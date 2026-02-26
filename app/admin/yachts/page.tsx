@@ -4,9 +4,19 @@ export const dynamic = 'force-dynamic' // Disable static generation
 
 export default async function AdminYachtsPage() {
   // Fetch yachts data using relative URL
-  const response = await fetch('/api/yachts')
-  const data = await response.json()
-  const yachts = data.yachts || []
+  let yachts: any[] = []
+  
+  try {
+    const response = await fetch('/api/yachts')
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    const data = await response.json()
+    yachts = data.yachts || []
+  } catch (error) {
+    console.error('Failed to fetch yachts:', error)
+    throw error // Let Next.js show the error
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
