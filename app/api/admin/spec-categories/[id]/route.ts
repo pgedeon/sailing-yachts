@@ -73,7 +73,7 @@ export async function PUT(
     }
 
     // Update
-    const [updated] = await db
+    const updated = await db
       .update(specCategories)
       .set({
         name: body.name,
@@ -85,6 +85,10 @@ export async function PUT(
       })
       .where(eq(specCategories.id, categoryId))
       .returning()
+
+    if (updated.length === 0) {
+      return NextResponse.json({ error: "Failed to update spec category" }, { status: 500 })
+    }
 
     return NextResponse.json({ success: true, category: updated[0] })
   } catch (error) {

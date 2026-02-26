@@ -73,7 +73,7 @@ export async function PUT(
     }
 
     // Update
-    const [updated] = await db
+    const updated = await db
       .update(yachtModels)
       .set({
         manufacturerId: body.manufacturerId,
@@ -102,6 +102,10 @@ export async function PUT(
       })
       .where(eq(yachtModels.id, yachtId))
       .returning()
+
+    if (updated.length === 0) {
+      return NextResponse.json({ error: "Failed to update yacht" }, { status: 500 })
+    }
 
     return NextResponse.json({ success: true, yacht: updated[0] })
   } catch (error) {

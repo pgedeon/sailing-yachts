@@ -73,7 +73,7 @@ export async function PUT(
     }
 
     // Update
-    const [updated] = await db
+    const updated = await db
       .update(manufacturers)
       .set({
         name: body.name,
@@ -85,6 +85,10 @@ export async function PUT(
       })
       .where(eq(manufacturers.id, manufacturerId))
       .returning()
+
+    if (updated.length === 0) {
+      return NextResponse.json({ error: "Failed to update manufacturer" }, { status: 500 })
+    }
 
     return NextResponse.json({ success: true, manufacturer: updated[0] })
   } catch (error) {
