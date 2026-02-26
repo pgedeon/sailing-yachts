@@ -3,11 +3,22 @@ import Link from 'next/link'
 export const dynamic = 'force-dynamic' // Disable static generation
 
 export default async function AdminManufacturersPage() {
-  // Fetch manufacturers data using absolute URL
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
-  const response = await fetch(`${baseUrl}/api/admin/manufacturers`)
-  const data = await response.json()
-  const manufacturers = data.manufacturers || []
+  let manufacturers: any[] = []
+  let errorMsg: string | null = null
+
+  try {
+    // Fetch manufacturers data using absolute URL
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
+    const response = await fetch(`${baseUrl}/api/admin/manufacturers`)
+    if (!response.ok) {
+      throw new Error(`Failed to fetch: ${response.status}`)
+    }
+    const data = await response.json()
+    manufacturers = data.manufacturers || []
+  } catch (error) {
+    console.error('Failed to fetch manufacturers:', error)
+    errorMsg = error instanceof Error ? error.message : 'Unknown error'
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -33,7 +44,12 @@ export default async function AdminManufacturersPage() {
             </Link>
           </div>
 
-          {manufacturers.length === 0 ? (
+          {errorMsg ? (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+              <strong className="font-bold">Error!</strong>
+              <span className="block sm:inline"> {errorMsg}</span>
+            </div>
+          ) : manufacturers.length === 0 ? (
             <p className="text-gray-500 text-center py-8">No manufacturers found.</p>
           ) : (
             <div className="overflow-x-auto">

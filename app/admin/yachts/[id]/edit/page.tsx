@@ -64,7 +64,7 @@ export default function EditYachtPage() {
     try {
       setLoading(true)
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
-      const res = await fetch(`${baseUrl}/api/yachts/${yachtId}`)
+      const res = await fetch(`${baseUrl}/api/admin/yachts/${yachtId}`)
       if (!res.ok) {
         throw new Error('Yacht not found')
       }
