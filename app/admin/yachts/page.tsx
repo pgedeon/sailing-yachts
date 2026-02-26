@@ -5,17 +5,22 @@ export const dynamic = 'force-dynamic' // Disable static generation
 export default async function AdminYachtsPage() {
   // Fetch yachts data using relative URL
   let yachts: any[] = []
+  let fetchError: string | null = null
   
   try {
-    const response = await fetch('/api/yachts')
+    const response = await fetch('/api/yachts', { next: { revalidate: 0 } })
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+      const errorText = await response.text()
+      console.error('API response error:', response.status, errorText)
+      fetchError = `Failed to load yachts: ${response.status}`
+    } else {
+      const data = await response.json()
+      yachts = data.yachts || []
+      console.log('Loaded yachts:', yachts.length)
     }
-    const data = await response.json()
-    yachts = data.yachts || []
   } catch (error) {
     console.error('Failed to fetch yachts:', error)
-    throw error // Let Next.js show the error
+    fetchError = error instanceof Error ? error.message : 'Unknown error'
   }
 
   return (
@@ -42,8 +47,13 @@ export default async function AdminYachtsPage() {
             </Link>
           </div>
 
-          {yachts.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">No yachts found.</p>
+          {fetchError ? (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+              <strong className="font-bold">Error!</strong>
+              <span className="block sm:inline"> {fetchError}</span>
+            </div>
+          ) : yachts.length === 0 ? (
+            <p className="text-gray-500 text-center py-8">No yachts found. <Link href="/admin/yachts/new" className="text-blue-600 hover:underline">Add one</Link></p>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -58,19 +68,37 @@ export default async function AdminYachtsPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {yachts.map((yacht: any) => (
-                    <tr key={yacht.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{yacht.modelName}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{yacht.manufacturer}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {yacht.lengthOverall ? Number(yacht.lengthOverall).toFixed(1) : 'N/A'} m
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {yacht.beam ? Number(yacht.beam).toFixed(1) : 'N/A'} m
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {yacht.year || 'N/A'}
-                      </td>
+                  {yachts.map((yacht: any) => {
+                    const y = yacht.yacht || yacht // Handle both structures
+                    return (
+                      <tr key={y.id}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{y.modelName || 'Unknown'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{yacht.manufacturer || 'Unknown'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {y.lengthOverall ? Number(y.lengthOverall).toFixed(1) : 'N/A'} m
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {y.beam ? Number(y.beam).toFixed(1) : 'N/A'} m
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {y.year || 'N/A'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
+                          <Link
+                            href={`/admin/yachts/${y.id}/edit`}
+                            className="text-blue-600 hover:text-blue-800 px-2 py-1 rounded text-xs bg-blue-50"
+                          >
+                            Edit
+                          </Link>
+                          <button className="text-red-600 hover:text-red-800 px-2 py-1 rounded text-xs bg-red-50">Delete</button>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
                       <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
                         <Link
                           href={`/admin/yachts/${yacht.id}/edit`}
