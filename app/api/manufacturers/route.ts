@@ -1,31 +1,22 @@
 import { NextResponse } from "next/server";
-import { neon } from "@neondatabase/serverless";
-
-export const dynamic = 'force-dynamic';
+import { db, manufacturers as mfgTable } from "@/lib/db";
 
 export async function GET() {
   try {
-    const connectionString = process.env.DATABASE_URL;
-    if (!connectionString) {
-      throw new Error("DATABASE_URL environment variable is required");
-    }
+    const manufacturers = await db
+      .select({
+        id: mfgTable.id,
+        name: mfgTable.name,
+      })
+      .from(mfgTable)
+      .orderBy(mfgTable.name);
 
-    const sql = neon(connectionString);
-    const result = await sql`
-      SELECT DISTINCT manufacturer 
-      FROM yachts 
-      WHERE manufacturer IS NOT NULL AND manufacturer != ''
-      ORDER BY manufacturer
-    `;
-
-    const manufacturers = result.map(row => row.manufacturer);
-
-    return NextResponse.json({ manufacturers });
+    return NextResponse.json(manufacturers);
   } catch (error) {
     console.error("Error fetching manufacturers:", error);
     return NextResponse.json(
       { error: "Failed to fetch manufacturers" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
