@@ -86,12 +86,48 @@ export default function EditYachtPage() {
 
     try {
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
-      // For now, just update locally - would need PUT endpoint
-      // Since we only have POST for admin create, we'll show a message
-      setError('Update functionality requires PUT endpoint. This would be implemented with a PUT request to /api/admin/yachts/[id]')
-      setSubmitting(false)
+      const payload = {
+        manufacturerId: yacht.manufacturerId,
+        modelName: yacht.modelName,
+        year: yacht.year,
+        slug: yacht.slug,
+        lengthOverall: yacht.lengthOverall,
+        beam: yacht.beam,
+        draft: yacht.draft,
+        displacement: yacht.displacement,
+        ballast: yacht.ballast,
+        sailAreaMain: yacht.sailAreaMain,
+        rigType: yacht.rigType,
+        keelType: yacht.keelType,
+        hullMaterial: yacht.hullMaterial,
+        cabins: yacht.cabins,
+        berths: yacht.berths,
+        heads: yacht.heads,
+        maxOccupancy: yacht.maxOccupancy,
+        engineHp: yacht.engineHp,
+        engineType: yacht.engineType,
+        fuelCapacity: yacht.fuelCapacity,
+        waterCapacity: yacht.waterCapacity,
+        designNotes: yacht.designNotes,
+        description: yacht.description,
+      }
+
+      const res = await fetch(`${baseUrl}/api/admin/yachts/${yachtId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+
+      if (!res.ok) {
+        const errorData = await res.json()
+        throw new Error(errorData.error || 'Failed to update yacht')
+      }
+
+      router.push('/admin/yachts')
+      router.refresh()
     } catch (err: any) {
       setError(err.message)
+    } finally {
       setSubmitting(false)
     }
   }
