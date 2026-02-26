@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, yachtModels } from "@/lib/db";
+import { getDb, yachtModels } from "@/lib/db";
 
 // GET single yacht
 export async function GET(
@@ -14,6 +14,7 @@ export async function GET(
       return NextResponse.json({ error: "Invalid yacht ID" }, { status: 400 })
     }
 
+    const db = getDb()
     const [yacht] = await db
       .select()
       .from(yachtModels)
@@ -56,6 +57,8 @@ export async function PUT(
         { status: 400 }
       )
     }
+
+    const db = getDb()
 
     // Check if yacht exists
     const [existing] = await db
@@ -121,6 +124,8 @@ export async function DELETE(
     if (isNaN(yachtId)) {
       return NextResponse.json({ error: "Invalid yacht ID" }, { status: 400 })
     }
+
+    const db = getDb()
 
     // Check if yacht exists
     const [existing] = await db

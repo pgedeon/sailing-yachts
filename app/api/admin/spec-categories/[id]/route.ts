@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, specCategories } from "@/lib/db";
+import { getDb, specCategories } from "@/lib/db";
 
 // GET single spec category
 export async function GET(
@@ -10,6 +10,11 @@ export async function GET(
     const { id } = await params
     const categoryId = parseInt(id)
 
+    if (isNaN(categoryId)) {
+      return NextResponse.json({ error: "Invalid category ID" }, { status: 400 })
+    }
+
+    const db = getDb()
     const [category] = await db
       .select()
       .from(specCategories)
@@ -22,8 +27,11 @@ export async function GET(
 
     return NextResponse.json({ category })
   } catch (error) {
-    console.error("Error fetching spec category:", error)
-    return NextResponse.json({ error: "Failed to fetch spec category" }, { status: 500 })
+    console.error("Error fetching spec category:", error, error instanceof Error ? error.stack : null)
+    return NextResponse.json({ 
+      error: "Failed to fetch spec category", 
+      details: error instanceof Error ? error.message : String(error) 
+    }, { status: 500 })
   }
 }
 
@@ -35,6 +43,11 @@ export async function PUT(
   try {
     const { id } = await params
     const categoryId = parseInt(id)
+    
+    if (isNaN(categoryId)) {
+      return NextResponse.json({ error: "Invalid category ID" }, { status: 400 })
+    }
+    
     const body = await request.json()
 
     // Validate required fields
@@ -44,6 +57,8 @@ export async function PUT(
         { status: 400 }
       )
     }
+
+    const db = getDb()
 
     // Check if category exists
     const [existing] = await db
@@ -72,8 +87,11 @@ export async function PUT(
 
     return NextResponse.json({ success: true, category: updated[0] })
   } catch (error) {
-    console.error("Error updating spec category:", error)
-    return NextResponse.json({ error: "Failed to update spec category" }, { status: 500 })
+    console.error("Error updating spec category:", error, error instanceof Error ? error.stack : null)
+    return NextResponse.json({ 
+      error: "Failed to update spec category", 
+      details: error instanceof Error ? error.message : String(error) 
+    }, { status: 500 })
   }
 }
 
@@ -85,6 +103,12 @@ export async function DELETE(
   try {
     const { id } = await params
     const categoryId = parseInt(id)
+
+    if (isNaN(categoryId)) {
+      return NextResponse.json({ error: "Invalid category ID" }, { status: 400 })
+    }
+
+    const db = getDb()
 
     // Check if category exists
     const [existing] = await db
@@ -101,7 +125,10 @@ export async function DELETE(
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error("Error deleting spec category:", error)
-    return NextResponse.json({ error: "Failed to delete spec category" }, { status: 500 })
+    console.error("Error deleting spec category:", error, error instanceof Error ? error.stack : null)
+    return NextResponse.json({ 
+      error: "Failed to delete spec category", 
+      details: error instanceof Error ? error.message : String(error) 
+    }, { status: 500 })
   }
 }

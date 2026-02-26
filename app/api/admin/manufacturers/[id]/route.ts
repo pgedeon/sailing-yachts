@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, manufacturers } from "@/lib/db";
+import { getDb, manufacturers } from "@/lib/db";
 
 // GET single manufacturer
 export async function GET(
@@ -10,6 +10,11 @@ export async function GET(
     const { id } = await params
     const manufacturerId = parseInt(id)
 
+    if (isNaN(manufacturerId)) {
+      return NextResponse.json({ error: "Invalid manufacturer ID" }, { status: 400 })
+    }
+
+    const db = getDb()
     const [manufacturer] = await db
       .select()
       .from(manufacturers)
@@ -22,8 +27,11 @@ export async function GET(
 
     return NextResponse.json({ manufacturer })
   } catch (error) {
-    console.error("Error fetching manufacturer:", error)
-    return NextResponse.json({ error: "Failed to fetch manufacturer" }, { status: 500 })
+    console.error("Error fetching manufacturer:", error, error instanceof Error ? error.stack : null)
+    return NextResponse.json({ 
+      error: "Failed to fetch manufacturer", 
+      details: error instanceof Error ? error.message : String(error) 
+    }, { status: 500 })
   }
 }
 
@@ -35,6 +43,11 @@ export async function PUT(
   try {
     const { id } = await params
     const manufacturerId = parseInt(id)
+    
+    if (isNaN(manufacturerId)) {
+      return NextResponse.json({ error: "Invalid manufacturer ID" }, { status: 400 })
+    }
+    
     const body = await request.json()
 
     // Validate required fields
@@ -44,6 +57,8 @@ export async function PUT(
         { status: 400 }
       )
     }
+
+    const db = getDb()
 
     // Check if manufacturer exists
     const [existing] = await db
@@ -72,8 +87,11 @@ export async function PUT(
 
     return NextResponse.json({ success: true, manufacturer: updated[0] })
   } catch (error) {
-    console.error("Error updating manufacturer:", error)
-    return NextResponse.json({ error: "Failed to update manufacturer" }, { status: 500 })
+    console.error("Error updating manufacturer:", error, error instanceof Error ? error.stack : null)
+    return NextResponse.json({ 
+      error: "Failed to update manufacturer", 
+      details: error instanceof Error ? error.message : String(error) 
+    }, { status: 500 })
   }
 }
 
@@ -85,6 +103,12 @@ export async function DELETE(
   try {
     const { id } = await params
     const manufacturerId = parseInt(id)
+
+    if (isNaN(manufacturerId)) {
+      return NextResponse.json({ error: "Invalid manufacturer ID" }, { status: 400 })
+    }
+
+    const db = getDb()
 
     // Check if manufacturer exists
     const [existing] = await db
@@ -101,7 +125,10 @@ export async function DELETE(
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error("Error deleting manufacturer:", error)
-    return NextResponse.json({ error: "Failed to delete manufacturer" }, { status: 500 })
+    console.error("Error deleting manufacturer:", error, error instanceof Error ? error.stack : null)
+    return NextResponse.json({ 
+      error: "Failed to delete manufacturer", 
+      details: error instanceof Error ? error.message : String(error) 
+    }, { status: 500 })
   }
 }

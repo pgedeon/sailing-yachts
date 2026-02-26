@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, manufacturers } from "@/lib/db";
+import { getDb, manufacturers } from "@/lib/db";
 
 export const dynamic = 'force-dynamic';
 
 // GET all manufacturers (admin view - can be used by both admin and public API)
 export async function GET() {
   try {
+    const db = getDb()
     const allManufacturers = await db.select().from(manufacturers);
     return NextResponse.json({ manufacturers: allManufacturers });
   } catch (error) {
@@ -30,6 +31,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const db = getDb()
     const [manufacturer] = await db
       .insert(manufacturers)
       .values({
