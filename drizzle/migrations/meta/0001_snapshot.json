@@ -1,7 +1,5 @@
 {
-  "id": "d9c1de33-46e4-4c62-ac00-aff9cb75708d",
-  "prevId": "a5fa16b2-06fc-49c4-80bc-47245347b313",
-  "version": "6",
+  "version": "7",
   "dialect": "postgresql",
   "tables": {
     "public.images": {
@@ -62,20 +60,34 @@
       },
       "indexes": {
         "idx_images_yacht": {
+          "columns": [
+            {
+              "expression": "yacht_model_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "idx_images_yacht",
-          "columns": ["yacht_model_id"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "images_yacht_model_id_yacht_models_id_fk": {
           "name": "images_yacht_model_id_yacht_models_id_fk",
           "tableFrom": "images",
+          "columnsFrom": [
+            "yacht_model_id"
+          ],
           "tableTo": "yacht_models",
-          "columnsFrom": ["yacht_model_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -125,9 +137,19 @@
       },
       "indexes": {
         "idx_manufacturers_name": {
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "idx_manufacturers_name",
-          "columns": ["name"],
-          "isUnique": true
+          "isUnique": true,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {},
@@ -135,8 +157,10 @@
       "uniqueConstraints": {
         "manufacturers_name_unique": {
           "name": "manufacturers_name_unique",
-          "nullsNotDistinct": false,
-          "columns": ["name"]
+          "columns": [
+            "name"
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
@@ -208,20 +232,34 @@
       },
       "indexes": {
         "idx_reviews_yacht": {
+          "columns": [
+            {
+              "expression": "yacht_model_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "idx_reviews_yacht",
-          "columns": ["yacht_model_id"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "reviews_yacht_model_id_yacht_models_id_fk": {
           "name": "reviews_yacht_model_id_yacht_models_id_fk",
           "tableFrom": "reviews",
+          "columnsFrom": [
+            "yacht_model_id"
+          ],
           "tableTo": "yacht_models",
-          "columnsFrom": ["yacht_model_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -305,9 +343,19 @@
       },
       "indexes": {
         "idx_spec_categories_group": {
+          "columns": [
+            {
+              "expression": "category_group",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "idx_spec_categories_group",
-          "columns": ["category_group"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {},
@@ -315,8 +363,10 @@
       "uniqueConstraints": {
         "spec_categories_name_unique": {
           "name": "spec_categories_name_unique",
-          "nullsNotDistinct": false,
-          "columns": ["name"]
+          "columns": [
+            "name"
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
@@ -357,39 +407,83 @@
       },
       "indexes": {
         "idx_spec_values_yacht": {
+          "columns": [
+            {
+              "expression": "yacht_model_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "idx_spec_values_yacht",
-          "columns": ["yacht_model_id"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "idx_spec_values_category": {
+          "columns": [
+            {
+              "expression": "spec_category_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "idx_spec_values_category",
-          "columns": ["spec_category_id"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "uniq_spec_values_yacht_category": {
+          "columns": [
+            {
+              "expression": "yacht_model_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "spec_category_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "uniq_spec_values_yacht_category",
-          "columns": ["yacht_model_id", "spec_category_id"],
-          "isUnique": true
+          "isUnique": true,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "spec_values_yacht_model_id_yacht_models_id_fk": {
           "name": "spec_values_yacht_model_id_yacht_models_id_fk",
           "tableFrom": "spec_values",
+          "columnsFrom": [
+            "yacht_model_id"
+          ],
           "tableTo": "yacht_models",
-          "columnsFrom": ["yacht_model_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         },
         "spec_values_spec_category_id_spec_categories_id_fk": {
           "name": "spec_values_spec_category_id_spec_categories_id_fk",
           "tableFrom": "spec_values",
+          "columnsFrom": [
+            "spec_category_id"
+          ],
           "tableTo": "spec_categories",
-          "columnsFrom": ["spec_category_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -578,53 +672,119 @@
       },
       "indexes": {
         "idx_yacht_models_manufacturer": {
+          "columns": [
+            {
+              "expression": "manufacturer_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "idx_yacht_models_manufacturer",
-          "columns": ["manufacturer_id"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "idx_yacht_models_slug": {
+          "columns": [
+            {
+              "expression": "slug",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "idx_yacht_models_slug",
-          "columns": ["slug"],
-          "isUnique": true
+          "isUnique": true,
+          "method": "btree",
+          "concurrently": false
         },
         "idx_yacht_models_length": {
+          "columns": [
+            {
+              "expression": "length_overall",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "idx_yacht_models_length",
-          "columns": ["length_overall"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "idx_yacht_models_displacement": {
+          "columns": [
+            {
+              "expression": "displacement",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "idx_yacht_models_displacement",
-          "columns": ["displacement"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "idx_yacht_models_rig": {
+          "columns": [
+            {
+              "expression": "rig_type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "idx_yacht_models_rig",
-          "columns": ["rig_type"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "idx_yacht_models_keel": {
+          "columns": [
+            {
+              "expression": "keel_type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "with": {},
           "name": "idx_yacht_models_keel",
-          "columns": ["keel_type"],
-          "isUnique": false
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "yacht_models_manufacturer_id_manufacturers_id_fk": {
           "name": "yacht_models_manufacturer_id_manufacturers_id_fk",
           "tableFrom": "yacht_models",
+          "columnsFrom": [
+            "manufacturer_id"
+          ],
           "tableTo": "manufacturers",
-          "columnsFrom": ["manufacturer_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "yacht_models_slug_unique": {
           "name": "yacht_models_slug_unique",
-          "nullsNotDistinct": false,
-          "columns": ["slug"]
+          "columns": [
+            "slug"
+          ],
+          "nullsNotDistinct": false
         }
       }
     }
@@ -632,8 +792,11 @@
   "enums": {},
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "d9c1de33-46e4-4c62-ac00-aff9cb75708d",
+  "prevId": "a5fa16b2-06fc-49c4-80bc-47245347b313",
+  "sequences": {}
 }

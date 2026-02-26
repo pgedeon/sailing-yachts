@@ -1,7 +1,5 @@
 {
-  "id": "a5fa16b2-06fc-49c4-80bc-47245347b313",
-  "prevId": "00000000-0000-0000-0000-000000000000",
-  "version": "6",
+  "version": "7",
   "dialect": "postgresql",
   "tables": {
     "public.images": {
@@ -65,11 +63,15 @@
         "images_yacht_model_id_yacht_models_id_fk": {
           "name": "images_yacht_model_id_yacht_models_id_fk",
           "tableFrom": "images",
+          "columnsFrom": [
+            "yacht_model_id"
+          ],
           "tableTo": "yacht_models",
-          "columnsFrom": ["yacht_model_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -123,8 +125,10 @@
       "uniqueConstraints": {
         "manufacturers_name_unique": {
           "name": "manufacturers_name_unique",
-          "nullsNotDistinct": false,
-          "columns": ["name"]
+          "columns": [
+            "name"
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
@@ -199,11 +203,15 @@
         "reviews_yacht_model_id_yacht_models_id_fk": {
           "name": "reviews_yacht_model_id_yacht_models_id_fk",
           "tableFrom": "reviews",
+          "columnsFrom": [
+            "yacht_model_id"
+          ],
           "tableTo": "yacht_models",
-          "columnsFrom": ["yacht_model_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -291,8 +299,10 @@
       "uniqueConstraints": {
         "spec_categories_name_unique": {
           "name": "spec_categories_name_unique",
-          "nullsNotDistinct": false,
-          "columns": ["name"]
+          "columns": [
+            "name"
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
@@ -336,20 +346,28 @@
         "spec_values_yacht_model_id_yacht_models_id_fk": {
           "name": "spec_values_yacht_model_id_yacht_models_id_fk",
           "tableFrom": "spec_values",
+          "columnsFrom": [
+            "yacht_model_id"
+          ],
           "tableTo": "yacht_models",
-          "columnsFrom": ["yacht_model_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         },
         "spec_values_spec_category_id_spec_categories_id_fk": {
           "name": "spec_values_spec_category_id_spec_categories_id_fk",
           "tableFrom": "spec_values",
+          "columnsFrom": [
+            "spec_category_id"
+          ],
           "tableTo": "spec_categories",
-          "columnsFrom": ["spec_category_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -541,19 +559,25 @@
         "yacht_models_manufacturer_id_manufacturers_id_fk": {
           "name": "yacht_models_manufacturer_id_manufacturers_id_fk",
           "tableFrom": "yacht_models",
+          "columnsFrom": [
+            "manufacturer_id"
+          ],
           "tableTo": "manufacturers",
-          "columnsFrom": ["manufacturer_id"],
-          "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "yacht_models_slug_unique": {
           "name": "yacht_models_slug_unique",
-          "nullsNotDistinct": false,
-          "columns": ["slug"]
+          "columns": [
+            "slug"
+          ],
+          "nullsNotDistinct": false
         }
       }
     }
@@ -561,8 +585,11 @@
   "enums": {},
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "a5fa16b2-06fc-49c4-80bc-47245347b313",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "sequences": {}
 }
