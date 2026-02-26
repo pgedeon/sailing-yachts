@@ -1,6 +1,0 @@
-import { pgTable, text } from "drizzle-orm/pg-core";
-
-export const manufacturers = pgTable("manufacturers", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull().unique(),
-});

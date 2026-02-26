@@ -28,3 +28,6 @@ export const db = new Proxy({}, {
     return value;
   },
 }) as any;
+
+// Re-export all tables and schemas for direct imports
+export * from "../drizzle/schema";

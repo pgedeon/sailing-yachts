@@ -15,12 +15,14 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "drizzle-orm": "^0.35.0",
+    "drizzle-zod": "^0.5.1",
     "@neondatabase/serverless": "^0.9.0",
     "drizzle-kit": "^0.26.0",
     "clsx": "^2.0.0",
     "tailwind-merge": "^2.2.0",
     "lucide-react": "^0.344.0",
     "@radix-ui/react-slot": "^1.0.3",
+    "@radix-ui/react-select": "^2.0.0",
     "class-variance-authority": "^0.7.0"
   },
   "devDependencies": {
