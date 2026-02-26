@@ -97,7 +97,6 @@ export default async function AdminYachtsPage() {
                           >
                             Edit
                           </Link>
-                          <button className="text-red-600 hover:text-red-800 px-2 py-1 rounded text-xs bg-red-50">Delete</button>
                         </td>
                       </tr>
                     )

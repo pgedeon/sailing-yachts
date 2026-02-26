@@ -1,92 +1,69 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, yachtModels, manufacturers } from "@/lib/db";
-import { eq } from "drizzle-orm";
+import { db, yachtModels } from "@/lib/db";
 
-function authorized(request: NextRequest): boolean {
-  const authHeader = request.headers.get("authorization") || "";
-  const key = authHeader.replace("Bearer ", "");
-  return key === process.env.ADMIN_API_KEY;
-}
-
+// GET single yacht
 export async function GET(
-  request: NextRequest,
+  request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  if (!authorized(request)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
-    const { id } = await params;
-    const yachtId = parseInt(id);
-    const result = await db
-      .select({
-        yacht: yachtModels,
-        manufacturer: manufacturers.name,
-      })
-      .from(yachtModels)
-      .leftJoin(manufacturers, eq(yachtModels.manufacturerId, manufacturers.id))
-      .where(eq(yachtModels.id, yachtId))
-      .limit(1);
+    const { id } = await params
+    const yachtId = parseInt(id)
 
-    if (result.length === 0) {
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    const [yacht] = await db
+      .select()
+      .from(yachtModels)
+      .where({ id: yachtId })
+      .limit(1)
+
+    if (!yacht) {
+      return NextResponse.json({ error: "Yacht not found" }, { status: 404 })
     }
 
-    const r = result[0];
-    return NextResponse.json({
-      ...r.yacht,
-      manufacturer: r.manufacturer,
-    });
+    return NextResponse.json({ yacht })
   } catch (error) {
-    console.error("Error fetching yacht:", error);
-    return NextResponse.json({ error: "Failed" }, { status: 500 });
+    console.error("Error fetching yacht:", error)
+    return NextResponse.json({ error: "Failed to fetch yacht" }, { status: 500 })
   }
 }
 
+// PUT update yacht
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  if (!authorized(request)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
-    const { id } = await params;
-    const yachtId = parseInt(id);
-    const body = await request.json();
+    const { id } = await params
+    const yachtId = parseInt(id)
+    const body = await request.json()
 
     // Validate required fields
-    if (!body.manufacturer || !body.modelName || !body.year) {
+    if (!body.modelName || !body.manufacturerId) {
       return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 },
-      );
+        { error: "Model name and manufacturer ID are required" },
+        { status: 400 }
+      )
     }
 
-    // Find or create manufacturer
-    let mfgResult = await db
+    // Check if yacht exists
+    const [existing] = await db
       .select()
-      .from(manufacturers)
-      .where(eq(manufacturers.name, body.manufacturer))
-      .limit(1);
-    let manufacturerId = mfgResult[0]?.id;
-    if (!manufacturerId) {
-      const [mfg] = await db
-        .insert(manufacturers)
-        .values({ name: body.manufacturer })
-        .returning({ id: manufacturers.id });
-      manufacturerId = mfg.id;
+      .from(yachtModels)
+      .where({ id: yachtId })
+      .limit(1)
+
+    if (!existing) {
+      return NextResponse.json({ error: "Yacht not found" }, { status: 404 })
     }
 
-    // Update yacht
+    // Update
     const [updated] = await db
       .update(yachtModels)
       .set({
-        manufacturerId,
+        manufacturerId: body.manufacturerId,
         modelName: body.modelName,
         year: body.year,
+        slug: body.slug,
         lengthOverall: body.lengthOverall,
         beam: body.beam,
         draft: body.draft,
@@ -106,21 +83,42 @@ export async function PUT(
         waterCapacity: body.waterCapacity,
         designNotes: body.designNotes,
         description: body.description,
-        sourceUrl: body.sourceUrl,
-        sourceAttribution: body.sourceAttribution,
-        adminLinks: body.adminLinks,
-        updatedAt: new Date(),
       })
-      .where(eq(yachtModels.id, yachtId))
-      .returning();
+      .where({ id: yachtId })
+      .returning()
 
-    if (!updated) {
-      return NextResponse.json({ error: "Yacht not found" }, { status: 404 });
+    return NextResponse.json({ success: true, yacht: updated[0] })
+  } catch (error) {
+    console.error("Error updating yacht:", error)
+    return NextResponse.json({ error: "Failed to update yacht" }, { status: 500 })
+  }
+}
+
+// DELETE yacht
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const { id } = await params
+    const yachtId = parseInt(id)
+
+    // Check if yacht exists
+    const [existing] = await db
+      .select()
+      .from(yachtModels)
+      .where({ id: yachtId })
+      .limit(1)
+
+    if (!existing) {
+      return NextResponse.json({ error: "Yacht not found" }, { status: 404 })
     }
 
-    return NextResponse.json(updated);
+    await db.delete(yachtModels).where({ id: yachtId })
+
+    return NextResponse.json({ success: true })
   } catch (error) {
-    console.error("Error updating yacht:", error);
-    return NextResponse.json({ error: "Failed to update" }, { status: 500 });
+    console.error("Error deleting yacht:", error)
+    return NextResponse.json({ error: "Failed to delete yacht" }, { status: 500 })
   }
 }

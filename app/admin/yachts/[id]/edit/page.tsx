@@ -1,0 +1,467 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
+
+interface YachtData {
+  id: number
+  manufacturerId: number
+  modelName: string
+  year: number
+  slug: string
+  lengthOverall?: number
+  beam?: number
+  draft?: number
+  displacement?: number
+  ballast?: number
+  sailAreaMain?: number
+  rigType?: string
+  keelType?: string
+  hullMaterial?: string
+  cabins?: number
+  berths?: number
+  heads?: number
+  maxOccupancy?: number
+  engineHp?: number
+  engineType?: string
+  fuelCapacity?: number
+  waterCapacity?: number
+  designNotes?: string
+  description?: string
+}
+
+export default function EditYachtPage() {
+  const params = useParams()
+  const router = useRouter()
+  const yachtId = params.id as string
+
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [manufacturers, setManufacturers] = useState<{ id: number; name: string }[]>([])
+  const [yacht, setYacht] = useState<YachtData | null>(null)
+
+  useEffect(() => {
+    fetchManufacturers()
+    fetchYacht()
+  }, [yachtId])
+
+  async function fetchManufacturers() {
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
+      const res = await fetch(`${baseUrl}/api/manufacturers`)
+      if (res.ok) {
+        const data = await res.json()
+        setManufacturers(data.manufacturers || [])
+      }
+    } catch (err) {
+      console.error('Failed to fetch manufacturers:', err)
+    }
+  }
+
+  async function fetchYacht() {
+    try {
+      setLoading(true)
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
+      const res = await fetch(`${baseUrl}/api/yachts/${yachtId}`)
+      if (!res.ok) {
+        throw new Error('Yacht not found')
+      }
+      const data = await res.json()
+      setYacht(data.yacht)
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!yacht) return
+
+    setSubmitting(true)
+    setError(null)
+
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
+      // For now, just update locally - would need PUT endpoint
+      // Since we only have POST for admin create, we'll show a message
+      setError('Update functionality requires PUT endpoint. This would be implemented with a PUT request to /api/admin/yachts/[id]')
+      setSubmitting(false)
+    } catch (err: any) {
+      setError(err.message)
+      setSubmitting(false)
+    }
+  }
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
+    const { name, value } = e.target
+    setYacht(prev => prev ? { ...prev, [name]: value } : null)
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-8">
+        <div className="max-w-4xl mx-auto">
+          <p>Loading yacht...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!yacht) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            Yacht not found
+          </div>
+          <Link href="/admin/yachts" className="text-blue-600 hover:underline">Back to yachts</Link>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center gap-4 mb-6">
+          <Link
+            href="/admin/yachts"
+            className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition duration-200"
+          >
+            ← Back to Yachts
+          </Link>
+          <h1 className="text-2xl font-bold text-gray-900">Edit Yacht</h1>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Basic Info */}
+              <div>
+                <label htmlFor="modelName" className="block text-sm font-medium text-gray-700 mb-1">Model Name *</label>
+                <input
+                  type="text"
+                  id="modelName"
+                  name="modelName"
+                  required
+                  value={yacht.modelName}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="manufacturerId" className="block text-sm font-medium text-gray-700 mb-1">Manufacturer *</label>
+                <select
+                  id="manufacturerId"
+                  name="manufacturerId"
+                  required
+                  value={yacht.manufacturerId}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {manufacturers.map(m => (
+                    <option key={m.id} value={m.id}>{m.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="year" className="block text-sm font-medium text-gray-700 mb-1">Year *</label>
+                <input
+                  type="number"
+                  id="year"
+                  name="year"
+                  required
+                  value={yacht.year || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="slug" className="block text-sm font-medium text-gray-700 mb-1">Slug</label>
+                <input
+                  type="text"
+                  id="slug"
+                  name="slug"
+                  value={yacht.slug || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              {/* Dimensions */}
+              <div>
+                <label htmlFor="lengthOverall" className="block text-sm font-medium text-gray-700 mb-1">Length Overall (m)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="lengthOverall"
+                  name="lengthOverall"
+                  value={yacht.lengthOverall ?? ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="beam" className="block text-sm font-medium text-gray-700 mb-1">Beam (m)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="beam"
+                  name="beam"
+                  value={yacht.beam ?? ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="draft" className="block text-sm font-medium text-gray-700 mb-1">Draft (m)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="draft"
+                  name="draft"
+                  value={yacht.draft ?? ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="displacement" className="block text-sm font-medium text-gray-700 mb-1">Displacement (kg)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="displacement"
+                  name="displacement"
+                  value={yacht.displacement ?? ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="ballast" className="block text-sm font-medium text-gray-700 mb-1">Ballast (kg)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="ballast"
+                  name="ballast"
+                  value={yacht.ballast ?? ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="sailAreaMain" className="block text-sm font-medium text-gray-700 mb-1">Sail Area Main (m²)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="sailAreaMain"
+                  name="sailAreaMain"
+                  value={yacht.sailAreaMain ?? ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              {/* Categorical */}
+              <div>
+                <label htmlFor="rigType" className="block text-sm font-medium text-gray-700 mb-1">Rig Type</label>
+                <input
+                  type="text"
+                  id="rigType"
+                  name="rigType"
+                  value={yacht.rigType || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="keelType" className="block text-sm font-medium text-gray-700 mb-1">Keel Type</label>
+                <input
+                  type="text"
+                  id="keelType"
+                  name="keelType"
+                  value={yacht.keelType || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="hullMaterial" className="block text-sm font-medium text-gray-700 mb-1">Hull Material</label>
+                <input
+                  type="text"
+                  id="hullMaterial"
+                  name="hullMaterial"
+                  value={yacht.hullMaterial || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              {/* Accommodation */}
+              <div>
+                <label htmlFor="cabins" className="block text-sm font-medium text-gray-700 mb-1">Cabins</label>
+                <input
+                  type="number"
+                  id="cabins"
+                  name="cabins"
+                  value={yacht.cabins ?? ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="berths" className="block text-sm font-medium text-gray-700 mb-1">Berths</label>
+                <input
+                  type="number"
+                  id="berths"
+                  name="berths"
+                  value={yacht.berths ?? ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="heads" className="block text-sm font-medium text-gray-700 mb-1">Heads</label>
+                <input
+                  type="number"
+                  id="heads"
+                  name="heads"
+                  value={yacht.heads ?? ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="maxOccupancy" className="block text-sm font-medium text-gray-700 mb-1">Max Occupancy</label>
+                <input
+                  type="number"
+                  id="maxOccupancy"
+                  name="maxOccupancy"
+                  value={yacht.maxOccupancy ?? ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              {/* Technical */}
+              <div>
+                <label htmlFor="engineHp" className="block text-sm font-medium text-gray-700 mb-1">Engine HP</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="engineHp"
+                  name="engineHp"
+                  value={yacht.engineHp ?? ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="engineType" className="block text-sm font-medium text-gray-700 mb-1">Engine Type</label>
+                <input
+                  type="text"
+                  id="engineType"
+                  name="engineType"
+                  value={yacht.engineType || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="fuelCapacity" className="block text-sm font-medium text-gray-700 mb-1">Fuel Capacity (L)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="fuelCapacity"
+                  name="fuelCapacity"
+                  value={yacht.fuelCapacity ?? ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="waterCapacity" className="block text-sm font-medium text-gray-700 mb-1">Water Capacity (L)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="waterCapacity"
+                  name="waterCapacity"
+                  value={yacht.waterCapacity ?? ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            {/* Full width fields */}
+            <div>
+              <label htmlFor="designNotes" className="block text-sm font-medium text-gray-700 mb-1">Design Notes</label>
+              <textarea
+                id="designNotes"
+                name="designNotes"
+                rows={3}
+                value={yacht.designNotes || ''}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <textarea
+                id="description"
+                name="description"
+                rows={4}
+                value={yacht.description || ''}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="flex justify-end gap-4 pt-4 border-t">
+              <Link
+                href="/admin/yachts"
+                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition duration-200"
+              >
+                Cancel
+              </Link>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200 disabled:opacity-50"
+              >
+                {submitting ? 'Updating...' : 'Update Yacht'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  )
+}
