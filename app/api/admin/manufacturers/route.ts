@@ -38,9 +38,9 @@ export async function POST(request: NextRequest) {
         name,
         country,
         foundedYear,
-        description,
-        websiteUrl,
-        logoUrl,
+        description: description || null,
+        websiteUrl: websiteUrl || null,
+        logoUrl: logoUrl || null,
       })
       .returning();
 

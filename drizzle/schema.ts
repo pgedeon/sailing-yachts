@@ -21,7 +21,9 @@ export const manufacturers = pgTable(
     name: varchar("name", { length: 255 }).notNull().unique(),
     country: varchar("country", { length: 100 }),
     foundedYear: integer("founded_year"),
-    website: varchar("website", { length: 500 }),
+    websiteUrl: varchar("website_url", { length: 500 }),
+    description: text("description"),
+    logoUrl: varchar("logo_url", { length: 500 }),
     createdAt: timestamp("created_at").defaultNow(),
   },
   (table) => ({
