@@ -3,8 +3,9 @@ import Link from 'next/link'
 export const dynamic = 'force-dynamic' // Disable static generation
 
 export default async function AdminManufacturersPage() {
-  // Fetch manufacturers data using relative URL
-  const response = await fetch('/api/manufacturers')
+  // Fetch manufacturers data using absolute URL
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
+  const response = await fetch(`${baseUrl}/api/manufacturers`)
   const manufacturers = await response.json()
 
   return (
