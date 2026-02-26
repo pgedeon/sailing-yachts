@@ -1,0 +1,733 @@
+# Sailing Yachts Specs Database
+
+## Project Overview
+A searchable, filterable web application showcasing a comprehensive database of sailing yacht specifications. Deployed on Vercel using a Next.js frontend with a PostgreSQL backend.
+
+**Target Users**: Sailing enthusiasts, boat buyers, marine researchers
+**Key Value**: Easy comparison of yacht specs across manufacturers and models
+
+---
+
+## Goals & Acceptance Criteria
+
+### MVP (Minimum Viable Product)
+- [ ] Responsive web app deployed on Vercel
+- [ ] List view of yachts with core specs + dynamic spec categories
+- [ ] Filter by: length range, manufacturer, rig type, keel type, AND any new spec categories added later (auto-generated)
+- [ ] Sort by: length, displacement, year, and any other numeric specs
+- [ ] Detail page for each yacht with full specifications, images, and customer sentiment (if available)
+- [ ] Compare feature: select 2-3 yachts to view side-by-side (auto-adapts to common spec fields)
+- [ ] Search functionality (text search on model name, manufacturer, and spec values)
+- [ ] Seed database with 4-5 yachts per size category (small/medium/large) → ~12-15 total, scraped from manufacturer sites
+- [ ] Responsive design: clean, minimalist, elegant (inspired by top sailing yacht websites)
+- [ ] Basic SEO (meta tags, structured data)
+- [ ] Admin interface: CRUD for yachts/manufacturers/specs, plus ability to add custom button/link per boat
+
+### Stretch Goals (post-MVP)
+- Brokerage listings and price tracking
+- User accounts and saved comparisons
+- Community submissions with moderation
+- Advanced metrics (sail area ratios, PHRF, comfort ratio)
+- Export to PDF/CSV
+- Bulk import via CSV
+
+---
+
+## Architecture
+
+### High-Level Diagram
+```
+┌─────────────────┐
+│   Vercel CDN    │  ← Static assets, images
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│  Next.js 14     │  ← App Router, React, TypeScript
+│  (Serverless)   │  ← Route Handlers (API)
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│   PostgreSQL    │  ← Supabase/Neon DB
+│   (Drizzle ORM) │  ← Type-safe queries
+└─────────────────┘
+```
+
+### Why This Stack?
+- **Next.js**: Best-in-class Vercel integration, SSG/SSR flexibility, API routes
+- **TypeScript**: Type safety for complex spec schemas, catches errors early
+- **PostgreSQL**: Relational data fits yacht models + manufacturers + specs perfectly
+- **Drizzle**: Modern TypeScript-first ORM, minimal abstraction, works on edge runtime
+- **Tailwind CSS**: Rapid UI development, consistent design system
+- **shadcn/ui**: Pre-built accessible components (datatable, dialogs, forms)
+
+---
+
+## Tech Stack
+
+| Layer | Technology | Rationale |
+|-------|------------|-----------|
+| Framework | Next.js 14 (App Router) | Vercel-native, React 19, Server Components |
+| Language | TypeScript 5 | Type safety, better DX |
+| Database | PostgreSQL (Supabase/Neon) | Free tier, managed, reliable |
+| ORM | Drizzle | Type-safe,kitchen-sink schema support |
+| Styling | Tailwind CSS | Utility-first, fast iteration |
+| Components | shadcn/ui | Radix UI primitives, customizable |
+| Forms | React Hook Form + Zod | Validation, performance |
+| Images | Next.js Image + Vercel Blob | Optimization, CDN |
+| Testing | Vitest + Testing Library | Fast unit tests |
+| Linting | ESLint + Prettier | Code quality |
+| Deployment | Vercel | Automatic previews, edge functions |
+
+---
+
+## Database Schema (Flexible & Extensible)
+
+### Design Principles
+- **Schema-less flexibility**: New spec categories can be added without DB migrations or code changes
+- **Frontend auto-discovery**: UI queries available spec categories and renders dynamic filters/spec display
+- **Type safety**: Numeric specs stored as numbers for filtering/sorting; text for freeform values
+- **Backward compatible**: Adding new categories never breaks existing pages
+
+### Core Tables (Stable)
+
+```sql
+-- Manufacturers (static reference)
+CREATE TABLE manufacturers (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL UNIQUE,
+  country VARCHAR(100),
+  founded_year INT,
+  website VARCHAR(500),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Yacht models (core identity + common searchable numeric fields)
+CREATE TABLE yacht_models (
+  id SERIAL PRIMARY KEY,
+  manufacturer_id INT NOT NULL REFERENCES manufacturers(id),
+  model_name VARCHAR(255) NOT NULL,
+  year INT NOT NULL,
+  slug VARCHAR(500) GENERATED ALWAYS AS (
+    LOWER(REPLACE(manufacturers.name, ' ', '-')) || '-' ||
+    LOWER(REPLACE(model_name, ' ', '-'))
+  ) STORED UNIQUE,
+
+  -- Core numeric specs (indexed for fast filter/sort)
+  length_overall DECIMAL(5,2),      -- meters (primary size filter)
+  beam DECIMAL(5,2),                -- meters
+  draft DECIMAL(5,2),               -- meters
+  displacement DECIMAL(8,2),        -- kg
+  sail_area_main DECIMAL(6,2),      -- m² (for performance metrics)
+
+  -- Core categorical (enumerated)
+  rig_type VARCHAR(100),            -- sloop, cutter, ketch, schooner, etc.
+  keel_type VARCHAR(100),           -- fin, wing, bulb, centerboard, twin
+  hull_material VARCHAR(100),       -- fiberglass, aluminum, steel, wood, composite
+
+  -- Metadata
+  design_notes TEXT,
+  description TEXT,
+  source_url VARCHAR(500),
+  source_attribution TEXT,
+  admin_links JSONB DEFAULT '[]'::jsonb,  -- Array of {label, url} for admin custom links
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Images
+CREATE TABLE images (
+  id SERIAL PRIMARY KEY,
+  yacht_model_id INT NOT NULL REFERENCES yacht_models(id) ON DELETE CASCADE,
+  url VARCHAR(1000) NOT NULL,
+  caption TEXT,
+  is_primary BOOLEAN DEFAULT FALSE,
+  alt_text VARCHAR(500),
+  sort_order INT DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Indexes on core fields
+CREATE INDEX idx_yacht_models_manufacturer ON yacht_models(manufacturer_id);
+CREATE INDEX idx_yacht_models_slug ON yacht_models(slug);
+CREATE INDEX idx_yacht_models_length ON yacht_models(length_overall);
+CREATE INDEX idx_yacht_models_displacement ON yacht_models(displacement);
+CREATE INDEX idx_yacht_models_rig ON yacht_models(rig_type);
+CREATE INDEX idx_yacht_models_keel ON yacht_models(keel_type);
+CREATE INDEX idx_images_yacht ON images(yacht_model_id);
+```
+
+### Flexible Specs System (Dynamic)
+
+**This is the key to extensibility**: All non-core specs are stored in a generic key-value structure that can be added on the fly.
+
+```sql
+-- Spec categories: defines the "dictionary" of available spec fields
+CREATE TABLE spec_categories (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL UNIQUE,      -- e.g., "Water Capacity", "PHRF Rating"
+  unit VARCHAR(50),                       -- e.g., "liters", "seconds", empty for unitless
+  data_type VARCHAR(20) NOT NULL,         -- 'numeric' or 'text'
+  category_group VARCHAR(100),            -- e.g., "dimensions", "accommodation", "performance", "technical"
+  display_order INT DEFAULT 0,            -- for ordering in UI groups
+  is_filterable BOOLEAN DEFAULT TRUE,    -- should this appear in filter UI?
+  is_sortable BOOLEAN DEFAULT FALSE,     -- should this be a sort option?
+  is_comparable BOOLEAN DEFAULT TRUE,    -- should this appear in compare view?
+  description TEXT,                      -- tooltip/help text for UI
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Spec values: one row per yacht per spec category
+CREATE TABLE spec_values (
+  id SERIAL PRIMARY KEY,
+  yacht_model_id INT NOT NULL REFERENCES yacht_models(id) ON DELETE CASCADE,
+  spec_category_id INT NOT NULL REFERENCES spec_categories(id) ON DELETE CASCADE,
+  value_text TEXT,                       -- used when data_type = 'text'
+  value_numeric DECIMAL(12,4),           -- used when data_type = 'numeric'
+  UNIQUE(yacht_model_id, spec_category_id)
+);
+
+-- Indexes for performance on dynamic specs
+CREATE INDEX idx_spec_values_yacht ON spec_values(yacht_model_id);
+CREATE INDEX idx_spec_values_category ON spec_values(spec_category_id);
+CREATE INDEX idx_spec_values_numeric ON spec_values(value_numeric) WHERE value_numeric IS NOT NULL;
+```
+
+### Customer Sentiment / Reviews
+
+```sql
+-- Optional: customer reviews/ratings if source provides
+CREATE TABLE reviews (
+  id SERIAL PRIMARY KEY,
+  yacht_model_id INT NOT NULL REFERENCES yacht_models(id) ON DELETE CASCADE,
+  source VARCHAR(100),                   -- e.g., "Sailing Magazine", "YachtWorld"
+  rating DECIMAL(2,1),                   -- 1-10 or 1-5 scale
+  summary TEXT,
+  full_text TEXT,
+  review_date DATE,
+  author_name VARCHAR(200),
+  source_url VARCHAR(500),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_reviews_yacht ON reviews(yacht_model_id);
+```
+
+### Why This Design?
+
+1. **Adding a new spec (e.g., "PHRF Rating")**:
+   - Insert one row into `spec_categories` (name="PHRF Rating", unit="seconds", data_type="numeric", group="performance", is_filterable=true, is_sortable=true)
+   - Insert values into `spec_values` for each yacht that has this spec
+   - **No code changes needed** – Frontend auto-discovers the new category from spec_categories and:
+     - Adds it to filter dropdowns (if is_filterable=true)
+     - Adds it to sort options (if is_sortable=true)
+     - Shows it on detail page (if category_group is configured)
+     - Includes it in compare view (if is_comparable=true)
+
+2. **Frontend auto-population**:
+   - API endpoint `/api/spec-categories` returns all active spec categories with metadata
+   - List page builds filter UI dynamically from that list
+   - Detail page groups specs by `category_group` and displays all spec_values for that yacht
+   - Compare page finds common spec categories among selected yachts and displays them
+
+3. **No breaking changes**:
+   - Old frontend code works even if new spec categories are added
+   - Missing spec values for a yacht simply show as "—" (dash)
+   - Category metadata controls visibility in each UI context
+
+---
+
+## Data Acquisition: Scraping Strategy
+
+### Size Categories & Target Manufacturers
+
+We'll seed **4-5 yachts per size category** (avoiding HanseYachts AG brands: Hanse, Sealine, Dehler, Fjord, Ryck, Moody).
+
+| Category | Length Range | Target Manufacturers (examples) |
+|----------|--------------|--------------------------------|
+| Small | < 10m (33 ft) | Catalina, Hunter, J/Boats, West Wight Potter, San Juan, Pearson |
+| Medium | 10-14m (33-46 ft) | Beneteau (Oceanis), Jeanneau (Sun Odyssey), Bavaria, Dufour, Elan, Swan (smaller) |
+| Large | 14-18m (46-59 ft) | Swan, Amel, X-Yachts, Grand Soleil, Contest, Najad |
+
+**Total target**: ~12-15 yachts for initial MVP
+
+### Scraping Approach
+
+1. **Identify source websites**:
+   - Manufacturer spec pages (most reliable)
+   - Sailing magazine reviews (Sail Magazine, Yachting World)
+   - Wikipedia boat lists (structured tables)
+
+2. **Scraping tool**:
+   - Use Puppeteer/Playwright (Node.js) to render JS-heavy pages
+   - Use Cheerio/Basic fetch for static HTML
+   - Respect robots.txt and rate limits (1 req/sec delay)
+
+3. **Data normalization**:
+   - Convert all measurements to metric (meters, kg, m²) if in imperial
+   - Map manufacturer spec fields to our spec_categories (create categories on the fly)
+   - Extract: core fields (length, beam, draft, displacement) + all other spec tables
+   - Capture images (URL + alt text)
+   - Store source URL and attribution
+
+4. **Automated category discovery**:
+   - Scraper scans all spec tables on a page
+   - For each spec row, standardizes the label (e.g., "Length Overall" → "LOA", or we store the display label)
+   - Suggests new spec category if label not found in spec_categories table
+   - Human review step before seed: confirm category mappings
+
+5. **Output**: JSONL or SQL inserts ready for seeding script
+
+### Scraping Script Structure
+
+```javascript
+// scraper/yacht-scraper.js
+- visit target manufacturer page (e.g., beneteau.com/oceanis-46)
+- extract model name, year, all spec table rows
+- normalize values (units conversion, type detection)
+- map to spec category IDs (create new ones if missing)
+- output structured record:
+  {
+    manufacturer: "Beneteau",
+    model: "Oceanis 46",
+    year: 2024,
+    core: { length_overall: 14.2, beam: 4.3, ... },
+    specs: { "Water Capacity": 600, "PHRF": 120, ... },
+    images: [{url, alt}],
+    source_url: "..."
+  }
+```
+
+6. **Review & seed**:
+   - Run scraper for each target yacht
+   - Manual review of generated JSON to fix mappings/errors
+   - Import into DB via seed script (upsert manufacturers, yacht_models, spec_values, images)
+
+---
+
+## Admin Interface
+
+### Requirements
+- CRUD for: Manufacturers, Yacht Models, Spec Categories, Spec Values, Images
+- Custom admin links/buttons per yacht (editable via yacht_models.admin_links JSONB)
+- Simple authentication (basic auth or API key for MVP)
+- Form validation
+- Image upload handling (optional: store URLs instead of files)
+
+### Tech Choices
+- Use Next.js admin routes under `/admin/*` (protected)
+- React Hook Form + Zod for validation
+- Simple UI with shadcn/ui components (forms, tables, dialogs)
+- Server Actions or API routes for data mutations
+- For MVP, we can use a single-page admin panel with tabs for each entity
+
+---
+
+## Customer Sentiment
+
+If reviews are found during scraping:
+- Store in `reviews` table with source attribution
+- Display average rating + individual reviews on detail page
+- Allow sorting/filtering by rating (if we have enough data)
+- For MVP, reviews are optional; if none, section is hidden
+
+---
+
+## Flexible Frontend Architecture
+
+### Key APIs
+
+1. `GET /api/spec-categories` → list of all active categories with metadata
+2. `GET /api/yachts` → accepts filters that are built dynamically from spec_categories
+3. `GET /api/yachts/[slug]` → returns yacht + ALL spec values (core + dynamic) + images + reviews
+4. `GET /api/manufacturers` → for filter dropdowns
+
+### Dynamic Filtering
+
+The `/api/yachts` endpoint constructs queries based on available spec_categories:
+
+```typescript
+// Example: filters = { manufacturer: ['Beneteau'], length_overall: {min:10, max:15}, 'Water Capacity': {min:500} }
+// The API knows which spec categories are numeric (has value_numeric) vs text
+// Joins spec_values table for dynamic numeric/text filters
+// Returns yacht_models with core fields + joins to get dynamic spec values
+```
+
+Frontend:
+- On mount, fetch `/api/spec-categories` to know what filters to render
+- Build filter UI components based on category: `data_type` determines slider (numeric) or multiselect (text)
+- Submit filter object; backend applies dynamically
+
+### Dynamic Detail Page
+
+- Fetch `GET /api/yachts/[slug]`
+- Group spec values by `spec_categories.category_group`
+- Render sections: "Dimensions", "Accommodation", "Performance", etc.
+- If new category_group added later, it appears automatically
+
+### Compare Page
+
+- Given yacht IDs, fetch all their spec values
+- Determine union of spec_categories that are common (or all)
+- Render table: rows = spec categories (with unit), columns = yachts
+- Missing values show "—"
+
+---
+
+## Timeline (Phased Over 2-3 Days)
+
+### Day 1 (Today)
+- [ ] Confirm final schema tweaks (maybe add some pre-populated spec_categories based on common yacht specs)
+- [ ] Create Next.js project structure
+- [ ] Setup DB (Supabase or Neon), run migrations
+- [ ] Create initial spec_categories seed (e.g., "LOA", "Beam", "Draft", "Displacement", "Sail Area Main", "Cabin Count", "Heads", "Water Capacity", "Fuel Capacity", "Engine HP", "Ballast", "Keel Type", "Rig Type", "Hull Material")
+- [ ] Write scraper for 1-2 yachts as proof-of-concept
+- [ ] Build core scaffolds (layout, navigation, home page)
+
+### Day 2
+- [ ] Scrape remaining 10-15 yachts across categories
+- [ ] Seed full database
+- [ ] Build yacht list page with dynamic filters (using spec_categories API)
+- [ ] Build yacht detail page (dynamic spec sections)
+- [ ] Build compare page
+- [ ] Basic styling (clean minimalist)
+
+### Day 3
+- [ ] Admin interface (CRUD pages)
+- [ ] Tests (unit + integration)
+- [ ] SEO + accessibility polish
+- [ ] Deploy to Vercel
+- [ ] Verification ladder and final QA
+
+---
+
+## Pre-Populated Spec Categories (Initial Seed)
+
+Before scraping, we'll insert these core spec categories (based on typical yacht spec sheets):
+
+| Category | Unit | Data Type | Group | Filterable | Sortable | Comparable |
+|----------|------|-----------|-------|------------|----------|------------|
+| Length Overall | m | numeric | dimensions | true | true | true |
+| Length Waterline | m | numeric | dimensions | true | false | true |
+| Beam | m | numeric | dimensions | true | false | true |
+| Draft | m | numeric | dimensions | true | false | true |
+| Displacement | kg | numeric | performance | true | true | true |
+| Ballast | kg | numeric | performance | true | false | true |
+| Sail Area Main | m² | numeric | sailplan | true | false | true |
+| Sail Area Genoa | m² | numeric | sailplan | false | false | true |
+| Sail Area Spinnaker | m² | numeric | sailplan | false | false | true |
+| Rig Type | - | text | sailplan | true | false | true |
+| Keel Type | - | text | hull | true | false | true |
+| Hull Material | - | text | hull | true | false | true |
+| Cabins | - | numeric | accommodation | true | false | true |
+| Berths | - | numeric | accommodation | true | false | true |
+| Heads | - | numeric | accommodation | true | false | true |
+| Max Occupancy | - | numeric | accommodation | true | false | true |
+| Engine HP | hp | numeric | technical | true | false | true |
+| Engine Type | - | text | technical | false | false | true |
+| Fuel Capacity | liters | numeric | technical | true | false | true |
+| Water Capacity | liters | numeric | technical | true | false | true |
+| PHRF Rating | seconds | numeric | performance | true | true | true |
+| Comfort Ratio | - | numeric | performance | false | false | true |
+
+This gives us a solid starting set. Scraper can add more categories as needed.
+
+---
+
+## Design Inspiration
+
+Top sailing yacht websites to emulate:
+- **Nautor's Swan**: Clean, image-focused, elegant typography
+- **Amel Yachts**: Minimalist, professional, French elegance
+- **Beneteau/Jeanneau**: Modern, bright, accessible
+- **X-Yachts**: Performance-oriented, sleek, dark accents
+
+**Design System**:
+- Color palette: White/off-white background, navy blue accents, light grays
+- Typography: Sans-serif (Inter or similar) for UI; elegant serif (Playfair Display) for headings
+- Spacing: Generous whitespace, grid-based layouts
+- Images: Full-bleed hero images on detail pages, consistent aspect ratios
+- Components: Card-based yacht listings, subtle shadows, rounded corners (8px)
+- No clutter: focus on specs and photos
+
+---
+
+## Verification Ladder (Updated)
+
+- [ ] `npm run format` (Prettier)
+- [ ] `npm run lint` (ESLint)
+- [ ] `npm run typecheck` (TypeScript)
+- [ ] `npm run test` (Vitest) with ≥80% coverage on API routes and components
+- [ ] `npm run build` succeeds
+- [ ] DB migrations run cleanly on fresh instance
+- [ ] Seed script imports ~15 yachts with dynamic specs correctly linked
+- [ ] List page loads with dynamic filters (no hardcoded filter fields)
+- [ ] Detail page displays all specs grouped correctly
+- [ ] Compare page works with any combination of yachts
+- [ ] Admin CRUD works for all entities
+- [ ] Responsive on mobile (320px+), tablet, desktop
+- [ ] SEO meta tags and sitemap
+- [ ] Vercel deployment succeeds
+- [ ] End-to-end test: browse → filter → detail → compare → admin edit → refresh shows changes
+
+---
+
+## Risks & Mitigations (Updated)
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| Scraping blocked or anti-bot | Medium | High | Use headless browser with human-like delays, rotate user agents, fallback to manual entry |
+| Spec normalization inconsistent | Medium | Medium | Build robust mapping rules; manual review step before seed |
+| Dynamic filter performance with joins | Low | Medium | Add GIN index on spec_values (using `jsonb` if we store value in JSONB instead) OR use separate numeric/text columns; cache `/api/spec-categories` |
+| Frontend breaks when new spec_categories added | Low | High | Write defensive rendering: only show categories that are `is_filterable`/`is_comparable` as configured; never assume fixed set |
+| Admin auth too weak | Low | Medium | Use NextAuth.js with credentials provider or simple API key; document changing keys |
+| Vercel serverless timeout on complex queries | Low | Low | Keep page size small (pagination), optimize queries, use edge functions with proper connection pooling |
+
+---
+
+## Success Metrics (Updated)
+
+- **Performance**: Lighthouse >90, API responses <200ms for filtered queries (with proper indexes)
+- **Flexibility**: New spec category added in DB appears in filters/compare within <5 minutes (no deploy needed)
+- **Data**: 12-15 yachts across size categories with complete core specs and at least 5 dynamic spec categories populated
+- **Admin**: Full CRUD functional; edit a yacht → change reflects on frontend within 5 seconds (no cache clear)
+- **Design**: Clean, minimalist, matches sailing website aesthetic (user satisfaction)
+- **Deployment**: Zero errors in Vercel build and runtime
+
+---
+
+## Next Immediate Actions
+
+1. **Create initial spec_categories seed** with the table above (SQL script)
+2. **Choose DB provider**: Supabase (recommended for ease) or Neon Serverless Postgres
+3. **Scaffold Next.js**: `npx create-next-app@latest --typescript --tailwind --app`
+4. **Setup Drizzle**: `npm install drizzle-orm postgres`, `npx drizzle-kit init`
+5. **Write migrations**: create all tables (yacht_models, manufacturers, spec_categories, spec_values, images, reviews)
+6. **Seed script**: Insert initial spec_categories, manufacturers (from scraped data), and yachts with spec_values
+
+**Ready to start implementation?** I'll use the coding-agent skill for all coding work, following the verification ladder. Please confirm:
+- DB provider: Supabase or Neon?
+- Any additional spec categories you want pre-seeded beyond the list?
+- Start now?
+
+---
+
+## Implementation Phases
+
+### Phase 1: Setup & Infrastructure (Day 1)
+1. Initialize Next.js project with TypeScript and Tailwind
+2. Set up database (Supabase project or Neon)
+3. Configure Drizzle ORM and connection
+4. Create initial migrations
+5. Setup environment variables (`.env.local`)
+6. Install shadcn/ui and configure components
+7. Create basic layout and navigation
+
+**Deliverable**: Running Next.js app with DB connection
+
+---
+
+### Phase 2: Data Model & Seeding (Day 1-2)
+1. Finalize Drizzle schema based on tables above
+2. Run migrations to create tables
+3. Write seed script with 50+ yacht models
+   - Scrape or manually curate from manufacturer websites
+   - Include representative spread across: Beneteau, Jeanneau, Catalina, Hunter, Bavaria, Swan, Amel, X-Yachts, etc.
+4. Add seed images (use manufacturer images with attribution or placeholders)
+5. Verify data integrity
+
+**Deliverable**: Populated database with searchable records
+
+---
+
+### Phase 3: Core Pages (Day 2-3)
+1. **Homepage** (`/`)
+   - Hero section (project title, search bar)
+   - Featured yachts (random or top-rated)
+   - Browse button, stats (total yachts count)
+
+2. **Yacht List Page** (`/yachts`)
+   - Data table or grid with pagination (20-50 per page)
+   - Filters sidebar:
+     - Manufacturer (multi-select)
+     - Length range (slider)
+     - Rig type (checkbox)
+     - Keel type (checkbox)
+     - Year range
+   - Sort dropdown (length, displacement, year asc/desc)
+   - URL query params for filter state
+
+3. **Yacht Detail Page** (`/yachts/[slug]`)
+   - Full spec table organized by category (dimensions, sail plan, accommodation, technical)
+   - Image gallery (carousel or grid)
+   - Manufacturer link
+   - Source attribution
+   - "Add to compare" button
+
+4. **Compare Page** (`/compare`)
+   - URL query with selected yacht IDs
+   - Side-by-side table with up to 3 yachts
+   - Highlight differences between rows
+
+**Deliverable**: All pages functional and linked
+
+---
+
+### Phase 4: API & Testing (Day 3)
+1. Create Next.js Route Handlers for:
+   - `GET /api/yachts` (list with filters, pagination, sort)
+   - `GET /api/yachts/[slug]` (single yacht)
+   - `GET /api/manufacturers` (list for filter dropdowns)
+   - `GET /api/compare?ids=1,2,3` (comparison data)
+2. Write unit tests:
+   - Drizzle query functions
+   - API route logic
+   - Filter/sort correctness
+3. Run test suite with Vitest
+4. Fix any failures
+
+**Deliverable**: Test coverage ≥ 80% for critical paths
+
+---
+
+### Phase 5: UI Polish & SEO (Day 3-4)
+1. Responsive design (mobile-first using Tailwind)
+2. Loading states and error boundaries
+3. Add meta tags per page (title, description, Open Graph)
+4. Generate `sitemap.xml` and `robots.txt`
+5. Add structured data (JSON-LD) for yacht schema
+6. Ensure accessibility (ARIA, keyboard nav)
+7. Optimize images (WebP, proper sizes)
+
+**Deliverable**: SEO-ready, accessible, mobile-friendly site
+
+---
+
+### Phase 6: Deployment & CI/CD (Day 4)
+1. Create Vercel project
+2. Connect GitHub repository
+3. Configure environment variables on Vercel
+4. Set up automatic deployments (preview on PR, production on main)
+5. Add CI workflow:
+   - Type check
+   - Lint
+   - Test run
+   - Build verification
+6. Deploy to production
+7. Test live site functionality
+
+**Deliverable**: Public URL with working MVP
+
+---
+
+## Verification Ladder (Completion Checklist)
+
+- [ ] `npm run format` passes (Prettier)
+- [ ] `npm run lint` passes (ESLint)
+- [ ] `npm run typecheck` passes (TypeScript)
+- [ ] `npm run test` passes with ≥80% coverage (Vitest)
+- [ ] `npm run build` succeeds locally (Next.js build)
+- [ ] Migrations run cleanly on fresh DB
+- [ ] Seed script completes without errors
+- [ ] All pages render correctly (list, detail, compare, home)
+- [ ] Filters, search, sort work as expected
+- [ ] Compare shows up to 3 yachts correctly
+- [ ] Responsive on mobile (320px+), tablet, desktop
+- [ ] SEO meta tags present on each page type
+- [ ] Vercel deployment succeeds without warnings
+- [ ] Live site tested end-to-end
+
+---
+
+## Data Acquisition Strategy
+
+### Initial Seed (50-100 Yachts)
+Sources to scrape/curate:
+1. **Manufacturer spec sheets**: Beneteau, Jeanneau, Catalina, Hunter, Bavaria, Dufour, Swan, Amel, X-Yachts, Grand Soleil, etc.
+2. **Sailing magazines**: Sail Magazine, Yachting World specs archives
+3. **Broker listings**: YachtWorld, Boat24 (scrape publicly available specs only)
+4. **Wikipedia**: List of sailboat designs (often have basic specs)
+
+### Scraping Approach
+- Write Node.js script using Puppeteer/Playwright to extract spec tables
+- Normalize field names to our schema (convert feet→meters, lbs→kg)
+- Store source URL and attribution for each record
+- Manual review before seeding to ensure accuracy
+
+### Ongoing Data
+- Plan for admin panel later to add/edit via UI
+- Consider CSV import tool for bulk additions
+- Community contributions with moderation queue
+
+---
+
+## Risks & Mitigations
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| Data scraping blocked by robots.txt or CAPTCHAs | Medium | High | Use respectful delays, rotate user agents, fallback to manual entry for some models |
+| Schema evolves (new spec fields needed) | High | Medium | Use JSONB column for extra_specs to store unstructured additional fields |
+| Image hosting costs/bandwidth | Low | Medium | Use manufacturer CDN links (hotlinking) or Vercel Blob free tier; lazy load images |
+| Search performance degrades with 1000+ yachts | Low | Medium | Add DB full-text search or Algolia/Meilisearch later |
+| Vercel serverless function timeout on large queries | Low | Low | Keep queries lightweight, use pagination, optimize indexes |
+| Copyright issues with spec data | Low | High | Use factual data (dimensions, weights) which is not copyrightable; attribute sources; avoid copying descriptive text |
+
+---
+
+## Success Metrics
+
+- **Performance**: Lighthouse score >90 (Performance, Accessibility, SEO)
+- **Usability**: Filter and search results load <500ms (cached)
+- **Data**: 50+ yachts with complete core specs
+- **Deployment**: Zero errors in Vercel deployment logs
+- **Code**: No TypeScript errors, lint warnings, or failing tests
+
+---
+
+## Maintenance Plan
+
+- **Database backups**: Enable Supabase/Neon automated backups
+- **Dependencies**: Weekly `npm outdated` check, update monthly
+- **Monitoring**: Vercel analytics, Log snippets for errors
+- **Data updates**: Quarterly review, add new models, correct errors
+
+---
+
+## Appendix: Useful Commands
+
+```bash
+# Init project (run once)
+npx create-next-app@latest sailing-yachts --typescript --tailwind --app
+cd sailing-yachts
+npm install drizzle-orm postgres
+npx drizzle-kit init
+
+# Dev server
+npm run dev
+
+# Database operations
+npx drizzle-kit generate   # generate migrations from schema
+npx drizzle-kit migrate    # apply migrations
+npm run seed               # populate initial data
+
+# Testing
+npm run test              # run Vitest
+npm run test:ui           # if using Vitest UI
+
+# Build & deploy
+npm run build
+npx vercel --prod
+```
+
+---
+
+## Contacts & Resources
+
+- **Vercel Docs**: https://vercel.com/docs
+- **Next.js**: https://nextjs.org/docs
+- **Drizzle**: https://orm.drizzle.team
+- **Supabase**: https://supabase.com/docs
+- **shadcn/ui**: https://ui.shadcn.com
+
+---
+
+*Last Updated: 2026-02-25*
