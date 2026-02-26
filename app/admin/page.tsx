@@ -1,101 +1,144 @@
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
+"use client";
+
+"use client";
+
+import { useState } from "react";
 
 export default function AdminPage() {
-  const cookieStore = cookies()
-  const authCookie = cookieStore.get('auth')?.value
- 
-  // Check if user is authenticated via cookie
-  if (!authCookie) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gray-50">
-        <h1 className="text-3xl font-bold mb-6 text-red-600">Admin Access Required</h1>
-        <p className="mb-4 text-lg text-gray-700">Please log in to access the admin panel.</p>
-        <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-          <form method="dialog" action="/api/admin/login" className="space-y-4">
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">Username</label>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter username"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter password"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"
-            >
-              Login
-            </button>
-          </form>
-        </div>
-      </div>
-    )
+  const [form, setForm] = useState({
+    name: "",
+    manufacturer: "",
+    lengthOverall: "",
+    beam: "",
+    draft: "",
+    displacement: "",
+    year: "",
+    imageUrl: "",
+  });
+  const [message, setMessage] = useState("");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setMessage("");
+    const payload = {
+      ...form,
+      lengthOverall: form.lengthOverall ? parseFloat(form.lengthOverall) : undefined,
+      beam: form.beam ? parseFloat(form.beam) : undefined,
+      draft: form.draft ? parseFloat(form.draft) : undefined,
+      displacement: form.displacement ? parseInt(form.displacement, 10) : undefined,
+      year: form.year ? parseInt(form.year, 10) : undefined,
+    };
+    const res = await fetch("/api/admin/yachts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      setMessage("Yacht added successfully!");
+      setForm({
+        name: "",
+        manufacturer: "",
+        lengthOverall: "",
+        beam: "",
+        draft: "",
+        displacement: "",
+        year: "",
+        imageUrl: "",
+      });
+    } else {
+      setMessage("Failed to add yacht.");
+    }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <Link
-            href="/api/admin/logout"
-            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-200"
-          >
-            Logout
-          </Link>
+    <div className="min-h-screen p-8">
+      <h1 className="text-2xl font-bold mb-6">Admin - Add Yacht</h1>
+      <form onSubmit={handleSubmit} className="max-w-xl space-y-4">
+        <div>
+          <label className="block text-sm font-medium">Name</label>
+          <input
+            required
+            className="w-full border rounded px-3 py-2"
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+          />
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Yachts Management</h2>
-            <p className="text-gray-600 mb-4">Manage sailing yacht listings and specifications.</p>
-            <Link
-              href="/admin/yachts"
-              className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
-            >
-              Manage Yachts
-            </Link>
+        <div>
+          <label className="block text-sm font-medium">Manufacturer</label>
+          <input
+            required
+            className="w-full border rounded px-3 py-2"
+            value={form.manufacturer}
+            onChange={(e) => setForm({ ...form, manufacturer: e.target.value })}
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium">Length Overall (ft)</label>
+            <input
+              type="number"
+              step="0.1"
+              className="w-full border rounded px-3 py-2"
+              value={form.lengthOverall}
+              onChange={(e) => setForm({ ...form, lengthOverall: e.target.value })}
+            />
           </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Manufacturers</h2>
-            <p className="text-gray-600 mb-4">Manage yacht manufacturers and brands.</p>
-            <Link
-              href="/admin/manufacturers"
-              className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
-            >
-              Manage Manufacturers
-            </Link>
+          <div>
+            <label className="block text-sm font-medium">Beam (ft)</label>
+            <input
+              type="number"
+              step="0.1"
+              className="w-full border rounded px-3 py-2"
+              value={form.beam}
+              onChange={(e) => setForm({ ...form, beam: e.target.value })}
+            />
           </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Specifications</h2>
-            <p className="text-gray-600 mb-4">Manage specification categories and types.</p>
-            <Link
-              href="/admin/spec-categories"
-              className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
-            >
-              Manage Specifications
-            </Link>
+          <div>
+            <label className="block text-sm font-medium">Draft (ft)</label>
+            <input
+              type="number"
+              step="0.1"
+              className="w-full border rounded px-3 py-2"
+              value={form.draft}
+              onChange={(e) => setForm({ ...form, draft: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Displacement (lbs)</label>
+            <input
+              type="number"
+              className="w-full border rounded px-3 py-2"
+              value={form.displacement}
+              onChange={(e) => setForm({ ...form, displacement: e.target.value })}
+            />
           </div>
         </div>
-      </div>
+        <div>
+          <label className="block text-sm font-medium">Year</label>
+          <input
+            type="number"
+            className="w-full border rounded px-3 py-2"
+            value={form.year}
+            onChange={(e) => setForm({ ...form, year: e.target.value })}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium">Image URL (optional)</label>
+          <input
+            className="w-full border rounded px-3 py-2"
+            value={form.imageUrl}
+            onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+            placeholder="https://example.com/image.jpg"
+          />
+        </div>
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Add Yacht
+        </button>
+      </form>
+      {message && <p className="mt-4 text-sm">{message}</p>}
     </div>
-  )
+  );
 }

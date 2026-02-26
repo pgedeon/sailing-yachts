@@ -8,8 +8,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "db:push": "drizzle-kit push",
-    "seed": "tsx scripts/seed.ts",
-    "postinstall": "drizzle-kit push"
+    "seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
     "next": "^14.2.5",

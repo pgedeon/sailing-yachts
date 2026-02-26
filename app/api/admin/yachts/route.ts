@@ -1,5 +1,6 @@
-import { db } from "@/lib/db";
-import { yachts } from "@/drizzle/schema";
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "../../../../lib/db";
+import { yachts } from "../../../../drizzle/schema";
 import { randomUUID } from "crypto";
 
 export async function POST(req: NextRequest) {
