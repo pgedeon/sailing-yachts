@@ -3,6 +3,25 @@ import Link from 'next/link'
 export const dynamic = 'force-dynamic'
 
 export default async function AdminYachtsPage() {
+  let yachts: any[] = []
+  let fetchError: string | null = null
+  
+  try {
+    const response = await fetch('/api/yachts?limit=100', { next: { revalidate: 0 } })
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('API response error:', response.status, errorText)
+      fetchError = `Failed to load yachts: ${response.status}`
+    } else {
+      const data = await response.json()
+      yachts = data.yachts || []
+      console.log('Loaded yachts:', yachts.length)
+    }
+  } catch (error) {
+    console.error('Failed to fetch yachts:', error)
+    fetchError = error instanceof Error ? error.message : 'Unknown error'
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
@@ -17,18 +36,72 @@ export default async function AdminYachtsPage() {
         </div>
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="flex flex-col items-center justify-center py-12">
-            <p className="text-gray-500 mb-4">The yacht management interface is being set up.</p>
-            <p className="text-sm text-gray-400 mb-6">Database needs to be seeded with sample data.</p>
-            <div className="space-y-2 text-sm">
-              <p className="text-gray-600">To add yachts, you can:</p>
-              <ul className="list-disc list-inside text-gray-600 space-y-1">
-                <li>Run the seed script: <code className="bg-gray-100 px-2 py-1 rounded">npm run seed</code></li>
-                <li>Use the admin API directly at <code className="bg-gray-100 px-2 py-1 rounded">/api/admin/yachts</code></li>
-                <li>Add data via PostgreSQL client</li>
-              </ul>
-            </div>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold text-gray-800">Yachts List</h2>
+            <Link
+              href="/admin/yachts/new"
+              className="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200 text-sm"
+            >
+              Add New Yacht
+            </Link>
           </div>
+
+          {fetchError ? (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+              <strong className="font-bold">Error!</strong>
+              <span className="block sm:inline"> {fetchError}</span>
+            </div>
+          ) : yachts.length === 0 ? (
+            <p className="text-gray-500 text-center py-8">No yachts found. <Link href="/admin/yachts/new" className="text-blue-600 hover:underline">Add one</Link></p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Manufacturer</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Length</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Beam</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Draft</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {yachts.map((yacht: any) => {
+                    const y = yacht.yacht || yacht
+                    return (
+                      <tr key={y.id}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{y.modelName}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{yacht.manufacturer}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {y.lengthOverall ? Number(y.lengthOverall).toFixed(1) : 'N/A'} m
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {y.beam ? Number(y.beam).toFixed(1) : 'N/A'} m
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {y.draft ? Number(y.draft).toFixed(1) : 'N/A'} m
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {y.year || 'N/A'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
+                          <Link
+                            href={`/admin/yachts/${y.id}/edit`}
+                            className="text-blue-600 hover:text-blue-800 px-2 py-1 rounded text-xs bg-blue-50"
+                          >
+                            Edit
+                          </Link>
+                          <button className="text-red-600 hover:text-red-800 px-2 py-1 rounded text-xs bg-red-50">Delete</button>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </div>
