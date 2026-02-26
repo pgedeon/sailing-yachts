@@ -42,10 +42,7 @@ export default function NewYachtPage() {
 
   async function fetchManufacturers() {
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
-      const res = await fetch(`${baseUrl}/api/manufacturers`, {
-        credentials: 'include'
-      })
+      const res = await fetch('/api/manufacturers')
       if (res.ok) {
         const data = await res.json()
         setManufacturers(data.manufacturers || [])
@@ -61,7 +58,6 @@ export default function NewYachtPage() {
     setError(null)
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
       const payload = {
         ...formData,
         manufacturerId: formData.manufacturerId ? parseInt(formData.manufacturerId) : undefined,
@@ -81,11 +77,10 @@ export default function NewYachtPage() {
         waterCapacity: formData.waterCapacity ? parseFloat(formData.waterCapacity) : undefined,
       }
 
-      const res = await fetch(`${baseUrl}/api/admin/yachts`, {
+      const res = await fetch('/api/admin/yachts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        credentials: 'include'
+        body: JSON.stringify(payload)
       })
 
       if (!res.ok) {

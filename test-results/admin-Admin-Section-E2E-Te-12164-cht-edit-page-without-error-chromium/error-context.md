@@ -15,9 +15,9 @@
           - /url: /admin
   - main [ref=e9]:
     - generic [ref=e11]:
-      - generic [ref=e12]: Manufacturer not found
-      - link "Back to manufacturers" [ref=e13] [cursor=pointer]:
-        - /url: /admin/manufacturers
+      - generic [ref=e12]: Yacht not found
+      - link "Back to yachts" [ref=e13] [cursor=pointer]:
+        - /url: /admin/yachts
   - contentinfo [ref=e14]:
     - generic [ref=e15]:
       - paragraph [ref=e16]: © 2026 Sailing Yachts Database. All rights reserved.

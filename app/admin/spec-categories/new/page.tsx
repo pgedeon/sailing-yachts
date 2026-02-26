@@ -24,17 +24,15 @@ export default function NewSpecCategoryPage() {
     setError(null)
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
       const payload = {
         ...formData,
         // isFilterable is already boolean from the checkbox
       }
 
-      const res = await fetch(`${baseUrl}/api/spec-categories`, {
+      const res = await fetch('/api/admin/spec-categories', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        credentials: 'include'
+        body: JSON.stringify(payload)
       })
 
       if (!res.ok) {

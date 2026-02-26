@@ -49,10 +49,7 @@ export default function EditYachtPage() {
 
   async function fetchManufacturers() {
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
-      const res = await fetch(`${baseUrl}/api/manufacturers`, {
-        credentials: 'include'
-      })
+      const res = await fetch('/api/manufacturers')
       if (res.ok) {
         const data = await res.json()
         setManufacturers(data.manufacturers || [])
@@ -65,8 +62,7 @@ export default function EditYachtPage() {
   async function fetchYacht() {
     try {
       setLoading(true)
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
-      const res = await fetch(`${baseUrl}/api/admin/yachts/${yachtId}`)
+      const res = await fetch(`/api/admin/yachts/${yachtId}`)
       if (!res.ok) {
         throw new Error('Yacht not found')
       }
@@ -87,7 +83,6 @@ export default function EditYachtPage() {
     setError(null)
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
       const payload = {
         manufacturerId: yacht.manufacturerId,
         modelName: yacht.modelName,
@@ -114,11 +109,10 @@ export default function EditYachtPage() {
         description: yacht.description,
       }
 
-      const res = await fetch(`${baseUrl}/api/admin/yachts/${yachtId}`, {
+      const res = await fetch(`/api/admin/yachts/${yachtId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        credentials: 'include'
+        body: JSON.stringify(payload)
       })
 
       if (!res.ok) {

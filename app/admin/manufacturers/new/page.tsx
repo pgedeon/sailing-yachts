@@ -24,17 +24,15 @@ export default function NewManufacturerPage() {
     setError(null)
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
       const payload = {
         ...formData,
         foundedYear: formData.foundedYear ? parseInt(formData.foundedYear) : undefined,
       }
 
-      const res = await fetch(`${baseUrl}/api/admin/manufacturers`, {
+      const res = await fetch('/api/admin/manufacturers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        credentials: 'include'
+        body: JSON.stringify(payload)
       })
 
       if (!res.ok) {

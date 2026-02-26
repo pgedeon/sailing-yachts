@@ -31,10 +31,7 @@ export default function EditSpecCategoryPage() {
   async function fetchCategory() {
     try {
       setLoading(true)
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
-      const res = await fetch(`${baseUrl}/api/admin/spec-categories/${categoryId}`, {
-        credentials: 'include'
-      })
+      const res = await fetch(`/api/admin/spec-categories/${categoryId}`)
       if (!res.ok) {
         throw new Error('Category not found')
       }
@@ -55,7 +52,6 @@ export default function EditSpecCategoryPage() {
     setError(null)
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
       const payload = {
         name: category.name,
         unit: category.unit,
@@ -65,7 +61,7 @@ export default function EditSpecCategoryPage() {
         description: category.description,
       }
 
-      const res = await fetch(`${baseUrl}/api/admin/spec-categories/${categoryId}`, {
+      const res = await fetch(`/api/admin/spec-categories/${categoryId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

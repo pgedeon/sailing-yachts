@@ -31,10 +31,7 @@ export default function EditManufacturerPage() {
   async function fetchManufacturer() {
     try {
       setLoading(true)
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
-      const res = await fetch(`${baseUrl}/api/admin/manufacturers/${manufacturerId}`, {
-        credentials: 'include'
-      })
+      const res = await fetch(`/api/admin/manufacturers/${manufacturerId}`)
       if (!res.ok) {
         throw new Error('Manufacturer not found')
       }
@@ -55,7 +52,6 @@ export default function EditManufacturerPage() {
     setError(null)
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
       const payload = {
         name: manufacturer.name,
         country: manufacturer.country,
@@ -65,7 +61,7 @@ export default function EditManufacturerPage() {
         logoUrl: manufacturer.logoUrl,
       }
 
-      const res = await fetch(`${baseUrl}/api/admin/manufacturers/${manufacturerId}`, {
+      const res = await fetch(`/api/admin/manufacturers/${manufacturerId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
