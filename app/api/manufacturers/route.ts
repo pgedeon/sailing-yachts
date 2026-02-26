@@ -1,22 +1,16 @@
 import { NextResponse } from "next/server";
-import { db, manufacturers as mfgTable } from "@/lib/db";
+import { db } from "../../../lib/db";
+import { manufacturers } from "../../../drizzle/schema/manufacturers";
 
 export async function GET() {
   try {
-    const manufacturers = await db
-      .select({
-        id: mfgTable.id,
-        name: mfgTable.name,
-      })
-      .from(mfgTable)
-      .orderBy(mfgTable.name);
-
-    return NextResponse.json(manufacturers);
+    const result = await db.select().from(manufacturers);
+    return NextResponse.json(result);
   } catch (error) {
     console.error("Error fetching manufacturers:", error);
     return NextResponse.json(
       { error: "Failed to fetch manufacturers" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
