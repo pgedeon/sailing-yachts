@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb, yachtModels } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import { requireAuth } from "@/lib/auth";
 
 // GET single yacht
 export async function GET(
@@ -8,6 +9,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    // Check authentication
+    const authError = requireAuth(request as NextRequest);
+    if (authError) return authError;
+
     const { id } = await params
     const yachtId = parseInt(id)
 
@@ -42,6 +47,10 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    // Check authentication
+    const authError = requireAuth(request);
+    if (authError) return authError;
+
     const { id } = await params
     const yachtId = parseInt(id)
     
@@ -123,6 +132,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    // Check authentication
+    const authError = requireAuth(request);
+    if (authError) return authError;
+
     const { id } = await params
     const yachtId = parseInt(id)
 

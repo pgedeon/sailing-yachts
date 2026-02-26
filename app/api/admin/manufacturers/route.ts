@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb, manufacturers } from "@/lib/db";
+import { eq } from "drizzle-orm";
+import { requireAuth } from "@/lib/auth";
 
 export const dynamic = 'force-dynamic';
 
-// GET all manufacturers (admin view - can be used by both admin and public API)
-export async function GET() {
+// GET all manufacturers (admin only)
+export async function GET(request: NextRequest) {
   try {
+    // Check authentication
+    const authError = requireAuth(request);
+    if (authError) return authError;
+
     const db = getDb()
     const allManufacturers = await db.select().from(manufacturers);
     return NextResponse.json({ manufacturers: allManufacturers });
@@ -21,6 +27,10 @@ export async function GET() {
 // POST create manufacturer (admin)
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const authError = requireAuth(request);
+    if (authError) return authError;
+
     const body = await request.json();
     const { name, country, foundedYear, description, websiteUrl, logoUrl } = body;
 

@@ -1,10 +1,15 @@
-import { db } from "@/lib/db";
-import { yachtModels, manufacturers } from "@/drizzle/schema";
-import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
+import { getDb, yachtModels, manufacturers } from "@/lib/db";
+import { eq } from "drizzle-orm";
+import { requireAuth } from "@/lib/auth";
 
+// POST create yacht (admin)
 export async function POST(req: NextRequest) {
   try {
+    // Check authentication
+    const authError = requireAuth(req);
+    if (authError) return authError;
+
     const body = await req.json();
     const {
       modelName,
@@ -41,12 +46,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const db = getDb();
+
     // Verify manufacturer exists
     const [manufacturer] = await db
       .select()
       .from(manufacturers)
-      .where({ id: manufacturerId });
-    
+      .where(eq(manufacturers.id, manufacturerId))
+      .limit(1);
+
     if (!manufacturer) {
       return NextResponse.json(
         { error: "Manufacturer not found" },
@@ -54,10 +62,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const [inserted] = await db
+    const inserted = await db
       .insert(yachtModels)
       .values({
-        id: undefined, // Let DB auto-generate ID
         manufacturerId,
         modelName,
         year,
@@ -87,7 +94,7 @@ export async function POST(req: NextRequest) {
       })
       .returning();
 
-    return NextResponse.json({ success: true, yacht: inserted });
+    return NextResponse.json({ success: true, yacht: inserted[0] });
   } catch (error) {
     console.error("Admin error:", error);
     return NextResponse.json({ error: "Failed to create yacht" }, { status: 500 });
