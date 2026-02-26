@@ -5,7 +5,8 @@ export const dynamic = 'force-dynamic' // Disable static generation
 export default async function AdminYachtsPage() {
   // Fetch yachts data using relative URL
   const response = await fetch('/api/yachts')
-  const yachts = await response.json()
+  const data = await response.json()
+  const yachts = data.yachts || []
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -38,7 +39,7 @@ export default async function AdminYachtsPage() {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Manufacturer</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Length</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Beam</th>
@@ -49,13 +50,13 @@ export default async function AdminYachtsPage() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {yachts.map((yacht: any) => (
                     <tr key={yacht.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{yacht.name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{yacht.modelName}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{yacht.manufacturer}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {yacht.lengthOverall ? yacht.lengthOverall.toFixed(1) : 'N/A'} m
+                        {yacht.lengthOverall ? Number(yacht.lengthOverall).toFixed(1) : 'N/A'} m
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {yacht.beam ? yacht.beam.toFixed(1) : 'N/A'} m
+                        {yacht.beam ? Number(yacht.beam).toFixed(1) : 'N/A'} m
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {yacht.year || 'N/A'}
