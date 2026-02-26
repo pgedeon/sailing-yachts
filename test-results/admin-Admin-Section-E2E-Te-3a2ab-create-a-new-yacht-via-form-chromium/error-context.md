@@ -1,5 +1,103 @@
 # Page snapshot
 
 ```yaml
-- generic [ref=e2]: Unauthorized
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "Sailing Yachts" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - navigation [ref=e5]:
+        - link "Browse" [ref=e6] [cursor=pointer]:
+          - /url: /yachts
+        - link "Compare" [ref=e7] [cursor=pointer]:
+          - /url: /compare
+        - link "Admin" [ref=e8] [cursor=pointer]:
+          - /url: /admin
+  - main [ref=e9]:
+    - generic [ref=e11]:
+      - generic [ref=e12]:
+        - link "← Back to Yachts" [ref=e13] [cursor=pointer]:
+          - /url: /admin/yachts
+        - heading "Add New Yacht" [level=1] [ref=e14]
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - generic [ref=e18]:
+            - generic [ref=e19]: Model Name *
+            - textbox "Model Name *" [ref=e20]: Test Yacht Model
+          - generic [ref=e21]:
+            - generic [ref=e22]: Manufacturer *
+            - combobox "Manufacturer *" [active] [ref=e23]:
+              - option "Select a manufacturer" [selected]
+          - generic [ref=e24]:
+            - generic [ref=e25]: Year *
+            - spinbutton "Year *" [ref=e26]: "2025"
+          - generic [ref=e27]:
+            - generic [ref=e28]: Slug (auto-generated)
+            - textbox "Slug (auto-generated)" [ref=e29]: test-yacht-model
+          - generic [ref=e30]:
+            - generic [ref=e31]: Length Overall (m)
+            - spinbutton "Length Overall (m)" [ref=e32]
+          - generic [ref=e33]:
+            - generic [ref=e34]: Beam (m)
+            - spinbutton "Beam (m)" [ref=e35]
+          - generic [ref=e36]:
+            - generic [ref=e37]: Draft (m)
+            - spinbutton "Draft (m)" [ref=e38]
+          - generic [ref=e39]:
+            - generic [ref=e40]: Displacement (kg)
+            - spinbutton "Displacement (kg)" [ref=e41]
+          - generic [ref=e42]:
+            - generic [ref=e43]: Ballast (kg)
+            - spinbutton "Ballast (kg)" [ref=e44]
+          - generic [ref=e45]:
+            - generic [ref=e46]: Sail Area Main (m²)
+            - spinbutton "Sail Area Main (m²)" [ref=e47]
+          - generic [ref=e48]:
+            - generic [ref=e49]: Rig Type
+            - textbox "Rig Type" [ref=e50]
+          - generic [ref=e51]:
+            - generic [ref=e52]: Keel Type
+            - textbox "Keel Type" [ref=e53]
+          - generic [ref=e54]:
+            - generic [ref=e55]: Hull Material
+            - textbox "Hull Material" [ref=e56]
+          - generic [ref=e57]:
+            - generic [ref=e58]: Cabins
+            - spinbutton "Cabins" [ref=e59]
+          - generic [ref=e60]:
+            - generic [ref=e61]: Berths
+            - spinbutton "Berths" [ref=e62]
+          - generic [ref=e63]:
+            - generic [ref=e64]: Heads
+            - spinbutton "Heads" [ref=e65]
+          - generic [ref=e66]:
+            - generic [ref=e67]: Max Occupancy
+            - spinbutton "Max Occupancy" [ref=e68]
+          - generic [ref=e69]:
+            - generic [ref=e70]: Engine HP
+            - spinbutton "Engine HP" [ref=e71]
+          - generic [ref=e72]:
+            - generic [ref=e73]: Engine Type
+            - textbox "Engine Type" [ref=e74]
+          - generic [ref=e75]:
+            - generic [ref=e76]: Fuel Capacity (L)
+            - spinbutton "Fuel Capacity (L)" [ref=e77]
+          - generic [ref=e78]:
+            - generic [ref=e79]: Water Capacity (L)
+            - spinbutton "Water Capacity (L)" [ref=e80]
+        - generic [ref=e81]:
+          - generic [ref=e82]: Design Notes
+          - textbox "Design Notes" [ref=e83]
+        - generic [ref=e84]:
+          - generic [ref=e85]: Description
+          - textbox "Description" [ref=e86]
+        - generic [ref=e87]:
+          - link "Cancel" [ref=e88] [cursor=pointer]:
+            - /url: /admin/yachts
+          - button "Create Yacht" [ref=e89] [cursor=pointer]
+  - contentinfo [ref=e90]:
+    - generic [ref=e91]:
+      - paragraph [ref=e92]: © 2026 Sailing Yachts Database. All rights reserved.
+      - paragraph [ref=e93]: Data sourced from manufacturer specifications.
+  - alert [ref=e94]
 ```

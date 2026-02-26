@@ -43,7 +43,9 @@ export default function NewYachtPage() {
   async function fetchManufacturers() {
     try {
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
-      const res = await fetch(`${baseUrl}/api/manufacturers`)
+      const res = await fetch(`${baseUrl}/api/manufacturers`, {
+        credentials: 'include'
+      })
       if (res.ok) {
         const data = await res.json()
         setManufacturers(data.manufacturers || [])
@@ -83,6 +85,7 @@ export default function NewYachtPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
+        credentials: 'include'
       })
 
       if (!res.ok) {

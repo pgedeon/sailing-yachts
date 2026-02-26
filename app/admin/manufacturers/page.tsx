@@ -9,7 +9,9 @@ export default async function AdminManufacturersPage() {
   try {
     // Fetch manufacturers data using absolute URL
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
-    const response = await fetch(`${baseUrl}/api/admin/manufacturers`)
+    const response = await fetch(`${baseUrl}/api/admin/manufacturers`, {
+      credentials: 'include'
+    })
     if (!response.ok) {
       throw new Error(`Failed to fetch: ${response.status}`)
     }

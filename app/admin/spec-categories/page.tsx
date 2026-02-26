@@ -9,7 +9,9 @@ export default async function AdminSpecCategoriesPage() {
   try {
     // Fetch spec categories data using absolute URL
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
-    const response = await fetch(`${baseUrl}/api/spec-categories`)
+    const response = await fetch(`${baseUrl}/api/spec-categories`, {
+      credentials: 'include'
+    })
     if (!response.ok) {
       throw new Error(`Failed to fetch: ${response.status}`)
     }

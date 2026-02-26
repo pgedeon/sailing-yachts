@@ -32,7 +32,9 @@ export default function EditManufacturerPage() {
     try {
       setLoading(true)
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
-      const res = await fetch(`${baseUrl}/api/admin/manufacturers/${manufacturerId}`)
+      const res = await fetch(`${baseUrl}/api/admin/manufacturers/${manufacturerId}`, {
+        credentials: 'include'
+      })
       if (!res.ok) {
         throw new Error('Manufacturer not found')
       }

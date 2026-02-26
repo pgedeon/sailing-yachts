@@ -32,7 +32,9 @@ export default function EditSpecCategoryPage() {
     try {
       setLoading(true)
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
-      const res = await fetch(`${baseUrl}/api/admin/spec-categories/${categoryId}`)
+      const res = await fetch(`${baseUrl}/api/admin/spec-categories/${categoryId}`, {
+        credentials: 'include'
+      })
       if (!res.ok) {
         throw new Error('Category not found')
       }
