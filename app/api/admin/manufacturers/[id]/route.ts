@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb, manufacturers } from "@/lib/db";
+import { eq } from "drizzle-orm";
 
 // GET single manufacturer
 export async function GET(
@@ -18,7 +19,7 @@ export async function GET(
     const [manufacturer] = await db
       .select()
       .from(manufacturers)
-      .where({ id: manufacturerId })
+      .where(eq(manufacturers.id, manufacturerId))
       .limit(1)
 
     if (!manufacturer) {
@@ -64,7 +65,7 @@ export async function PUT(
     const [existing] = await db
       .select()
       .from(manufacturers)
-      .where({ id: manufacturerId })
+      .where(eq(manufacturers.id, manufacturerId))
       .limit(1)
 
     if (!existing) {
@@ -82,7 +83,7 @@ export async function PUT(
         websiteUrl: body.websiteUrl,
         logoUrl: body.logoUrl,
       })
-      .where({ id: manufacturerId })
+      .where(eq(manufacturers.id, manufacturerId))
       .returning()
 
     return NextResponse.json({ success: true, manufacturer: updated[0] })
@@ -114,14 +115,14 @@ export async function DELETE(
     const [existing] = await db
       .select()
       .from(manufacturers)
-      .where({ id: manufacturerId })
+      .where(eq(manufacturers.id, manufacturerId))
       .limit(1)
 
     if (!existing) {
       return NextResponse.json({ error: "Manufacturer not found" }, { status: 404 })
     }
 
-    await db.delete(manufacturers).where({ id: manufacturerId })
+    await db.delete(manufacturers).where(eq(manufacturers.id, manufacturerId))
 
     return NextResponse.json({ success: true })
   } catch (error) {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb, yachtModels } from "@/lib/db";
+import { eq } from "drizzle-orm";
 
 // GET single yacht
 export async function GET(
@@ -18,7 +19,7 @@ export async function GET(
     const [yacht] = await db
       .select()
       .from(yachtModels)
-      .where({ id: yachtId })
+      .where(eq(yachtModels.id, yachtId))
       .limit(1)
 
     if (!yacht) {
@@ -64,7 +65,7 @@ export async function PUT(
     const [existing] = await db
       .select()
       .from(yachtModels)
-      .where({ id: yachtId })
+      .where(eq(yachtModels.id, yachtId))
       .limit(1)
 
     if (!existing) {
@@ -99,7 +100,7 @@ export async function PUT(
         designNotes: body.designNotes,
         description: body.description,
       })
-      .where({ id: yachtId })
+      .where(eq(yachtModels.id, yachtId))
       .returning()
 
     return NextResponse.json({ success: true, yacht: updated[0] })
@@ -131,14 +132,14 @@ export async function DELETE(
     const [existing] = await db
       .select()
       .from(yachtModels)
-      .where({ id: yachtId })
+      .where(eq(yachtModels.id, yachtId))
       .limit(1)
 
     if (!existing) {
       return NextResponse.json({ error: "Yacht not found" }, { status: 404 })
     }
 
-    await db.delete(yachtModels).where({ id: yachtId })
+    await db.delete(yachtModels).where(eq(yachtModels.id, yachtId))
 
     return NextResponse.json({ success: true })
   } catch (error) {

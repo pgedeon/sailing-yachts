@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb, specCategories } from "@/lib/db";
+import { eq } from "drizzle-orm";
 
 // GET single spec category
 export async function GET(
@@ -18,7 +19,7 @@ export async function GET(
     const [category] = await db
       .select()
       .from(specCategories)
-      .where({ id: categoryId })
+      .where(eq(specCategories.id, categoryId))
       .limit(1)
 
     if (!category) {
@@ -64,7 +65,7 @@ export async function PUT(
     const [existing] = await db
       .select()
       .from(specCategories)
-      .where({ id: categoryId })
+      .where(eq(specCategories.id, categoryId))
       .limit(1)
 
     if (!existing) {
@@ -82,7 +83,7 @@ export async function PUT(
         isFilterable: body.isFilterable,
         description: body.description,
       })
-      .where({ id: categoryId })
+      .where(eq(specCategories.id, categoryId))
       .returning()
 
     return NextResponse.json({ success: true, category: updated[0] })
@@ -114,14 +115,14 @@ export async function DELETE(
     const [existing] = await db
       .select()
       .from(specCategories)
-      .where({ id: categoryId })
+      .where(eq(specCategories.id, categoryId))
       .limit(1)
 
     if (!existing) {
       return NextResponse.json({ error: "Category not found" }, { status: 404 })
     }
 
-    await db.delete(specCategories).where({ id: categoryId })
+    await db.delete(specCategories).where(eq(specCategories.id, categoryId))
 
     return NextResponse.json({ success: true })
   } catch (error) {
