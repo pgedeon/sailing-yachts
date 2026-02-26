@@ -11,7 +11,7 @@ export async function GET() {
     }
 
     const sql = neon(connectionString);
-    const result = await sql<{ manufacturer: string }>`
+    const result = await sql`
       SELECT DISTINCT manufacturer 
       FROM yachts 
       WHERE manufacturer IS NOT NULL AND manufacturer != ''
