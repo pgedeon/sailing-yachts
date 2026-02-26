@@ -3,8 +3,8 @@ import Link from 'next/link'
 export const dynamic = 'force-dynamic' // Disable static generation
 
 export default async function AdminYachtsPage() {
-  // Fetch yachts data
-  const response = await fetch('http://localhost:3000/api/yachts')
+  // Fetch yachts data using relative URL
+  const response = await fetch('/api/yachts')
   const yachts = await response.json()
 
   return (

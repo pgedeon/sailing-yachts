@@ -3,8 +3,8 @@ import Link from 'next/link'
 export const dynamic = 'force-dynamic' // Disable static generation
 
 export default async function AdminSpecCategoriesPage() {
-  // Fetch spec categories data
-  const response = await fetch('http://localhost:3000/api/spec-categories')
+  // Fetch spec categories data using relative URL
+  const response = await fetch('/api/spec-categories')
   const data = await response.json()
   const categories = data.categories || []
 
