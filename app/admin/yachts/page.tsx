@@ -7,7 +7,11 @@ export default async function AdminYachtsPage() {
   let fetchError: string | null = null
   
   try {
-    const response = await fetch('/api/yachts?limit=100', { next: { revalidate: 0 } })
+    // Build absolute URL to avoid parsing issues
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
+    const response = await fetch(`${baseUrl}/api/yachts?limit=100`, {
+      next: { revalidate: 0 }
+    })
     if (!response.ok) {
       const errorText = await response.text()
       console.error('API response error:', response.status, errorText)
