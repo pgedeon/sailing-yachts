@@ -10,6 +10,10 @@ export async function GET(
     const { id } = await params
     const yachtId = parseInt(id)
 
+    if (isNaN(yachtId)) {
+      return NextResponse.json({ error: "Invalid yacht ID" }, { status: 400 })
+    }
+
     const [yacht] = await db
       .select()
       .from(yachtModels)
@@ -22,8 +26,11 @@ export async function GET(
 
     return NextResponse.json({ yacht })
   } catch (error) {
-    console.error("Error fetching yacht:", error)
-    return NextResponse.json({ error: "Failed to fetch yacht" }, { status: 500 })
+    console.error("Error fetching yacht:", error, error instanceof Error ? error.stack : null)
+    return NextResponse.json({ 
+      error: "Failed to fetch yacht", 
+      details: error instanceof Error ? error.message : String(error) 
+    }, { status: 500 })
   }
 }
 
@@ -35,6 +42,11 @@ export async function PUT(
   try {
     const { id } = await params
     const yachtId = parseInt(id)
+    
+    if (isNaN(yachtId)) {
+      return NextResponse.json({ error: "Invalid yacht ID" }, { status: 400 })
+    }
+    
     const body = await request.json()
 
     // Validate required fields
@@ -89,8 +101,11 @@ export async function PUT(
 
     return NextResponse.json({ success: true, yacht: updated[0] })
   } catch (error) {
-    console.error("Error updating yacht:", error)
-    return NextResponse.json({ error: "Failed to update yacht" }, { status: 500 })
+    console.error("Error updating yacht:", error, error instanceof Error ? error.stack : null)
+    return NextResponse.json({ 
+      error: "Failed to update yacht", 
+      details: error instanceof Error ? error.message : String(error) 
+    }, { status: 500 })
   }
 }
 
@@ -102,6 +117,10 @@ export async function DELETE(
   try {
     const { id } = await params
     const yachtId = parseInt(id)
+
+    if (isNaN(yachtId)) {
+      return NextResponse.json({ error: "Invalid yacht ID" }, { status: 400 })
+    }
 
     // Check if yacht exists
     const [existing] = await db
@@ -118,7 +137,10 @@ export async function DELETE(
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error("Error deleting yacht:", error)
-    return NextResponse.json({ error: "Failed to delete yacht" }, { status: 500 })
+    console.error("Error deleting yacht:", error, error instanceof Error ? error.stack : null)
+    return NextResponse.json({ 
+      error: "Failed to delete yacht", 
+      details: error instanceof Error ? error.message : String(error) 
+    }, { status: 500 })
   }
 }
