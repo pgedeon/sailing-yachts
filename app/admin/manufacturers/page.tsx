@@ -1,3 +1,4 @@
+import { cookies } from 'next/headers'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic' // Disable static generation
@@ -7,10 +8,17 @@ export default async function AdminManufacturersPage() {
   let errorMsg: string | null = null
 
   try {
-    // Fetch manufacturers data using absolute URL
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
+    const cookieStore = cookies()
+    const authCookie = cookieStore.get('auth')?.value
+    const headers: HeadersInit = {}
+    if (authCookie) {
+      headers['Cookie'] = `auth=${authCookie}`
+    }
+
     const response = await fetch(`${baseUrl}/api/admin/manufacturers`, {
-      credentials: 'include'
+      headers,
+      next: { revalidate: 0 }
     })
     if (!response.ok) {
       throw new Error(`Failed to fetch: ${response.status}`)
