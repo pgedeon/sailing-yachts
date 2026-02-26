@@ -1,0 +1,44 @@
+VERCEL WEBSITE FIXES - FILES CREATED/MODIFIED
+==============================================
+
+CREATED FILES:
+--------------
+1. public/favicon.ico (240 bytes)
+   - Purpose: Favicon for website to resolve 404 error
+   
+2. app/api/manufacturers/route.ts
+   - Purpose: API endpoint for fetching manufacturers
+   - Lines: ~15 lines of code
+   
+3. app/api/spec-categories/route.ts  
+   - Purpose: API endpoint for fetching spec categories
+   - Lines: ~15 lines of code
+   
+4. app/api/yachts/route.ts
+   - Purpose: API endpoint for fetching yachts
+   - Lines: ~12 lines of code
+   
+5. drizzle/schema/manufacturers.ts
+   - Purpose: Database table schema for manufacturers
+   - Lines: 3 lines of code
+   
+6. drizzle/schema/spec_categories.ts
+   - Purpose: Database table schema for spec categories
+   - Lines: 3 lines of code
+
+MODIFIED FILES:
+---------------
+1. lib/db.ts (previously imported schema, now simplified)
+2. package.json (removed postinstall script causing errors)
+3. drizzle.config.ts (simplified configuration)
+4. drizzle/index.ts (REMOVED - was causing TypeScript errors)
+
+DOCUMENTATION FILES CREATED:
+-----------------------------
+1. FIXES_SUMMARY.md - Detailed summary of all fixes
+2. API_ROUTES_TEST.md - Test results and verification
+3. VERCEL_FIXES_COMPLETE.md - Complete report with technical details
+4. FILES_CHANGED.txt - This file
+5. test-lint.sh - Automated verification script
+
+TOTAL: 10 new files created, 3 files modified, 1 file removed
