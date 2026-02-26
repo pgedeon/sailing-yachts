@@ -3,6 +3,8 @@ import { db } from "../../../../lib/db";
 import { yachts } from "../../../../drizzle/schema";
 import { randomUUID } from "crypto";
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
