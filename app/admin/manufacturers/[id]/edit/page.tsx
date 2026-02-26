@@ -31,7 +31,7 @@ export default function EditManufacturerPage() {
   async function fetchManufacturer() {
     try {
       setLoading(true)
-      const res = await fetch(`/api/admin/manufacturers/${manufacturerId}`)
+      const res = await fetch(`/api/admin/manufacturers/${manufacturerId}`, { credentials: 'include' })
       if (!res.ok) {
         throw new Error('Manufacturer not found')
       }
@@ -65,6 +65,7 @@ export default function EditManufacturerPage() {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
+        credentials: 'include'
       })
 
       if (!res.ok) {

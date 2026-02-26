@@ -62,7 +62,7 @@ export default function EditYachtPage() {
   async function fetchYacht() {
     try {
       setLoading(true)
-      const res = await fetch(`/api/admin/yachts/${yachtId}`)
+      const res = await fetch(`/api/admin/yachts/${yachtId}`, { credentials: 'include' })
       if (!res.ok) {
         throw new Error('Yacht not found')
       }
@@ -112,7 +112,8 @@ export default function EditYachtPage() {
       const res = await fetch(`/api/admin/yachts/${yachtId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        credentials: 'include'
       })
 
       if (!res.ok) {

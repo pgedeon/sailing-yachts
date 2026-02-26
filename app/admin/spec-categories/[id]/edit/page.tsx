@@ -31,7 +31,7 @@ export default function EditSpecCategoryPage() {
   async function fetchCategory() {
     try {
       setLoading(true)
-      const res = await fetch(`/api/admin/spec-categories/${categoryId}`)
+      const res = await fetch(`/api/admin/spec-categories/${categoryId}`, { credentials: 'include' })
       if (!res.ok) {
         throw new Error('Category not found')
       }
@@ -65,6 +65,7 @@ export default function EditSpecCategoryPage() {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
+        credentials: 'include'
       })
 
       if (!res.ok) {

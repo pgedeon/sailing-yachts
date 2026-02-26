@@ -20,7 +20,7 @@
           - /url: /admin/spec-categories
         - heading "Add New Spec Category" [level=1] [ref=e14]
       - generic [ref=e15]:
-        - alert [ref=e16]: Failed to create spec category
+        - alert [ref=e16]: Unauthorized - Admin access required
         - generic [ref=e17]:
           - generic [ref=e18]:
             - generic [ref=e19]:
