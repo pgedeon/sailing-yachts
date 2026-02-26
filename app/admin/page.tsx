@@ -13,7 +13,7 @@ export default function AdminPage() {
         <h1 className="text-3xl font-bold mb-6 text-red-600">Admin Access Required</h1>
         <p className="mb-4 text-lg text-gray-700">Please log in to access the admin panel.</p>
         <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-          <form method="dialog" action="/api/admin/login" className="space-y-4">
+          <form method="post" action="/api/admin/login" className="space-y-4">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">Username</label>
               <input
