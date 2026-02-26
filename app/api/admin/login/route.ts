@@ -9,8 +9,8 @@ export async function POST(request: Request) {
   const AUTH_PASS = "SailBoatAdmin!"
   
   if (username === AUTH_USER && password === AUTH_PASS) {
-    // Set auth cookie
-    const response = NextResponse.json({ success: true })
+    // Set auth cookie and redirect to admin dashboard
+    const response = NextResponse.redirect(new URL('/admin', request.url))
     response.cookies.set('auth', 'true', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -20,5 +20,11 @@ export async function POST(request: Request) {
     return response
   }
   
-  return NextResponse.json({ success: false }, { status: 401 })
+  // On failure, redirect back to admin page with error
+  const response = NextResponse.redirect(new URL('/admin?error=invalid', request.url))
+  response.cookies.set('auth', '', { 
+    expires: new Date(0),
+    path: '/admin'
+  })
+  return response
 }

@@ -2,7 +2,13 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
-export default function AdminPage() {
+interface AdminPageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+export default async function AdminPage({ searchParams }: AdminPageProps) {
+  const params = await searchParams
+  const error = params.error
   const cookieStore = cookies()
   const authCookie = cookieStore.get('auth')?.value
  
@@ -14,6 +20,12 @@ export default function AdminPage() {
         <p className="mb-4 text-lg text-gray-700">Please log in to access the admin panel.</p>
         <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
           <form method="post" action="/api/admin/login" className="space-y-4">
+            {error && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <strong className="font-bold">Error!</strong>
+                <span className="block sm:inline"> Invalid username or password</span>
+              </div>
+            )}
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">Username</label>
               <input
