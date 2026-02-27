@@ -5,6 +5,8 @@ function generateToken() {
   return Math.random().toString(36).substring(2) + Date.now().toString(36)
 }
 
+// Force rebuild: 2026-02-27 12:59
+
 export async function POST(request: Request) {
   const formData = await request.formData()
   const username = formData.get('username') as string
