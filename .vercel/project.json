@@ -1,16 +1,1 @@
-{
-  "projectId": "prj_gbe7d7gz2LhQDXQ19hCasa842NEu",
-  "orgId": "team_xSSHQzIcu59itEvUr4RtNHPA",
-  "projectName": "sailing-yachts",
-  "settings": {
-    "createdAt": 1772038039907,
-    "framework": "nextjs",
-    "devCommand": null,
-    "installCommand": null,
-    "buildCommand": null,
-    "outputDirectory": null,
-    "rootDirectory": null,
-    "directoryListing": false,
-    "nodeVersion": "24.x"
-  }
-}
+{"projectId":"sailing-yachts","teamId":null}
