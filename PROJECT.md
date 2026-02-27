@@ -287,3 +287,35 @@ Command: npx playwright test tests/admin.spec.ts --reporter=html --output=test-r
 - `test-results/` - Screenshots and traces for all 15 tests
 
 **See PLAYWRIGHT_FINAL_REPORT.md for complete details.**
+
+---
+
+## Build Fix: Suspense Boundary for useSearchParams (2026-02-27)
+
+### Problem
+Vercel production build failed with the error:
+```
+useSearchParams() should be wrapped in a suspense boundary at page "/admin".
+```
+
+The admin login page (`/admin`) used `useSearchParams()` directly at the top level of a Client Component, which violates Next.js 14+ requirements. This caused static generation to fail during the "Generating static pages" phase.
+
+### Solution
+Refactored the admin authentication page:
+- Created a new Client Component `AdminLoginForm.tsx` containing the original login logic
+- Wrapped this component in a `<Suspense>` boundary in `page.tsx` with a minimal loading fallback
+- The page itself is now a Server Component that handles the Suspense wrapper
+
+#### Files Changed
+- `app/admin/AdminLoginForm.tsx` (new) - Contains the full login form logic
+- `app/admin/page.tsx` (modified) - Now exports a Server Component wrapping AdminLoginForm in Suspense
+
+### Verification
+- Local build (`npm run build`) completed successfully with exit code 0
+- The admin page is now properly recognized as static (○) in the build output
+- All other pages remain unaffected
+- Ready for redeployment to Vercel
+
+### Technical Notes
+- The fallback UI shows a simple spinner and "Loading..." text while the client component hydrates
+- This pattern can be applied to any page using `useSearchParams()` or other client hooks that require Suspense
