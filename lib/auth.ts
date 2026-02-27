@@ -1,4 +1,24 @@
 import { NextAuthOptions } from "next-auth"
+import { JWT } from "next-auth/jwt"
+
+// Extend NextAuth types to include our custom user fields
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string
+      role: string
+      name?: string | null
+      email?: string | null
+      image?: string | null
+    }
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    role?: string
+  }
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -45,7 +65,9 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.role = (user as any).role
+      if (user) {
+        token.role = (user as any).role
+      }
       return token
     },
     async session({ session, token }) {
