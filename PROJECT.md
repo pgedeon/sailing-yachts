@@ -329,20 +329,34 @@ The admin login page was using NextAuth's `signIn()` credentials provider, but t
 
 Additionally, the root layout was missing `SessionProvider`, which would also break NextAuth client-side operations.
 
-### Solution
-Removed the NextAuth dependency from the admin login entirely. The login form now:
-- Submits via standard HTML POST to `/api/admin/login`
-- Server validates credentials and sets the `auth` httpOnly cookie
-- Redirects back to `/admin` on success or `/admin?error=invalid` on failure
-- Displays error message from query param
+### Solution (Complete Overhaul)
+Restored the original admin authentication pattern with proper cookie-based access control:
 
-This aligns with the existing admin authentication architecture where all admin pages check for the `auth` cookie directly via `cookies()`.
+- `app/admin/page.tsx` now acts as a server component that checks for the `auth` cookie
+- When authenticated: renders an Admin Dashboard with quick links to manufacturers, yachts, and spec categories, plus a logout button
+- When unauthenticated: renders the login form inside a `<Suspense>` boundary (required because the form uses `useSearchParams`)
+- `app/admin/AdminLoginForm.tsx` is a client component that:
+  - Displays h1 "Admin Access Required" and button "Login" (matches test selectors)
+  - Uses `useSearchParams()` to show error after failed login/logout
+  - Submits via POST to `/api/admin/login`
+- The page is marked `dynamic = 'force-dynamic'` to ensure per-request cookie evaluation
 
 ### Files Modified
-- `app/admin/AdminLoginForm.tsx` (rewritten) - simplified to plain HTML form
-- `app/admin/page.tsx` - unchanged, still wraps form in Suspense
+- `app/admin/page.tsx` (rewritten)
+- `app/admin/AdminLoginForm.tsx` (rewritten)
+- `PROJECT.md` (this update)
+- `memory/2026-02-27.md` (separate entry)
+
+### Verification
+- Local build (`npm run build`) succeeded
+- Behavior:
+  - GET /admin without `auth` cookie → login form (200)
+  - GET /admin with `auth` cookie → dashboard (200)
+  - POST /api/admin/login with correct credentials → sets cookie + redirects to /admin
+  - GET /api/admin/logout → clears cookie + redirects to /admin?error=invalid
 
 ### Notes
-- No client-side state management needed; form does full page reload
-- The `auth` cookie is httpOnly, secure in production, 1-hour expiry
-- Credentials are hardcoded (admin / SailBoatAdmin!) for MVP
+- Dashboard matches the original design from earlier commits
+- All admin pages (`/admin/manufacturers`, etc.) continue to check `auth` cookie directly
+- No NextAuth needed in admin section; cookie is httpOnly, SameSite=lax, 1h expiry
+- Credentials: admin / SailBoatAdmin!
