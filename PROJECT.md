@@ -319,3 +319,30 @@ Refactored the admin authentication page:
 ### Technical Notes
 - The fallback UI shows a simple spinner and "Loading..." text while the client component hydrates
 - This pattern can be applied to any page using `useSearchParams()` or other client hooks that require Suspense
+
+---
+
+## Admin Authentication Fix (2026-02-27)
+
+### Problem
+The admin login page was using NextAuth's `signIn()` credentials provider, but the rest of the admin section uses a custom `auth` cookie set by `/api/admin/login`. This mismatch caused the login to fail silently (button greyed out, no action).
+
+Additionally, the root layout was missing `SessionProvider`, which would also break NextAuth client-side operations.
+
+### Solution
+Removed the NextAuth dependency from the admin login entirely. The login form now:
+- Submits via standard HTML POST to `/api/admin/login`
+- Server validates credentials and sets the `auth` httpOnly cookie
+- Redirects back to `/admin` on success or `/admin?error=invalid` on failure
+- Displays error message from query param
+
+This aligns with the existing admin authentication architecture where all admin pages check for the `auth` cookie directly via `cookies()`.
+
+### Files Modified
+- `app/admin/AdminLoginForm.tsx` (rewritten) - simplified to plain HTML form
+- `app/admin/page.tsx` - unchanged, still wraps form in Suspense
+
+### Notes
+- No client-side state management needed; form does full page reload
+- The `auth` cookie is httpOnly, secure in production, 1-hour expiry
+- Credentials are hardcoded (admin / SailBoatAdmin!) for MVP
