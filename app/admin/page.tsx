@@ -1,118 +1,73 @@
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '../api/auth/[...nextauth]/route'
 import Link from 'next/link'
+import { signOut } from 'next-auth/react'
 
-interface AdminPageProps {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-}
+export default async function AdminDashboardPage() {
+  const session = await getServerSession(authOptions)
 
-export default async function AdminPage({ searchParams }: AdminPageProps) {
-  const params = await searchParams
-  const error = params.error
-  const cookieStore = cookies()
-  const authCookie = cookieStore.get('auth')?.value
- 
-  // Check if user is authenticated via cookie
-  if (!authCookie) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gray-50">
-        <h1 className="text-3xl font-bold mb-6 text-red-600">Admin Access Required</h1>
-        <p className="mb-4 text-lg text-gray-700">Please log in to access the admin panel.</p>
-        <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-          <form method="post" action="/api/admin/login" className="space-y-4">
-            {error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                <strong className="font-bold">Error!</strong>
-                <span className="block sm:inline"> Invalid username or password</span>
-              </div>
-            )}
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">Username</label>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                required
-                autoComplete="username"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter username"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                required
-                autoComplete="current-password"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter password"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"
-            >
-              Login
-            </button>
-          </form>
-        </div>
-      </div>
-    )
+  if (!session) {
+    redirect('/admin?error=unauthenticated')
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+    <div className="min-h-screen bg-gray-50">
+      <nav className="bg-white shadow-sm border-b border-gray-200 mb-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <Link href="/admin" className="text-xl font-bold text-gray-900">
+                Admin Dashboard
+              </Link>
+            </div>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-600">
+                Logged in as: <strong>{session.user?.username || session.user?.name}</strong>
+              </span>
+              <form action="/api/auth/signout" method="POST">
+                <button
+                  type="submit"
+                  className="text-red-600 hover:text-red-800 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Logout
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Link
-            href="/api/admin/logout"
-            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-200"
+            href="/admin/yachts"
+            className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:bg-gray-50 transition"
           >
-            Logout
+            <h3 className="text-lg font-medium text-gray-900">Manage Yachts</h3>
+            <p className="text-gray-500">View, edit, and create yacht entries</p>
+          </Link>
+          <Link
+            href="/admin/manufacturers"
+            className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:bg-gray-50 transition"
+          >
+            <h3 className="text-lg font-medium text-gray-900">Manage Manufacturers</h3>
+            <p className="text-gray-500">View, edit, and create manufacturers</p>
+          </Link>
+          <Link
+            href="/admin/spec-categories"
+            className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:bg-gray-50 transition"
+          >
+            <h3 className="text-lg font-medium text-gray-900">Manage Specification Categories</h3>
+            <p className="text-gray-500">Define yacht specification categories</p>
           </Link>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Yachts Management</h2>
-            <p className="text-gray-600 mb-4">Manage sailing yacht listings and specifications.</p>
-            <Link
-              href="/admin/yachts"
-              prefetch={false}
-              className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
-            >
-              Manage Yachts
-            </Link>
-          </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Manufacturers</h2>
-            <p className="text-gray-600 mb-4">Manage yacht manufacturers and brands.</p>
-            <Link
-              href="/admin/manufacturers"
-              prefetch={false}
-              className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
-            >
-              Manage Manufacturers
-            </Link>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Specifications</h2>
-            <p className="text-gray-600 mb-4">Manage specification categories and types.</p>
-            <Link
-              href="/admin/spec-categories"
-              prefetch={false}
-              className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
-            >
-              Manage Specifications
-            </Link>
-          </div>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Stats</h2>
+          <p className="text-gray-600">Welcome to the admin interface. Use the cards above to manage your content.</p>
         </div>
-      </div>
+      </main>
     </div>
   )
 }
