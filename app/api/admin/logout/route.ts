@@ -1,7 +1,16 @@
 import { NextResponse } from 'next/server'
 
-export async function GET() {
-  const response = NextResponse.redirect(new URL('/admin?error=invalid', process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'))
-  response.cookies.delete('auth')
+export async function POST(request: Request) {
+  const response = NextResponse.redirect(new URL('/admin', request.url))
+  response.cookies.set('auth', '', {
+    expires: new Date(0),
+    path: '/',
+    sameSite: 'lax',
+  })
   return response
+}
+
+// GET should not log out – just redirect to admin page
+export async function GET() {
+  return NextResponse.redirect(new URL('/admin', new URL('https://sailing-yachts.vercel.app')))
 }
