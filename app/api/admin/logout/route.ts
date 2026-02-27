@@ -2,15 +2,11 @@ import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
   const response = NextResponse.redirect(new URL('/admin', request.url))
-  const cookieOptions: Cookies.CookieAttributes = {
+  response.cookies.set('auth', '', {
     expires: new Date(0),
     path: '/',
     sameSite: 'lax',
-  }
-  if (process.env.NODE_ENV === 'production') {
-    cookieOptions.domain = 'sailing-yachts.vercel.app'
-  }
-  response.cookies.set('auth', '', cookieOptions)
+  })
   return response
 }
 
