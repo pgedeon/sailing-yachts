@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -35,10 +35,10 @@ export default function NewYachtPage() {
     description: '',
   })
 
-  // Fetch manufacturers on mount
-  useState(() => {
+  // Fetch manufacturers on mount (useEffect, not useState)
+  useEffect(() => {
     fetchManufacturers()
-  })
+  }, [])
 
   async function fetchManufacturers() {
     try {
@@ -104,7 +104,7 @@ export default function NewYachtPage() {
     
     // Auto-generate slug from model name
     if (name === 'modelName' && !formData.slug) {
-      const slug = value.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
+      const slug = value.toLowerCase().replace(/\s+/g, '-').replace(/[\w-]/g, '')
       setFormData(prev => ({ ...prev, slug }))
     }
   }
