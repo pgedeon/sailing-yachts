@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       secure: process.env.NODE_ENV === 'production',
       maxAge: 3600, // 1 hour
       path: '/',
-      sameSite: 'none', // More permissive for Vercel edge
+      sameSite: 'lax', // Better browser compatibility
     })
     return response
   }
