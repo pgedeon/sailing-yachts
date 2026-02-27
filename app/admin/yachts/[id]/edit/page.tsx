@@ -110,9 +110,14 @@ export default function EditYachtPage() {
         description: yacht.description,
       }
 
+      const token = getAuthToken()
+      const headers: HeadersInit = { 'Content-Type': 'application/json' }
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
       const res = await fetch(`/api/admin/yachts/${yachtId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(payload),
         credentials: 'include'
       })
