@@ -19,11 +19,12 @@ export async function POST(request: Request) {
     // Set the auth cookie with the token, readable by JS
     const response = NextResponse.redirect(new URL('/admin', request.url))
     response.cookies.set('auth', token, {
-      httpOnly: true, // Not accessible to JavaScript - more secure
+      httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 3600, // 1 hour
+      maxAge: 3600,
       path: '/',
-      sameSite: 'lax', // Better browser compatibility
+      sameSite: 'lax',
+      domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined,
     })
     return response
   }
