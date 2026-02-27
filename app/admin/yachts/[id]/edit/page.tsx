@@ -6,10 +6,9 @@ import Link from 'next/link'
 
 interface YachtData {
   id: number
-  manufacturerId: number
   modelName: string
-  year: number
-  slug: string
+  manufacturer?: { id: number; name: string }
+  year?: number
   lengthOverall?: number
   beam?: number
   draft?: number
@@ -29,6 +28,7 @@ interface YachtData {
   waterCapacity?: number
   designNotes?: string
   description?: string
+  slug?: string
 }
 
 export default function EditYachtPage() {
@@ -39,33 +39,18 @@ export default function EditYachtPage() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [manufacturers, setManufacturers] = useState<{ id: number; name: string }[]>([])
   const [yacht, setYacht] = useState<YachtData | null>(null)
 
   useEffect(() => {
-    fetchManufacturers()
     fetchYacht()
   }, [yachtId])
-
-  async function fetchManufacturers() {
-    try {
-      const res = await fetch('/api/manufacturers')
-      if (res.ok) {
-        const data = await res.json()
-        setManufacturers(data.manufacturers || [])
-      }
-    } catch (err) {
-      console.error('Failed to fetch manufacturers:', err)
-    }
-  }
 
   async function fetchYacht() {
     try {
       setLoading(true)
-      // Cookie is automatically sent with credentials: 'include'
       const res = await fetch(`/api/admin/yachts/${yachtId}`, { credentials: 'include' })
       if (!res.ok) {
-        throw new Error('Yacht not found')
+        throw Error('Yacht not found')
       }
       const data = await res.json()
       setYacht(data.yacht)
@@ -85,7 +70,7 @@ export default function EditYachtPage() {
 
     try {
       const payload = {
-        manufacturerId: yacht.manufacturerId,
+        manufacturerId: yacht.manufacturer?.id,
         modelName: yacht.modelName,
         year: yacht.year,
         slug: yacht.slug,
@@ -110,14 +95,9 @@ export default function EditYachtPage() {
         description: yacht.description,
       }
 
-      const token = getAuthToken()
-      const headers: HeadersInit = { 'Content-Type': 'application/json' }
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
       const res = await fetch(`/api/admin/yachts/${yachtId}`, {
         method: 'PUT',
-        headers,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
         credentials: 'include'
       })
@@ -136,7 +116,7 @@ export default function EditYachtPage() {
     }
   }
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value } = e.target
     setYacht(prev => prev ? { ...prev, [name]: value } : null)
   }
@@ -144,7 +124,7 @@ export default function EditYachtPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 p-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-2xl mx-auto">
           <p>Loading yacht...</p>
         </div>
       </div>
@@ -154,7 +134,7 @@ export default function EditYachtPage() {
   if (!yacht) {
     return (
       <div className="min-h-screen bg-gray-50 p-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-2xl mx-auto">
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             Yacht not found
           </div>
@@ -166,7 +146,7 @@ export default function EditYachtPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-2xl mx-auto">
         <div className="flex items-center gap-4 mb-6">
           <Link
             href="/admin/yachts"
@@ -186,7 +166,6 @@ export default function EditYachtPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Basic Info */}
               <div>
                 <label htmlFor="modelName" className="block text-sm font-medium text-gray-700 mb-1">Model Name *</label>
                 <input
@@ -201,52 +180,22 @@ export default function EditYachtPage() {
               </div>
 
               <div>
-                <label htmlFor="manufacturerId" className="block text-sm font-medium text-gray-700 mb-1">Manufacturer *</label>
-                <select
-                  id="manufacturerId"
-                  name="manufacturerId"
-                  required
-                  value={yacht.manufacturerId}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {manufacturers.map(m => (
-                    <option key={m.id} value={m.id}>{m.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label htmlFor="year" className="block text-sm font-medium text-gray-700 mb-1">Year *</label>
+                <label htmlFor="year" className="block text-sm font-medium text-gray-700 mb-1">Year</label>
                 <input
                   type="number"
                   id="year"
                   name="year"
-                  required
-                  value={yacht.year || ''}
+                  value={yacht.year ?? ''}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
-              <div>
-                <label htmlFor="slug" className="block text-sm font-medium text-gray-700 mb-1">Slug</label>
-                <input
-                  type="text"
-                  id="slug"
-                  name="slug"
-                  value={yacht.slug || ''}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              {/* Dimensions */}
               <div>
                 <label htmlFor="lengthOverall" className="block text-sm font-medium text-gray-700 mb-1">Length Overall (m)</label>
                 <input
                   type="number"
-                  step="0.01"
+                  step="0.1"
                   id="lengthOverall"
                   name="lengthOverall"
                   value={yacht.lengthOverall ?? ''}
@@ -259,7 +208,7 @@ export default function EditYachtPage() {
                 <label htmlFor="beam" className="block text-sm font-medium text-gray-700 mb-1">Beam (m)</label>
                 <input
                   type="number"
-                  step="0.01"
+                  step="0.1"
                   id="beam"
                   name="beam"
                   value={yacht.beam ?? ''}
@@ -272,7 +221,7 @@ export default function EditYachtPage() {
                 <label htmlFor="draft" className="block text-sm font-medium text-gray-700 mb-1">Draft (m)</label>
                 <input
                   type="number"
-                  step="0.01"
+                  step="0.1"
                   id="draft"
                   name="draft"
                   value={yacht.draft ?? ''}
@@ -285,7 +234,6 @@ export default function EditYachtPage() {
                 <label htmlFor="displacement" className="block text-sm font-medium text-gray-700 mb-1">Displacement (kg)</label>
                 <input
                   type="number"
-                  step="0.01"
                   id="displacement"
                   name="displacement"
                   value={yacht.displacement ?? ''}
@@ -298,7 +246,6 @@ export default function EditYachtPage() {
                 <label htmlFor="ballast" className="block text-sm font-medium text-gray-700 mb-1">Ballast (kg)</label>
                 <input
                   type="number"
-                  step="0.01"
                   id="ballast"
                   name="ballast"
                   value={yacht.ballast ?? ''}
@@ -308,10 +255,10 @@ export default function EditYachtPage() {
               </div>
 
               <div>
-                <label htmlFor="sailAreaMain" className="block text-sm font-medium text-gray-700 mb-1">Sail Area Main (m²)</label>
+                <label htmlFor="sailAreaMain" className="block text-sm font-medium text-gray-700 mb-1">Main Sail Area (m²)</label>
                 <input
                   type="number"
-                  step="0.01"
+                  step="0.1"
                   id="sailAreaMain"
                   name="sailAreaMain"
                   value={yacht.sailAreaMain ?? ''}
@@ -320,7 +267,6 @@ export default function EditYachtPage() {
                 />
               </div>
 
-              {/* Categorical */}
               <div>
                 <label htmlFor="rigType" className="block text-sm font-medium text-gray-700 mb-1">Rig Type</label>
                 <input
@@ -357,7 +303,6 @@ export default function EditYachtPage() {
                 />
               </div>
 
-              {/* Accommodation */}
               <div>
                 <label htmlFor="cabins" className="block text-sm font-medium text-gray-700 mb-1">Cabins</label>
                 <input
@@ -406,12 +351,10 @@ export default function EditYachtPage() {
                 />
               </div>
 
-              {/* Technical */}
               <div>
                 <label htmlFor="engineHp" className="block text-sm font-medium text-gray-700 mb-1">Engine HP</label>
                 <input
                   type="number"
-                  step="0.01"
                   id="engineHp"
                   name="engineHp"
                   value={yacht.engineHp ?? ''}
@@ -436,7 +379,6 @@ export default function EditYachtPage() {
                 <label htmlFor="fuelCapacity" className="block text-sm font-medium text-gray-700 mb-1">Fuel Capacity (L)</label>
                 <input
                   type="number"
-                  step="0.01"
                   id="fuelCapacity"
                   name="fuelCapacity"
                   value={yacht.fuelCapacity ?? ''}
@@ -449,7 +391,6 @@ export default function EditYachtPage() {
                 <label htmlFor="waterCapacity" className="block text-sm font-medium text-gray-700 mb-1">Water Capacity (L)</label>
                 <input
                   type="number"
-                  step="0.01"
                   id="waterCapacity"
                   name="waterCapacity"
                   value={yacht.waterCapacity ?? ''}
@@ -459,13 +400,12 @@ export default function EditYachtPage() {
               </div>
             </div>
 
-            {/* Full width fields */}
             <div>
               <label htmlFor="designNotes" className="block text-sm font-medium text-gray-700 mb-1">Design Notes</label>
               <textarea
                 id="designNotes"
                 name="designNotes"
-                rows={3}
+                rows={4}
                 value={yacht.designNotes || ''}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"

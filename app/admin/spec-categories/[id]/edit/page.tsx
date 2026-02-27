@@ -7,10 +7,8 @@ import Link from 'next/link'
 interface SpecCategoryData {
   id: number
   name: string
+  dataType: 'string' | 'number' | 'boolean' | 'date' | 'numeric'
   unit?: string
-  dataType: string
-  categoryGroup?: string
-  isFilterable: boolean
   description?: string
 }
 
@@ -31,12 +29,7 @@ export default function EditSpecCategoryPage() {
   async function fetchCategory() {
     try {
       setLoading(true)
-      const token = getAuthToken()
-      const headers: HeadersInit = {}
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-      const res = await fetch(`/api/admin/spec-categories/${categoryId}`, { headers, credentials: 'include' })
+      const res = await fetch(`/api/admin/spec-categories/${categoryId}`, { credentials: 'include' })
       if (!res.ok) {
         throw new Error('Category not found')
       }
@@ -49,11 +42,6 @@ export default function EditSpecCategoryPage() {
     }
   }
 
-  function getAuthToken(): string | null {
-    if (typeof window === 'undefined') return null
-    return localStorage.getItem('authToken')
-  }
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!category) return
@@ -64,21 +52,14 @@ export default function EditSpecCategoryPage() {
     try {
       const payload = {
         name: category.name,
-        unit: category.unit,
         dataType: category.dataType,
-        categoryGroup: category.categoryGroup,
-        isFilterable: category.isFilterable,
+        unit: category.unit,
         description: category.description,
       }
 
-      const token = getAuthToken()
-      const headers: HeadersInit = { 'Content-Type': 'application/json' }
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
       const res = await fetch(`/api/admin/spec-categories/${categoryId}`, {
         method: 'PUT',
-        headers,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
         credentials: 'include'
       })
@@ -98,11 +79,8 @@ export default function EditSpecCategoryPage() {
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
-    const { name, value, type } = e.target
-    setCategory(prev => prev ? { 
-      ...prev, 
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value 
-    } : null)
+    const { name, value } = e.target
+    setCategory(prev => prev ? { ...prev, [name]: value } : null)
   }
 
   if (loading) {
@@ -138,7 +116,7 @@ export default function EditSpecCategoryPage() {
           >
             ← Back to Categories
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900">Edit Spec Category</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Edit Specification Category</h1>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -164,19 +142,6 @@ export default function EditSpecCategoryPage() {
               </div>
 
               <div>
-                <label htmlFor="unit" className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
-                <input
-                  type="text"
-                  id="unit"
-                  name="unit"
-                  value={category.unit || ''}
-                  onChange={handleChange}
-                  placeholder="e.g., m, kg, m²"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
                 <label htmlFor="dataType" className="block text-sm font-medium text-gray-700 mb-1">Data Type *</label>
                 <select
                   id="dataType"
@@ -185,37 +150,24 @@ export default function EditSpecCategoryPage() {
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="numeric">Numeric</option>
-                  <option value="text">Text</option>
+                  <option value="string">String</option>
+                  <option value="number">Number</option>
                   <option value="boolean">Boolean</option>
                   <option value="date">Date</option>
+                  <option value="numeric">Numeric</option>
                 </select>
               </div>
 
               <div>
-                <label htmlFor="categoryGroup" className="block text-sm font-medium text-gray-700 mb-1">Category Group</label>
+                <label htmlFor="unit" className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
                 <input
                   type="text"
-                  id="categoryGroup"
-                  name="categoryGroup"
-                  value={category.categoryGroup || ''}
+                  id="unit"
+                  name="unit"
+                  value={category.unit || ''}
                   onChange={handleChange}
-                  placeholder="e.g., Construction, Rigging, Technical"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-              </div>
-
-              <div className="flex items-center">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    name="isFilterable"
-                    checked={category.isFilterable}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <span className="ml-2 text-sm text-gray-700">Filterable</span>
-                </label>
               </div>
             </div>
 
@@ -224,7 +176,7 @@ export default function EditSpecCategoryPage() {
               <textarea
                 id="description"
                 name="description"
-                rows={3}
+                rows={4}
                 value={category.description || ''}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
