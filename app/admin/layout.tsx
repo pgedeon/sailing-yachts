@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard - Sailing Yachts",
@@ -10,5 +11,21 @@ export default function AdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <Script id="auth-token-sync" strategy="afterInteractive">
+        {`
+          (function() {
+            try {
+              const match = document.cookie.match(/auth=([^;]+)/);
+              if (match) {
+                localStorage.setItem('authToken', decodeURIComponent(match[1]));
+              }
+            } catch (e) {}
+          })();
+        `}
+      </Script>
+    </>
+  );
 }
