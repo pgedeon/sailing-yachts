@@ -1,15 +1,23 @@
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
 export default async function AdminYachtsPage() {
+  // Authentication check - redirect to login if not authenticated
+  const cookieStore = cookies()
+  const authCookie = cookieStore.get('auth')?.value
+  if (!authCookie) {
+    redirect('/admin')
+  }
+
   let yachts: any[] = []
   let fetchError: string | null = null
   
   try {
-    // Build absolute URL to avoid parsing issues
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
-    const response = await fetch(`${baseUrl}/api/yachts?limit=100`, {
+    // Use relative URL to avoid domain mismatches
+    const response = await fetch('/api/yachts?limit=100', {
       next: { revalidate: 0 }
     })
     if (!response.ok) {
@@ -73,26 +81,25 @@ export default async function AdminYachtsPage() {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {yachts.map((yacht: any) => {
-                    const y = yacht.yacht || yacht
                     return (
-                      <tr key={y.id}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{y.modelName}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{yacht.manufacturer}</td>
+                      <tr key={yacht.id}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{yacht.modelName}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{yacht.manufacturer || 'N/A'}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {y.lengthOverall ? Number(y.lengthOverall).toFixed(1) : 'N/A'} m
+                          {yacht.lengthOverall ? Number(yacht.lengthOverall).toFixed(1) : 'N/A'} m
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {y.beam ? Number(y.beam).toFixed(1) : 'N/A'} m
+                          {yacht.beam ? Number(yacht.beam).toFixed(1) : 'N/A'} m
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {y.draft ? Number(y.draft).toFixed(1) : 'N/A'} m
+                          {yacht.draft ? Number(yacht.draft).toFixed(1) : 'N/A'} m
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {y.year || 'N/A'}
+                          {yacht.year || 'N/A'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
                           <Link
-                            href={`/admin/yachts/${y.id}/edit`}
+                            href={`/admin/yachts/${yacht.id}/edit`}
                             className="text-blue-600 hover:text-blue-800 px-2 py-1 rounded text-xs bg-blue-50"
                           >
                             Edit

@@ -1,22 +1,28 @@
 import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic' // Disable static generation
 
 export default async function AdminManufacturersPage() {
+  // Authentication check - redirect to login if not authenticated
+  const cookieStore = cookies()
+  const authCookie = cookieStore.get('auth')?.value
+  if (!authCookie) {
+    redirect('/admin')
+  }
+
   let manufacturers: any[] = []
   let errorMsg: string | null = null
 
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
-    const cookieStore = cookies()
-    const authCookie = cookieStore.get('auth')?.value
+    // Use relative URL to ensure same-origin request
     const headers: HeadersInit = {}
     if (authCookie) {
       headers['Cookie'] = `auth=${authCookie}`
     }
 
-    const response = await fetch(`${baseUrl}/api/admin/manufacturers`, {
+    const response = await fetch('/api/admin/manufacturers', {
       headers,
       next: { revalidate: 0 }
     })

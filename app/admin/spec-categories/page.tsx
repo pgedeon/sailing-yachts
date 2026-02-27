@@ -1,23 +1,23 @@
 import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic' // Disable static generation
 
 export default async function AdminSpecCategoriesPage() {
+  // Authentication check - redirect to login if not authenticated
+  const cookieStore = cookies()
+  const authCookie = cookieStore.get('auth')?.value
+  if (!authCookie) {
+    redirect('/admin')
+  }
+
   let categories: any[] = []
   let errorMsg: string | null = null
 
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
-    const cookieStore = cookies()
-    const authCookie = cookieStore.get('auth')?.value
-    const headers: HeadersInit = {}
-    if (authCookie) {
-      headers['Cookie'] = `auth=${authCookie}`
-    }
-
-    const response = await fetch(`${baseUrl}/api/spec-categories`, {
-      headers,
+    // Use relative URL to ensure same-origin request
+    const response = await fetch('/api/spec-categories', {
       next: { revalidate: 0 }
     })
     if (!response.ok) {
@@ -57,7 +57,7 @@ export default async function AdminSpecCategoriesPage() {
           {errorMsg ? (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
               <strong className="font-bold">Error!</strong>
-              <span className="block sm:inline"> {errorMsg}</span>
+              <span className="block sm-inline"> {errorMsg}</span>
             </div>
           ) : categories.length === 0 ? (
             <p className="text-gray-500 text-center py-8">No specification categories found.</p>

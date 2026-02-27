@@ -79,6 +79,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             <p className="text-gray-600 mb-4">Manage sailing yacht listings and specifications.</p>
             <Link
               href="/admin/yachts"
+              prefetch={false}
               className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
             >
               Manage Yachts
@@ -90,6 +91,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             <p className="text-gray-600 mb-4">Manage yacht manufacturers and brands.</p>
             <Link
               href="/admin/manufacturers"
+              prefetch={false}
               className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
             >
               Manage Manufacturers
@@ -101,6 +103,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             <p className="text-gray-600 mb-4">Manage specification categories and types.</p>
             <Link
               href="/admin/spec-categories"
+              prefetch={false}
               className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
             >
               Manage Specifications
