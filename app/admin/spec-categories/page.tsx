@@ -16,8 +16,9 @@ export default async function AdminSpecCategoriesPage() {
   let errorMsg: string | null = null
 
   try {
-    // Use relative URL to ensure same-origin request
-    const response = await fetch('/api/spec-categories', {
+    // Use absolute URL for server-side fetch
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
+    const response = await fetch(`${baseUrl}/api/spec-categories`, {
       next: { revalidate: 0 }
     })
     if (!response.ok) {
@@ -57,7 +58,7 @@ export default async function AdminSpecCategoriesPage() {
           {errorMsg ? (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
               <strong className="font-bold">Error!</strong>
-              <span className="block sm-inline"> {errorMsg}</span>
+              <span className="block sm:inline"> {errorMsg}</span>
             </div>
           ) : categories.length === 0 ? (
             <p className="text-gray-500 text-center py-8">No specification categories found.</p>
@@ -93,6 +94,7 @@ export default async function AdminSpecCategoriesPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
                         <Link
                           href={`/admin/spec-categories/${category.id}/edit`}
+                          prefetch={false}
                           className="text-blue-600 hover:text-blue-800 px-2 py-1 rounded text-xs bg-blue-50"
                         >
                           Edit

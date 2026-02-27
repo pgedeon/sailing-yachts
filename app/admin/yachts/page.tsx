@@ -16,8 +16,9 @@ export default async function AdminYachtsPage() {
   let fetchError: string | null = null
   
   try {
-    // Use relative URL to avoid domain mismatches
-    const response = await fetch('/api/yachts?limit=100', {
+    // Use absolute URL for server-side fetch
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
+    const response = await fetch(`${baseUrl}/api/yachts?limit=100`, {
       next: { revalidate: 0 }
     })
     if (!response.ok) {
@@ -100,6 +101,7 @@ export default async function AdminYachtsPage() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
                           <Link
                             href={`/admin/yachts/${yacht.id}/edit`}
+                            prefetch={false}
                             className="text-blue-600 hover:text-blue-800 px-2 py-1 rounded text-xs bg-blue-50"
                           >
                             Edit

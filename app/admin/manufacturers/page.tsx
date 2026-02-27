@@ -16,13 +16,14 @@ export default async function AdminManufacturersPage() {
   let errorMsg: string | null = null
 
   try {
-    // Use relative URL to ensure same-origin request
+    // Use absolute URL for server-side fetch
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
     const headers: HeadersInit = {}
     if (authCookie) {
       headers['Cookie'] = `auth=${authCookie}`
     }
 
-    const response = await fetch('/api/admin/manufacturers', {
+    const response = await fetch(`${baseUrl}/api/admin/manufacturers`, {
       headers,
       next: { revalidate: 0 }
     })
@@ -85,6 +86,7 @@ export default async function AdminManufacturersPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
                         <Link
                           href={`/admin/manufacturers/${manufacturer.id}/edit`}
+                          prefetch={false}
                           className="text-blue-600 hover:text-blue-800 px-2 py-1 rounded text-xs bg-blue-50"
                         >
                           Edit
