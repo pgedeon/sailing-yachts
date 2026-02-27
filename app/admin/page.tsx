@@ -33,6 +33,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 id="username"
                 name="username"
                 required
+                autoComplete="username"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter username"
               />
@@ -44,6 +45,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 id="password"
                 name="password"
                 required
+                autoComplete="current-password"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter password"
               />

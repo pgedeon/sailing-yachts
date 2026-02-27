@@ -31,7 +31,12 @@ export default function EditManufacturerPage() {
   async function fetchManufacturer() {
     try {
       setLoading(true)
-      const res = await fetch(`/api/admin/manufacturers/${manufacturerId}`, { credentials: 'include' })
+      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null
+      const headers: HeadersInit = {}
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+      const res = await fetch(`/api/admin/manufacturers/${manufacturerId}`, { headers, credentials: 'include' })
       if (!res.ok) {
         throw new Error('Manufacturer not found')
       }
@@ -61,9 +66,15 @@ export default function EditManufacturerPage() {
         logoUrl: manufacturer.logoUrl,
       }
 
+      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null
+      const headers: HeadersInit = { 'Content-Type': 'application/json' }
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+
       const res = await fetch(`/api/admin/manufacturers/${manufacturerId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(payload),
         credentials: 'include'
       })

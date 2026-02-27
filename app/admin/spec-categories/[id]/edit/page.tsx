@@ -31,7 +31,12 @@ export default function EditSpecCategoryPage() {
   async function fetchCategory() {
     try {
       setLoading(true)
-      const res = await fetch(`/api/admin/spec-categories/${categoryId}`, { credentials: 'include' })
+      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null
+      const headers: HeadersInit = {}
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+      const res = await fetch(`/api/admin/spec-categories/${categoryId}`, { headers, credentials: 'include' })
       if (!res.ok) {
         throw new Error('Category not found')
       }
@@ -61,9 +66,15 @@ export default function EditSpecCategoryPage() {
         description: category.description,
       }
 
+      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null
+      const headers: HeadersInit = { 'Content-Type': 'application/json' }
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+      }
+
       const res = await fetch(`/api/admin/spec-categories/${categoryId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(payload),
         credentials: 'include'
       })

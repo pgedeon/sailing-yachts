@@ -7,18 +7,18 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: 1, // Use single worker to avoid overloading production
   reporter: 'list',
-  use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'https://sailing-yachts.vercel.app',
-    trace: 'on-first-retry',
-    screenshot: 'on',
-    headless: true,
-    actionTimeout: 15000,
-    navigationTimeout: 30000,
-  },
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: process.env.PLAYWRIGHT_BASE_URL || 'https://sailing-yachts.vercel.app',
+        trace: 'on-first-retry',
+        screenshot: 'only-on-failure',
+        headless: true,
+        actionTimeout: 15000,
+        navigationTimeout: 30000,
+      },
     },
   ],
 });

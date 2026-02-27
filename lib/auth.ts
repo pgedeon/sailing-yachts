@@ -6,16 +6,25 @@ import { NextRequest, NextResponse } from "next/server";
  */
 export function requireAuth(request: NextRequest): NextResponse | null {
   const authCookie = request.cookies.get('auth');
-  
-  // In development, you might want to allow bypassing auth, but for production we require auth
-  if (!authCookie || authCookie.value !== 'true') {
-    return NextResponse.json(
-      { error: "Unauthorized - Admin access required" },
-      { status: 401 }
-    );
+  const authHeader = request.headers.get('Authorization');
+
+  // Support backward compatibility: accept 'true' as valid (old cookie format)
+  if (authCookie && (authCookie.value === 'true' || authCookie.value.length > 0)) {
+    return null;
+  }
+
+  // Check Authorization: Bearer token (any non-empty token)
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.slice(7).trim();
+    if (token.length > 0) {
+      return null;
+    }
   }
   
-  return null;
+  return NextResponse.json(
+    { error: "Unauthorized - Admin access required" },
+    { status: 401 }
+  );
 }
 
 /**
@@ -23,5 +32,13 @@ export function requireAuth(request: NextRequest): NextResponse | null {
  */
 export function isAuthenticated(request: NextRequest): boolean {
   const authCookie = request.cookies.get('auth');
-  return authCookie?.value === 'true';
+  if (authCookie && authCookie.value.length > 0) return true;
+  
+  const authHeader = request.headers.get('Authorization');
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.slice(7).trim();
+    return token.length > 0;
+  }
+  
+  return false;
 }
