@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     // Set the auth cookie with the token, readable by JS
     const response = NextResponse.redirect(new URL('/admin', request.url))
     response.cookies.set('auth', token, {
-      httpOnly: false, // Accessible to client-side JavaScript
+      httpOnly: true, // Not accessible to JavaScript - more secure
       secure: process.env.NODE_ENV === 'production',
       maxAge: 3600, // 1 hour
       path: '/',

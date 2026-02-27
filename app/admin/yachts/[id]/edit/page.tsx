@@ -62,12 +62,8 @@ export default function EditYachtPage() {
   async function fetchYacht() {
     try {
       setLoading(true)
-      const token = getAuthToken()
-      const headers: HeadersInit = {}
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-      const res = await fetch(`/api/admin/yachts/${yachtId}`, { headers, credentials: 'include' })
+      // Cookie is automatically sent with credentials: 'include'
+      const res = await fetch(`/api/admin/yachts/${yachtId}`, { credentials: 'include' })
       if (!res.ok) {
         throw new Error('Yacht not found')
       }
@@ -78,17 +74,6 @@ export default function EditYachtPage() {
     } finally {
       setLoading(false)
     }
-  }
-
-  // Helper to get auth token from localStorage or cookie
-  function getAuthToken(): string | null {
-    if (typeof window === 'undefined') return null
-    // Try localStorage first
-    const token = localStorage.getItem('authToken')
-    if (token) return token
-    // Fallback to reading cookie directly
-    const match = document.cookie.match(/(?:^|; )auth=([^;]+)/)
-    return match ? decodeURIComponent(match[1]) : null
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -125,15 +110,9 @@ export default function EditYachtPage() {
         description: yacht.description,
       }
 
-      const token = getAuthToken()
-      const headers: HeadersInit = { 'Content-Type': 'application/json' }
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
       const res = await fetch(`/api/admin/yachts/${yachtId}`, {
         method: 'PUT',
-        headers,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
         credentials: 'include'
       })

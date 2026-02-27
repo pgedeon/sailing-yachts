@@ -31,12 +31,7 @@ export default function EditSpecCategoryPage() {
   async function fetchCategory() {
     try {
       setLoading(true)
-      const token = getAuthToken()
-      const headers: HeadersInit = {}
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-      const res = await fetch(`/api/admin/spec-categories/${categoryId}`, { headers, credentials: 'include' })
+      const res = await fetch(`/api/admin/spec-categories/${categoryId}`, { credentials: 'include' })
       if (!res.ok) {
         throw new Error('Category not found')
       }
@@ -47,17 +42,6 @@ export default function EditSpecCategoryPage() {
     } finally {
       setLoading(false)
     }
-  }
-
-  // Helper to get auth token from localStorage or cookie
-  function getAuthToken(): string | null {
-    if (typeof window === 'undefined') return null
-    // Try localStorage first
-    const token = localStorage.getItem('authToken')
-    if (token) return token
-    // Fallback to reading cookie directly
-    const match = document.cookie.match(/(?:^|; )auth=([^;]+)/)
-    return match ? decodeURIComponent(match[1]) : null
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -77,15 +61,9 @@ export default function EditSpecCategoryPage() {
         description: category.description,
       }
 
-      const token = getAuthToken()
-      const headers: HeadersInit = { 'Content-Type': 'application/json' }
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
-
       const res = await fetch(`/api/admin/spec-categories/${categoryId}`, {
         method: 'PUT',
-        headers,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
         credentials: 'include'
       })
