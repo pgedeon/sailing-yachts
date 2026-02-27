@@ -31,7 +31,7 @@ export default function EditManufacturerPage() {
   async function fetchManufacturer() {
     try {
       setLoading(true)
-      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null
+      const token = getAuthToken()
       const headers: HeadersInit = {}
       if (token) {
         headers['Authorization'] = `Bearer ${token}`
@@ -47,6 +47,17 @@ export default function EditManufacturerPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  // Helper to get auth token from localStorage or cookie
+  function getAuthToken(): string | null {
+    if (typeof window === 'undefined') return null
+    // Try localStorage first
+    const token = localStorage.getItem('authToken')
+    if (token) return token
+    // Fallback to reading cookie directly
+    const match = document.cookie.match(/(?:^|; )auth=([^;]+)/)
+    return match ? decodeURIComponent(match[1]) : null
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -66,7 +77,7 @@ export default function EditManufacturerPage() {
         logoUrl: manufacturer.logoUrl,
       }
 
-      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null
+      const token = getAuthToken()
       const headers: HeadersInit = { 'Content-Type': 'application/json' }
       if (token) {
         headers['Authorization'] = `Bearer ${token}`
