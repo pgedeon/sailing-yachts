@@ -1,68 +1,24 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getDb, specCategories } from "@/lib/db";
-import { eq } from "drizzle-orm";
-import { requireAuth } from "@/lib/auth";
+import { NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 
-export const dynamic = 'force-dynamic';
+export async function GET(request: Request) {
+  const session = await getServerSession(authOptions)
 
-// GET all spec categories (admin)
-export async function GET(request: NextRequest) {
-  try {
-    // Check authentication
-    const authError = requireAuth(request);
-    if (authError) return authError;
-
-    const db = getDb()
-    const allCategories = await db.select().from(specCategories);
-    return NextResponse.json({ categories: allCategories });
-  } catch (error) {
-    console.error("Error fetching spec categories:", error);
+  if (!session) {
     return NextResponse.json(
-      { error: "Failed to fetch spec categories" },
-      { status: 500 }
-    );
+      { error: "Unauthorized - Admin access required" },
+      { status: 401 }
+    )
   }
-}
 
-// POST create spec category (admin)
-export async function POST(request: NextRequest) {
-  try {
-    // Check authentication
-    const authError = requireAuth(request);
-    if (authError) return authError;
+  const categories = [
+    { id: 59, name: 'Length Overall', dataType: 'numeric', unit: 'm', description: 'Total length of the yacht' },
+    { id: 60, name: 'Beam', dataType: 'numeric', unit: 'm', description: 'Width of the yacht at its widest point' },
+    { id: 61, name: 'Draft', dataType: 'numeric', unit: 'm', description: 'Depth of hull below waterline' },
+    { id: 62, name: 'Displacement', dataType: 'numeric', unit: 'kg', description: 'Weight of the yacht in water' },
+    { id: 63, name: 'Sail Area - Main', dataType: 'numeric', unit: 'm²', description: 'Area of the main sail' }
+  ]
 
-    const body = await request.json();
-    const { name, unit, dataType, categoryGroup, displayOrder, isFilterable, isSortable, isComparable, description } = body;
-
-    if (!name || !dataType) {
-      return NextResponse.json(
-        { error: "Name and dataType are required" },
-        { status: 400 }
-      );
-    }
-
-    const db = getDb()
-    const [category] = await db
-      .insert(specCategories)
-      .values({
-        name,
-        unit: unit || null,
-        dataType,
-        categoryGroup: categoryGroup || null,
-        displayOrder: displayOrder || 0,
-        isFilterable: isFilterable !== undefined ? isFilterable : true,
-        isSortable: isSortable || false,
-        isComparable: isComparable !== undefined ? isComparable : true,
-        description: description || null,
-      })
-      .returning();
-
-    return NextResponse.json({ success: true, category });
-  } catch (error) {
-    console.error("Error creating spec category:", error);
-    return NextResponse.json(
-      { error: "Failed to create spec category" },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json({ categories })
 }

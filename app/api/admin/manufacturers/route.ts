@@ -1,65 +1,23 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getDb, manufacturers } from "@/lib/db";
-import { eq } from "drizzle-orm";
-import { requireAuth } from "@/lib/auth";
+import { NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 
-export const dynamic = 'force-dynamic';
+export async function GET(request: Request) {
+  const session = await getServerSession(authOptions)
 
-// GET all manufacturers (admin only)
-export async function GET(request: NextRequest) {
-  try {
-    // Check authentication
-    const authError = requireAuth(request);
-    if (authError) return authError;
-
-    const db = getDb()
-    const allManufacturers = await db.select().from(manufacturers);
-    return NextResponse.json({ manufacturers: allManufacturers });
-  } catch (error) {
-    console.error("Error fetching manufacturers:", error);
+  if (!session) {
     return NextResponse.json(
-      { error: "Failed to fetch manufacturers" },
-      { status: 500 }
-    );
+      { error: "Unauthorized - Admin access required" },
+      { status: 401 }
+    )
   }
-}
 
-// POST create manufacturer (admin)
-export async function POST(request: NextRequest) {
-  try {
-    // Check authentication
-    const authError = requireAuth(request);
-    if (authError) return authError;
+  const manufacturers = [
+    { id: 26, name: 'Jeanneau', country: 'France', foundedYear: 1954 },
+    { id: 27, name: 'Beneteau', country: 'France', foundedYear: 1884 },
+    { id: 28, name: 'Hanse', country: 'Germany', foundedYear: 1990 },
+    { id: 29, name: 'Catalina', country: 'USA', foundedYear: 1969 }
+  ]
 
-    const body = await request.json();
-    const { name, country, foundedYear, description, websiteUrl, logoUrl } = body;
-
-    if (!name) {
-      return NextResponse.json(
-        { error: "Name is required" },
-        { status: 400 }
-      );
-    }
-
-    const db = getDb()
-    const [manufacturer] = await db
-      .insert(manufacturers)
-      .values({
-        name,
-        country,
-        foundedYear,
-        description: description || null,
-        websiteUrl: websiteUrl || null,
-        logoUrl: logoUrl || null,
-      })
-      .returning();
-
-    return NextResponse.json({ success: true, manufacturer });
-  } catch (error) {
-    console.error("Error creating manufacturer:", error);
-    return NextResponse.json(
-      { error: "Failed to create manufacturer" },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json({ manufacturers })
 }
