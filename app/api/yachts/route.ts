@@ -191,6 +191,19 @@ export async function GET(request: NextRequest) {
     const countResult = await countQuery;
     const total = Number(countResult[0]?.count || 0);
 
+    // DEBUG: capture state before pagination
+    let debugInfo: any = undefined;
+    if (debug) {
+      // Re-run the base filtered query (no limit/offset) to see what it returns
+      const baseRows = await query; // Note: query still has all filters applied but no order/limit
+      debugInfo = {
+        totalFromCount: total,
+        baseRowsCount: baseRows.length,
+        baseIds: (baseRows as any[]).map((r: any) => r.yacht.id),
+        baseSlugs: (baseRows as any[]).map((r: any) => r.yacht.slug),
+      };
+    }
+
     let sortField: any = yachtModels[sortBy as keyof typeof yachtModels];
     if (!sortField) {
       const cat = await db
@@ -275,13 +288,17 @@ export async function GET(request: NextRequest) {
       }),
     );
 
-    return NextResponse.json({
+    const responseBody: any = {
       yachts,
       total,
       page,
       limit,
       totalPages: Math.ceil(total / limit),
-    });
+    };
+    if (debugInfo) {
+      responseBody.debug = debugInfo;
+    }
+    return NextResponse.json(responseBody);
   } catch (error) {
     console.error("Error fetching yachts:", error);
     return NextResponse.json(
