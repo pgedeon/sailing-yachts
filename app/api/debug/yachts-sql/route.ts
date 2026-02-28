@@ -19,5 +19,9 @@ export async function GET() {
   // @ts-ignore – toSQL is available but TS may not see it
   const sql = (query as any).toSQL?.({ dialect: 'postgresql' }) || 'Could not serialize';
 
-  return NextResponse.json({ sql });
+  // Execute the query to see actual results
+  const results = await query;
+  const ids = results.map((r: any) => r.yacht.id);
+
+  return NextResponse.json({ sql, count: results.length, ids });
 }
