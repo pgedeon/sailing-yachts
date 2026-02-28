@@ -25,8 +25,7 @@ export async function POST(request: Request) {
       secure: process.env.NODE_ENV === 'production',
       maxAge: 3600,
       path: '/',
-      sameSite: 'lax',
-      domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined,
+      sameSite: 'lax'
     })
     return response
   }
