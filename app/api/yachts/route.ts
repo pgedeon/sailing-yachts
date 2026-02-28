@@ -32,6 +32,9 @@ export async function GET(request: NextRequest) {
     const filtersRaw = searchParams.get("filters");
     const filters = filtersRaw ? JSON.parse(filtersRaw) : {};
 
+    // DEBUG: Log the incoming filters
+    console.log('[DEBUG] /api/yachts filters:', filters);
+
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "20");
     const offset = (page - 1) * limit;
@@ -164,6 +167,8 @@ export async function GET(request: NextRequest) {
       .select({ count: count() })
       .from((query as any).as("count_subquery"));
     const total = Number(countResult[0]?.count || 0);
+    // DEBUG: Log the total count from the query
+    console.log('[DEBUG] total count from query:', total);
 
     let sortField: any = yachtModels[sortBy as keyof typeof yachtModels];
     if (!sortField) {
