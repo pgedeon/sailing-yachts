@@ -311,6 +311,7 @@ export async function GET(request: NextRequest) {
     );
 
     const responseBody: any = {
+      test: 'hello-world-123',
       yachts,
       total,
       page,
