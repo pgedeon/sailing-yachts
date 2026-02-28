@@ -11,6 +11,8 @@ export type Manufacturer = {
   description?: string
 }
 
+console.log('Mock DB module loaded')
+
 export type Yacht = {
   id: number
   modelName: string
@@ -54,6 +56,8 @@ let manufacturers: Manufacturer[] = [
   { id: 28, name: 'Hanse', country: 'Germany', foundedYear: 1990 },
   { id: 29, name: 'Catalina', country: 'USA', foundedYear: 1969 }
 ]
+
+console.log('Mock DB: manufacturers seeded', manufacturers.length)
 
 let yachts: Yacht[] = [
   {
@@ -198,6 +202,8 @@ export function createSpecCategory(data: Partial<SpecCategory>) {
   specCategories.push(category)
   return category
 }
+
+console.log('Mock DB: specCategories seeded', specCategories.length)
 
 export function deleteSpecCategory(id: number) {
   const index = specCategories.findIndex(c => c.id === id)
