@@ -13,7 +13,7 @@ function mapYacht(row: any) {
     draft: row.draft ?? undefined,
     displacement: row.displacement ?? undefined,
     ballast: row.ballast ?? undefined,
-    sailAreaMain: row.main_sail_area ?? undefined,
+    sailAreaMain: row.sail_area_main ?? undefined,
     rigType: row.rig_type ?? undefined,
     keelType: row.keel_type ?? undefined,
     hullMaterial: row.hull_material ?? undefined,
@@ -54,7 +54,7 @@ export async function GET(request: Request) {
         y.draft,
         y.displacement,
         y.ballast,
-        y.main_sail_area,
+        y.sail_area_main,
         y.rig_type,
         y.keel_type,
         y.hull_material,
@@ -109,7 +109,7 @@ export async function POST(request: Request) {
           draft,
           displacement,
           ballast,
-          main_sail_area,
+          sail_area_main,
           rig_type,
           keel_type,
           hull_material,
@@ -128,7 +128,7 @@ export async function POST(request: Request) {
           $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22
         )
         RETURNING id, model_name, manufacturer_id, year, length_overall, beam, draft,
-                  displacement, ballast, main_sail_area, rig_type, keel_type, hull_material,
+                  displacement, ballast, sail_area_main, rig_type, keel_type, hull_material,
                   cabins, berths, heads, max_occupancy, engine_hp, engine_type, fuel_capacity,
                   water_capacity, design_notes, description
       `,

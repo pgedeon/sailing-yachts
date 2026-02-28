@@ -87,7 +87,7 @@ export async function ensureSchema() {
             draft NUMERIC,
             displacement NUMERIC,
             ballast NUMERIC,
-            main_sail_area NUMERIC,
+            sail_area_main NUMERIC,
             rig_type TEXT,
             keel_type TEXT,
             hull_material TEXT,
