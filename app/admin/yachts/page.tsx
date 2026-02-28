@@ -1,7 +1,6 @@
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import * as db from '@/lib/mock-db'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,7 +14,20 @@ export default async function AdminYachtsPage() {
   let fetchError: string | null = null
   
   try {
-    yachts = db.getYachts()
+    const headersList = headers()
+    const host = headersList.get('x-forwarded-host') ?? headersList.get('host')
+    const proto = headersList.get('x-forwarded-proto') ?? 'http'
+    const baseUrl = host ? `${proto}://${host}` : 'http://localhost:3000'
+    const res = await fetch(`${baseUrl}/api/admin/yachts`, {
+      cache: 'no-store',
+      headers: { cookie: headersList.get('cookie') ?? '' },
+    })
+    if (!res.ok) {
+      const errorBody = await res.json().catch(() => null)
+      throw new Error(errorBody?.error || 'Failed to fetch yachts')
+    }
+    const data = await res.json()
+    yachts = data.yachts ?? []
   } catch (error) {
     console.error('Failed to fetch yachts:', error)
     fetchError = error instanceof Error ? error.message : 'Unknown error'

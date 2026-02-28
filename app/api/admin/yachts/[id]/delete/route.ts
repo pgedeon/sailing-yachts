@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import * as db from '@/lib/mock-db'
+import { ensureSchema, pool } from '@/lib/db'
+
+function parseId(id: string) {
+  const value = Number(id)
+  return Number.isFinite(value) ? value : null
+}
 
 export async function POST(
   request: Request,
@@ -17,11 +22,23 @@ export async function POST(
   }
 
   const { id } = await params
-  const deleted = db.deleteYacht(Number(id))
-
-  if (!deleted) {
-    return NextResponse.json({ error: 'Yacht not found' }, { status: 404 })
+  const yachtId = parseId(id)
+  if (!yachtId) {
+    return NextResponse.json({ error: 'Invalid yacht id' }, { status: 400 })
   }
 
-  return NextResponse.redirect(new URL('/admin/yachts', request.url))
+  try {
+    await ensureSchema()
+    const result = await pool.query('DELETE FROM yachts WHERE id = $1', [yachtId])
+    if (result.rowCount === 0) {
+      return NextResponse.json({ error: 'Yacht not found' }, { status: 404 })
+    }
+    return NextResponse.redirect(new URL('/admin/yachts', request.url))
+  } catch (error) {
+    console.error('Failed to delete yacht:', error)
+    return NextResponse.json(
+      { error: 'Failed to delete yacht' },
+      { status: 500 }
+    )
+  }
 }

@@ -1,6 +1,18 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import * as db from '@/lib/mock-db'
+import { ensureSchema, pool } from '@/lib/db'
+
+function mapCategory(row: any) {
+  return {
+    id: row.id,
+    name: row.name,
+    dataType: row.data_type ?? undefined,
+    unit: row.unit ?? undefined,
+    description: row.description ?? undefined,
+    categoryGroup: row.grouping ?? undefined,
+    isFilterable: row.filterable ?? false,
+  }
+}
 
 export async function GET(request: Request) {
   const cookieStore = cookies()
@@ -13,8 +25,22 @@ export async function GET(request: Request) {
     )
   }
 
-  const categories = db.getSpecCategories()
-  return NextResponse.json({ categories })
+  try {
+    await ensureSchema()
+    const result = await pool.query(`
+      SELECT id, name, data_type, unit, description, grouping, filterable
+      FROM spec_categories
+      ORDER BY id
+    `)
+    const categories = result.rows.map(mapCategory)
+    return NextResponse.json({ categories })
+  } catch (error) {
+    console.error('Failed to fetch spec categories:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch spec categories' },
+      { status: 500 }
+    )
+  }
 }
 
 export async function POST(request: Request) {
@@ -28,7 +54,37 @@ export async function POST(request: Request) {
     )
   }
 
-  const body = await request.json()
-  const category = db.createSpecCategory(body)
-  return NextResponse.json({ category }, { status: 201 })
+  try {
+    await ensureSchema()
+    const body = await request.json()
+    const result = await pool.query(
+      `
+        INSERT INTO spec_categories (
+          name,
+          data_type,
+          unit,
+          description,
+          grouping,
+          filterable
+        ) VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING id, name, data_type, unit, description, grouping, filterable
+      `,
+      [
+        body.name ?? null,
+        body.dataType ?? null,
+        body.unit ?? null,
+        body.description ?? null,
+        body.categoryGroup ?? null,
+        body.isFilterable ?? false,
+      ]
+    )
+    const category = mapCategory(result.rows[0])
+    return NextResponse.json({ category }, { status: 201 })
+  } catch (error) {
+    console.error('Failed to create spec category:', error)
+    return NextResponse.json(
+      { error: 'Failed to create spec category' },
+      { status: 500 }
+    )
+  }
 }
