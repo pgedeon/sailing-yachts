@@ -1,6 +1,23 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import * as db from '@/lib/mock-db'
+import { ensureSchema, pool } from '@/lib/db'
+
+function mapManufacturer(row: any) {
+  return {
+    id: row.id,
+    name: row.name,
+    country: row.country ?? undefined,
+    foundedYear: row.founded_year ?? undefined,
+    websiteUrl: row.website_url ?? undefined,
+    logoUrl: row.logo_url ?? undefined,
+    description: row.description ?? undefined,
+  }
+}
+
+function parseId(id: string) {
+  const value = Number(id)
+  return Number.isFinite(value) ? value : null
+}
 
 export async function GET(
   request: Request,
@@ -17,13 +34,33 @@ export async function GET(
   }
 
   const { id } = await params
-  const manufacturer = db.getManufacturerById(Number(id))
-
-  if (!manufacturer) {
-    return NextResponse.json({ error: 'Manufacturer not found' }, { status: 404 })
+  const manufacturerId = parseId(id)
+  if (!manufacturerId) {
+    return NextResponse.json({ error: 'Invalid manufacturer id' }, { status: 400 })
   }
 
-  return NextResponse.json({ manufacturer })
+  try {
+    await ensureSchema()
+    const result = await pool.query(
+      `
+        SELECT id, name, country, founded_year, website_url, logo_url, description
+        FROM manufacturers
+        WHERE id = $1
+      `,
+      [manufacturerId]
+    )
+    if (result.rows.length === 0) {
+      return NextResponse.json({ error: 'Manufacturer not found' }, { status: 404 })
+    }
+    const manufacturer = mapManufacturer(result.rows[0])
+    return NextResponse.json({ manufacturer })
+  } catch (error) {
+    console.error('Failed to fetch manufacturer:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch manufacturer' },
+      { status: 500 }
+    )
+  }
 }
 
 export async function PUT(
@@ -41,15 +78,48 @@ export async function PUT(
   }
 
   const { id } = await params
-  const body = await request.json()
+  const manufacturerId = parseId(id)
+  if (!manufacturerId) {
+    return NextResponse.json({ error: 'Invalid manufacturer id' }, { status: 400 })
+  }
 
-  console.log(`Updating manufacturer ${id} with:`, body)
-
-  // In a real app, update the DB. Here we just echo back.
-  return NextResponse.json({
-    success: true,
-    manufacturer: { id: Number(id), ...body }
-  })
+  try {
+    await ensureSchema()
+    const body = await request.json()
+    const result = await pool.query(
+      `
+        UPDATE manufacturers
+        SET name = $1,
+            country = $2,
+            founded_year = $3,
+            website_url = $4,
+            logo_url = $5,
+            description = $6
+        WHERE id = $7
+        RETURNING id, name, country, founded_year, website_url, logo_url, description
+      `,
+      [
+        body.name ?? null,
+        body.country ?? null,
+        body.foundedYear ?? null,
+        body.websiteUrl ?? null,
+        body.logoUrl ?? null,
+        body.description ?? null,
+        manufacturerId,
+      ]
+    )
+    if (result.rows.length === 0) {
+      return NextResponse.json({ error: 'Manufacturer not found' }, { status: 404 })
+    }
+    const manufacturer = mapManufacturer(result.rows[0])
+    return NextResponse.json({ manufacturer })
+  } catch (error) {
+    console.error('Failed to update manufacturer:', error)
+    return NextResponse.json(
+      { error: 'Failed to update manufacturer' },
+      { status: 500 }
+    )
+  }
 }
 
 export async function DELETE(
@@ -67,12 +137,26 @@ export async function DELETE(
   }
 
   const { id } = await params
-  const deleted = db.deleteManufacturer(Number(id))
-
-  if (!deleted) {
-    return NextResponse.json({ error: 'Manufacturer not found' }, { status: 404 })
+  const manufacturerId = parseId(id)
+  if (!manufacturerId) {
+    return NextResponse.json({ error: 'Invalid manufacturer id' }, { status: 400 })
   }
 
-  // Respond with 204 No Content, then client can reload
-  return new NextResponse(null, { status: 204 })
+  try {
+    await ensureSchema()
+    const result = await pool.query(
+      'DELETE FROM manufacturers WHERE id = $1',
+      [manufacturerId]
+    )
+    if (result.rowCount === 0) {
+      return NextResponse.json({ error: 'Manufacturer not found' }, { status: 404 })
+    }
+    return new NextResponse(null, { status: 204 })
+  } catch (error) {
+    console.error('Failed to delete manufacturer:', error)
+    return NextResponse.json(
+      { error: 'Failed to delete manufacturer' },
+      { status: 500 }
+    )
+  }
 }

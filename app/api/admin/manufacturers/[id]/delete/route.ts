@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import * as db from '@/lib/mock-db'
+import { ensureSchema, pool } from '@/lib/db'
+
+function parseId(id: string) {
+  const value = Number(id)
+  return Number.isFinite(value) ? value : null
+}
 
 export async function POST(
   request: Request,
@@ -17,12 +22,26 @@ export async function POST(
   }
 
   const { id } = await params
-  const deleted = db.deleteManufacturer(Number(id))
-
-  if (!deleted) {
-    return NextResponse.json({ error: 'Manufacturer not found' }, { status: 404 })
+  const manufacturerId = parseId(id)
+  if (!manufacturerId) {
+    return NextResponse.json({ error: 'Invalid manufacturer id' }, { status: 400 })
   }
 
-  // Redirect back to the manufacturers list
-  return NextResponse.redirect(new URL('/admin/manufacturers', request.url))
+  try {
+    await ensureSchema()
+    const result = await pool.query(
+      'DELETE FROM manufacturers WHERE id = $1',
+      [manufacturerId]
+    )
+    if (result.rowCount === 0) {
+      return NextResponse.json({ error: 'Manufacturer not found' }, { status: 404 })
+    }
+    return NextResponse.redirect(new URL('/admin/manufacturers', request.url))
+  } catch (error) {
+    console.error('Failed to delete manufacturer:', error)
+    return NextResponse.json(
+      { error: 'Failed to delete manufacturer' },
+      { status: 500 }
+    )
+  }
 }
