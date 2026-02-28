@@ -55,21 +55,34 @@ export async function GET(request: NextRequest) {
         eq(yachtModels.manufacturerId, manufacturers.id),
       );
 
-    if (filters.manufacturers && filters.manufacturers.length > 0) {
-      query = query.where(
-        inArray(yachtModels.manufacturerId, filters.manufacturers),
+    // Parallel count query with same filters
+    let countQuery: any = db
+      .select({ count: count() })
+      .from(yachtModels)
+      .leftJoin(
+        manufacturers,
+        eq(yachtModels.manufacturerId, manufacturers.id),
       );
+
+    if (filters.manufacturers && filters.manufacturers.length > 0) {
+      const condition = inArray(yachtModels.manufacturerId, filters.manufacturers);
+      query = query.where(condition);
+      countQuery = countQuery.where(condition);
     }
     if (filters.rigType && filters.rigType.length > 0) {
-      query = query.where(inArray(yachtModels.rigType, filters.rigType));
+      const condition = inArray(yachtModels.rigType, filters.rigType);
+      query = query.where(condition);
+      countQuery = countQuery.where(condition);
     }
     if (filters.keelType && filters.keelType.length > 0) {
-      query = query.where(inArray(yachtModels.keelType, filters.keelType));
+      const condition = inArray(yachtModels.keelType, filters.keelType);
+      query = query.where(condition);
+      countQuery = countQuery.where(condition);
     }
     if (filters.hullMaterial && filters.hullMaterial.length > 0) {
-      query = query.where(
-        inArray(yachtModels.hullMaterial, filters.hullMaterial),
-      );
+      const condition = inArray(yachtModels.hullMaterial, filters.hullMaterial);
+      query = query.where(condition);
+      countQuery = countQuery.where(condition);
     }
 
     const fieldMap: Record<string, any> = {
@@ -93,10 +106,14 @@ export async function GET(request: NextRequest) {
       const min = filters[minKey];
       const max = filters[maxKey];
       if (min !== undefined) {
-        query = query.where(gte(column, parseFloat(min as any)));
+        const condition = gte(column, parseFloat(min as any));
+        query = query.where(condition);
+        countQuery = countQuery.where(condition);
       }
       if (max !== undefined) {
-        query = query.where(lte(column, parseFloat(max as any)));
+        const condition = lte(column, parseFloat(max as any));
+        query = query.where(condition);
+        countQuery = countQuery.where(condition);
       }
     }
 
@@ -119,21 +136,24 @@ export async function GET(request: NextRequest) {
         const aliasedSpec = (specValues as any).as(svAlias);
         const numericCol = sql`${sql.identifier(svAlias)}.value_numeric`;
 
-        query = query.leftJoin(
-          aliasedSpec,
-          and(
-            eq(yachtModels.id, sql`${sql.identifier(svAlias)}.yacht_model_id`),
-            eq(sql`${sql.identifier(svAlias)}.spec_category_id`, category.id),
-          ),
+        const joinCondition = and(
+          eq(yachtModels.id, sql`${sql.identifier(svAlias)}.yacht_model_id`),
+          eq(sql`${sql.identifier(svAlias)}.spec_category_id`, category.id),
         );
+        query = query.leftJoin(aliasedSpec, joinCondition);
+        countQuery = countQuery.leftJoin(aliasedSpec, joinCondition);
 
         const minVal = range?.min;
         const maxVal = range?.max;
         if (minVal !== undefined) {
-          query = query.where(gte(numericCol, parseFloat(minVal as any)));
+          const condition = gte(numericCol, parseFloat(minVal as any));
+          query = query.where(condition);
+          countQuery = countQuery.where(condition);
         }
         if (maxVal !== undefined) {
-          query = query.where(lte(numericCol, parseFloat(maxVal as any)));
+          const condition = lte(numericCol, parseFloat(maxVal as any));
+          query = query.where(condition);
+          countQuery = countQuery.where(condition);
         }
       }
     }
@@ -152,22 +172,23 @@ export async function GET(request: NextRequest) {
 
         const svAlias = `svText_${category.id}`;
         const aliasedSpec = (specValues as any).as(svAlias);
-        query = query.leftJoin(
-          aliasedSpec,
-          and(
-            eq(yachtModels.id, sql`${sql.identifier(svAlias)}.yacht_model_id`),
-            eq(sql`${sql.identifier(svAlias)}.spec_category_id`, category.id),
-          ),
+        const joinCondition = and(
+          eq(yachtModels.id, sql`${sql.identifier(svAlias)}.yacht_model_id`),
+          eq(sql`${sql.identifier(svAlias)}.spec_category_id`, category.id),
         );
+        query = query.leftJoin(aliasedSpec, joinCondition);
+        countQuery = countQuery.leftJoin(aliasedSpec, joinCondition);
         query = query.where(
+          inArray(sql`${sql.identifier(svAlias)}.value_text`, values),
+        );
+        countQuery = countQuery.where(
           inArray(sql`${sql.identifier(svAlias)}.value_text`, values),
         );
       }
     }
 
-    const countResult = await db
-      .select({ count: count() })
-      .from((query as any).as("count_subquery"));
+    // Execute count query (parallel)
+    const countResult = await countQuery;
     const total = Number(countResult[0]?.count || 0);
 
     let sortField: any = yachtModels[sortBy as keyof typeof yachtModels];
