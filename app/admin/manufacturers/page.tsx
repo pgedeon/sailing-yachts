@@ -1,11 +1,41 @@
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic' // Disable static generation
 
 export default async function AdminManufacturersPage() {
-  // Fetch manufacturers data
-  const response = await fetch('http://localhost:3000/api/manufacturers')
-  const manufacturers = await response.json()
+  // Authentication check - redirect to login if not authenticated
+  const cookieStore = cookies()
+  const authCookie = cookieStore.get('auth')?.value
+  if (!authCookie) {
+    redirect('/admin')
+  }
+
+  let manufacturers: any[] = []
+  let errorMsg: string | null = null
+
+  try {
+    // Use absolute URL for server-side fetch
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
+    const headers: HeadersInit = {}
+    if (authCookie) {
+      headers['Cookie'] = `auth=${authCookie}`
+    }
+
+    const response = await fetch(`${baseUrl}/api/admin/manufacturers`, {
+      headers,
+      next: { revalidate: 0 }
+    })
+    if (!response.ok) {
+      throw new Error(`Failed to fetch: ${response.status}`)
+    }
+    const data = await response.json()
+    manufacturers = data.manufacturers || []
+  } catch (error) {
+    console.error('Failed to fetch manufacturers:', error)
+    errorMsg = error instanceof Error ? error.message : 'Unknown error'
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -31,7 +61,12 @@ export default async function AdminManufacturersPage() {
             </Link>
           </div>
 
-          {manufacturers.length === 0 ? (
+          {errorMsg ? (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+              <strong className="font-bold">Error!</strong>
+              <span className="block sm:inline"> {errorMsg}</span>
+            </div>
+          ) : manufacturers.length === 0 ? (
             <p className="text-gray-500 text-center py-8">No manufacturers found.</p>
           ) : (
             <div className="overflow-x-auto">
@@ -51,6 +86,7 @@ export default async function AdminManufacturersPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
                         <Link
                           href={`/admin/manufacturers/${manufacturer.id}/edit`}
+                          prefetch={false}
                           className="text-blue-600 hover:text-blue-800 px-2 py-1 rounded text-xs bg-blue-50"
                         >
                           Edit

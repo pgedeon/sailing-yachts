@@ -29,5 +29,8 @@ export const db = new Proxy({}, {
   },
 }) as any;
 
+// Export getDb for direct usage in serverless functions where proxy may cause issues
+export { getDb };
+
 // Re-export all tables and schemas for direct imports
 export * from "../drizzle/schema";
