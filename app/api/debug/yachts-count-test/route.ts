@@ -26,13 +26,13 @@ export async function GET() {
 
   // Also fetch the rows from the same base query to see which IDs are included
   const rows = await query;
-  const ids = rows.map(r => r.yacht.id);
+  const ids = (rows as any[]).map((r: any) => r.yacht.id);
 
   return NextResponse.json({
     totalFromSubquery: total,
     fetchedRows: rows.length,
     ids,
-    slugs: rows.map(r => r.yacht.slug),
+    slugs: (rows as any[]).map((r: any) => r.yacht.slug),
     message: 'This replicates the count logic from /api/yachts'
   });
 }

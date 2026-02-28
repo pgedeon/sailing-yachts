@@ -17,10 +17,11 @@ export async function GET() {
       eq(yachtModels.manufacturerId, manufacturers.id)
     );
 
+  const rowsAny = rows as any[];
   return NextResponse.json({
     count: rows.length,
-    ids: rows.map(r => r.yacht.id),
-    slugs: rows.map(r => r.yacht.slug),
+    ids: rowsAny.map(r => r.yacht.id),
+    slugs: rowsAny.map(r => r.yacht.slug),
     totalRows: rows.length,
   });
 }
