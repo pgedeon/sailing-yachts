@@ -46,8 +46,30 @@ export async function GET(request: NextRequest) {
 
     let query: any = db
       .select({
-        yacht: yachtModels,
+        id: yachtModels.id,
+        modelName: yachtModels.modelName,
         manufacturer: manufacturers.name,
+        year: yachtModels.year,
+        slug: yachtModels.slug,
+        lengthOverall: yachtModels.lengthOverall,
+        beam: yachtModels.beam,
+        draft: yachtModels.draft,
+        displacement: yachtModels.displacement,
+        ballast: yachtModels.ballast,
+        sailAreaMain: yachtModels.sailAreaMain,
+        rigType: yachtModels.rigType,
+        keelType: yachtModels.keelType,
+        hullMaterial: yachtModels.hullMaterial,
+        cabins: yachtModels.cabins,
+        berths: yachtModels.berths,
+        heads: yachtModels.heads,
+        maxOccupancy: yachtModels.maxOccupancy,
+        engineHp: yachtModels.engineHp,
+        engineType: yachtModels.engineType,
+        fuelCapacity: yachtModels.fuelCapacity,
+        waterCapacity: yachtModels.waterCapacity,
+        designNotes: yachtModels.designNotes,
+        description: yachtModels.description,
       })
       .from(yachtModels)
       .leftJoin(
@@ -199,8 +221,8 @@ export async function GET(request: NextRequest) {
       debugInfo = {
         totalFromCount: total,
         baseRowsCount: baseRows.length,
-        baseIds: (baseRows as any[]).map((r: any) => r.yacht.id),
-        baseSlugs: (baseRows as any[]).map((r: any) => r.yacht.slug),
+        baseIds: (baseRows as any[]).map((r: any) => r.id),
+        baseSlugs: (baseRows as any[]).map((r: any) => r.slug),
       };
     }
 
@@ -238,7 +260,7 @@ export async function GET(request: NextRequest) {
 
     const results = await query;
     console.log('[DEBUG] total from count:', total, 'results rows:', results.length);
-    console.log('[DEBUG] yacht IDs:', results.map((r:any) => r.yacht.id));
+    console.log('[DEBUG] yacht IDs:', results.map((r:any) => r.id));
 
     const yachts = await Promise.all(
       results.map(async (r: any) => {
@@ -254,7 +276,7 @@ export async function GET(request: NextRequest) {
             specCategories,
             eq(specValues.specCategoryId, specCategories.id),
           )
-          .where(eq(specValues.yachtModelId, r.yacht.id));
+          .where(eq(specValues.yachtModelId, r.id));
 
         const specsDict: Record<
           string,
@@ -270,19 +292,19 @@ export async function GET(request: NextRequest) {
         }
 
         return {
-          id: r.yacht.id,
+          id: r.id,
           manufacturer: r.manufacturer,
-          modelName: r.yacht.modelName,
-          year: r.yacht.year,
-          slug: r.yacht.slug,
-          lengthOverall: r.yacht.lengthOverall,
-          beam: r.yacht.beam,
-          draft: r.yacht.draft,
-          displacement: r.yacht.displacement,
-          sailAreaMain: r.yacht.sailAreaMain,
-          rigType: r.yacht.rigType,
-          keelType: r.yacht.keelType,
-          hullMaterial: r.yacht.hullMaterial,
+          modelName: r.modelName,
+          year: r.year,
+          slug: r.slug,
+          lengthOverall: r.lengthOverall,
+          beam: r.beam,
+          draft: r.draft,
+          displacement: r.displacement,
+          sailAreaMain: r.sailAreaMain,
+          rigType: r.rigType,
+          keelType: r.keelType,
+          hullMaterial: r.hullMaterial,
           specs: specsDict,
         };
       }),
