@@ -91,7 +91,9 @@ export default async function AdminManufacturersPage() {
                         >
                           Edit
                         </Link>
-                        <button className="text-red-600 hover:text-red-800 px-2 py-1 rounded text-xs bg-red-50">Delete</button>
+                        <form action={`/api/admin/manufacturers/${manufacturer.id}/delete`} method="POST" style={{ display: 'inline' }} onSubmit={(e) => { if (!window.confirm('Are you sure you want to delete this manufacturer?')) e.preventDefault(); }}>
+                          <button type="submit" className="text-red-600 hover:text-red-800 px-2 py-1 rounded text-xs bg-red-50">Delete</button>
+                        </form>
                       </td>
                     </tr>
                   ))}

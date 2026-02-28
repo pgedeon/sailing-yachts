@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
+import * as db from '@/lib/mock-db'
 
 export async function GET(
   request: Request,
@@ -16,13 +17,7 @@ export async function GET(
   }
 
   const { id } = await params
-
-  // Find yacht by ID in mock data
-  const yacht = {
-    26: { id: 26, modelName: 'Oceanis 30.1', manufacturer: { id: 1, name: 'Jeanneau' }, year: 2023, lengthOverall: 9.11, beam: 3.19, draft: 1.83 },
-    27: { id: 27, modelName: 'Sun Odyssey 349', manufacturer: { id: 1, name: 'Jeanneau' }, year: 2022, lengthOverall: 10.49, beam: 3.83, draft: 1.95 },
-    28: { id: 28, modelName: 'Oceanis 38.1', manufacturer: { id: 1, name: 'Jeanneau' }, year: 2024, lengthOverall: 11.18, beam: 3.97, draft: 1.98 }
-  }[id]
+  const yacht = db.getYachtById(Number(id))
 
   if (!yacht) {
     return NextResponse.json({ error: 'Yacht not found' }, { status: 404 })
@@ -48,11 +43,35 @@ export async function PUT(
   const { id } = await params
   const body = await request.json()
 
-  // In a real app, update the database
   console.log(`Updating yacht ${id} with:`, body)
 
+  // In a real app, update the database
   return NextResponse.json({
     success: true,
-    yacht: { id, ...body }
+    yacht: { id: Number(id), ...body }
   })
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const cookieStore = cookies()
+  const authCookie = cookieStore.get('auth')?.value
+
+  if (!authCookie) {
+    return NextResponse.json(
+      { error: "Unauthorized - Admin access required" },
+      { status: 401 }
+    )
+  }
+
+  const { id } = await params
+  const deleted = db.deleteYacht(Number(id))
+
+  if (!deleted) {
+    return NextResponse.json({ error: 'Yacht not found' }, { status: 404 })
+  }
+
+  return new NextResponse(null, { status: 204 })
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
+import * as db from '@/lib/mock-db'
 
 export async function GET(
   request: Request,
@@ -16,13 +17,7 @@ export async function GET(
   }
 
   const { id } = await params
-
-  const manufacturer = {
-    26: { id: 26, name: 'Jeanneau', country: 'France', foundedYear: 1954 },
-    27: { id: 27, name: 'Beneteau', country: 'France', foundedYear: 1884 },
-    28: { id: 28, name: 'Hanse', country: 'Germany', foundedYear: 1990 },
-    29: { id: 29, name: 'Catalina', country: 'USA', foundedYear: 1969 }
-  }[id]
+  const manufacturer = db.getManufacturerById(Number(id))
 
   if (!manufacturer) {
     return NextResponse.json({ error: 'Manufacturer not found' }, { status: 404 })
@@ -50,8 +45,34 @@ export async function PUT(
 
   console.log(`Updating manufacturer ${id} with:`, body)
 
+  // In a real app, update the DB. Here we just echo back.
   return NextResponse.json({
     success: true,
-    manufacturer: { id, ...body }
+    manufacturer: { id: Number(id), ...body }
   })
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const cookieStore = cookies()
+  const authCookie = cookieStore.get('auth')?.value
+
+  if (!authCookie) {
+    return NextResponse.json(
+      { error: "Unauthorized - Admin access required" },
+      { status: 401 }
+    )
+  }
+
+  const { id } = await params
+  const deleted = db.deleteManufacturer(Number(id))
+
+  if (!deleted) {
+    return NextResponse.json({ error: 'Manufacturer not found' }, { status: 404 })
+  }
+
+  // Respond with 204 No Content, then client can reload
+  return new NextResponse(null, { status: 204 })
 }
