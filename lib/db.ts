@@ -110,8 +110,8 @@ export async function ensureSchema() {
             data_type TEXT,
             unit TEXT,
             description TEXT,
-            grouping TEXT,
-            filterable BOOLEAN
+            category_group TEXT,
+            is_filterable BOOLEAN DEFAULT true
           );
         `);
       } finally {

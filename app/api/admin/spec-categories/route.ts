@@ -9,8 +9,8 @@ function mapCategory(row: any) {
     dataType: row.data_type ?? undefined,
     unit: row.unit ?? undefined,
     description: row.description ?? undefined,
-    categoryGroup: row.grouping ?? undefined,
-    isFilterable: row.filterable ?? false,
+    categoryGroup: row.category_group ?? undefined,
+    isFilterable: row.is_filterable ?? false,
   }
 }
 
@@ -28,7 +28,7 @@ export async function GET(request: Request) {
   try {
     await ensureSchema()
     const result = await pool.query(`
-      SELECT id, name, data_type, unit, description, grouping, filterable
+      SELECT id, name, data_type, unit, description, category_group, is_filterable
       FROM spec_categories
       ORDER BY id
     `)
@@ -64,10 +64,10 @@ export async function POST(request: Request) {
           data_type,
           unit,
           description,
-          grouping,
-          filterable
+          category_group,
+          is_filterable
         ) VALUES ($1, $2, $3, $4, $5, $6)
-        RETURNING id, name, data_type, unit, description, grouping, filterable
+        RETURNING id, name, data_type, unit, description, category_group, is_filterable
       `,
       [
         body.name ?? null,
