@@ -203,6 +203,8 @@ export async function GET(request: NextRequest) {
     query = query.limit(limit).offset(offset);
 
     const results = await query;
+    console.log('[DEBUG] total from count:', total, 'results rows:', results.length);
+    console.log('[DEBUG] yacht IDs:', results.map((r:any) => r.yacht.id));
 
     const yachts = await Promise.all(
       results.map(async (r: any) => {
