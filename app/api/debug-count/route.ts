@@ -31,8 +31,8 @@ export async function GET() {
       )
       .orderBy(yachtModels.id);
 
-    const ids = rows.map(r => r.yacht.id);
-    const slugs = rows.map(r => r.yacht.slug);
+    const ids = rows.map((r: any) => r.yacht.id);
+    const slugs = rows.map((r: any) => r.yacht.slug);
 
     return NextResponse.json({
       totalCountFromSimpleQuery: total,
