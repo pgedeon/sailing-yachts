@@ -1,13 +1,12 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import * as db from '@/lib/mock-db'
 
 export const dynamic = 'force-dynamic' // Disable static generation
 
 export default async function AdminManufacturersPage() {
-  // Authentication check - redirect to login if not authenticated
-  const cookieStore = cookies()
-  const authCookie = cookieStore.get('auth')?.value
+  const authCookie = cookies().get('auth')?.value
   if (!authCookie) {
     redirect('/admin')
   }
@@ -16,22 +15,7 @@ export default async function AdminManufacturersPage() {
   let errorMsg: string | null = null
 
   try {
-    // Use absolute URL for server-side fetch
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
-    const headers: HeadersInit = {}
-    if (authCookie) {
-      headers['Cookie'] = `auth=${authCookie}`
-    }
-
-    const response = await fetch(`${baseUrl}/api/admin/manufacturers`, {
-      headers,
-      next: { revalidate: 0 }
-    })
-    if (!response.ok) {
-      throw new Error(`Failed to fetch: ${response.status}`)
-    }
-    const data = await response.json()
-    manufacturers = data.manufacturers || []
+    manufacturers = db.getManufacturers()
   } catch (error) {
     console.error('Failed to fetch manufacturers:', error)
     errorMsg = error instanceof Error ? error.message : 'Unknown error'

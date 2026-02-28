@@ -1,13 +1,12 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import * as db from '@/lib/mock-db'
 
 export const dynamic = 'force-dynamic'
 
 export default async function AdminYachtsPage() {
-  // Authentication check - redirect to login if not authenticated
-  const cookieStore = cookies()
-  const authCookie = cookieStore.get('auth')?.value
+  const authCookie = cookies().get('auth')?.value
   if (!authCookie) {
     redirect('/admin')
   }
@@ -16,20 +15,7 @@ export default async function AdminYachtsPage() {
   let fetchError: string | null = null
   
   try {
-    // Use absolute URL for server-side fetch
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sailing-yachts.vercel.app'
-    const response = await fetch(`${baseUrl}/api/yachts?limit=100`, {
-      next: { revalidate: 0 }
-    })
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('API response error:', response.status, errorText)
-      fetchError = `Failed to load yachts: ${response.status}`
-    } else {
-      const data = await response.json()
-      yachts = data.yachts || []
-      console.log('Loaded yachts:', yachts.length)
-    }
+    yachts = db.getYachts()
   } catch (error) {
     console.error('Failed to fetch yachts:', error)
     fetchError = error instanceof Error ? error.message : 'Unknown error'
