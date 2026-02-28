@@ -169,19 +169,6 @@ export async function GET(request: NextRequest) {
       .select({ count: count() })
       .from((query as any).as("count_subquery"));
     const total = Number(countResult[0]?.count || 0);
-    // DEBUG: Log the total count from the query
-    console.log('[DEBUG] total count from query:', total);
-
-    // If debug mode, add diagnostic info to the response
-    if (debug) {
-      (yachts as any)._debug = {
-        filters,
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      };
-    }
 
     let sortField: any = yachtModels[sortBy as keyof typeof yachtModels];
     if (!sortField) {
