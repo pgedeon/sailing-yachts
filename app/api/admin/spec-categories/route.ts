@@ -22,3 +22,31 @@ export async function GET(request: Request) {
 
   return NextResponse.json({ categories })
 }
+
+export async function POST(request: Request) {
+  const cookieStore = cookies()
+  const authCookie = cookieStore.get('auth')?.value
+
+  if (!authCookie) {
+    return NextResponse.json(
+      { error: "Unauthorized - Admin access required" },
+      { status: 401 }
+    )
+  }
+
+  const body = await request.json()
+
+  // Mock creation
+  const newId = Math.floor(Math.random() * 1000) + 200
+  const category = {
+    id: newId,
+    name: body.name,
+    dataType: body.dataType,
+    unit: body.unit,
+    description: body.description,
+    group: body.group,
+    filterable: body.filterable ?? false
+  }
+
+  return NextResponse.json({ category }, { status: 201 })
+}

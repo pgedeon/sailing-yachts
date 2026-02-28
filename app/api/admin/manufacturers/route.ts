@@ -21,3 +21,31 @@ export async function GET(request: Request) {
 
   return NextResponse.json({ manufacturers })
 }
+
+export async function POST(request: Request) {
+  const cookieStore = cookies()
+  const authCookie = cookieStore.get('auth')?.value
+
+  if (!authCookie) {
+    return NextResponse.json(
+      { error: "Unauthorized - Admin access required" },
+      { status: 401 }
+    )
+  }
+
+  const body = await request.json()
+
+  // Mock creation: generate a new ID and return the created manufacturer
+  const newId = Math.floor(Math.random() * 1000) + 30
+  const manufacturer = {
+    id: newId,
+    name: body.name,
+    country: body.country,
+    foundedYear: body.foundedYear,
+    websiteUrl: body.websiteUrl,
+    logoUrl: body.logoUrl,
+    description: body.description
+  }
+
+  return NextResponse.json({ manufacturer }, { status: 201 })
+}

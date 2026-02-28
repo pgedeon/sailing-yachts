@@ -45,3 +45,47 @@ export async function GET(request: Request) {
 
   return NextResponse.json({ yachts })
 }
+
+export async function POST(request: Request) {
+  const cookieStore = cookies()
+  const authCookie = cookieStore.get('auth')?.value
+
+  if (!authCookie) {
+    return NextResponse.json(
+      { error: "Unauthorized - Admin access required" },
+      { status: 401 }
+    )
+  }
+
+  const body = await request.json()
+
+  // Mock creation
+  const newId = Math.floor(Math.random() * 1000) + 100
+  const yacht = {
+    id: newId,
+    modelName: body.modelName,
+    manufacturer: body.manufacturer || { id: 0, name: '' },
+    year: body.year,
+    lengthOverall: body.lengthOverall,
+    beam: body.beam,
+    draft: body.draft,
+    displacement: body.displacement,
+    ballast: body.ballast,
+    mainSailArea: body.mainSailArea,
+    rigType: body.rigType,
+    keelType: body.keelType,
+    hullMaterial: body.hullMaterial,
+    cabins: body.cabins,
+    berths: body.berths,
+    heads: body.heads,
+    maxOccupancy: body.maxOccupancy,
+    engineHP: body.engineHP,
+    engineType: body.engineType,
+    fuelCapacity: body.fuelCapacity,
+    waterCapacity: body.waterCapacity,
+    designNotes: body.designNotes,
+    description: body.description
+  }
+
+  return NextResponse.json({ yacht }, { status: 201 })
+}
