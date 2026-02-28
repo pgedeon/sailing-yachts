@@ -92,7 +92,7 @@ export default async function AdminYachtsPage() {
                           >
                             Edit
                           </Link>
-                          <form action={`/api/admin/yachts/${yacht.id}/delete`} method="POST" style={{ display: 'inline' }} onSubmit={(e) => { if (!window.confirm('Are you sure you want to delete this yacht?')) e.preventDefault(); }}>
+                          <form action={`/api/admin/yachts/${yacht.id}/delete`} method="POST" style={{ display: 'inline' }}>
                             <button type="submit" className="text-red-600 hover:text-red-800 px-2 py-1 rounded text-xs bg-red-50">Delete</button>
                           </form>
                         </td>
