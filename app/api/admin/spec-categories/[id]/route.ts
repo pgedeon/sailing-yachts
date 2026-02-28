@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { cookies } from 'next/headers'
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getServerSession(authOptions)
+  const cookieStore = cookies()
+  const authCookie = cookieStore.get('auth')?.value
 
-  if (!session) {
+  if (!authCookie) {
     return NextResponse.json(
       { error: "Unauthorized - Admin access required" },
       { status: 401 }
@@ -36,9 +36,10 @@ export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getServerSession(authOptions)
+  const cookieStore = cookies()
+  const authCookie = cookieStore.get('auth')?.value
 
-  if (!session) {
+  if (!authCookie) {
     return NextResponse.json(
       { error: "Unauthorized - Admin access required" },
       { status: 401 }
