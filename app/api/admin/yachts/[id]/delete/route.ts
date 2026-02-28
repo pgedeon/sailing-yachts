@@ -29,7 +29,7 @@ export async function POST(
 
   try {
     await ensureSchema()
-    const result = await pool.query('DELETE FROM yachts WHERE id = $1', [yachtId])
+    const result = await pool.query('DELETE FROM yacht_models WHERE id = $1', [yachtId])
     if (result.rowCount === 0) {
       return NextResponse.json({ error: 'Yacht not found' }, { status: 404 })
     }

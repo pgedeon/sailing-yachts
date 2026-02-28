@@ -77,7 +77,7 @@ export async function ensureSchema() {
           );
         `);
         await client.query(`
-          CREATE TABLE IF NOT EXISTS yachts (
+          CREATE TABLE IF NOT EXISTS yacht_models (
             id SERIAL PRIMARY KEY,
             model_name TEXT,
             manufacturer_id INT REFERENCES manufacturers(id) ON DELETE SET NULL,

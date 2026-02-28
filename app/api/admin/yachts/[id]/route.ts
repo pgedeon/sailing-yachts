@@ -65,7 +65,7 @@ async function fetchYachtById(yachtId: number) {
         y.design_notes,
         y.description,
         m.name AS manufacturer_name
-      FROM yachts y
+      FROM yacht_models y
       LEFT JOIN manufacturers m ON y.manufacturer_id = m.id
       WHERE y.id = $1
     `,
@@ -136,7 +136,7 @@ export async function PUT(
     const body = await request.json()
     const updateResult = await pool.query(
       `
-        UPDATE yachts
+        UPDATE yacht_models
         SET model_name = $1,
             manufacturer_id = $2,
             year = $3,
@@ -224,7 +224,7 @@ export async function DELETE(
 
   try {
     await ensureSchema()
-    const result = await pool.query('DELETE FROM yachts WHERE id = $1', [yachtId])
+    const result = await pool.query('DELETE FROM yacht_models WHERE id = $1', [yachtId])
     if (result.rowCount === 0) {
       return NextResponse.json({ error: 'Yacht not found' }, { status: 404 })
     }

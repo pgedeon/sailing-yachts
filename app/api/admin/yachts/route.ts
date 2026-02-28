@@ -69,7 +69,7 @@ export async function GET(request: Request) {
         y.design_notes,
         y.description,
         m.name AS manufacturer_name
-      FROM yachts y
+      FROM yacht_models y
       LEFT JOIN manufacturers m ON y.manufacturer_id = m.id
       ORDER BY y.id
     `)
@@ -100,7 +100,7 @@ export async function POST(request: Request) {
     const body = await request.json()
     const result = await pool.query(
       `
-        INSERT INTO yachts (
+        INSERT INTO yacht_models (
           model_name,
           manufacturer_id,
           year,
