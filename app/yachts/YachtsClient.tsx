@@ -780,19 +780,19 @@ export default function YachtsClient({
                           {yacht.lengthOverall && (
                             <div>
                               <span className="text-muted-foreground">LOA:</span>{" "}
-                              {yacht.lengthOverall}m
+                              {Number(yacht.lengthOverall).toFixed(2)}m
                             </div>
                           )}
                           {yacht.beam && (
                             <div>
                               <span className="text-muted-foreground">Beam:</span>{" "}
-                              {yacht.beam}m
+                              {Number(yacht.beam).toFixed(2)}m
                             </div>
                           )}
                           {yacht.draft && (
                             <div>
                               <span className="text-muted-foreground">Draft:</span>{" "}
-                              {yacht.draft}m
+                              {Number(yacht.draft).toFixed(2)}m
                             </div>
                           )}
                           {yacht.displacement && (
@@ -804,7 +804,7 @@ export default function YachtsClient({
                           {yacht.sailAreaMain && (
                             <div>
                               <span className="text-muted-foreground">Sail:</span>{" "}
-                              {yacht.sailAreaMain.toFixed(1)}m²
+                              {Number(yacht.sailAreaMain).toFixed(1)}m²
                             </div>
                           )}
                           {yacht.rigType && (
