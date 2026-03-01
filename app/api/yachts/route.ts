@@ -26,7 +26,10 @@ export async function GET(request: Request) {
       );
 
     // Apply filters (if any)
-    query = query.distinct();
+    // Currently no filters, but structure supports:
+    // - manufacturer filter
+    // - spec numeric ranges
+    // - full-text search
 
     // Get total count BEFORE pagination
     const countResult = await db
