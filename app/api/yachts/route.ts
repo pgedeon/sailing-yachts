@@ -26,16 +26,51 @@ export async function GET(request: Request) {
         eq(yachtModels.manufacturerId, manufacturers.id)
       );
 
-    // Apply filters (if any)
-    // Currently no filters, but structure supports:
-    // - manufacturer filter
-    // - spec numeric ranges
-    // - full-text search
+    // Parse and apply filters
+    let filters: any = {};
+    try {
+      const filtersParam = searchParams.get('filters');
+      if (filtersParam) {
+        filters = JSON.parse(filtersParam);
+      }
+    } catch (e) {
+      console.warn('Invalid filters parameter:', e);
+    }
 
-    // Get total count BEFORE pagination
+    const conditions: any[] = [];
+
+    // Manufacturer filter: expects array of IDs
+    if (filters.manufacturers && Array.isArray(filters.manufacturers) && filters.manufacturers.length > 0) {
+      conditions.push(sql`${yachtModels.manufacturerId} = ANY(${filters.manufacturers})`);
+    }
+
+    // String equality filters
+    if (filters.rigType) conditions.push(sql`${yachtModels.rigType} = ${filters.rigType}`);
+    if (filters.keelType) conditions.push(sql`${yachtModels.keelType} = ${filters.keelType}`);
+    if (filters.hullMaterial) conditions.push(sql`${yachtModels.hullMaterial} = ${filters.hullMaterial}`);
+
+    // Numeric ranges with inclusive bounds
+    if (filters.lengthOverall_min != null) conditions.push(sql`${yachtModels.lengthOverall} >= ${filters.lengthOverall_min}`);
+    if (filters.lengthOverall_max != null) conditions.push(sql`${yachtModels.lengthOverall} <= ${filters.lengthOverall_max}`);
+    if (filters.beam_min != null) conditions.push(sql`${yachtModels.beam} >= ${filters.beam_min}`);
+    if (filters.beam_max != null) conditions.push(sql`${yachtModels.beam} <= ${filters.beam_max}`);
+    if (filters.draft_min != null) conditions.push(sql`${yachtModels.draft} >= ${filters.draft_min}`);
+    if (filters.draft_max != null) conditions.push(sql`${yachtModels.draft} <= ${filters.draft_max}`);
+    if (filters.displacement_min != null) conditions.push(sql`${yachtModels.displacement} >= ${filters.displacement_min}`);
+    if (filters.displacement_max != null) conditions.push(sql`${yachtModels.displacement} <= ${filters.displacement_max}`);
+    if (filters.sailAreaMain_min != null) conditions.push(sql`${yachtModels.sailAreaMain} >= ${filters.sailAreaMain_min}`);
+    if (filters.sailAreaMain_max != null) conditions.push(sql`${yachtModels.sailAreaMain} <= ${filters.sailAreaMain_max}`);
+
+    // Apply all conditions with AND
+    if (conditions.length > 0) {
+      query = query.where(sql`${conditions[0]}${conditions.slice(1).map(c => sql` AND ${c}`)}`);
+    }
+
+    // Get total count BEFORE pagination and after filters applied
+    const countQuery = query.clone();
     const countResult = await db
       .select({ count: count() })
-      .from(query.as('count_subquery'));
+      .from(countQuery.as('count_subquery'));
     const total = Number(countResult[0]?.count || 0);
 
     // Apply sorting
