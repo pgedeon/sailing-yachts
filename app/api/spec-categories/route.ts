@@ -8,7 +8,9 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const categories = await db.select().from(specCategories);
-    return NextResponse.json({ categories });
+    const response = NextResponse.json({ categories });
+    response.headers.set("Cache-Control", "no-store, max-age=0, must-revalidate");
+    return response;
   } catch (error) {
     console.error("Error fetching spec categories:", error);
     return NextResponse.json(

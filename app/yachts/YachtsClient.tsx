@@ -95,7 +95,7 @@ export default function YachtsClient({
     if (initialCategories.length === 0) {
       async function loadCategories() {
         try {
-          const res = await fetch("/api/spec-categories");
+          const res = await fetch("/api/spec-categories", { cache: 'no-store' });
           if (!res.ok) throw new Error("Failed to fetch spec categories");
           const data = await res.json();
           setCategories(data.categories || []);
@@ -112,7 +112,7 @@ export default function YachtsClient({
     if (initialManufacturers.length === 0) {
       async function loadManufacturers() {
         try {
-          const res = await fetch("/api/manufacturers");
+          const res = await fetch("/api/manufacturers", { cache: 'no-store' });
           if (!res.ok) throw new Error("Failed to fetch manufacturers");
           const data = await res.json();
           setManufacturers(data.manufacturers || []);
@@ -215,7 +215,7 @@ export default function YachtsClient({
       const query = buildQuery();
       const url = new URL("/api/yachts", window.location.origin);
       Object.entries(query).forEach(([k, v]) => url.searchParams.append(k, v));
-      const res = await fetch(url.toString());
+      const res = await fetch(url.toString(), { cache: 'no-store' });
       if (!res.ok) throw new Error("Failed to fetch yachts");
       const data = await res.json();
       setYachts(data.yachts || []);

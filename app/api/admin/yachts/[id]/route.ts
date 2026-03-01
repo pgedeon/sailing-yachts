@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { ensureSchema, pool } from '@/lib/db'
+import { revalidateTag } from 'next/cache'
+
+export const dynamic = 'force-dynamic';
 
 function parseId(id: string) {
   const value = Number(id)
@@ -15,6 +18,7 @@ function mapYachtDetail(row: any) {
       ? { id: row.manufacturer_id, name: row.manufacturer_name ?? '' }
       : undefined,
     year: row.year ?? undefined,
+    slug: row.slug ?? undefined,
     lengthOverall: row.length_overall ?? undefined,
     beam: row.beam ?? undefined,
     draft: row.draft ?? undefined,
@@ -34,6 +38,8 @@ function mapYachtDetail(row: any) {
     waterCapacity: row.water_capacity ?? undefined,
     designNotes: row.design_notes ?? undefined,
     description: row.description ?? undefined,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   }
 }
 
@@ -64,6 +70,9 @@ async function fetchYachtById(yachtId: number) {
         y.water_capacity,
         y.design_notes,
         y.description,
+        y.slug,
+        y.created_at,
+        y.updated_at,
         m.name AS manufacturer_name
       FROM yacht_models y
       LEFT JOIN manufacturers m ON y.manufacturer_id = m.id
@@ -133,6 +142,8 @@ export async function PUT(
 
   try {
     await ensureSchema()
+    // Fetch existing yacht to get current slug (for cache invalidation if slug changes)
+    const oldRow = await fetchYachtById(yachtId)
     const body = await request.json()
     const updateResult = await pool.query(
       `
@@ -140,31 +151,34 @@ export async function PUT(
         SET model_name = $1,
             manufacturer_id = $2,
             year = $3,
-            length_overall = $4,
-            beam = $5,
-            draft = $6,
-            displacement = $7,
-            ballast = $8,
-            sail_area_main = $9,
-            rig_type = $10,
-            keel_type = $11,
-            hull_material = $12,
-            cabins = $13,
-            berths = $14,
-            heads = $15,
-            max_occupancy = $16,
-            engine_hp = $17,
-            engine_type = $18,
-            fuel_capacity = $19,
-            water_capacity = $20,
-            design_notes = $21,
-            description = $22
-        WHERE id = $23
+            slug = $4,
+            length_overall = $5,
+            beam = $6,
+            draft = $7,
+            displacement = $8,
+            ballast = $9,
+            sail_area_main = $10,
+            rig_type = $11,
+            keel_type = $12,
+            hull_material = $13,
+            cabins = $14,
+            berths = $15,
+            heads = $16,
+            max_occupancy = $17,
+            engine_hp = $18,
+            engine_type = $19,
+            fuel_capacity = $20,
+            water_capacity = $21,
+            design_notes = $22,
+            description = $23,
+            updated_at = NOW()
+        WHERE id = $24
       `,
       [
         body.modelName ?? null,
         body.manufacturerId ?? null,
         body.year ?? null,
+        body.slug ?? null,
         body.lengthOverall ?? null,
         body.beam ?? null,
         body.draft ?? null,
@@ -190,6 +204,17 @@ export async function PUT(
     if (updateResult.rowCount === 0) {
       return NextResponse.json({ error: 'Yacht not found' }, { status: 404 })
     }
+    // P1: Invalidate cache tags
+    revalidateTag('yachts');
+    // Invalidate old slug if it changed
+    if (oldRow?.slug && oldRow.slug !== body.slug) {
+      revalidateTag(`yacht:${oldRow.slug}`);
+    }
+    // Invalidate new slug if present
+    if (body.slug) {
+      revalidateTag(`yacht:${body.slug}`);
+    }
+    // Fetch updated row to return
     const row = await fetchYachtById(yachtId)
     const yacht = row ? mapYachtDetail(row) : { id: yachtId }
     return NextResponse.json({ yacht })
@@ -224,9 +249,18 @@ export async function DELETE(
 
   try {
     await ensureSchema()
+    // Fetch yacht before delete to get slug for tag invalidation
+    const row = await fetchYachtById(yachtId)
+    const slug = row?.slug
+
     const result = await pool.query('DELETE FROM yacht_models WHERE id = $1', [yachtId])
     if (result.rowCount === 0) {
       return NextResponse.json({ error: 'Yacht not found' }, { status: 404 })
+    }
+    // P1: Invalidate cache tags
+    revalidateTag('yachts');
+    if (slug) {
+      revalidateTag(`yacht:${slug}`);
     }
     return new NextResponse(null, { status: 204 })
   } catch (error) {

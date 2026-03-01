@@ -26,12 +26,6 @@ export async function GET(request: Request) {
       );
 
     // Apply filters (if any)
-    // Currently no filters, but structure supports:
-    // - manufacturer filter
-    // - spec numeric ranges
-    // - full-text search
-
-    // IMPORTANT: Deduplicate rows (e.g., from future spec joins)
     query = query.distinct();
 
     // Get total count BEFORE pagination
@@ -71,7 +65,12 @@ export async function GET(request: Request) {
       };
     }
 
-    return NextResponse.json(response);
+    const jsonResponse = NextResponse.json(response);
+    // P0: Ensure public API is non-cacheable
+    jsonResponse.headers.set("Cache-Control", "no-store, max-age=0, must-revalidate");
+    // P1: Tag for future cache invalidation (currently unused but ready)
+    jsonResponse.headers.set("x-next-revalidate-tags", "yachts");
+    return jsonResponse;
   } catch (error: any) {
     console.error('Yachts API error:', error);
     return NextResponse.json(
