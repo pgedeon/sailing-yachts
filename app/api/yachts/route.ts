@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db, yachtModels, manufacturers } from '@/lib/db';
-import { eq, count, sql } from 'drizzle-orm';
+import { eq, count, sql, and } from 'drizzle-orm';
 import { revalidateTag } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
@@ -61,16 +61,17 @@ export async function GET(request: Request) {
     if (filters.sailAreaMain_min != null) conditions.push(sql`${yachtModels.sailAreaMain} >= ${filters.sailAreaMain_min}`);
     if (filters.sailAreaMain_max != null) conditions.push(sql`${yachtModels.sailAreaMain} <= ${filters.sailAreaMain_max}`);
 
-    // Apply all conditions with AND
+    // Apply all conditions with AND using drizzle and()
     if (conditions.length > 0) {
-      query = query.where(sql`${conditions[0]}${conditions.slice(1).map(c => sql` AND ${c}`)}`);
+      query = query.where(and(...conditions));
     }
 
-    // Get total count BEFORE pagination and after filters applied
-    const countQuery = query.clone();
-    const countResult = await db
-      .select({ count: count() })
-      .from(countQuery.as('count_subquery'));
+    // Get total count respecting filters (without pagination)
+    let countBase = db.select({ count: count() }).from(yachtModels);
+    if (conditions.length > 0) {
+      countBase = countBase.where(and(...conditions));
+    }
+    const countResult = await countBase;
     const total = Number(countResult[0]?.count || 0);
 
     // Apply sorting
