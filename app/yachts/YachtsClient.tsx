@@ -61,31 +61,19 @@ interface Yacht {
   reviews?: Array<{ source: string; rating: number | null; summary: string | null; fullText?: string | null; reviewDate?: string | null; authorName?: string | null; sourceUrl?: string | null }>;
 }
 
-interface YachtsClientProps {
-  initialManufacturers?: Manufacturer[];
-  initialCategories?: SpecCategory[];
-}
-
-export default function YachtsClient({
-  initialManufacturers = [],
-  initialCategories = [],
-}: YachtsClientProps) {
+export default function YachtsClient() {
   const searchParams = useSearchParams();
 
-  // Defensive normalization: ensure arrays
-  const safeManufacturers = Array.isArray(initialManufacturers) ? initialManufacturers : [];
-  const safeCategories = Array.isArray(initialCategories) ? initialCategories : [];
-
   // State
-  const [categories, setCategories] =
-    useState<SpecCategory[]>(safeCategories);
-  const [manufacturers, setManufacturers] =
-    useState<Manufacturer[]>(safeManufacturers);
+  const [categories, setCategories] = useState<SpecCategory[]>([]);
+  const [manufacturers, setManufacturers] = useState<Manufacturer[]>([]);
   const [yachts, setYachts] = useState<Yacht[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [loadingCategories, setLoadingCategories] = useState(false);
+  const [loadingManufacturers, setLoadingManufacturers] = useState(false);
   const [distinct, setDistinct] = useState<{
     rigTypes: string[];
     keelTypes: string[];
@@ -96,14 +84,10 @@ export default function YachtsClient({
   const [sortOrder, setSortOrder] = useState("asc");
 
   // Derived filter state for UI controls
-  const [selectedManufacturers, setSelectedManufacturers] = useState<string[]>(
-    [],
-  );
+  const [selectedManufacturers, setSelectedManufacturers] = useState<string[]>([]);
   const [selectedRigTypes, setSelectedRigTypes] = useState<string[]>([]);
   const [selectedKeelTypes, setSelectedKeelTypes] = useState<string[]>([]);
-  const [selectedHullMaterials, setSelectedHullMaterials] = useState<string[]>(
-    [],
-  );
+  const [selectedHullMaterials, setSelectedHullMaterials] = useState<string[]>([]);
   const [lengthMin, setLengthMin] = useState("");
   const [lengthMax, setLengthMax] = useState("");
   const [beamMin, setBeamMin] = useState("");
@@ -120,42 +104,46 @@ export default function YachtsClient({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loadingDetails, setLoadingDetails] = useState(false);
 
-  // Fetch spec categories for filters (only if not provided)
+  // Fetch spec categories for filters
   useEffect(() => {
-    if (initialCategories.length === 0) {
-      async function loadCategories() {
-        try {
-          const res = await fetch("/api/spec-categories", { cache: 'no-store' });
-          if (!res.ok) throw new Error("Failed to fetch spec categories");
-          const data = await res.json();
-          setCategories(data.categories || []);
-        } catch (err) {
-          console.error("Failed to load spec categories:", err);
-        }
+    async function loadCategories() {
+      setLoadingCategories(true);
+      try {
+        const res = await fetch("/api/spec-categories", { cache: 'no-store' });
+        if (!res.ok) throw new Error("Failed to fetch spec categories");
+        const data = await res.json();
+        setCategories(data.categories || []);
+      } catch (err) {
+        console.error("Failed to load spec categories:", err);
+        setCategories([]);
+      } finally {
+        setLoadingCategories(false);
       }
-      loadCategories();
     }
-  }, [initialCategories]);
+    loadCategories();
+  }, []);
 
-  // Fetch manufacturers for filter dropdown (only if not provided)
+  // Fetch manufacturers for filter dropdown
   useEffect(() => {
-    if (initialManufacturers.length === 0) {
-      async function loadManufacturers() {
-        try {
-          const url = new URL("/api/manufacturers", window.location.origin);
-          url.searchParams.set("_t", Date.now().toString());
-          const res = await fetch(url.toString(), { cache: 'no-store' });
-          if (!res.ok) throw new Error("Failed to fetch manufacturers");
-          const data = await res.json();
-          const list = Array.isArray(data) ? data : (data.manufacturers ?? []);
-          setManufacturers(list);
-        } catch (err) {
-          console.error("Failed to load manufacturers:", err);
-        }
+    async function loadManufacturers() {
+      setLoadingManufacturers(true);
+      try {
+        const url = new URL("/api/manufacturers", window.location.origin);
+        url.searchParams.set("_t", Date.now().toString());
+        const res = await fetch(url.toString(), { cache: 'no-store' });
+        if (!res.ok) throw new Error("Failed to fetch manufacturers");
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : (data.manufacturers ?? []);
+        setManufacturers(list);
+      } catch (err) {
+        console.error("Failed to load manufacturers:", err);
+        setManufacturers([]);
+      } finally {
+        setLoadingManufacturers(false);
       }
-      loadManufacturers();
     }
-  }, [initialManufacturers]);
+    loadManufacturers();
+  }, []);
 
   // Build query object from filter state
   const buildQuery = useCallback(() => {
@@ -410,7 +398,9 @@ export default function YachtsClient({
               <div>
                 <Label className="mb-2 block">Manufacturer</Label>
                 <div className="space-y-2 max-h-40 overflow-y-auto border rounded p-2">
-                  {Array.isArray(manufacturers) && manufacturers.map((m) => (
+                  {loadingManufacturers ? (
+                    <p className="text-sm text-muted-foreground">Loading manufacturers...</p>
+                  ) : Array.isArray(manufacturers) && manufacturers.map((m) => (
                     <label key={m.id} className="flex items-center space-x-2">
                       <input
                         type="checkbox"

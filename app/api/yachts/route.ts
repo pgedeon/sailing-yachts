@@ -26,15 +26,40 @@ export async function GET(request: Request) {
         eq(yachtModels.manufacturerId, manufacturers.id)
       );
 
-    // Parse and apply filters
+    // Parse filters from query string: accept both legacy JSON ?filters={"k":v} and modern ?filters[k]=v
     let filters: any = {};
-    try {
-      const filtersParam = searchParams.get('filters');
-      if (filtersParam) {
-        filters = JSON.parse(filtersParam);
+
+    // First, try modern format: repeated filters[key]=value
+    const filterEntries: Record<string, any[]> = {};
+    for (const [key, value] of searchParams.entries()) {
+      const match = key.match(/^filters\[(.+)\]$/);
+      if (match) {
+        const inner = match[1];
+        if (!filterEntries[inner]) filterEntries[inner] = [];
+        filterEntries[inner].push(value);
       }
-    } catch (e) {
-      console.warn('Invalid filters parameter:', e);
+    }
+    // Convert arrays with single elements to primitives for compatibility
+    for (const [k, v] of Object.entries(filterEntries)) {
+      if (v.length === 1) {
+        // Try to parse number if numeric
+        const num = Number(v[0]);
+        filters[k] = isNaN(num) ? v[0] : num;
+      } else {
+        filters[k] = v;
+      }
+    }
+
+    // Fallback: legacy single JSON parameter
+    if (Object.keys(filters).length === 0) {
+      try {
+        const legacy = searchParams.get('filters');
+        if (legacy) {
+          filters = JSON.parse(legacy);
+        }
+      } catch (e) {
+        console.warn('Invalid filters JSON:', e);
+      }
     }
 
     const conditions: any[] = [];
