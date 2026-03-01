@@ -17,8 +17,8 @@ async function getInitialData() {
       ),
     ]);
 
-    const categories = catRes.ok ? await catRes.json() : [];
-    const manufacturers = mfgRes.ok ? await mfgRes.json() : [];
+    const categories = catRes.ok ? (await catRes.json()).categories : [];
+    const manufacturers = mfgRes.ok ? (await mfgRes.json()).manufacturers : [];
 
     return { categories, manufacturers };
   } catch (error) {
