@@ -147,6 +147,26 @@ export async function PUT(
     // Fetch existing yacht to get current slug (for cache invalidation if slug changes)
     const oldRow = await fetchYachtById(yachtId)
     const body = await request.json()
+
+    // Ensure slug is valid if provided; derive from modelName if missing
+    let slug = body.slug?.trim()
+    if (slug) {
+      slug = slugify(slug)
+    } else if (oldRow) {
+      // Keep existing slug if not provided
+      slug = oldRow.slug
+    }
+    // If slug is still empty (no existing and not provided), derive from modelName
+    if (!slug && body.modelName?.trim()) {
+      slug = slugify(body.modelName.trim())
+    }
+    if (!slug) {
+      return NextResponse.json(
+        { error: 'Slug is required or modelName must be provided to generate slug' },
+        { status: 400 }
+      )
+    }
+
     const updateResult = await pool.query(
       `
         UPDATE yacht_models
@@ -180,7 +200,7 @@ export async function PUT(
         body.modelName ?? null,
         body.manufacturerId ?? null,
         body.year ?? null,
-        body.slug ?? null,
+        slug,
         body.lengthOverall ?? null,
         body.beam ?? null,
         body.draft ?? null,

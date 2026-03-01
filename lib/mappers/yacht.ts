@@ -1,5 +1,3 @@
-import { YachtModels, Manufacturers, SpecCategories, SpecValues, Images, Reviews } from "./db";
-
 /**
  * Map a raw yacht row (with joined manufacturer name) to the public-facing DTO.
  * This is the canonical shape used by both admin list and public APIs.
