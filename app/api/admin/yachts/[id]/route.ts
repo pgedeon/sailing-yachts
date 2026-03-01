@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { ensureSchema, pool } from '@/lib/db'
 import { revalidateTag } from 'next/cache'
+import { mapYachtRowToDto } from '@/lib/mappers/yacht'
 
 export const dynamic = 'force-dynamic';
 

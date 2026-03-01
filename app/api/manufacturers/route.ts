@@ -12,7 +12,8 @@ export async function GET() {
       .orderBy(mfgTable.name);
 
     const response = NextResponse.json({ manufacturers });
-    response.headers.set("Cache-Control", "no-store, max-age=0, must-revalidate");
+    response.headers.set("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0, s-maxage=0");
+    response.headers.set("Pragma", "no-cache");
     return response;
   } catch (error) {
     console.error("Error fetching manufacturers:", error);

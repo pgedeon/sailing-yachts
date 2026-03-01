@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { ensureSchema, pool } from '@/lib/db'
+import { mapYachtRowToDto } from '@/lib/mappers/yacht'
 import { revalidateTag } from 'next/cache'
 
 export const dynamic = 'force-dynamic';
@@ -82,7 +83,7 @@ export async function GET(request: Request) {
       LEFT JOIN manufacturers m ON y.manufacturer_id = m.id
       ORDER BY y.id
     `)
-    const yachts = result.rows.map(mapYacht)
+    const yachts = result.rows.map((row) => mapYachtRowToDto(row))
     return NextResponse.json({ yachts })
   } catch (error) {
     console.error('Failed to fetch yachts:', error)

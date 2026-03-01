@@ -139,8 +139,9 @@ export async function GET(
     };
 
     const jsonResponse = NextResponse.json(response);
-    // P0: Ensure public API is non-cacheable
-    jsonResponse.headers.set("Cache-Control", "no-store, max-age=0, must-revalidate");
+    // P0: Ensure public API is non-cacheable at all layers
+    jsonResponse.headers.set("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0, s-maxage=0");
+    jsonResponse.headers.set("Pragma", "no-cache");
     // P1: Tag for future cache invalidation
     if (r.yacht.slug) {
       jsonResponse.headers.set("x-next-revalidate-tag", `yacht:${r.yacht.slug}`);
