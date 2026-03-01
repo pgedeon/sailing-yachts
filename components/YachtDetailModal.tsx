@@ -125,7 +125,7 @@ export default function YachtDetailModal({
         if (e.target === e.currentTarget) close();
       }}
     >
-      <div className="bg-background rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-200">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <div>
@@ -138,7 +138,7 @@ export default function YachtDetailModal({
           </div>
           <button
             onClick={close}
-            className="text-2xl leading-none hover:text-foreground/70"
+            className="text-2xl leading-none hover:text-foreground/70 text-gray-700"
             aria-label="Close"
           >
             ✕
