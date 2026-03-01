@@ -241,10 +241,14 @@ export default function YachtsClient({
       if (!res.ok) throw new Error("Failed to fetch yachts");
       const data = await res.json();
       // Flatten API response: merge yacht object with manufacturer
-      const flatYachts = (data.yachts || []).map((item: any) => ({
-        ...item.yacht,
-        manufacturer: item.manufacturer,
-      }));
+      const rawList = data.yachts || []
+      const flatYachts: Yacht[] = rawList.map((item: any) => {
+        const base = item.yacht || {};
+        return {
+          ...base,
+          manufacturer: item.manufacturer || '',
+        };
+      });
       setYachts(flatYachts);
       setTotal(data.total || 0);
       setTotalPages(data.totalPages || 1);
@@ -398,7 +402,7 @@ export default function YachtsClient({
               <div>
                 <Label className="mb-2 block">Manufacturer</Label>
                 <div className="space-y-2 max-h-40 overflow-y-auto border rounded p-2">
-                  {manufacturers.map((m) => (
+                  {Array.isArray(manufacturers) && manufacturers.map((m) => (
                     <label key={m.id} className="flex items-center space-x-2">
                       <input
                         type="checkbox"
@@ -758,7 +762,7 @@ export default function YachtsClient({
             ) : (
               <>
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {yachts.map((yacht) => (
+                  {Array.isArray(yachts) && yachts.map((yacht) => (
                     <div
                       key={yacht.id}
                       className="border rounded-lg overflow-hidden bg-card flex flex-col"
