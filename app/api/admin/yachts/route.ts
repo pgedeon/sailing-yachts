@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { ensureSchema, pool } from '@/lib/db'
-import { mapYachtRowToDto } from '@/lib/mappers/yacht'
+import { mapYachtToListDto } from '@/lib/mappers/yacht'
 import { revalidateTag } from 'next/cache'
+import { slugify } from '@/lib/utils/slugify'
 
 export const dynamic = 'force-dynamic';
 
@@ -83,7 +84,7 @@ export async function GET(request: Request) {
       LEFT JOIN manufacturers m ON y.manufacturer_id = m.id
       ORDER BY y.id
     `)
-    const yachts = result.rows.map((row) => mapYachtRowToDto(row))
+    const yachts = result.rows.map((row) => mapYachtToListDto(row))
     return NextResponse.json({ yachts })
   } catch (error) {
     console.error('Failed to fetch yachts:', error)
@@ -108,6 +109,28 @@ export async function POST(request: Request) {
   try {
     await ensureSchema()
     const body = await request.json()
+
+    // Ensure slug is present and valid: derive from modelName if missing
+    let slug = body.slug?.trim()
+    if (!slug) {
+      const modelName = body.modelName?.trim()
+      if (!modelName) {
+        return NextResponse.json(
+          { error: 'Slug or model name required' },
+          { status: 400 }
+        )
+      }
+      slug = slugify(modelName)
+    } else {
+      slug = slugify(slug)
+    }
+    if (!slug) {
+      return NextResponse.json(
+        { error: 'Invalid slug generated' },
+        { status: 400 }
+      )
+    }
+
     const result = await pool.query(
       `
         INSERT INTO yacht_models (
@@ -150,7 +173,7 @@ export async function POST(request: Request) {
         body.modelName ?? null,
         body.manufacturerId ?? null,
         body.year ?? null,
-        body.slug ?? null,
+        slug,
         body.lengthOverall ?? null,
         body.beam ?? null,
         body.draft ?? null,

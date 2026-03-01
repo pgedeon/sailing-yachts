@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { slugify } from '@/lib/utils/slugify'
 
 export default function NewYachtPage() {
   const router = useRouter()
@@ -70,8 +71,6 @@ export default function NewYachtPage() {
     }
   }
 
-  // Rest of state and handlers...
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
@@ -121,11 +120,12 @@ export default function NewYachtPage() {
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
-    
-    // Auto-generate slug from model name
-    if (name === 'modelName' && !formData.slug) {
-      const slug = value.toLowerCase().replace(/\s+/g, '-').replace(/[\w-]/g, '')
-      setFormData(prev => ({ ...prev, slug }))
+
+    // Auto-generate slug from model name using slugify utility
+    if (name === 'modelName') {
+      // Always update slug field to match model name, auto-cleaned
+      const newSlug = slugify(value)
+      setFormData(prev => ({ ...prev, slug: newSlug }))
     }
   }
 
