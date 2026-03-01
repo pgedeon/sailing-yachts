@@ -777,34 +777,46 @@ export default function YachtsClient({
                           {yacht.year}
                         </p>
                         <div className="grid grid-cols-3 gap-x-4 gap-y-2 text-sm mb-4">
-                          {yacht.lengthOverall && (
+                          {yacht.lengthOverall != null && (
                             <div>
                               <span className="text-muted-foreground">LOA:</span>{" "}
-                              {Number(yacht.lengthOverall).toFixed(2)}m
+                              {(() => {
+                                const n = Number(yacht.lengthOverall);
+                                return isNaN(n) ? String(yacht.lengthOverall) : `${n.toFixed(2)}m`;
+                              })()}
                             </div>
                           )}
-                          {yacht.beam && (
+                          {yacht.beam != null && (
                             <div>
                               <span className="text-muted-foreground">Beam:</span>{" "}
-                              {Number(yacht.beam).toFixed(2)}m
+                              {(() => {
+                                const n = Number(yacht.beam);
+                                return isNaN(n) ? String(yacht.beam) : `${n.toFixed(2)}m`;
+                              })()}
                             </div>
                           )}
-                          {yacht.draft && (
+                          {yacht.draft != null && (
                             <div>
                               <span className="text-muted-foreground">Draft:</span>{" "}
-                              {Number(yacht.draft).toFixed(2)}m
+                              {(() => {
+                                const n = Number(yacht.draft);
+                                return isNaN(n) ? String(yacht.draft) : `${n.toFixed(2)}m`;
+                              })()}
                             </div>
                           )}
-                          {yacht.displacement && (
+                          {yacht.displacement != null && (
                             <div>
                               <span className="text-muted-foreground">Disp:</span>{" "}
                               {Number(yacht.displacement).toLocaleString()}kg
                             </div>
                           )}
-                          {yacht.sailAreaMain && (
+                          {yacht.sailAreaMain != null && (
                             <div>
                               <span className="text-muted-foreground">Sail:</span>{" "}
-                              {Number(yacht.sailAreaMain).toFixed(1)}m²
+                              {(() => {
+                                const n = Number(yacht.sailAreaMain);
+                                return isNaN(n) ? String(yacht.sailAreaMain) : `${n.toFixed(1)}m²`;
+                              })()}
                             </div>
                           )}
                           {yacht.rigType && (
