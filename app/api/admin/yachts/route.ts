@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { ensureSchema, pool } from '@/lib/db'
+import { revalidateTag } from 'next/cache'
+
+export const dynamic = 'force-dynamic';
 
 function mapYacht(row: any) {
   return {
@@ -8,6 +11,7 @@ function mapYacht(row: any) {
     modelName: row.model_name,
     manufacturer: row.manufacturer_name ?? row.manufacturer ?? undefined,
     year: row.year ?? undefined,
+    slug: row.slug ?? undefined,
     lengthOverall: row.length_overall ?? undefined,
     beam: row.beam ?? undefined,
     draft: row.draft ?? undefined,
@@ -27,6 +31,8 @@ function mapYacht(row: any) {
     waterCapacity: row.water_capacity ?? undefined,
     designNotes: row.design_notes ?? undefined,
     description: row.description ?? undefined,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   }
 }
 
@@ -49,6 +55,7 @@ export async function GET(request: Request) {
         y.model_name,
         y.manufacturer_id,
         y.year,
+        y.slug,
         y.length_overall,
         y.beam,
         y.draft,
@@ -68,6 +75,8 @@ export async function GET(request: Request) {
         y.water_capacity,
         y.design_notes,
         y.description,
+        y.created_at,
+        y.updated_at,
         m.name AS manufacturer_name
       FROM yacht_models y
       LEFT JOIN manufacturers m ON y.manufacturer_id = m.id
@@ -104,6 +113,7 @@ export async function POST(request: Request) {
           model_name,
           manufacturer_id,
           year,
+          slug,
           length_overall,
           beam,
           draft,
@@ -125,17 +135,21 @@ export async function POST(request: Request) {
           description
         ) VALUES (
           $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
-          $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22
+          $11, $12, $13, $14, $15, $16, $17, $18, $19, $20,
+          $21, $22, $23
         )
-        RETURNING id, model_name, manufacturer_id, year, length_overall, beam, draft,
-                  displacement, ballast, sail_area_main, rig_type, keel_type, hull_material,
-                  cabins, berths, heads, max_occupancy, engine_hp, engine_type, fuel_capacity,
-                  water_capacity, design_notes, description
+        RETURNING id, model_name, manufacturer_id, year, slug,
+                  length_overall, beam, draft, displacement, ballast,
+                  sail_area_main, rig_type, keel_type, hull_material,
+                  cabins, berths, heads, max_occupancy, engine_hp,
+                  engine_type, fuel_capacity, water_capacity, design_notes,
+                  description, created_at, updated_at
       `,
       [
         body.modelName ?? null,
         body.manufacturerId ?? null,
         body.year ?? null,
+        body.slug ?? null,
         body.lengthOverall ?? null,
         body.beam ?? null,
         body.draft ?? null,
@@ -157,8 +171,14 @@ export async function POST(request: Request) {
         body.description ?? null,
       ]
     )
-    const yacht = mapYacht(result.rows[0])
-    return NextResponse.json({ yacht }, { status: 201 })
+    const yacht = result.rows[0]
+    // P1: Invalidate cache tags
+    revalidateTag('yachts');
+    if (yacht.slug) {
+      revalidateTag(`yacht:${yacht.slug}`);
+    }
+    const mappedYacht = mapYacht(yacht)
+    return NextResponse.json({ yacht: mappedYacht }, { status: 201 })
   } catch (error) {
     console.error('Failed to create yacht:', error)
     return NextResponse.json(

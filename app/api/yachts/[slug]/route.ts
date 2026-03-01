@@ -9,6 +9,9 @@ import {
   reviews,
 } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import { revalidateTag } from "next/cache";
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(
   request: Request,
@@ -135,7 +138,16 @@ export async function GET(
       })),
     };
 
-    return NextResponse.json(response);
+    const jsonResponse = NextResponse.json(response);
+    // P0: Ensure public API is non-cacheable
+    jsonResponse.headers.set("Cache-Control", "no-store, max-age=0, must-revalidate");
+    // P1: Tag for future cache invalidation
+    if (r.yacht.slug) {
+      jsonResponse.headers.set("x-next-revalidate-tag", `yacht:${r.yacht.slug}`);
+    } else {
+      jsonResponse.headers.set("x-next-revalidate-tag", "yachts");
+    }
+    return jsonResponse;
   } catch (error) {
     console.error("Error fetching yacht:", error);
     return NextResponse.json(

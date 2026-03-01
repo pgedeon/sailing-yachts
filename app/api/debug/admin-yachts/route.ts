@@ -17,7 +17,7 @@ export async function GET() {
     );
   return NextResponse.json({
     count: rows.length,
-    ids: rows.map(r => r.yacht.id),
-    names: rows.map(r => `${r.manufacturer} ${r.yacht.modelName}`.trim()),
+    ids: rows.map((r: any) => r.yacht.id),
+    names: rows.map((r: any) => `${r.manufacturer} ${r.yacht.modelName}`.trim()),
   });
 }

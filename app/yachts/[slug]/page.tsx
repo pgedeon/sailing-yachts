@@ -89,7 +89,7 @@ export default function YachtDetailPage() {
 
   useEffect(() => {
     if (!slug) return;
-    fetch(`/api/yachts/${slug}`)
+    fetch(`/api/yachts/${slug}`, { cache: 'no-store' })
       .then((r) => {
         if (!r.ok) throw new Error("Yacht not found");
         return r.json();
