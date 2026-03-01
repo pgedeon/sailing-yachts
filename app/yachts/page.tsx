@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { YachtsClient } from './YachtsClient';
+import YachtsClient from './YachtsClient';
 
 export const dynamic = 'force-dynamic';
 

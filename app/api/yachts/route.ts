@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db, yachtModels, manufacturers } from '@/lib/db';
-import { eq, count, sql, and } from 'drizzle-orm';
+import { eq, count, inArray, sql, and } from 'drizzle-orm';
 import { revalidateTag } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
@@ -66,13 +66,13 @@ export async function GET(request: Request) {
 
     // Manufacturer filter: expects array of IDs
     if (filters.manufacturers && Array.isArray(filters.manufacturers) && filters.manufacturers.length > 0) {
-      conditions.push(sql`${yachtModels.manufacturerId} = ANY(${filters.manufacturers})`);
+      conditions.push(inArray(yachtModels.manufacturerId, filters.manufacturers));
     }
 
-    // String equality filters
-    if (filters.rigType) conditions.push(sql`${yachtModels.rigType} = ${filters.rigType}`);
-    if (filters.keelType) conditions.push(sql`${yachtModels.keelType} = ${filters.keelType}`);
-    if (filters.hullMaterial) conditions.push(sql`${yachtModels.hullMaterial} = ${filters.hullMaterial}`);
+    // String equality filters using eq for type safety
+    if (filters.rigType) conditions.push(eq(yachtModels.rigType, filters.rigType));
+    if (filters.keelType) conditions.push(eq(yachtModels.keelType, filters.keelType));
+    if (filters.hullMaterial) conditions.push(eq(yachtModels.hullMaterial, filters.hullMaterial));
 
     // Numeric ranges with inclusive bounds
     if (filters.lengthOverall_min != null) conditions.push(sql`${yachtModels.lengthOverall} >= ${filters.lengthOverall_min}`);
