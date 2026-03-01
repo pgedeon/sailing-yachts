@@ -8,6 +8,7 @@ export default function NewYachtPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [manufacturerError, setManufacturerError] = useState<string | null>(null)
   const [manufacturers, setManufacturers] = useState<{ id: number; name: string }[]>([])
   const [formData, setFormData] = useState({
     modelName: '',
@@ -35,22 +36,36 @@ export default function NewYachtPage() {
     description: '',
   })
 
-  // Fetch manufacturers on mount (useEffect, not useState)
+  // Fetch manufacturers on mount
   useEffect(() => {
     fetchManufacturers()
   }, [])
 
   async function fetchManufacturers() {
+    setManufacturerError(null)
     try {
-      const res = await fetch('/api/manufacturers')
-      if (res.ok) {
-        const data = await res.json()
-        setManufacturers(data.manufacturers || [])
+      // Use admin endpoint to ensure consistent auth + response shape
+      const res = await fetch('/api/admin/manufacturers', {
+        credentials: 'include',
+        cache: 'no-store',
+      })
+      if (!res.ok) {
+        throw new Error('Failed to fetch manufacturers')
+      }
+      const data = await res.json()
+      // Support both { manufacturers } and raw array
+      const list = Array.isArray(data) ? data : (data.manufacturers ?? [])
+      setManufacturers(list)
+      if (list.length === 0) {
+        setManufacturerError('No manufacturers available. Add one first.')
       }
     } catch (err) {
       console.error('Failed to fetch manufacturers:', err)
+      setManufacturerError('Unable to load manufacturers. Please try again later.')
     }
   }
+
+  // Rest of state and handlers...
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -147,6 +162,9 @@ export default function NewYachtPage() {
 
               <div>
                 <label htmlFor="manufacturerId" className="block text-sm font-medium text-gray-700 mb-1">Manufacturer *</label>
+                {manufacturerError && (
+                  <p className="text-sm text-red-600 mb-2">{manufacturerError}</p>
+                )}
                 <select
                   id="manufacturerId"
                   name="manufacturerId"
@@ -154,12 +172,21 @@ export default function NewYachtPage() {
                   value={formData.manufacturerId}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={manufacturers.length === 0}
                 >
                   <option value="">Select a manufacturer</option>
                   {manufacturers.map(m => (
                     <option key={m.id} value={m.id}>{m.name}</option>
                   ))}
                 </select>
+                {manufacturers.length === 0 && (
+                  <p className="text-xs text-gray-500 mt-2">
+                    No manufacturers available.&nbsp;
+                    <Link href="/admin/manufacturers/new" className="text-blue-600 hover:underline">
+                      Add manufacturer
+                    </Link>
+                  </p>
+                )}
               </div>
 
               <div>
@@ -439,7 +466,8 @@ export default function NewYachtPage() {
               </Link>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || manufacturers.length === 0}
+                title={manufacturers.length === 0 ? 'Add a manufacturer first' : ''}
                 className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200 disabled:opacity-50"
               >
                 {loading ? 'Creating...' : 'Create Yacht'}

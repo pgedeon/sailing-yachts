@@ -11,7 +11,7 @@ export async function GET() {
       .from(mfgTable)
       .orderBy(mfgTable.name);
 
-    const response = NextResponse.json(manufacturers);
+    const response = NextResponse.json({ manufacturers });
     response.headers.set("Cache-Control", "no-store, max-age=0, must-revalidate");
     return response;
   } catch (error) {

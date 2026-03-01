@@ -136,7 +136,8 @@ export default function YachtsClient({
           const res = await fetch("/api/manufacturers", { cache: 'no-store' });
           if (!res.ok) throw new Error("Failed to fetch manufacturers");
           const data = await res.json();
-          setManufacturers(data.manufacturers || []);
+          const list = Array.isArray(data) ? data : (data.manufacturers ?? []);
+          setManufacturers(list);
         } catch (err) {
           console.error("Failed to load manufacturers:", err);
         }
