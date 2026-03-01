@@ -82,6 +82,11 @@ export default function YachtsClient({
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [distinct, setDistinct] = useState<{
+    rigTypes: string[];
+    keelTypes: string[];
+    hullMaterials: string[];
+  }>({ rigTypes: [], keelTypes: [], hullMaterials: [] });
   const [filters, setFilters] = useState<Record<string, any>>({});
   const [sortBy, setSortBy] = useState("lengthOverall");
   const [sortOrder, setSortOrder] = useState("asc");
@@ -256,6 +261,7 @@ export default function YachtsClient({
       setYachts(flatYachts);
       setTotal(data.total || 0);
       setTotalPages(data.totalPages || 1);
+      setDistinct(data.distinct || { rigTypes: [], keelTypes: [], hullMaterials: [] });
     } catch (err) {
       console.error("Failed to fetch yachts:", err);
       setYachts([]);
@@ -377,16 +383,10 @@ export default function YachtsClient({
     setSelectedYacht(null);
   };
 
-  // Extract unique values for dropdowns based on current results
-  const rigTypeOptions = Array.from(
-    new Set(yachts.map((y) => y.rigType).filter(Boolean)),
-  ) as string[];
-  const keelTypeOptions = Array.from(
-    new Set(yachts.map((y) => y.keelType).filter(Boolean)),
-  ) as string[];
-  const hullMaterialOptions = Array.from(
-    new Set(yachts.map((y) => y.hullMaterial).filter(Boolean)),
-  ) as string[];
+  // Use distinct values from API (full dataset)
+  const rigTypeOptions = distinct.rigTypes;
+  const keelTypeOptions = distinct.keelTypes;
+  const hullMaterialOptions = distinct.hullMaterials;
 
   return (
     <div className="min-h-screen bg-background">
