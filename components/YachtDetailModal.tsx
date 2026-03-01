@@ -175,7 +175,10 @@ export default function YachtDetailModal({
                 <div className="border rounded-lg p-3 text-center">
                   <div className="text-xs text-muted-foreground">Length Overall</div>
                   <div className="text-lg font-semibold">
-                    {yacht.lengthOverall.toFixed(2)} m
+                    {(() => {
+                      const n = Number(yacht.lengthOverall);
+                      return isNaN(n) ? String(yacht.lengthOverall) : `${n.toFixed(2)} m`;
+                    })()}
                   </div>
                 </div>
               )}
@@ -183,7 +186,10 @@ export default function YachtDetailModal({
                 <div className="border rounded-lg p-3 text-center">
                   <div className="text-xs text-muted-foreground">Beam</div>
                   <div className="text-lg font-semibold">
-                    {yacht.beam.toFixed(2)} m
+                    {(() => {
+                      const n = Number(yacht.beam);
+                      return isNaN(n) ? String(yacht.beam) : `${n.toFixed(2)} m`;
+                    })()}
                   </div>
                 </div>
               )}
@@ -191,7 +197,10 @@ export default function YachtDetailModal({
                 <div className="border rounded-lg p-3 text-center">
                   <div className="text-xs text-muted-foreground">Draft</div>
                   <div className="text-lg font-semibold">
-                    {yacht.draft.toFixed(2)} m
+                    {(() => {
+                      const n = Number(yacht.draft);
+                      return isNaN(n) ? String(yacht.draft) : `${n.toFixed(2)} m`;
+                    })()}
                   </div>
                 </div>
               )}
@@ -199,7 +208,10 @@ export default function YachtDetailModal({
                 <div className="border rounded-lg p-3 text-center">
                   <div className="text-xs text-muted-foreground">Displacement</div>
                   <div className="text-lg font-semibold">
-                    {(yacht.displacement / 1000).toFixed(1)} t
+                    {(() => {
+                      const n = Number(yacht.displacement);
+                      return isNaN(n) ? String(yacht.displacement) : `${(n / 1000).toFixed(1)} t`;
+                    })()}
                   </div>
                 </div>
               )}
@@ -207,7 +219,10 @@ export default function YachtDetailModal({
                 <div className="border rounded-lg p-3 text-center">
                   <div className="text-xs text-muted-foreground">Sail Area Main</div>
                   <div className="text-lg font-semibold">
-                    {yacht.sailAreaMain.toFixed(1)} m²
+                    {(() => {
+                      const n = Number(yacht.sailAreaMain);
+                      return isNaN(n) ? String(yacht.sailAreaMain) : `${n.toFixed(1)} m²`;
+                    })()}
                   </div>
                 </div>
               )}
@@ -248,7 +263,10 @@ export default function YachtDetailModal({
                             </div>
                             <div>
                               {spec.value !== null && spec.value !== undefined
-                                ? `${Number(spec.value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${spec.unit ?? ""}`.trim()
+                                ? (() => {
+                                    const n = Number(spec.value);
+                                    return isNaN(n) ? String(spec.value) : `${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${spec.unit ?? ""}`.trim();
+                                  })()
                                 : "—"}
                             </div>
                           </div>
@@ -301,10 +319,13 @@ export default function YachtDetailModal({
                       <dd>{yacht.maxOccupancy}</dd>
                     </>
                   )}
-                  {yacht.engineHp && (
+                  {yacht.engineHp != null && (
                     <>
                       <dt className="text-muted-foreground">Engine HP</dt>
-                      <dd>{yacht.engineHp.toFixed(0)}</dd>
+                      <dd>{(() => {
+                        const n = Number(yacht.engineHp);
+                        return isNaN(n) ? String(yacht.engineHp) : n.toFixed(0);
+                      })()}</dd>
                     </>
                   )}
                   {yacht.engineType && (
@@ -341,7 +362,10 @@ export default function YachtDetailModal({
                         {review.rating && (
                           <div className="flex items-center gap-1">
                             <span className="text-yellow-500">★</span>
-                            <span>{review.rating.toFixed(1)}</span>
+                            <span>{(() => {
+                              const n = Number(review.rating);
+                              return isNaN(n) ? String(review.rating) : n.toFixed(1);
+                            })()}</span>
                           </div>
                         )}
                       </div>
