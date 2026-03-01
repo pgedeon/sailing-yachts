@@ -239,7 +239,12 @@ export default function YachtsClient({
       const res = await fetch(url.toString(), { cache: 'no-store' });
       if (!res.ok) throw new Error("Failed to fetch yachts");
       const data = await res.json();
-      setYachts(data.yachts || []);
+      // Flatten API response: merge yacht object with manufacturer
+      const flatYachts = (data.yachts || []).map((item: any) => ({
+        ...item.yacht,
+        manufacturer: item.manufacturer,
+      }));
+      setYachts(flatYachts);
       setTotal(data.total || 0);
       setTotalPages(data.totalPages || 1);
     } catch (err) {
