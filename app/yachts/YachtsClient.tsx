@@ -72,11 +72,15 @@ export default function YachtsClient({
 }: YachtsClientProps) {
   const searchParams = useSearchParams();
 
+  // Defensive normalization: ensure arrays
+  const safeManufacturers = Array.isArray(initialManufacturers) ? initialManufacturers : [];
+  const safeCategories = Array.isArray(initialCategories) ? initialCategories : [];
+
   // State
   const [categories, setCategories] =
-    useState<SpecCategory[]>(initialCategories);
+    useState<SpecCategory[]>(safeCategories);
   const [manufacturers, setManufacturers] =
-    useState<Manufacturer[]>(initialManufacturers);
+    useState<Manufacturer[]>(safeManufacturers);
   const [yachts, setYachts] = useState<Yacht[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
