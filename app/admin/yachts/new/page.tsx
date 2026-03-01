@@ -44,15 +44,20 @@ export default function NewYachtPage() {
   async function fetchManufacturers() {
     setManufacturerError(null)
     try {
-      // Use admin endpoint to ensure consistent auth + response shape
-      const res = await fetch('/api/admin/manufacturers', {
+      // Prefer admin endpoint for consistent auth/response, fallback to public
+      let res = await fetch('/api/admin/manufacturers', {
         credentials: 'include',
         cache: 'no-store',
       })
+      let data
       if (!res.ok) {
-        throw new Error('Failed to fetch manufacturers')
+        // Fallback to public endpoint if admin fails (e.g., not logged in or no data)
+        res = await fetch('/api/manufacturers', { cache: 'no-store' })
+        if (!res.ok) throw new Error('Failed to fetch manufacturers')
+        data = await res.json()
+      } else {
+        data = await res.json()
       }
-      const data = await res.json()
       // Support both { manufacturers } and raw array
       const list = Array.isArray(data) ? data : (data.manufacturers ?? [])
       setManufacturers(list)
