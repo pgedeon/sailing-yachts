@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import YachtDetailModal from "@/components/YachtDetailModal";
 
 interface SpecCategory {
   id: number;
@@ -38,11 +39,26 @@ interface Yacht {
   beam: number | null;
   draft: number | null;
   displacement: number | null;
+  ballast: number | null;
   sailAreaMain: number | null;
   rigType: string | null;
   keelType: string | null;
   hullMaterial: string | null;
-  specs: Record<string, { value: number | string; unit?: string }>;
+  cabins: number | null;
+  berths: number | null;
+  heads: number | null;
+  maxOccupancy: number | null;
+  engineHp: number | null;
+  engineType: string | null;
+  fuelCapacity: number | null;
+  waterCapacity: number | null;
+  designNotes: string | null;
+  description: string | null;
+  sourceUrl?: string | null;
+  sourceAttribution?: string | null;
+  specsByGroup?: Record<string, Array<{ category: string; value: number | string; unit?: string }>>;
+  images?: Array<{ url: string; caption?: string; altText?: string; isPrimary: boolean }>;
+  reviews?: Array<{ source: string; rating: number | null; summary: string | null; fullText?: string | null; reviewDate?: string | null; authorName?: string | null; sourceUrl?: string | null }>;
 }
 
 interface YachtsClientProps {
@@ -89,6 +105,11 @@ export default function YachtsClient({
   const [displacementMax, setDisplacementMax] = useState("");
   const [sailAreaMin, setSailAreaMin] = useState("");
   const [sailAreaMax, setSailAreaMax] = useState("");
+
+  // Modal state
+  const [selectedYacht, setSelectedYacht] = useState<Yacht | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loadingDetails, setLoadingDetails] = useState(false);
 
   // Fetch spec categories for filters (only if not provided)
   useEffect(() => {
@@ -309,6 +330,37 @@ export default function YachtsClient({
     setSailAreaMax("");
     setPage(1);
     setFilters({});
+  };
+
+  // Fetch full yacht details for modal
+  const fetchFullYacht = useCallback(async (slug: string): Promise<Yacht> => {
+    setLoadingDetails(true);
+    try {
+      const res = await fetch(`/api/yachts/${slug}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to fetch yacht details');
+      return await res.json();
+    } finally {
+      setLoadingDetails(false);
+    }
+  }, []);
+
+  const openYachtDetails = async (slug: string) => {
+    setIsModalOpen(true);
+    setLoadingDetails(true);
+    try {
+      const fullYacht = await fetchFullYacht(slug);
+      setSelectedYacht(fullYacht);
+    } catch (err) {
+      console.error(err);
+      setSelectedYacht(null);
+    } finally {
+      setLoadingDetails(false);
+    }
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedYacht(null);
   };
 
   // Extract unique values for dropdowns based on current results
@@ -719,45 +771,68 @@ export default function YachtsClient({
                         <p className="text-sm text-muted-foreground mb-3">
                           {yacht.year}
                         </p>
-                        <div className="grid grid-cols-2 gap-2 text-sm mb-4">
+                        <div className="grid grid-cols-3 gap-x-4 gap-y-2 text-sm mb-4">
                           {yacht.lengthOverall && (
                             <div>
-                              <span className="text-muted-foreground">
-                                LOA:
-                              </span>{" "}
+                              <span className="text-muted-foreground">LOA:</span>{" "}
                               {yacht.lengthOverall}m
                             </div>
                           )}
                           {yacht.beam && (
                             <div>
-                              <span className="text-muted-foreground">
-                                Beam:
-                              </span>{" "}
+                              <span className="text-muted-foreground">Beam:</span>{" "}
                               {yacht.beam}m
                             </div>
                           )}
                           {yacht.draft && (
                             <div>
-                              <span className="text-muted-foreground">
-                                Draft:
-                              </span>{" "}
+                              <span className="text-muted-foreground">Draft:</span>{" "}
                               {yacht.draft}m
                             </div>
                           )}
                           {yacht.displacement && (
                             <div>
-                              <span className="text-muted-foreground">
-                                Disp:
-                              </span>{" "}
+                              <span className="text-muted-foreground">Disp:</span>{" "}
                               {Number(yacht.displacement).toLocaleString()}kg
+                            </div>
+                          )}
+                          {yacht.sailAreaMain && (
+                            <div>
+                              <span className="text-muted-foreground">Sail:</span>{" "}
+                              {yacht.sailAreaMain.toFixed(1)}m²
+                            </div>
+                          )}
+                          {yacht.rigType && (
+                            <div>
+                              <span className="text-muted-foreground">Rig:</span>{" "}
+                              {yacht.rigType}
+                            </div>
+                          )}
+                          {yacht.keelType && (
+                            <div>
+                              <span className="text-muted-foreground">Keel:</span>{" "}
+                              {yacht.keelType}
+                            </div>
+                          )}
+                          {yacht.cabins && (
+                            <div>
+                              <span className="text-muted-foreground">Cab:</span>{" "}
+                              {yacht.cabins}
+                            </div>
+                          )}
+                          {yacht.maxOccupancy && (
+                            <div>
+                              <span className="text-muted-foreground">Max:</span>{" "}
+                              {yacht.maxOccupancy}
                             </div>
                           )}
                         </div>
                         <div className="mt-auto">
-                          <Button asChild className="w-full">
-                            <Link href={`/yachts/${yacht.slug}`}>
-                              View Details
-                            </Link>
+                          <Button
+                            className="w-full"
+                            onClick={() => openYachtDetails(yacht.slug)}
+                          >
+                            View Details
                           </Button>
                           <Button
                             asChild
@@ -805,6 +880,12 @@ export default function YachtsClient({
           </div>
         </div>
       </main>
+      {/* Modal for full yacht details */}
+      <YachtDetailModal
+        yacht={selectedYacht}
+        open={isModalOpen}
+        onOpenChange={closeModal}
+      />
     </div>
   );
 }
