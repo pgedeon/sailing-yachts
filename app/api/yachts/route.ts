@@ -53,6 +53,28 @@ export async function GET(request: Request) {
     // Fetch results
     const results = await query;
 
+    // Build distinct values for filter options (from full dataset, ignoring filters)
+    const distinctQuery = db
+      .select({
+        rigType: yachtModels.rigType,
+        keelType: yachtModels.keelType,
+        hullMaterial: yachtModels.hullMaterial,
+      })
+      .from(yachtModels)
+      .where(sql`${yachtModels.rigType} IS NOT NULL OR ${yachtModels.keelType} IS NOT NULL OR ${yachtModels.hullMaterial} IS NOT NULL`);
+    const distinctRows = await distinctQuery;
+
+    const collectDistinct = (field: string) =>
+      Array.from(
+        new Set(distinctRows.map((r: any) => r[field] as string | null).filter(Boolean))
+      ).sort();
+
+    const distinct = {
+      rigTypes: collectDistinct('rigType'),
+      keelTypes: collectDistinct('keelType'),
+      hullMaterials: collectDistinct('hullMaterial'),
+    };
+
     // Build response
     const response: any = {
       yachts: results,
@@ -60,6 +82,7 @@ export async function GET(request: Request) {
       page,
       limit,
       totalPages: Math.ceil(total / limit),
+      distinct,
     };
 
     if (debug) {
