@@ -228,3 +228,7 @@ Pull requests welcome. Please ensure all verification ladder items pass.
 
 Built with ❤️ using Next.js, Drizzle, and Tailwind.
 // force deploy Fri Feb 27 13:47:04 CET 2026
+
+---
+
+[![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-PayPal-blue)](https://www.paypal.com/donate/?business=petermgedeon%40gmail.com)
