@@ -138,7 +138,7 @@ export async function GET(request: Request) {
     };
 
     // Flatten results
-    const yachts = results.map(row => ({
+    const yachts = results.map((row: any) => ({
       id: row.id,
       manufacturer: row.manufacturer_name ?? '',
       modelName: row.model_name,
