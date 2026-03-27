@@ -5,6 +5,10 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 interface Manufacturer { id: number; name: string; }
+
+function fmt(value: number | null): string {
+  return value?.toLocaleString() || "—";
+}
 interface SpecCategory { id: number; name: string; group?: string; }
 interface Yacht {
   id: number;
@@ -29,6 +33,7 @@ interface Yacht {
   engineType: string | null;
   fuelCapacity: number | null;
   waterCapacity: number | null;
+  description: string | null;
 }
 
 export default function YachtsClient() {
@@ -243,7 +248,7 @@ export default function YachtsClient() {
                         <div className="flex justify-between"><dt>Hull:</dt><dd>{yacht.hullMaterial ?? '—'}</dd></div>
                       </dl>
                       {yacht.slug && (
-                        <button onClick={() => openYacht(yacht.slug)} className="mt-3 text-blue-600 hover:underline text-sm">
+                        <button onClick={() => openYacht(yacht.slug!)} className="mt-3 text-blue-600 hover:underline text-sm">
                           View Details
                         </button>
                       )}
