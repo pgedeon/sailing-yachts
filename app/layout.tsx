@@ -8,25 +8,37 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-// Playfair Display for elegant headings (optional, will load via CDN in layout if needed)
-// For now using Inter for everything
-
 export const metadata: Metadata = {
-  title: "Sailing Yachts Database",
+  metadataBase: new URL("https://sailing-yachts.vercel.app"),
+  title: {
+    default: "Sailing Yachts Database — Search & Compare Yacht Specs",
+    template: "%s | Sailing Yachts",
+  },
   description:
-    "Search and compare sailing yacht specifications from top manufacturers worldwide.",
+    "Comprehensive sailing yacht database. Search, compare specifications, and find the perfect sailboat from top manufacturers worldwide.",
   keywords: [
     "sailing yacht",
     "sailboat",
     "yacht specs",
     "boat comparison",
     "marine",
+    "yacht database",
+    "sailing yacht specifications",
   ],
   openGraph: {
     title: "Sailing Yachts Database",
     description:
       "Comprehensive database of sailing yacht specifications with advanced search and comparison tools.",
     type: "website",
+    siteName: "Sailing Yachts",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@sailingyachts",
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
@@ -35,8 +47,23 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Sailing Yachts",
+    url: "https://sailing-yachts.vercel.app",
+    description:
+      "Comprehensive sailing yacht database with search and comparison tools.",
+  };
+
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
+      </head>
       <body
         className={cn(inter.variable, "antialiased min-h-screen bg-background")}
       >
