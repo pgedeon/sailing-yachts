@@ -114,7 +114,7 @@ export async function GET(request: Request) {
 
     // Sorting
     const sortField = yachtModels[sortBy] ?? yachtModels.id;
-    query = query.orderBy(sql`${sortField} ${sortOrder}`);
+    query = sortOrder === "desc" ? query.orderBy(sql`${sql.identifier(sortBy as string)} desc`) : query.orderBy(sql`${sql.identifier(sortBy as string)} asc`);
 
     // Pagination
     const offset = (page - 1) * limit;
