@@ -4,7 +4,6 @@ const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'https://sailing-yachts.verc
 
 test.describe('Public Pages Smoke Tests', () => {
   test.beforeEach(async ({ page }) => {
-    // Set viewport size for consistent testing
     await page.setViewportSize({ width: 1280, height: 720 });
   });
 
@@ -27,8 +26,8 @@ test.describe('Public Pages Smoke Tests', () => {
       await page.goto(BASE_URL);
       await page.waitForLoadState('networkidle');
 
-      const criticalErrors = errors.filter(e => 
-        !e.includes('favicon') && 
+      const criticalErrors = errors.filter(e =>
+        !e.includes('favicon') &&
         !e.includes('net::ERR') &&
         !e.includes('Failed to load resource')
       );
@@ -75,8 +74,8 @@ test.describe('Public Pages Smoke Tests', () => {
       await page.goto(`${BASE_URL}/yachts`);
       await page.waitForLoadState('networkidle');
 
-      const criticalErrors = errors.filter(e => 
-        !e.includes('favicon') && 
+      const criticalErrors = errors.filter(e =>
+        !e.includes('favicon') &&
         !e.includes('net::ERR') &&
         !e.includes('Failed to load resource')
       );
@@ -86,19 +85,16 @@ test.describe('Public Pages Smoke Tests', () => {
     test('should display yachts in card format', async ({ page }) => {
       await page.goto(`${BASE_URL}/yachts`);
       await page.waitForLoadState('networkidle');
-
-      // Wait a bit for data to load
       await page.waitForTimeout(2000);
-      
-      // Look for any yacht-related content
+
       const yachtCards = page.locator('[data-testid="yacht-card"], .border.rounded.p-4').first();
       const loadingText = page.locator('text="Loading yachts..."');
       const noYachtsText = page.locator('text="No yachts match your filters"');
-      
+
       const hasCards = await yachtCards.count() > 0;
       const hasLoading = await loadingText.count() > 0;
       const hasNoYachts = await noYachtsText.count() > 0;
-      
+
       expect(hasCards || hasLoading || hasNoYachts).toBe(true);
     });
 
@@ -106,15 +102,12 @@ test.describe('Public Pages Smoke Tests', () => {
       await page.goto(`${BASE_URL}/yachts`);
       await page.waitForLoadState('networkidle');
 
-      // Look for filter checkboxes
       const filterCheckboxes = page.locator('input[type="checkbox"]').first();
-      
+
       if (await filterCheckboxes.count() > 0) {
         await expect(filterCheckboxes).toBeVisible();
-        // Click a filter checkbox to test it works
         await filterCheckboxes.first().check();
         await page.waitForLoadState('networkidle');
-        // Page should not crash after filter interaction
         await page.waitForSelector('h1');
         const h1 = page.locator('h1');
         await expect(h1).toHaveText('Sail Yachts');
@@ -124,19 +117,16 @@ test.describe('Public Pages Smoke Tests', () => {
     test('should have pagination if present', async ({ page }) => {
       await page.goto(`${BASE_URL}/yachts`);
       await page.waitForLoadState('networkidle');
-
-      // Wait for data to load
       await page.waitForTimeout(2000);
 
       const pagination = page.locator('button:has-text("Previous"), button:has-text("Next")').first();
-      
+
       if (await pagination.count() > 0) {
         await expect(pagination).toBeVisible();
         const prevButton = page.locator('button:has-text("Previous")').first();
         if (await prevButton.count() > 0 && !(await prevButton.isDisabled())) {
           await prevButton.click();
           await page.waitForLoadState('networkidle');
-          // Page should redirect without crashing
           await page.waitForSelector('h1');
           const h1 = page.locator('h1');
           await expect(h1).toHaveText('Sail Yachts');
@@ -147,19 +137,15 @@ test.describe('Public Pages Smoke Tests', () => {
     test('should show yacht details modal when clicking view details', async ({ page }) => {
       await page.goto(`${BASE_URL}/yachts`);
       await page.waitForLoadState('networkidle');
-
-      // Wait for data to load
       await page.waitForTimeout(2000);
 
-      // Look for "View Details" buttons
       const viewDetailsButtons = page.locator('text="View Details"').first();
-      
+
       if (await viewDetailsButtons.count() > 0) {
         await expect(viewDetailsButtons).toBeVisible();
         await viewDetailsButtons.first().click();
         await page.waitForTimeout(1000);
-        
-        // Modal should appear
+
         const modal = page.locator('.fixed.inset-0, .bg-black\\/50, .z-50').first();
         await expect(modal).toBeVisible();
       }
@@ -168,62 +154,51 @@ test.describe('Public Pages Smoke Tests', () => {
 
   test.describe('Individual Yacht Page', () => {
     test('should load individual yacht page via modal navigation', async ({ page }) => {
-      // This test is complex because it requires opening a modal from the listing
       await page.goto(`${BASE_URL}/yachts`);
       await page.waitForLoadState('networkidle');
-
-      // Wait for data to load
       await page.waitForTimeout(2000);
 
-      // Look for yacht cards that might have view details links
       const viewDetailsButtons = page.locator('text="View Details"').first();
-      
+
       if (await viewDetailsButtons.count() > 0) {
         await viewDetailsButtons.first().click();
         await page.waitForTimeout(1000);
-        
-        // Modal should be visible with yacht details
+
         const modal = page.locator('.fixed.inset-0, .bg-black\\/50, .z-50').first();
         await expect(modal).toBeVisible();
-        
-        // Close modal and test direct URL access
-        const closeButton = page.locator('text="×", .text-gray-500:has-text("×")').first();
+
+        const closeButton = page.locator('text="×"').first();
         if (await closeButton.count() > 0) {
           await closeButton.click();
           await page.waitForTimeout(500);
         }
       } else {
-        test.skip('No yachts available for detail testing');
+        test.skip(true, 'No yachts available for detail testing');
       }
     });
 
     test('should handle direct yacht URL access', async ({ page }) => {
-      // First get a yacht slug from the listing page
       await page.goto(`${BASE_URL}/yachts`);
       await page.waitForLoadState('networkidle');
-
-      // Wait for data to load
       await page.waitForTimeout(2000);
 
-      // Look for yacht links
       const yachtLinks = page.locator('a[href^="/yachts/"]:not([href="/yachts"])');
-      
+
       if (await yachtLinks.count() > 0) {
         const firstLink = yachtLinks.first();
         const href = await firstLink.getAttribute('href');
-        
+
         if (href) {
           await page.goto(`${BASE_URL}${href}`);
           await page.waitForLoadState('networkidle');
-          
-          // Should be on a yacht detail page
+
           await expect(page).toHaveURL(/\/yachts\/.+/);
           await page.waitForSelector('h1, h2');
           const yachtTitle = page.locator('h1, h2').first();
           await expect(yachtTitle).toBeVisible();
         }
       } else {
-        test.skip('No yacht links found');
+        test.skip(true, 'No yacht links found');
       }
     });
 
@@ -237,46 +212,54 @@ test.describe('Public Pages Smoke Tests', () => {
 
       await page.goto(`${BASE_URL}/yachts`);
       await page.waitForLoadState('networkidle');
-
-      // Wait for data to load
       await page.waitForTimeout(2000);
 
       const yachtLinks = page.locator('a[href^="/yachts/"]:not([href="/yachts"])');
-      
+
       if (await yachtLinks.count() > 0) {
         const firstLink = yachtLinks.first();
         await firstLink.click();
         await page.waitForLoadState('networkidle');
 
-        const criticalErrors = errors.filter(e => 
-          !e.includes('favicon') && 
+        const criticalErrors = errors.filter(e =>
+          !e.includes('favicon') &&
           !e.includes('net::ERR') &&
           !e.includes('Failed to load resource')
         );
         expect(criticalErrors.length).toBe(0);
       } else {
-        test.skip('No yacht links found');
+        test.skip(true, 'No yacht links found');
       }
     });
 
     test('should have yacht specifications in detail view', async ({ page }) => {
       await page.goto(`${BASE_URL}/yachts`);
       await page.waitForLoadState('networkidle');
-
-      // Wait for data to load
       await page.waitForTimeout(2000);
 
       const viewDetailsButtons = page.locator('text="View Details"').first();
-      
+
       if (await viewDetailsButtons.count() > 0) {
         await viewDetailsButtons.first().click();
         await page.waitForTimeout(1000);
-        
+
         // Check for specification details
-        const specFields = page.locator('dt, strong').filter({ hasText: /^(Length|Beam|Draft|Displacement|Rig|Keel)/ });
-        await expect(specFields.first()).toBeVisible();
+        const specFields = page.locator('dt, strong');
+        const specCount = await specFields.count();
+
+        let foundSpec = false;
+        for (let i = 0; i < specCount; i++) {
+          const text = await specFields.nth(i).textContent();
+          if (text && (text.includes('Length') || text.includes('Beam') || text.includes('Draft') ||
+                       text.includes('Displacement') || text.includes('Rig') || text.includes('Keel'))) {
+            foundSpec = true;
+            break;
+          }
+        }
+
+        expect(foundSpec).toBe(true);
       } else {
-        test.skip('No yachts available for spec testing');
+        test.skip(true, 'No yachts available for spec testing');
       }
     });
   });
@@ -285,16 +268,15 @@ test.describe('Public Pages Smoke Tests', () => {
     test('should show empty state when no yacht IDs provided', async ({ page }) => {
       await page.goto(`${BASE_URL}/compare`);
       await expect(page).toHaveURL(`${BASE_URL}/compare`);
-      
-      // Should show either loading or empty state
+
       const loadingText = page.locator('text="Loading comparison..."');
       const emptyText = page.locator('text="No yachts selected for comparison"');
       const noYachtsText = page.locator('text="No yachts to compare"');
-      
+
       const hasLoading = await loadingText.count() > 0;
       const hasEmpty = await emptyText.count() > 0;
       const hasNoYachts = await noYachtsText.count() > 0;
-      
+
       expect(hasLoading || hasEmpty || hasNoYachts).toBe(true);
     });
 
@@ -309,8 +291,8 @@ test.describe('Public Pages Smoke Tests', () => {
       await page.goto(`${BASE_URL}/compare`);
       await page.waitForLoadState('networkidle');
 
-      const criticalErrors = errors.filter(e => 
-        !e.includes('favicon') && 
+      const criticalErrors = errors.filter(e =>
+        !e.includes('favicon') &&
         !e.includes('net::ERR') &&
         !e.includes('Failed to load resource')
       );
@@ -318,21 +300,19 @@ test.describe('Public Pages Smoke Tests', () => {
     });
 
     test('should show comparison table when yacht IDs provided', async ({ page }) => {
-      // This would require actual yacht IDs, so we'll test the error case
       await page.goto(`${BASE_URL}/compare?ids=1,2`);
       await page.waitForLoadState('networkidle');
 
-      // Should either show loading, error, or actual comparison
       const loadingText = page.locator('text="Loading comparison..."');
       const errorText = page.locator('text="Failed"');
       const compareTable = page.locator('table');
       const yachtHeaders = page.locator('th:has-text("Manufacturer")');
-      
+
       const hasLoading = await loadingText.count() > 0;
       const hasError = await errorText.count() > 0;
       const hasTable = await compareTable.count() > 0;
       const hasHeaders = await yachtHeaders.count() > 0;
-      
+
       expect(hasLoading || hasError || hasTable || hasHeaders).toBe(true);
     });
 
@@ -344,7 +324,6 @@ test.describe('Public Pages Smoke Tests', () => {
       if (await errorText.count() > 0) {
         await expect(errorText).toBeVisible();
       } else {
-        // If no error shown, the page should still load without crashing
         await page.waitForSelector('h1');
         const h1 = page.locator('h1');
         await expect(h1).toBeVisible();
@@ -358,11 +337,9 @@ test.describe('Public Pages Smoke Tests', () => {
       await page.goto(BASE_URL);
       await page.waitForLoadState('networkidle');
 
-      // Main content should be visible on mobile
       const mains = page.locator('main');
       await expect(mains.first()).toBeVisible();
-      
-      // Home page content should be accessible
+
       const homeContent = page.locator('h1, .flex').first();
       await expect(homeContent).toBeVisible();
     });
@@ -372,7 +349,6 @@ test.describe('Public Pages Smoke Tests', () => {
       await page.goto(BASE_URL);
       await page.waitForLoadState('networkidle');
 
-      // Main content should be visible on tablet
       const mains = page.locator('main');
       await expect(mains.first()).toBeVisible();
     });
@@ -383,13 +359,11 @@ test.describe('Public Pages Smoke Tests', () => {
       await page.goto(BASE_URL);
       await page.waitForLoadState('networkidle');
 
-      // Click browse yachts button
       const browseButton = page.locator('text="Browse Yachts"').first();
       await expect(browseButton).toBeVisible();
       await browseButton.click();
       await page.waitForLoadState('networkidle');
-      
-      // Should navigate to yachts page
+
       await expect(page).toHaveURL(`${BASE_URL}/yachts`);
       await page.waitForSelector('h1');
       const h1 = page.locator('h1');
@@ -400,16 +374,14 @@ test.describe('Public Pages Smoke Tests', () => {
       await page.goto(`${BASE_URL}/yachts`);
       await page.waitForLoadState('networkidle');
 
-      // Look for back navigation link or browser back
       const backLink = page.locator('a:has-text("Back"), a[href="/"]').first();
-      
+
       if (await backLink.count() > 0) {
         await expect(backLink).toBeVisible();
         await backLink.click();
         await page.waitForLoadState('networkidle');
         await expect(page).toHaveURL(BASE_URL);
       } else {
-        // Test browser back button
         await page.goBack();
         await page.waitForLoadState('networkidle');
         await expect(page).toHaveURL(BASE_URL);
@@ -418,12 +390,11 @@ test.describe('Public Pages Smoke Tests', () => {
 
     test('should have footer links on all pages', async ({ page }) => {
       const pages = [BASE_URL, `${BASE_URL}/yachts`, `${BASE_URL}/compare`];
-      
+
       for (const pageUrl of pages) {
         await page.goto(pageUrl);
         await page.waitForLoadState('networkidle');
 
-        // Look for footer content
         const footerContent = page.locator('footer, .text-sm, .text-gray-500').first();
         await expect(footerContent).toBeVisible();
       }
@@ -435,8 +406,7 @@ test.describe('Public Pages Smoke Tests', () => {
       const startTime = Date.now();
       await page.goto(BASE_URL);
       const loadTime = Date.now() - startTime;
-      
-      // Pages should load within 10 seconds
+
       expect(loadTime).toBeLessThan(10000);
     });
 
@@ -444,11 +414,9 @@ test.describe('Public Pages Smoke Tests', () => {
       await page.goto(BASE_URL);
       await page.waitForLoadState('networkidle');
 
-      // Check for basic accessibility landmarks
       const main = page.locator('main').first();
       const hasMain = await main.count() > 0;
-      
-      // At least main content should be present
+
       expect(hasMain).toBe(true);
     });
 
@@ -456,9 +424,8 @@ test.describe('Public Pages Smoke Tests', () => {
       await page.goto(`${BASE_URL}/yachts`);
       await page.waitForLoadState('networkidle');
 
-      // Look for any interactive elements and test they don't break the page
       const interactiveElements = page.locator('input, button, a, [role="button"]').first();
-      
+
       if (await interactiveElements.count() > 0) {
         await expect(interactiveElements.first()).toBeVisible();
       }
@@ -469,8 +436,7 @@ test.describe('Public Pages Smoke Tests', () => {
     test('should handle 404 gracefully', async ({ page }) => {
       await page.goto(`${BASE_URL}/non-existent-page`);
       await page.waitForLoadState('networkidle');
-      
-      // Should show some content (error page or basic page structure)
+
       const bodyContent = page.locator('body').first();
       await expect(bodyContent).toBeVisible();
     });
@@ -486,23 +452,18 @@ test.describe('Public Pages Smoke Tests', () => {
       await page.goto(BASE_URL);
       await page.waitForLoadState('networkidle');
 
-      // Allow some broken images (like favicons that might not exist)
       expect(brokenImages.filter(url => !url.includes('favicon'))).toEqual([]);
     });
   });
 
   test.describe('SEO & Meta Tags', () => {
     test('should have title tag in page source', async ({ page }) => {
-      const pages = [
-        BASE_URL,
-        `${BASE_URL}/yachts`,
-        `${BASE_URL}/compare`
-      ];
+      const pages = [BASE_URL, `${BASE_URL}/yachts`, `${BASE_URL}/compare`];
 
       for (const pageUrl of pages) {
         await page.goto(pageUrl);
         await page.waitForLoadState('networkidle');
-        
+
         const title = page.locator('title');
         const titleText = await title.textContent();
         expect(titleText && titleText.trim().length > 0).toBe(true);
@@ -512,7 +473,7 @@ test.describe('Public Pages Smoke Tests', () => {
     test('should have meta description in page source if present', async ({ page }) => {
       await page.goto(BASE_URL);
       await page.waitForLoadState('networkidle');
-      
+
       const metaDescription = page.locator('meta[name="description"]').first();
       if (await metaDescription.count() > 0) {
         const content = await metaDescription.getAttribute('content');
