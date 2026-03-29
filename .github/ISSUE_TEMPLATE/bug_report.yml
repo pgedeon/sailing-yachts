@@ -1,51 +1,197 @@
 name: 🐛 Bug Report
-description: Report a bug or unexpected behavior
+description: Report a bug or unexpected behavior in the sailing yachts database
 labels: ["bug"]
 body:
   - type: textarea
-    id: description
+    id: summary
     attributes:
-      label: Bug Description
-      description: A clear description of what the bug is.
-      placeholder: "When I visit /yachts, the page loads slowly and shows..."
-    validations:
-      required: true
-  - type: textarea
-    id: steps
-    attributes:
-      label: Steps to Reproduce
-      description: How can we reproduce this behavior?
+      label: Bug Summary
+      description: A brief, clear summary of the bug (1-2 sentences).
       placeholder: |
-        1. Go to '/yachts'
-        2. Click on 'Beneteau Oceanis 30.1'
-        3. See error
+        Yacht comparison page crashes when user tries to add more than 4 yachts.
       render: markdown
     validations:
       required: true
   - type: textarea
-    id: expected
+    id: description
+    attributes:
+      label: Bug Description
+      description: A detailed description of what the bug is and how it manifests.
+      placeholder: |
+        **Issue Description:**
+        The yacht comparison tool crashes with a JavaScript error when users attempt to select a 5th yacht for comparison.
+        
+        **Error Message:**
+        ```
+        Error: Maximum comparison limit exceeded
+        ```
+        
+        **Frequency:**
+        - Occurs consistently when selecting 5th yacht
+        - Affects all users trying to compare multiple yachts
+        - Blocks the comparison functionality completely
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Detailed steps to reproduce the bug. Include specific data if needed.
+      placeholder: |
+        1. Navigate to `/yachts` page
+        2. Click the checkbox for the first yacht (e.g., Beneteau Oceanis 30.1)
+        3. Click the checkbox for a second yacht (e.g., Bavaria 32)
+        4. Click the checkbox for a third yacht (e.g., Jeanneau Sun Odyssey 349)
+        5. Click the checkbox for a fourth yacht (e.g., Bavaria 36)
+        6. Attempt to click checkbox for a fifth yacht (e.g., Beneteau First 35)
+        7. Observe the crash/error
+        
+        **Expected vs Actual:**
+        - Expected: Should show "Maximum 4 yachts can be compared" message
+        - Actual: Page crashes with JavaScript error
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: expected_behavior
     attributes:
       label: Expected Behavior
-      description: What did you expect to happen?
+      description: What should happen instead? Describe the correct behavior.
+      placeholder: |
+        **Expected Behavior:**
+        When users attempt to select a 5th yacht for comparison:
+        
+        1. System should display a user-friendly message indicating "Maximum 4 yachts can be compared"
+        2. The 5th yacht checkbox should remain unchecked
+        3. No JavaScript errors should occur
+        4. Existing selection of 4 yachts should remain intact
+        5. Users should have the option to deselect a yacht to make room for another
+        
+        **User Experience:**
+        - Clear visual feedback about the limitation
+        - Graceful handling of the constraint
+        - Maintains functionality without crashes
+      render: markdown
     validations:
       required: true
   - type: textarea
     id: screenshots
     attributes:
-      label: Screenshots
-      description: If applicable, add screenshots to help explain the issue.
-  - type: textarea
-    id: environment
-    attributes:
-      label: Environment
-      description: Browser, device, OS info
+      label: Screenshots & Screenshots
+      description: If applicable, add screenshots or screen recordings to help explain the issue. Include error messages.
       placeholder: |
-        - Browser: Chrome 120
-        - Device: Desktop
-        - URL: https://sailing-yachts.vercel.app/yachts
+        **Before (Working):**
+        ![Working comparison with 4 yachts selected](https://example.com/screenshot1.png)
+        
+        **After (Bug):**
+        ![Error message when trying to select 5th yacht](https://example.com/screenshot2.png)
+        
+        **Console Error:**
+        ```
+        TypeError: Cannot read property 'length' of undefined
+        at ComparisonComponent.js:45
+        ```
+      render: markdown
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this bug? Consider impact on users and system functionality.
+      options:
+        - Critical — System unusable or major functionality broken
+        - High — Core functionality affected, significant impact
+        - Medium — Non-critical features affected, moderate impact
+        - Low — Minor issues, cosmetic problems, or edge cases
+      default: 2
+    validations:
+      required: true
+  - type: dropdown
+    id: affected_components
+    attributes:
+      label: Affected Components
+      description: Which parts of the application are affected?
+      options:
+        - Frontend (React/Next.js components)
+        - Backend (API routes, server-side logic)
+        - Database (schema, queries, data)
+        - Build/deployment (CI/CD, Vercel)
+        - Testing (Playwright, test infrastructure)
+        - Multiple components
+      default: 0
+    validations:
+      required: true
+  - type: textarea
+    id: environment_info
+    attributes:
+      label: Environment Information
+      description: Browser, device, OS, and any other relevant environmental details.
+      placeholder: |
+        **Browser:**
+        - Chrome 120.0.6099 (latest)
+        - Safari 16.6 (macOS)
+        - Firefox 119.0 (latest)
+        
+        **Device/OS:**
+        - MacBook Pro (M1 Pro, macOS 14.3)
+        - Dell XPS 15 (Windows 11)
+        - iPhone 13 Pro (iOS 17.2)
+        
+        **Environment:**
+        - Production: https://sailing-yachts.vercel.app
+        - Staging: (if applicable)
+        - Network: WiFi, 4G
+        
+        **Other:**
+        - Tested with 50+ yachts in database
+        - Consistent behavior across browsers
+      render: markdown
+  - type: checkboxes
+    id: reproduction_frequency
+    attributes:
+      label: Reproduction Frequency
+      description: How often does this bug occur?
+      options:
+        - label: Always (reproduces every time)
+        - label: Often (80-90% of the time)
+        - label: Sometimes (50-80% of the time)
+        - label: Rarely (10-50% of the time)
+        - label: Only under specific conditions
+    validations:
+      required: true
+  - type: textarea
+    id: workarounds
+    attributes:
+      label: Workarounds
+      description: Are there any temporary workarounds users can use to avoid this bug?
+      placeholder: |
+        **Current Workarounds:**
+        1. Users can only compare 4 yachts max (but aren't informed of this limit)
+        2. Clear browser cache and cookies (temporary fix)
+        3. Use browser incognito mode (sometimes helps)
+        4. Navigate away from comparison page and return
+        
+        **Limitations:**
+        - Workarounds are not user-friendly
+        - Some workarounds require technical knowledge
+        - Problem persists across sessions
       render: markdown
   - type: textarea
-    id: additional
+    id: additional_context
     attributes:
       label: Additional Context
-      description: Any other context about the problem.
+      description: Any other context that might help fix this bug. Include related issues, recent changes, etc.
+      placeholder: |
+        **Recent Changes:**
+        - Issue #15 introduced the comparison feature
+        - PR #18 added the 4-yacht limit but didn't handle UI gracefully
+        
+        **Related Issues:**
+        - Issue #19: Feature request for better UX on comparison limits
+        - Issue #21: Performance issues with large comparison sets
+        
+        **User Impact:**
+        - Affects yacht comparison workflow
+        - Frustrates users doing research
+        - May cause users to abandon the site
+      render: markdown

@@ -1,32 +1,57 @@
 name: ✨ Feature Request
-description: Suggest a new feature or enhancement
+description: Suggest a new feature or enhancement for the sailing yachts database
 labels: ["enhancement"]
 body:
   - type: textarea
     id: problem
     attributes:
       label: Problem / Motivation
-      description: Is your feature request related to a problem? Please describe.
-      placeholder: "I'm frustrated when I can't compare more than 2 yachts..."
+      description: Is your feature request related to a problem? Please describe the pain point or missing functionality.
+      placeholder: |
+        **Current Problem:**
+        Users can only compare 2 yachts at a time, making it difficult to evaluate multiple options for purchasing decisions.
+        
+        **User Impact:**
+        - Sailors researching boats need to compare 3-4 models simultaneously
+        - Limited comparison affects decision quality
+        - Frustrating user experience when evaluating multiple yacht options
+      render: markdown
     validations:
       required: true
   - type: textarea
-    id: solution
+    id: proposed_solution
     attributes:
       label: Proposed Solution
-      description: Describe the solution you'd like.
+      description: Describe the solution you'd like in detail. Include mockups, diagrams, or specific requirements.
+      placeholder: |
+        **Solution Overview:**
+        Implement a multi-yacht comparison tool allowing users to select and compare 2-4 yachts side-by-side.
+        
+        **Key Features:**
+        - Checkbox selection on yacht listing pages
+        - Dedicated comparison page with side-by-side layout
+        - Show all yacht specifications (specs, features, dimensions)
+        - Visual indicators for key differences
+        - "Save comparison" functionality with shareable URLs
+        
+        **Technical Approach:**
+        - Add selection checkboxes to yacht cards
+        - Create `/compare` route with dynamic yacht parameters
+        - Use React state for comparison data
+        - Implement responsive grid layout
+      render: markdown
     validations:
       required: true
   - type: dropdown
     id: priority
     attributes:
       label: Priority
-      description: How important is this feature?
+      description: How important is this feature? Consider user impact and business value.
       options:
-        - Low — Nice to have
-        - Medium — Would improve experience
-        - High — Significant impact
-        - Critical — Blocking current work
+        - Low — Nice to have (future consideration, low impact)
+        - Medium — Would improve experience (quality of life improvement)
+        - High — Significant impact (solves major user pain point)
+        - Critical — Blocking current work (prevents core functionality)
       default: 1
     validations:
       required: true
@@ -34,22 +59,124 @@ body:
     id: phase
     attributes:
       label: Roadmap Phase
-      description: Which phase does this belong to? (see ROADMAP.md)
+      description: Which phase does this belong to? (see ROADMAP.md for details)
       options:
-        - Phase 0 — Fix Build & CI
-        - Phase 1 — Data & Content
-        - Phase 2 — Core Features
-        - Phase 3 — User Features
-        - Phase 4 — sailboats.fr Integration
-        - Phase 5 — Advanced Features
+        - Phase 0 — Fix Build & CI (infrastructure, bug fixes)
+        - Phase 1 — Data & Content (data expansion, content improvements)
+        - Phase 2 — Core Features (user-facing functionality)
+        - Phase 3 — User Features (enhanced user experience)
+        - Phase 4 — sailboats.fr Integration (cross-platform features)
+        - Phase 5 — Advanced Features (future capabilities, optimization)
       default: 2
+    validations:
+      required: true
   - type: textarea
-    id: alternatives
+    id: alternatives_considered
     attributes:
       label: Alternatives Considered
-      description: Any alternative solutions or features you've considered.
+      description: What other solutions have you considered? Why is this approach better?
+      placeholder: |
+        **Alternative 1: External Comparison Tools**
+        - Use third-party comparison widgets
+        - *Why not:* Less control over data, branding issues, potential costs
+        
+        **Alternative 2: Simple Table Layout**
+        - Basic HTML table comparison
+        - *Why not:* Poor mobile experience, limited functionality, no interactivity
+        
+        **Chosen Approach:**
+        Custom React component with responsive design, interactive features, and seamless integration.
+      render: markdown
   - type: textarea
-    id: additional
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Define what must be true for this feature to be complete (use specific, testable criteria).
+      placeholder: |
+        **Functionality:**
+        - [ ] Users can select 2-4 yachts via checkboxes
+        - [ ] Comparison page shows all yacht specifications in table format
+        - [ ] Users can remove yachts from comparison
+        - [ ] Compare page is responsive on mobile devices
+        - [ ] Shared URLs work for saved comparisons
+        
+        **Technical:**
+        - [ ] TypeScript types defined for comparison data
+        - [ ] API endpoints handle comparison data efficiently
+        - [ ] Playwright tests created for all user flows
+        - [ ] Performance tests for large comparison sets
+        
+        **Quality:**
+        - [ ] All existing tests still pass
+        - [ ] Code follows project conventions
+        - [ ] Accessibility compliance maintained
+        - [ ] SEO optimization included
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: user_scenarios
+    attributes:
+      label: User Scenarios
+      description: Describe how different users would interact with this feature. Include user stories.
+      placeholder: |
+        **Scenario 1: Researching Sailboat Buyer**
+        *As a sailor looking to buy a 35-40ft bluewater cruiser,*
+        *I want to compare Beneteau, Bavaria, and Jeanneau models*
+        *so that I can make an informed decision based on specifications.*
+        
+        **Scenario 2: Charter Company Manager**
+        *As a charter company evaluating fleet expansion,*
+        *I want to compare yacht models for operational efficiency*
+        *so that I can choose cost-effective vessels for my business.*
+        
+        **Scenario 3: Sailing Instructor**
+        *As an instructor researching training boats,*
+        *I want to compare different yacht models for student use*
+        *so that I can select safe, appropriate vessels for courses.*
+      render: markdown
+  - type: textarea
+    id: implementation_notes
+    attributes:
+      label: Implementation Notes & Technical Details
+      description: Any technical considerations, dependencies, or implementation guidance.
+      placeholder: |
+        **Technical Considerations:**
+        - Store selected yacht IDs in localStorage for persistence
+        - Use Next.js dynamic routing for `/compare/[ids]`
+        - Implement server-side data fetching for comparison
+        - Consider data caching for performance
+        
+        **Dependencies:**
+        - Existing yacht data schema (`drizzle/schema/yacht.ts`)
+        - Existing manufacturer and specification data
+        - No database schema changes required
+        
+        **Files to Modify/Create:**
+        - `app/yachts/[slug]/page.tsx` (add comparison checkboxes)
+        - `app/compare/page.tsx` (dynamic comparison page)
+        - `components/comparison/YachtComparison.tsx`
+        - `lib/comparison.ts` (utility functions)
+        - `tests/comparison.spec.ts`
+      render: markdown
+  - type: checkboxes
+    id: compliance_checklist
+    attributes:
+      label: Compliance Checklist
+      description: Ensure this follows project standards and best practices.
+      options:
+        - label: Follows automated workflow rules (feature branches, PR process)
+        - label: Will include Playwright E2E tests
+        - label: Will run typecheck and build locally before push
+        - label: Conventional commit messages will be used
+        - label: Maintains existing code style and patterns
+        - label: Includes accessibility considerations
+        - label: SEO best practices followed
+        - label: Performance implications considered
+    validations:
+      required: true
+  - type: textarea
+    id: additional_context
     attributes:
       label: Additional Context
-      description: Any other context, screenshots, or references.
+      description: Any other context, screenshots, mockups, references to similar features, or other notes.
