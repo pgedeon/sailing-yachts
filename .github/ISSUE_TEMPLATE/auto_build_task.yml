@@ -6,13 +6,17 @@ body:
     id: description
     attributes:
       label: Task Description
-      description: What needs to be implemented.
+      description: What needs to be implemented (be specific about features, files to modify, APIs to create).
+      placeholder: |
+        Implement the yacht comparison feature with side-by-side view showing all specifications from the database.
+      render: markdown
     validations:
       required: true
   - type: dropdown
     id: priority
     attributes:
       label: Priority
+      description: Select the priority level based on impact and urgency.
       options:
         - critical
         - high
@@ -21,19 +25,120 @@ body:
       default: 1
     validations:
       required: true
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Roadmap Phase
+      description: Which phase does this belong to? (see ROADMAP.md)
+      options:
+        - Phase 0 — Fix Build & CI
+        - Phase 1 — Data & Content
+        - Phase 2 — Core Features
+        - Phase 3 — User Features
+        - Phase 4 — sailboats.fr Integration
+        - Phase 5 — Advanced Features
+      default: 2
+    validations:
+      required: true
   - type: textarea
     id: acceptance
     attributes:
       label: Acceptance Criteria
-      description: What must be true for this task to be considered complete.
+      description: What must be true for this task to be considered complete (use checkboxes).
       placeholder: |
-        - [ ] Feature works as described
-        - [ ] Tests pass
-        - [ ] Build succeeds
-        - [ ] Deployed to production
+        - [ ] Feature works as described in the requirements
+        - [ ] All TypeScript types are defined and validated
+        - [ ] Playwright E2E tests created and passing
+        - [ ] `npm run typecheck` passes without errors
+        - [ ] `npm run build` succeeds locally
+        - [ ] Git commit follows conventional commit format
+        - [ ] Feature branch created and pushed to GitHub
+        - [ ] PR opened with proper description and links to issue
+        - [ ] CI checks (typecheck, build, lint) all pass
+        - [ ] PR merged to main after CI passes
+        - [ ] Vercel deployment succeeds (verified in dashboard)
+        - [ ] Production URL tested and feature confirmed working
+        - [ ] Issue closed with summary comment of what was done
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: implementation_notes
+    attributes:
+      label: Implementation Notes & Technical Details
+      description: Any technical notes, dependencies, implementation approach, or specific requirements.
+      placeholder: |
+        ## Technical Approach
+        - Create new API route at `/api/comparison`
+        - Use existing yacht schema from `dr/schema/yacht.ts`
+        - Implement client-side comparison component using React state
+        - Use Tailwind for responsive layout
+        
+        ## Dependencies
+        - No additional npm packages required
+        - Requires existing yacht data from Neon database
+        
+        ## Files to Modify/Create
+        - `app/api/comparison/route.ts` (new API route)
+        - `components/comparison/YachtComparison.tsx` (new component)
+        - `app/yachts/compare/page.tsx` (new page)
+        - `tests/comparison.spec.ts` (new Playwright tests)
+        
+        ## Database Schema
+        - Use existing `yachts` table schema
+        - No schema changes required
+      render: markdown
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Implementation Checklist
+      description: Check all that apply (implementation guide for automated builder).
+      options:
+        - label: This task follows the automated workflow rules
+        - label: Feature branch will use naming convention `feature/issue-N-description`
+        - label: Will include at least one Playwright E2E test
+        - label: Will run `npm run typecheck && npm run build` locally before push
+        - label: Will create PR with conventional commit message
+        - label: Will wait for CI checks to pass before merging
+        - label: Will verify Vercel deployment after merge
+        - label: Will add/update tests for new functionality
+        - label: Will keep commits atomic and well-described
+        - label: Source `.env` from `/root/.openclaw/workspace/sailing-yachts/.env` for DATABASE_URL
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies & Related Issues
+      description: Any dependencies on other issues, PRs, or features. Reference issue numbers.
+      placeholder: |
+        Depends on:
+        - Issue #X (for database schema changes)
+        - PR #Y (for API endpoints)
+        
+        Related to:
+        - Issue #Z (similar feature)
       render: markdown
   - type: textarea
-    id: notes
+    id: testing_requirements
     attributes:
-      label: Implementation Notes
-      description: Any technical notes or pointers for the implementer.
+      label: Testing Requirements
+      description: Specify what tests need to be created/updated.
+      placeholder: |
+        ## Required Tests
+        - [ ] Playwright E2E test for main user flow
+        - [ ] API route error handling tests
+        - [ ] Component unit tests if complex logic
+        
+        ## Test Scenarios
+        - Verify feature works on desktop and mobile
+        - Test with empty/fallback data
+        - Test error states and edge cases
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional Context
+      description: Any other context, screenshots, references, or notes.
