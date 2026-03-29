@@ -8,25 +8,59 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-// Playfair Display for elegant headings (optional, will load via CDN in layout if needed)
-// For now using Inter for everything
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sailing-yachts.vercel.app";
 
 export const metadata: Metadata = {
-  title: "Sailing Yachts Database",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "Sailing Yachts Database — Specs, Comparison & Reviews",
+    template: "%s | Sailing Yachts Database",
+  },
   description:
-    "Search and compare sailing yacht specifications from top manufacturers worldwide.",
+    "Search and compare sailing yacht specifications from top manufacturers worldwide. Browse detailed specs, dimensions, sail plans, and accommodation details.",
   keywords: [
     "sailing yacht",
     "sailboat",
     "yacht specs",
     "boat comparison",
     "marine",
+    "yacht database",
+    "sailing boat specifications",
+    "yacht dimensions",
+    "sailboat reviews",
+    "boat finder",
   ],
+  authors: [{ name: "Sailing Yachts Database" }],
+  creator: "Sailing Yachts Database",
+  publisher: "Sailing Yachts Database",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   openGraph: {
-    title: "Sailing Yachts Database",
+    type: "website",
+    locale: "en_US",
+    url: siteUrl,
+    siteName: "Sailing Yachts Database",
+    title: "Sailing Yachts Database — Specs, Comparison & Reviews",
     description:
       "Comprehensive database of sailing yacht specifications with advanced search and comparison tools.",
-    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sailing Yachts Database — Specs, Comparison & Reviews",
+    description:
+      "Comprehensive database of sailing yacht specifications with advanced search and comparison tools.",
+  },
+  alternates: {
+    canonical: siteUrl,
   },
 };
 
