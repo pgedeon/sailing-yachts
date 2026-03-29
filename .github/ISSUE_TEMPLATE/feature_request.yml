@@ -1,0 +1,55 @@
+name: ✨ Feature Request
+description: Suggest a new feature or enhancement
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Motivation
+      description: Is your feature request related to a problem? Please describe.
+      placeholder: "I'm frustrated when I can't compare more than 2 yachts..."
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like.
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature?
+      options:
+        - Low — Nice to have
+        - Medium — Would improve experience
+        - High — Significant impact
+        - Critical — Blocking current work
+      default: 1
+    validations:
+      required: true
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Roadmap Phase
+      description: Which phase does this belong to? (see ROADMAP.md)
+      options:
+        - Phase 0 — Fix Build & CI
+        - Phase 1 — Data & Content
+        - Phase 2 — Core Features
+        - Phase 3 — User Features
+        - Phase 4 — sailboats.fr Integration
+        - Phase 5 — Advanced Features
+      default: 2
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any alternative solutions or features you've considered.
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other context, screenshots, or references.

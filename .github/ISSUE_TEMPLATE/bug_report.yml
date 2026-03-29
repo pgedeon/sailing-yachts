@@ -1,0 +1,51 @@
+name: 🐛 Bug Report
+description: Report a bug or unexpected behavior
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear description of what the bug is.
+      placeholder: "When I visit /yachts, the page loads slowly and shows..."
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this behavior?
+      placeholder: |
+        1. Go to '/yachts'
+        2. Click on 'Beneteau Oceanis 30.1'
+        3. See error
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain the issue.
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser, device, OS info
+      placeholder: |
+        - Browser: Chrome 120
+        - Device: Desktop
+        - URL: https://sailing-yachts.vercel.app/yachts
+      render: markdown
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other context about the problem.
