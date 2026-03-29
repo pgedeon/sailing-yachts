@@ -1,0 +1,39 @@
+name: 🏗️ Auto-Build Task
+description: Task for the automated sailing-yachts-builder cron
+labels: ["auto-build"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Task Description
+      description: What needs to be implemented.
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - critical
+        - high
+        - medium
+        - low
+      default: 1
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: What must be true for this task to be considered complete.
+      placeholder: |
+        - [ ] Feature works as described
+        - [ ] Tests pass
+        - [ ] Build succeeds
+        - [ ] Deployed to production
+      render: markdown
+  - type: textarea
+    id: notes
+    attributes:
+      label: Implementation Notes
+      description: Any technical notes or pointers for the implementer.
