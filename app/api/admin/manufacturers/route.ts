@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { ensureSchema, pool } from '@/lib/db'
+import { validate, createManufacturerSchema, updateManufacturerSchema } from '@/lib/validations'
+import { revalidateTag } from 'next/cache'
 
 function mapManufacturer(row: any) {
   return {
@@ -57,28 +59,34 @@ export async function POST(request: Request) {
   try {
     await ensureSchema()
     const body = await request.json()
+
+    const validation = validate(createManufacturerSchema, body)
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: validation.errors },
+        { status: 400 }
+      )
+    }
+
+    const data = validation.data
     const result = await pool.query(
       `
         INSERT INTO manufacturers (
-          name,
-          country,
-          founded_year,
-          website_url,
-          logo_url,
-          description
+          name, country, founded_year, website_url, logo_url, description
         ) VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING id, name, country, founded_year, website_url, logo_url, description
       `,
       [
-        body.name ?? null,
-        body.country ?? null,
-        body.foundedYear ?? null,
-        body.websiteUrl ?? null,
-        body.logoUrl ?? null,
-        body.description ?? null,
+        data.name,
+        data.country ?? null,
+        data.foundedYear ?? null,
+        data.websiteUrl && data.websiteUrl !== "" ? data.websiteUrl : null,
+        data.logoUrl && data.logoUrl !== "" ? data.logoUrl : null,
+        data.description ?? null,
       ]
     )
     const manufacturer = mapManufacturer(result.rows[0])
+    revalidateTag('manufacturers');
     return NextResponse.json({ manufacturer }, { status: 201 })
   } catch (error) {
     console.error('Failed to create manufacturer:', error)

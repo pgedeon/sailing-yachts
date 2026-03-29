@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { ensureSchema, pool } from '@/lib/db'
+import { validate, updateSpecCategorySchema } from '@/lib/validations'
 
 function mapCategory(row: any) {
   return {
@@ -86,25 +87,35 @@ export async function PUT(
   try {
     await ensureSchema()
     const body = await request.json()
+
+    const validation = validate(updateSpecCategorySchema, body)
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: validation.errors },
+        { status: 400 }
+      )
+    }
+
+    const data = validation.data
     const result = await pool.query(
       `
         UPDATE spec_categories
-        SET name = $1,
-            data_type = $2,
-            unit = $3,
-            description = $4,
-            category_group = $5,
-            is_filterable = $6
+        SET name = COALESCE($1, name),
+            data_type = COALESCE($2, data_type),
+            unit = COALESCE($3, unit),
+            description = COALESCE($4, description),
+            category_group = COALESCE($5, category_group),
+            is_filterable = COALESCE($6, is_filterable)
         WHERE id = $7
         RETURNING id, name, data_type, unit, description, category_group, is_filterable
       `,
       [
-        body.name ?? null,
-        body.dataType ?? null,
-        body.unit ?? null,
-        body.description ?? null,
-        body.categoryGroup ?? null,
-        body.isFilterable ?? false,
+        data.name ?? null,
+        data.dataType ?? null,
+        data.unit ?? null,
+        data.description ?? null,
+        data.categoryGroup ?? null,
+        data.isFilterable ?? null,
         categoryId,
       ]
     )
