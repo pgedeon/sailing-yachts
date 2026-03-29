@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { ensureSchema, pool } from '@/lib/db'
+import { validate, updateManufacturerSchema } from '@/lib/validations'
+import { revalidateTag } from 'next/cache'
 
 function mapManufacturer(row: any) {
   return {
@@ -86,31 +88,42 @@ export async function PUT(
   try {
     await ensureSchema()
     const body = await request.json()
+
+    const validation = validate(updateManufacturerSchema, body)
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: validation.errors },
+        { status: 400 }
+      )
+    }
+
+    const data = validation.data
     const result = await pool.query(
       `
         UPDATE manufacturers
-        SET name = $1,
-            country = $2,
-            founded_year = $3,
-            website_url = $4,
-            logo_url = $5,
-            description = $6
+        SET name = COALESCE($1, name),
+            country = COALESCE($2, country),
+            founded_year = COALESCE($3, founded_year),
+            website_url = COALESCE($4, website_url),
+            logo_url = COALESCE($5, logo_url),
+            description = COALESCE($6, description)
         WHERE id = $7
         RETURNING id, name, country, founded_year, website_url, logo_url, description
       `,
       [
-        body.name ?? null,
-        body.country ?? null,
-        body.foundedYear ?? null,
-        body.websiteUrl ?? null,
-        body.logoUrl ?? null,
-        body.description ?? null,
+        data.name ?? null,
+        data.country ?? null,
+        data.foundedYear ?? null,
+        data.websiteUrl ?? null,
+        data.logoUrl ?? null,
+        data.description ?? null,
         manufacturerId,
       ]
     )
     if (result.rows.length === 0) {
       return NextResponse.json({ error: 'Manufacturer not found' }, { status: 404 })
     }
+    revalidateTag('manufacturers');
     const manufacturer = mapManufacturer(result.rows[0])
     return NextResponse.json({ manufacturer })
   } catch (error) {
@@ -151,6 +164,7 @@ export async function DELETE(
     if (result.rowCount === 0) {
       return NextResponse.json({ error: 'Manufacturer not found' }, { status: 404 })
     }
+    revalidateTag('manufacturers');
     return new NextResponse(null, { status: 204 })
   } catch (error) {
     console.error('Failed to delete manufacturer:', error)

@@ -4,6 +4,7 @@ import { ensureSchema, pool } from '@/lib/db'
 import { mapYachtToListDto } from '@/lib/mappers/yacht'
 import { revalidateTag } from 'next/cache'
 import { slugify } from '@/lib/utils/slugify'
+import { validate, createYachtModelSchema } from '@/lib/validations'
 
 export const dynamic = 'force-dynamic';
 
@@ -110,17 +111,20 @@ export async function POST(request: Request) {
     await ensureSchema()
     const body = await request.json()
 
-    // Ensure slug is present and valid: derive from modelName if missing
-    let slug = body.slug?.trim()
+    const validation = validate(createYachtModelSchema, body)
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: validation.errors },
+        { status: 400 }
+      )
+    }
+
+    const data = validation.data
+
+    // Ensure slug is present: derive from modelName if missing
+    let slug = data.slug?.trim()
     if (!slug) {
-      const modelName = body.modelName?.trim()
-      if (!modelName) {
-        return NextResponse.json(
-          { error: 'Slug or model name required' },
-          { status: 400 }
-        )
-      }
-      slug = slugify(modelName)
+      slug = slugify(data.modelName)
     } else {
       slug = slugify(slug)
     }
@@ -134,29 +138,12 @@ export async function POST(request: Request) {
     const result = await pool.query(
       `
         INSERT INTO yacht_models (
-          model_name,
-          manufacturer_id,
-          year,
-          slug,
-          length_overall,
-          beam,
-          draft,
-          displacement,
-          ballast,
-          sail_area_main,
-          rig_type,
-          keel_type,
-          hull_material,
-          cabins,
-          berths,
-          heads,
-          max_occupancy,
-          engine_hp,
-          engine_type,
-          fuel_capacity,
-          water_capacity,
-          design_notes,
-          description
+          model_name, manufacturer_id, year, slug,
+          length_overall, beam, draft, displacement, ballast, sail_area_main,
+          rig_type, keel_type, hull_material,
+          cabins, berths, heads, max_occupancy,
+          engine_hp, engine_type, fuel_capacity, water_capacity,
+          design_notes, description
         ) VALUES (
           $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
           $11, $12, $13, $14, $15, $16, $17, $18, $19, $20,
@@ -170,33 +157,32 @@ export async function POST(request: Request) {
                   description, created_at, updated_at
       `,
       [
-        body.modelName ?? null,
-        body.manufacturerId ?? null,
-        body.year ?? null,
+        data.modelName,
+        data.manufacturerId,
+        data.year,
         slug,
-        body.lengthOverall ?? null,
-        body.beam ?? null,
-        body.draft ?? null,
-        body.displacement ?? null,
-        body.ballast ?? null,
-        body.sailAreaMain ?? null,
-        body.rigType ?? null,
-        body.keelType ?? null,
-        body.hullMaterial ?? null,
-        body.cabins ?? null,
-        body.berths ?? null,
-        body.heads ?? null,
-        body.maxOccupancy ?? null,
-        body.engineHp ?? null,
-        body.engineType ?? null,
-        body.fuelCapacity ?? null,
-        body.waterCapacity ?? null,
-        body.designNotes ?? null,
-        body.description ?? null,
+        data.lengthOverall ?? null,
+        data.beam ?? null,
+        data.draft ?? null,
+        data.displacement ?? null,
+        data.ballast ?? null,
+        data.sailAreaMain ?? null,
+        data.rigType ?? null,
+        data.keelType ?? null,
+        data.hullMaterial ?? null,
+        data.cabins ?? null,
+        data.berths ?? null,
+        data.heads ?? null,
+        data.maxOccupancy ?? null,
+        data.engineHp ?? null,
+        data.engineType ?? null,
+        data.fuelCapacity ?? null,
+        data.waterCapacity ?? null,
+        data.designNotes ?? null,
+        data.description ?? null,
       ]
     )
     const yacht = result.rows[0]
-    // P1: Invalidate cache tags
     revalidateTag('yachts');
     if (yacht.slug) {
       revalidateTag(`yacht:${yacht.slug}`);
