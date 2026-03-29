@@ -1,53 +1,118 @@
-import { db, yachtModels } from "@/lib/db";
-import { sql } from "drizzle-orm";
+import { db, yachtModels, manufacturers } from "@/lib/db";
+import { isNotNull } from "drizzle-orm";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://sailing-yachts.vercel.app";
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://sailing-yachts.vercel.app";
+
+function escapeXml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+interface SitemapEntry {
+  loc: string;
+  lastmod?: string;
+  changefreq?: string;
+  priority?: string;
+}
+
+function buildUrl(entry: SitemapEntry): string {
+  const lastmod = entry.lastmod
+    ? `<lastmod>${escapeXml(entry.lastmod)}</lastmod>`
+    : "";
+  const changefreq = entry.changefreq
+    ? `<changefreq>${escapeXml(entry.changefreq)}</changefreq>`
+    : "";
+  const priority = entry.priority
+    ? `<priority>${escapeXml(entry.priority)}</priority>`
+    : "";
+
+  return `  <url>
+    <loc>${escapeXml(entry.loc)}</loc>
+    ${lastmod}${changefreq}${priority}
+  </url>`;
+}
 
 export async function GET() {
-  // Fetch all yacht slugs for dynamic URLs
-  const yachts: Array<{ slug: string | null; updatedAt: Date | null }> = await db
-    .select({
-      slug: yachtModels.slug,
-      updatedAt: yachtModels.updatedAt,
-    })
-    .from(yachtModels);
+  try {
+    // Fetch yacht slugs with updatedAt
+    const yachts: Array<{ slug: string | null; updatedAt: Date | null }> =
+      await db
+        .select({
+          slug: yachtModels.slug,
+          updatedAt: yachtModels.updatedAt,
+        })
+        .from(yachtModels);
 
-  const staticPages = [
-    { path: "/", changefreq: "daily", priority: "1.0" },
-    { path: "/yachts", changefreq: "daily", priority: "0.9" },
-    { path: "/compare", changefreq: "weekly", priority: "0.7" },
-  ];
+    // Fetch manufacturers
+    const mfrs: Array<{ id: number | null; name: string | null }> =
+      await db.select({ id: manufacturers.id, name: manufacturers.name }).from(manufacturers);
 
-  const urls = [
-    ...staticPages.map((p) => `    <url>
-      <loc>${SITE_URL}${p.path}</loc>
-      <changefreq>${p.changefreq}</changefreq>
-      <priority>${p.priority}</priority>
-    </url>`),
-    ...yachts
-      .filter((y: { slug: string | null; updatedAt: Date | null }) => y.slug)
-      .map((y: { slug: string | null; updatedAt: Date | null }) => {
-        const lastmod = y.updatedAt
-          ? `<lastmod>${new Date(y.updatedAt).toISOString()}</lastmod>`
-          : "";
-        return `    <url>
-      <loc>${SITE_URL}/yachts/${y.slug}</loc>
-      ${lastmod}
-      <changefreq>weekly</changefreq>
-      <priority>0.8</priority>
-    </url>`;
-      }),
-  ].join("\n");
+    const entries: SitemapEntry[] = [
+      // Static pages
+      { loc: `${SITE_URL}/`, changefreq: "daily", priority: "1.0" },
+      { loc: `${SITE_URL}/yachts`, changefreq: "daily", priority: "0.9" },
+      { loc: `${SITE_URL}/compare`, changefreq: "weekly", priority: "0.7" },
+    ];
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+    // Dynamic yacht pages
+    for (const y of yachts) {
+      if (y.slug) {
+        entries.push({
+          loc: `${SITE_URL}/yachts/${y.slug}`,
+          lastmod: y.updatedAt ? new Date(y.updatedAt).toISOString() : undefined,
+          changefreq: "weekly",
+          priority: "0.8",
+        });
+      }
+    }
+
+    // Dynamic manufacturer pages (if individual pages exist)
+    for (const m of mfrs) {
+      if (m.id && m.name) {
+        const slug = m.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+        entries.push({
+          loc: `${SITE_URL}/yachts?manufacturer=${encodeURIComponent(slug)}`,
+          changefreq: "weekly",
+          priority: "0.6",
+        });
+      }
+    }
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls}
+${entries.map(buildUrl).join("\n")}
 </urlset>`;
 
-  return new Response(xml, {
-    headers: {
-      "Content-Type": "application/xml",
-      "Cache-Control": "s-maxage=3600, stale-while-revalidate",
-    },
-  });
+    return new Response(xml, {
+      headers: {
+        "Content-Type": "application/xml",
+        "Cache-Control": "s-maxage=3600, stale-while-revalidate",
+      },
+    });
+  } catch (error) {
+    console.error("[sitemap] Error generating sitemap:", error);
+
+    // Return a minimal valid sitemap even on error
+    const fallback = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${SITE_URL}/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>`;
+
+    return new Response(fallback, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/xml",
+        "Cache-Control": "no-cache",
+      },
+    });
+  }
 }
