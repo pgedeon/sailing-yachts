@@ -1,48 +1,40 @@
-# Sailing Yachts — Session Notes
+# Sailing Yachts — Session Log
 
-## 2026-03-28: Issue #3 — Playwright E2E Smoke Tests
+## Session: 2026-03-29 08:30 UTC (Cron: sailing-yachts-builder)
 
-### Completed
-- **Issue #3** (priority:high, phase:0): Add Playwright E2E smoke tests for all pages
-  - Created `tests/smoke.spec.ts` with 37 test cases across 9 test groups
-  - **Test coverage**: Home (4), Yachts Listing (6), Individual Yacht (4), Compare (4), Responsive (2), Navigation (3), Performance/A11y (3), Error Handling (2), SEO/Meta (2)
-  - Fixed `test.skip('string')` → `test.skip(true, 'string')` — Playwright requires `(condition: boolean, description?: string)`
-  - Fixed `.filter({ hasText: /regex/ })` TypeScript overload errors
-  - PR #6 merged to main, all CI checks green (TypeScript, Lint, Build, Vercel)
-  - Issue #3 closed with summary comment
+### Completed Issues (4/4 auto-build issues resolved)
 
-### Key Learnings
-- **Playwright `test.skip()`**: Must pass `(condition: boolean, description?: string)`, NOT just a string. `test.skip('reason')` fails TypeScript.
-- **Playwright `.filter({ hasText: /regex/ })`**: Can cause TypeScript overload resolution errors. Safer to iterate with `.textContent()` checks.
-- **Test resilience**: Many tests use conditional logic (`if count > 0`) to handle dynamic data, since the production DB may not always have yacht records loaded.
-- **CI runs TypeScript strictly**: Even if local `tsc --noEmit` passes, always verify CI passes before merging.
+1. **Issue #11 — Dynamic sitemap.xml** (PR #14)
+   - Improved existing `app/sitemap.xml/route.ts` with XML escaping, error handling, manufacturer URLs
+   - Enhanced `app/robots.txt/route.ts` with cache headers and crawl-delay
+   - Already had Playwright test coverage in `tests/seo.spec.ts`
+   - Live: https://sailing-yachts.vercel.app/sitemap.xml (3 static + 3 yachts + 4 manufacturers)
 
-### Project State
-- Main branch: up to date with origin
-- CI pipeline: active and green on main
-- Completed issues: #2 (CI workflow), #3 (Playwright smoke tests)
-- Open issues: #4 (SEO)
-- Vercel project: `sailing-yachts` (peter-gedeons-projects)
+2. **Issue #7 — GitHub issue templates** (PR #15)
+   - Created 3 templates: bug_report.yml, feature_request.yml, auto_build_task.yml
+   - Added config.yml to disable blank issues
+   - Completes Phase 0 of ROADMAP
 
-### Next Task
-- Check ROADMAP.md for remaining unchecked items to create new auto-build issues
-- Issue #4 (SEO) might be the next candidate
+3. **Issue #8 — Zod validation schemas** (PR #16)
+   - Created `lib/validations.ts` with schemas for manufacturers, yachts, spec-categories
+   - Applied to all admin POST/PUT routes
+   - Invalid inputs return 400 with structured error messages
+   - Query param schemas for yacht filtering and compare
 
----
+4. **Issue #9 — Seed data script** (PR #17)
+   - Enhanced `scripts/seed.ts` with CSV/JSON bulk import
+   - Added `--input` flag for file import, `--upsert` for conflict handling
+   - Created `data/sample-yachts.json` with 10 manufacturers + 10 yacht models
+   - Uses Zod validation, slug auto-generation, manufacturer name resolution
 
-## 2026-03-28: Issue #2 — GitHub Actions CI Workflow
+### Key Decisions
+- Used `/tmp/sailing-yachts-actual` as working directory (fresh clone of GitHub repo)
+- The `/root/.openclaw/workspace/sailing-yachts` directory is a different repo (filament-settings-webapp / openclaw-dashboard)
+- Kept existing `app/sitemap.xml/route.ts` (Next.js convention) rather than remote branch's `app/api/sitemap/route.ts`
+- ROADMAP.md updated: Phase 0 complete, Phase 1 partial, Phase 2 sitemap done
 
-### Completed
-- **Issue #2** (priority:critical, phase:0): Add GitHub Actions CI workflow
-  - Created `.github/workflows/ci.yml` with 3 jobs: typecheck, build, lint
-  - Fixed `actions/upload-artifact` v3 → v4 (v3 deprecated/blocked)
-  - Replaced Playwright test job with lint job (tests are Issue #3's scope)
-  - Added `test` script to `package.json`
-  - PR #5 merged via squash to main
-  - All CI jobs green: typecheck (18s), build (50s), lint (18s)
-
-### Key Learnings
-- **Directory confusion**: The OpenClaw sandbox default cwd is `/root/.openclaw/workspace/main`. Must use `git -C /root/.openclaw/workspace/sailing-yachts` or `cd /root/.openclaw/workspace/sailing-yachts && ...` for all sailing-yachts operations.
-- **`.git` symlink trap**: `/root/.openclaw/workspace/main/.git -> /root/.openclaw/workspace/.git` means running bare `git` commands from the default cwd operates on the wrong repo.
-- **tsconfig.json**: The project already had a working tsconfig.json; the one I wrote over it broke the build. Always `git checkout` before overwriting config files.
-- **CI build needs DATABASE_URL**: Build step needs the Neon DATABASE_URL as a GitHub secret. Currently passing as env var — may need to add to repo secrets if build fails.
+### Remaining Work
+- No more auto-build issues open
+- ROADMAP Phase 1: Need 40+ more manufacturers, 190+ more yacht models, images
+- ROADMAP Phase 2: Comparison tool, search, saved comparisons, mobile UX
+- Could create new auto-build issues from ROADMAP items for next cron run
