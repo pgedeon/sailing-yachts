@@ -27,7 +27,7 @@ Cron: sailing-yachts-builder (every 6h)
 ## Phase 1 — Data and Content (Priority: High) — IN PROGRESS
 - [ ] Expand manufacturer database (target: 50+ manufacturers)
 - [ ] Add yacht models with real specs (target: 200+ models)
-- [ ] Add high-quality yacht images (royalty-free or manufacturer press)
+- [x] Add high-quality yacht images (Issue #23, PR #24) (royalty-free or manufacturer press)
 - [x] Seed data script for bulk import (CSV/JSON support) — Issue #9, PR #17
 - [x] Data validation schema (Zod) for all inputs — Issue #8, PR #16
 
