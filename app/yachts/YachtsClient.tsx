@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 
 interface Manufacturer { id: number; name: string; }
 
@@ -36,6 +35,11 @@ interface Yacht {
   description: string | null;
 }
 
+// Serialize filters to a string key for stable comparison
+function filterKey(mfgIds: number[], rigType?: string, keelType?: string, hullMaterial?: string): string {
+  return `${mfgIds.sort().join(',')}:${rigType ?? ''}:${keelType ?? ''}:${hullMaterial ?? ''}`;
+}
+
 export default function YachtsClient() {
   const searchParams = useSearchParams();
   const [manufacturers, setManufacturers] = useState<Manufacturer[]>([]);
@@ -50,31 +54,53 @@ export default function YachtsClient() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedYacht, setSelectedYacht] = useState<Yacht | null>(null);
 
-  // Get filter values from URL
-  const mfgIds = (searchParams.get('filters[manufacturers]')?.split(',').map(Number).filter(Boolean) ?? []) as number[];
+  // Parse filters from URL once on mount and when URL actually changes
+  const mfgIds = searchParams.getAll('filters[manufacturers]').map(Number).filter(Boolean);
   const rigType = searchParams.get('filters[rigType]') ?? undefined;
   const keelType = searchParams.get('filters[keelType]') ?? undefined;
   const hullMaterial = searchParams.get('filters[hullMaterial]') ?? undefined;
 
-  // Fetch reference data
+  // Stable filter key to prevent re-fetching on same params
+  const currentKey = filterKey(mfgIds, rigType, keelType, hullMaterial);
+  const lastFetchedKey = useRef<string>('');
+  const abortRef = useRef<AbortController | null>(null);
+
+  // Fetch reference data (once)
   useEffect(() => {
+    let cancelled = false;
     async function loadRefs() {
       try {
         const [m, c] = await Promise.all([
           fetch('/api/manufacturers').then(r => r.json()),
           fetch('/api/spec-categories').then(r => r.json()),
         ]);
-        setManufacturers(Array.isArray(m.manufacturers) ? m.manufacturers : []);
-        setCategories(Array.isArray(c.categories) ? c.categories : []);
+        if (!cancelled) {
+          setManufacturers(Array.isArray(m.manufacturers) ? m.manufacturers : []);
+          setCategories(Array.isArray(c.categories) ? c.categories : []);
+        }
       } catch (e) {
         console.error(e);
       }
     }
     loadRefs();
+    return () => { cancelled = true; };
   }, []);
 
-  // Build query for yachts
-  const buildQuery = useCallback(() => {
+  // Fetch yachts - only when key actually changes
+  useEffect(() => {
+    // Skip if we already fetched this exact combination
+    const fetchKey = `${currentKey}:p${page}`;
+    if (fetchKey === lastFetchedKey.current) return;
+    lastFetchedKey.current = fetchKey;
+
+    // Abort previous request
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    setLoading(true);
+    setError(null);
+
     const q = new URLSearchParams();
     q.set('page', String(page));
     q.set('limit', '20');
@@ -82,15 +108,8 @@ export default function YachtsClient() {
     if (rigType) q.set('filters[rigType]', rigType);
     if (keelType) q.set('filters[keelType]', keelType);
     if (hullMaterial) q.set('filters[hullMaterial]', hullMaterial);
-    return q;
-  }, [page, mfgIds, rigType, keelType, hullMaterial]);
 
-  // Fetch yachts
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
-    const query = buildQuery();
-    fetch(`/api/yachts?${query.toString()}`, { cache: 'no-store' })
+    fetch(`/api/yachts?${q.toString()}`, { cache: 'no-store', signal: controller.signal })
       .then(r => {
         if (!r.ok) throw new Error('Failed to fetch yachts');
         return r.json();
@@ -103,15 +122,18 @@ export default function YachtsClient() {
         setLoading(false);
       })
       .catch(err => {
-        setError(err.message);
-        setLoading(false);
+        if (err.name !== 'AbortError') {
+          setError(err.message);
+          setLoading(false);
+        }
       });
-  }, [buildQuery]);
+
+    return () => controller.abort();
+  }, [currentKey, page]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Handlers
   const toggleManufacturer = (id: number) => {
     const url = new URLSearchParams(searchParams.toString());
-    // Remove existing manufacturers filters
     searchParams.forEach((_, key) => {
       if (key.startsWith('filters[manufacturers]')) url.delete(key);
     });
@@ -119,6 +141,7 @@ export default function YachtsClient() {
     newIds.forEach(i => url.append('filters[manufacturers]', String(i)));
     window.history.pushState({}, '', `?${url.toString()}`);
     setPage(1);
+    lastFetchedKey.current = ''; // Force re-fetch
   };
 
   const setFilter = (name: string, value: string | null) => {
@@ -126,13 +149,13 @@ export default function YachtsClient() {
     if (value) url.set(`filters[${name}]`, value); else url.delete(`filters[${name}]`);
     window.history.pushState({}, '', `?${url.toString()}`);
     setPage(1);
+    lastFetchedKey.current = ''; // Force re-fetch
   };
 
   const clearFilters = () => {
-    const url = new URLSearchParams();
-    url.set('page', '1');
-    window.history.pushState({}, '', `?${url.toString()}`);
+    window.history.pushState({}, '', '?page=1');
     setPage(1);
+    lastFetchedKey.current = ''; // Force re-fetch
   };
 
   const openYacht = async (slug: string) => {
@@ -270,7 +293,6 @@ export default function YachtsClient() {
       </div>
 
       {/* Modal */}
-
       {modalOpen && selectedYacht && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={closeModal}>
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-screen overflow-y-auto" onClick={e => e.stopPropagation()}>
