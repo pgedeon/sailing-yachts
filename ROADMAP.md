@@ -1,7 +1,7 @@
 # Sailing Yachts — Improvement Roadmap
 
 Created: 2026-03-27
-Updated: 2026-03-29
+Updated: 2026-03-30
 Status: Active
 Repo: https://github.com/pgedeon/sailing-yachts
 Vercel: sailing-yachts (peter-gedeons-projects)
@@ -11,11 +11,12 @@ Cron: sailing-yachts-builder (every 6h)
 - **Version:** 0.2.0
 - **Stack:** Next.js 14, Drizzle ORM, Neon PostgreSQL, Vercel
 - **CI/CD:** GitHub Actions (typecheck + build + lint), Vercel auto-deploy
-- **Tests:** Playwright smoke tests (37 test cases across all public pages)
-- **Data:** 10 manufacturers, 10 yacht models (seed data + bulk import)
+- **Tests:** Playwright smoke tests (44 test cases across all public pages)
+- **Data:** 53 manufacturers, 79 yacht models (seed data + bulk import)
 - **Open issues:** 0
 - **Validation:** Zod schemas on all admin CRUD routes
 - **SEO:** Dynamic sitemap.xml, robots.txt, meta tags, JSON-LD
+- **Search:** Full-text search with autocomplete
 
 ## Phase 0 — Fix Build and CI (Priority: Critical) — COMPLETE
 - [x] Diagnose and fix Vercel build error
@@ -25,15 +26,15 @@ Cron: sailing-yachts-builder (every 6h)
 - [x] Create GitHub issue templates for feature tracking — Issue #7, PR #15
 
 ## Phase 1 — Data and Content (Priority: High) — IN PROGRESS
-- [ ] Expand manufacturer database (target: 50+ manufacturers)
-- [ ] Add yacht models with real specs (target: 200+ models)
+- [x] Expand manufacturer database (target: 50+ manufacturers) — PR #22 (53 manufacturers)
+- [ ] Add yacht models with real specs (target: 200+ models) — PR #22 (79/200 models)
 - [x] Add high-quality yacht images (Issue #23, PR #24) (royalty-free or manufacturer press)
 - [x] Seed data script for bulk import (CSV/JSON support) — Issue #9, PR #17
 - [x] Data validation schema (Zod) for all inputs — Issue #8, PR #16
 
-## Phase 2 — Core Features (Priority: High)
+## Phase 2 — Core Features (Priority: High) — IN PROGRESS
 - [ ] Advanced comparison tool (side-by-side 2-4 yachts, all specs)
-- [ ] Search with autocomplete (manufacturer + model name)
+- [x] Search with autocomplete (manufacturer + model name) — Issue #25, PR #26
 - [ ] Saved comparisons (localStorage + shareable URLs)
 - [ ] Responsive mobile UX audit and fixes
 - [x] SEO: dynamic meta tags, Open Graph, structured data (JSON-LD)
