@@ -33,7 +33,7 @@ Cron: sailing-yachts-builder (every 6h)
 - [x] Data validation schema (Zod) for all inputs — Issue #8, PR #16
 
 ## Phase 2 — Core Features (Priority: High) — IN PROGRESS
-- [ ] Advanced comparison tool (side-by-side 2-4 yachts, all specs)
+- [x] Advanced comparison tool (side-by-side 2-4 yachts, all specs) — Issue #27, PR #28
 - [x] Search with autocomplete (manufacturer + model name) — Issue #25, PR #26
 - [ ] Saved comparisons (localStorage + shareable URLs)
 - [ ] Responsive mobile UX audit and fixes
