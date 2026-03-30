@@ -320,7 +320,7 @@ test.describe('Public Pages Smoke Tests', () => {
       await page.goto(`${BASE_URL}/compare?ids=1,2,3,4`);
       await page.waitForLoadState('networkidle');
 
-      const errorText = page.locator('text="Maximum 3 yachts can be compared"');
+      const errorText = page.locator('text="Maximum 4 yachts"');
       if (await errorText.count() > 0) {
         await expect(errorText).toBeVisible();
       } else {
