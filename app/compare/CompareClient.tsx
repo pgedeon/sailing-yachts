@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 
 interface Yacht {
@@ -28,6 +28,7 @@ interface Yacht {
   waterCapacity: number | null;
   designNotes: string | null;
   description: string | null;
+  specsByGroup: Record<string, { name: string; value: string; unit: string | null }[]>;
 }
 
 interface YachtOption {
@@ -44,36 +45,72 @@ interface CompareClientProps {
   initialIds: number[];
 }
 
-const MAX_COMPARE = 3;
+const MAX_COMPARE = 4;
 
-const COMPARE_FIELDS: { key: keyof Yacht; label: string; unit?: string; lowerBetter?: boolean }[] = [
-  { key: 'lengthOverall', label: 'Length Overall', unit: 'm' },
-  { key: 'beam', label: 'Beam', unit: 'm' },
-  { key: 'draft', label: 'Draft', unit: 'm', lowerBetter: true },
-  { key: 'displacement', label: 'Displacement', unit: 'kg', lowerBetter: true },
-  { key: 'ballast', label: 'Ballast', unit: 'kg' },
-  { key: 'sailAreaMain', label: 'Sail Area', unit: 'm²' },
-  { key: 'rigType', label: 'Rig Type' },
-  { key: 'keelType', label: 'Keel Type' },
-  { key: 'hullMaterial', label: 'Hull Material' },
-  { key: 'cabins', label: 'Cabins' },
-  { key: 'berths', label: 'Berths' },
-  { key: 'heads', label: 'Heads' },
-  { key: 'maxOccupancy', label: 'Max Occupancy' },
-  { key: 'engineHp', label: 'Engine HP' },
-  { key: 'engineType', label: 'Engine Type' },
-  { key: 'fuelCapacity', label: 'Fuel', unit: 'L' },
-  { key: 'waterCapacity', label: 'Water', unit: 'L' },
+interface FieldDef {
+  key: keyof Yacht;
+  label: string;
+  unit?: string;
+  lowerBetter?: boolean;
+}
+
+const SPEC_GROUPS: { group: string; fields: FieldDef[] }[] = [
+  {
+    group: "Dimensions",
+    fields: [
+      { key: 'lengthOverall', label: 'Length Overall', unit: 'm' },
+      { key: 'beam', label: 'Beam', unit: 'm' },
+      { key: 'draft', label: 'Draft', unit: 'm', lowerBetter: true },
+      { key: 'displacement', label: 'Displacement', unit: 'kg', lowerBetter: true },
+      { key: 'ballast', label: 'Ballast', unit: 'kg' },
+    ],
+  },
+  {
+    group: "Rigging & Sails",
+    fields: [
+      { key: 'sailAreaMain', label: 'Sail Area (Main)', unit: 'm²' },
+      { key: 'rigType', label: 'Rig Type' },
+    ],
+  },
+  {
+    group: "Construction",
+    fields: [
+      { key: 'keelType', label: 'Keel Type' },
+      { key: 'hullMaterial', label: 'Hull Material' },
+    ],
+  },
+  {
+    group: "Accommodation",
+    fields: [
+      { key: 'cabins', label: 'Cabins' },
+      { key: 'berths', label: 'Berths' },
+      { key: 'heads', label: 'Heads' },
+      { key: 'maxOccupancy', label: 'Max Occupancy' },
+    ],
+  },
+  {
+    group: "Technical",
+    fields: [
+      { key: 'engineHp', label: 'Engine HP' },
+      { key: 'engineType', label: 'Engine Type' },
+      { key: 'fuelCapacity', label: 'Fuel', unit: 'L' },
+      { key: 'waterCapacity', label: 'Water', unit: 'L' },
+    ],
+  },
 ];
+
+// Flatten for convenience
+const ALL_COMPARE_FIELDS: FieldDef[] = SPEC_GROUPS.flatMap(g => g.fields);
 
 const YACHT_COLORS = [
   { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-400', ring: 'ring-blue-200', dot: 'bg-blue-500' },
   { bg: 'bg-emerald-100', text: 'text-emerald-800', border: 'border-emerald-400', ring: 'ring-emerald-200', dot: 'bg-emerald-500' },
   { bg: 'bg-amber-100', text: 'text-amber-800', border: 'border-amber-400', ring: 'ring-amber-200', dot: 'bg-amber-500' },
+  { bg: 'bg-purple-100', text: 'text-purple-800', border: 'border-purple-400', ring: 'ring-purple-200', dot: 'bg-purple-500' },
 ];
 
 export function CompareClient({ initialIds }: CompareClientProps) {
-  const [selectedIds, setSelectedIds] = useState<number[]>(initialIds);
+  const [selectedIds, setSelectedIds] = useState<number[]>(initialIds.slice(0, MAX_COMPARE));
   const [yachts, setYachts] = useState<Yacht[]>([]);
   const [allYachts, setAllYachts] = useState<YachtOption[]>([]);
   const [loading, setLoading] = useState(false);
@@ -85,7 +122,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
 
   // Fetch all yachts for the picker
   useEffect(() => {
-    fetch('/api/yachts?limit=100')
+    fetch('/api/yachts?limit=200')
       .then(r => r.json())
       .then(data => {
         const opts: YachtOption[] = (data.yachts || []).map((y: any) => ({
@@ -116,6 +153,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
     }
 
     setLoading(true);
+    setError(null);
     fetch(`/api/compare?ids=${selectedIds.join(',')}`)
       .then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to fetch')))
       .then(data => { setYachts(data.yachts || []); setLoading(false); })
@@ -196,7 +234,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
     return String(value);
   };
 
-  const highlightBest = (field: keyof Yacht, value: any, fieldDef: typeof COMPARE_FIELDS[0]) => {
+  const highlightBest = (field: keyof Yacht, value: any, fieldDef: FieldDef) => {
     if (yachts.length < 2 || value === null || value === undefined || typeof value !== 'number') return '';
     const numVals = yachts.map(y => y[field] as number | null).filter((v): v is number => v !== null && v !== undefined);
     if (numVals.length < 2) return '';
@@ -204,8 +242,65 @@ export function CompareClient({ initialIds }: CompareClientProps) {
     return value === best ? 'font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded' : '';
   };
 
+  // Collect extra spec rows from specsByGroup, deduped across all yachts
+  const extraSpecRows = useMemo(() => {
+    const allSpecs: Record<string, Record<string, { name: string; value: string; unit: string | null }>> = {};
+    // Collect unique (group, name) pairs
+    const keys = new Set<string>();
+    for (const y of yachts) {
+      for (const [group, entries] of Object.entries(y.specsByGroup || {})) {
+        for (const e of entries) {
+          keys.add(`${group}|${e.name}`);
+          if (!allSpecs[group]) allSpecs[group] = {};
+        }
+      }
+    }
+    // Build rows: group -> name -> { name, value (per yacht), unit }
+    const rows: { group: string; name: string; unit: string | null; values: (string | null)[] }[] = [];
+    const sortedKeys = [...keys].sort();
+    for (const k of sortedKeys) {
+      const [group, name] = k.split('|');
+      let unit: string | null = null;
+      const values = yachts.map(y => {
+        const entries = y.specsByGroup?.[group] || [];
+        const entry = entries.find(e => e.name === name);
+        if (entry) {
+          unit = entry.unit;
+          return entry.value;
+        }
+        return null;
+      });
+      rows.push({ group, name, unit, values });
+    }
+    // Group by spec group
+    const grouped: Record<string, typeof rows> = {};
+    for (const r of rows) {
+      if (!grouped[r.group]) grouped[r.group] = [];
+      grouped[r.group].push(r);
+    }
+    return grouped;
+  }, [yachts]);
+
+  // Merge built-in groups with extra spec groups (skip duplicates with built-in fields)
+  const builtInFieldKeys = new Set(ALL_COMPARE_FIELDS.map(f => f.label.toLowerCase()));
+  const displayGroups = useMemo(() => {
+    const result: { group: string; type: 'builtin' | 'extra' }[] = SPEC_GROUPS.map(g => ({ group: g.group, type: 'builtin' as const }));
+    for (const group of Object.keys(extraSpecRows)) {
+      // Only add extra groups not already covered
+      const hasUndupedSpecs = extraSpecRows[group]?.some(r => !builtInFieldKeys.has(r.name.toLowerCase()));
+      if (hasUndupedSpecs) {
+        if (!result.find(r => r.group === group)) {
+          result.push({ group, type: 'extra' as const });
+        }
+      }
+    }
+    return result;
+  }, [extraSpecRows]);
+
+  const colCount = Math.max(yachts.length, 1);
+
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Compare Yachts</h1>
@@ -215,7 +310,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
       {/* Selection Area */}
       <div className="mb-8">
         {/* Selected Yacht Slots */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+        <div className={`grid gap-3 mb-4 ${colCount <= 2 ? 'grid-cols-1 md:grid-cols-2' : colCount === 3 ? 'grid-cols-1 md:grid-cols-3' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'}`}>
           {Array.from({ length: MAX_COMPARE }).map((_, i) => {
             const id = selectedIds[i];
             const yacht = id ? allYachts.find(y => y.id === id) : null;
@@ -266,7 +361,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
           })}
         </div>
 
-        {/* Add/Change Button */}
+        {/* Add Button */}
         {selectedIds.length < MAX_COMPARE && (
           <button
             onClick={() => setPickerOpen(!pickerOpen)}
@@ -307,12 +402,12 @@ export function CompareClient({ initialIds }: CompareClientProps) {
             ) : groupedYachts.length === 0 ? (
               <div className="p-6 text-center text-gray-400 text-sm">No yachts match your search.</div>
             ) : (
-              groupedYachts.map(([manufacturer, yachts]) => (
+              groupedYachts.map(([manufacturer, yachtsList]) => (
                 <div key={manufacturer}>
                   <div className="sticky top-0 bg-gray-50 px-4 py-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
                     {manufacturer}
                   </div>
-                  {yachts.map(y => {
+                  {yachtsList.map(y => {
                     const isSelected = selectedIds.includes(y.id);
                     const slotIdx = getSlotIndex(y.id);
                     const color = slotIdx >= 0 ? YACHT_COLORS[slotIdx] : null;
@@ -326,7 +421,6 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                             : 'hover:bg-gray-50 text-gray-700'
                         }`}
                       >
-                        {/* Checkbox/indicator */}
                         <div className={`w-4 h-4 rounded flex-shrink-0 flex items-center justify-center ${
                           isSelected
                             ? `${color?.dot || 'bg-blue-500'}`
@@ -377,7 +471,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
           </svg>
           <p className="text-lg font-medium text-gray-500">Select yachts to compare</p>
-          <p className="text-sm mt-1">Choose 2 or 3 yachts above to see a detailed comparison</p>
+          <p className="text-sm mt-1">Choose 2 to {MAX_COMPARE} yachts above to see a detailed comparison</p>
         </div>
       )}
 
@@ -401,11 +495,11 @@ export function CompareClient({ initialIds }: CompareClientProps) {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-gray-50 border-b">
-                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-40">Spec</th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-40 sticky left-0 bg-gray-50 z-10">Spec</th>
                   {yachts.map((yacht, i) => (
-                    <th key={yacht.id} className="px-5 py-3 text-left">
+                    <th key={yacht.id} className="px-5 py-3 text-left min-w-[160px]">
                       <Link href={`/yachts/${yacht.slug}`} className="hover:underline">
-                        <span className={`inline-flex items-center gap-1.5`}>
+                        <span className="inline-flex items-center gap-1.5">
                           <span className={`w-2.5 h-2.5 rounded-full ${YACHT_COLORS[i]?.dot}`} />
                           <span className="font-semibold text-gray-800">{yacht.manufacturer} {yacht.modelName}</span>
                         </span>
@@ -415,24 +509,85 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {COMPARE_FIELDS.map(field => (
-                  <tr key={field.key} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-5 py-3 text-gray-600 font-medium whitespace-nowrap">
-                      {field.label}
-                      {field.unit && <span className="text-gray-400 ml-1 text-xs">({field.unit})</span>}
-                    </td>
-                    {yachts.map((yacht, i) => {
-                      const value = yacht[field.key] as any;
-                      const display = formatValue(value, field.unit);
-                      const highlight = highlightBest(field.key, value, field);
-                      return (
-                        <td key={yacht.id} className={`px-5 py-3 whitespace-nowrap ${highlight || 'text-gray-700'}`}>
-                          {display}
-                        </td>
+                {displayGroups.map(dg => {
+                  const groupRows: React.ReactNode[] = [];
+
+                  if (dg.type === 'builtin') {
+                    const builtinGroup = SPEC_GROUPS.find(g => g.group === dg.group)!;
+                    for (const field of builtinGroup.fields) {
+                      groupRows.push(
+                        <tr key={field.key} className="hover:bg-gray-50/50 transition-colors">
+                          <td className="px-5 py-3 text-gray-600 font-medium whitespace-nowrap sticky left-0 bg-white z-10">
+                            {field.label}
+                            {field.unit && <span className="text-gray-400 ml-1 text-xs">({field.unit})</span>}
+                          </td>
+                          {yachts.map((yacht) => {
+                            const value = yacht[field.key] as any;
+                            const display = formatValue(value, field.unit);
+                            const highlight = highlightBest(field.key, value, field);
+                            return (
+                              <td key={yacht.id} className={`px-5 py-3 whitespace-nowrap ${highlight || 'text-gray-700'}`}>
+                                {display}
+                              </td>
+                            );
+                          })}
+                        </tr>
                       );
-                    })}
-                  </tr>
-                ))}
+                    }
+                  } else {
+                    // Extra spec rows from spec_values table
+                    const extraGroup = extraSpecRows[dg.group] || [];
+                    for (const row of extraGroup) {
+                      if (builtInFieldKeys.has(row.name.toLowerCase())) continue; // skip dupes
+                      groupRows.push(
+                        <tr key={`extra-${dg.group}-${row.name}`} className="hover:bg-gray-50/50 transition-colors">
+                          <td className="px-5 py-3 text-gray-600 font-medium whitespace-nowrap sticky left-0 bg-white z-10">
+                            {row.name}
+                            {row.unit && <span className="text-gray-400 ml-1 text-xs">({row.unit})</span>}
+                          </td>
+                          {yachts.map((yacht, yi) => (
+                            <td key={yacht.id} className="px-5 py-3 whitespace-nowrap text-gray-700">
+                              {row.values[yi] ?? '—'}
+                            </td>
+                          ))}
+                        </tr>
+                      );
+                    }
+                  }
+
+                  return (
+                    <React.Fragment key={dg.group}>
+                      {/* Group header row */}
+                      <tr className="bg-slate-50">
+                        <td colSpan={yachts.length + 1} className="px-5 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                          {dg.group}
+                        </td>
+                      </tr>
+                      {groupRows}
+                    </React.Fragment>
+                  );
+                })}
+
+                {/* Design Notes (if any) */}
+                {yachts.some(y => y.designNotes) && (
+                  <>
+                    <tr className="bg-slate-50">
+                      <td colSpan={yachts.length + 1} className="px-5 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        Notes
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-5 py-3 text-gray-600 font-medium whitespace-nowrap sticky left-0 bg-white z-10">
+                        Design Notes
+                      </td>
+                      {yachts.map(yacht => (
+                        <td key={yacht.id} className="px-5 py-3 text-gray-700 text-sm max-w-xs">
+                          {yacht.designNotes || '—'}
+                        </td>
+                      ))}
+                    </tr>
+                  </>
+                )}
               </tbody>
             </table>
           </div>
