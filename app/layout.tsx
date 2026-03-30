@@ -90,6 +90,12 @@ export default function RootLayout({
                 Browse
               </a>
               <a
+                href="/search"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Search
+              </a>
+              <a
                 href="/compare"
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
