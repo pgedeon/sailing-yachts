@@ -3,6 +3,16 @@ import { pool } from "@/lib/db";
 
 export const dynamic = 'force-dynamic';
 
+interface SpecValue {
+  specCategoryId: number;
+  categoryName: string;
+  categoryGroup: string;
+  unit: string | null;
+  dataType: string | null;
+  valueText: string | null;
+  valueNumeric: number | null;
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -14,13 +24,16 @@ export async function GET(request: Request) {
     if (ids.length === 0) {
       return NextResponse.json({ error: 'Invalid ids' }, { status: 400 });
     }
-    if (ids.length > 3) {
-      return NextResponse.json({ error: 'Maximum 3 yachts allowed' }, { status: 400 });
+    if (ids.length > 4) {
+      return NextResponse.json({ error: 'Maximum 4 yachts allowed' }, { status: 400 });
+    }
+    if (ids.length < 2) {
+      return NextResponse.json({ error: 'Minimum 2 yachts required' }, { status: 400 });
     }
 
-    // Build a query with IN clause using raw SQL
+    // Fetch yacht base data
     const placeholders = ids.map((_, i) => `$${i + 1}`).join(',');
-    const sqlQuery = `
+    const yachtQuery = `
       SELECT
         y.id,
         y.model_name,
@@ -56,8 +69,48 @@ export async function GET(request: Request) {
       LEFT JOIN manufacturers m ON y.manufacturer_id = m.id
       WHERE y.id IN (${placeholders})
     `;
-    const result = await pool.query(sqlQuery, ids);
-    const rows = result.rows as any[];
+    const yachtResult = await pool.query(yachtQuery, ids);
+    const rows = yachtResult.rows as any[];
+
+    if (rows.length === 0) {
+      return NextResponse.json({ error: 'No yachts found' }, { status: 404 });
+    }
+
+    // Fetch spec_values for these yachts
+    const specPlaceholders = ids.map((_, i) => `$${i + 1}`).join(',');
+    const specQuery = `
+      SELECT
+        sv.yacht_model_id,
+        sv.value_text,
+        sv.value_numeric,
+        sc.id AS spec_category_id,
+        sc.name AS category_name,
+        sc.category_group,
+        sc.unit,
+        sc.data_type
+      FROM spec_values sv
+      JOIN spec_categories sc ON sv.spec_category_id = sc.id
+      WHERE sv.yacht_model_id IN (${specPlaceholders})
+      ORDER BY sc.category_group, sc.name
+    `;
+    const specResult = await pool.query(specQuery, ids);
+    const specRows = specResult.rows as any[];
+
+    // Group specs by yacht id
+    const specsByYacht: Record<number, SpecValue[]> = {};
+    for (const sr of specRows) {
+      const yachtId = sr.yacht_model_id;
+      if (!specsByYacht[yachtId]) specsByYacht[yachtId] = [];
+      specsByYacht[yachtId].push({
+        specCategoryId: sr.spec_category_id,
+        categoryName: sr.category_name,
+        categoryGroup: sr.category_group || 'Other',
+        unit: sr.unit,
+        dataType: sr.data_type,
+        valueText: sr.value_text,
+        valueNumeric: sr.value_numeric ? Number(sr.value_numeric) : null,
+      });
+    }
 
     // Map rows to DTO
     const yachts = rows.map(row => ({
@@ -66,12 +119,12 @@ export async function GET(request: Request) {
       modelName: row.model_name,
       year: row.year ?? undefined,
       slug: row.slug ?? undefined,
-      lengthOverall: row.length_overall ?? undefined,
-      beam: row.beam ?? undefined,
-      draft: row.draft ?? undefined,
-      displacement: row.displacement ?? undefined,
-      ballast: row.ballast ?? undefined,
-      sailAreaMain: row.sail_area_main ?? undefined,
+      lengthOverall: row.length_overall ? Number(row.length_overall) : undefined,
+      beam: row.beam ? Number(row.beam) : undefined,
+      draft: row.draft ? Number(row.draft) : undefined,
+      displacement: row.displacement ? Number(row.displacement) : undefined,
+      ballast: row.ballast ? Number(row.ballast) : undefined,
+      sailAreaMain: row.sail_area_main ? Number(row.sail_area_main) : undefined,
       rigType: row.rig_type ?? undefined,
       keelType: row.keel_type ?? undefined,
       hullMaterial: row.hull_material ?? undefined,
@@ -79,10 +132,10 @@ export async function GET(request: Request) {
       berths: row.berths ?? undefined,
       heads: row.heads ?? undefined,
       maxOccupancy: row.max_occupancy ?? undefined,
-      engineHp: row.engine_hp ?? undefined,
+      engineHp: row.engine_hp ? Number(row.engine_hp) : undefined,
       engineType: row.engine_type ?? undefined,
-      fuelCapacity: row.fuel_capacity ?? undefined,
-      waterCapacity: row.water_capacity ?? undefined,
+      fuelCapacity: row.fuel_capacity ? Number(row.fuel_capacity) : undefined,
+      waterCapacity: row.water_capacity ? Number(row.water_capacity) : undefined,
       designNotes: row.design_notes ?? undefined,
       description: row.description ?? undefined,
       sourceUrl: row.source_url ?? undefined,
@@ -90,7 +143,7 @@ export async function GET(request: Request) {
       adminLinks: row.admin_links ?? undefined,
       createdAt: row.created_at ?? undefined,
       updatedAt: row.updated_at ?? undefined,
-      specsByGroup: {},
+      specsByGroup: buildSpecGroups(specsByYacht[row.id] || []),
       images: [],
       reviews: [],
     }));
@@ -103,4 +156,20 @@ export async function GET(request: Request) {
       { status: 500 }
     );
   }
+}
+
+function buildSpecGroups(specs: SpecValue[]): Record<string, { name: string; value: string; unit: string | null }[]> {
+  const groups: Record<string, { name: string; value: string; unit: string | null }[]> = {};
+  for (const s of specs) {
+    const group = s.categoryGroup || 'Other';
+    if (!groups[group]) groups[group] = [];
+    let value = '—';
+    if (s.valueNumeric !== null) {
+      value = s.valueNumeric.toLocaleString(undefined, { maximumFractionDigits: 2 });
+    } else if (s.valueText) {
+      value = s.valueText;
+    }
+    groups[group].push({ name: s.categoryName, value, unit: s.unit });
+  }
+  return groups;
 }
