@@ -120,6 +120,10 @@ export default function RootLayout({
             <p className="mt-1">
               Data sourced from manufacturer specifications.
             </p>
+            <p className="mt-2 text-xs">
+              Built with ❤️ by <a href="https://3dput.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground transition-colors">3DPUT</a> · 
+              <a href="https://sailboats.fr" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground transition-colors">Sailboats.fr</a>
+            </p>
           </div>
         </footer>
       </body>
