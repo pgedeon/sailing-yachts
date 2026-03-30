@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { ensureSchema, pool } from '@/lib/db'
+import { revalidatePath } from 'next/cache'
 
 function parseId(id: string) {
   const value = Number(id)
@@ -33,6 +34,10 @@ export async function POST(
     if (result.rowCount === 0) {
       return NextResponse.json({ error: 'Yacht not found' }, { status: 404 })
     }
+    // Invalidate public pages
+    revalidatePath('/yachts')
+    revalidatePath('/compare')
+    revalidatePath('/')
     return NextResponse.redirect(new URL('/admin/yachts', request.url))
   } catch (error) {
     console.error('Failed to delete yacht:', error)

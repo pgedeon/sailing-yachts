@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { ensureSchema, pool } from '@/lib/db'
+import { revalidatePath } from 'next/cache'
 
 function parseId(id: string) {
   const value = Number(id)
@@ -33,6 +34,7 @@ export async function POST(
     if (result.rowCount === 0) {
       return NextResponse.json({ error: 'Category not found' }, { status: 404 })
     }
+    revalidatePath('/yachts')
     return NextResponse.redirect(new URL('/admin/spec-categories', request.url))
   } catch (error) {
     console.error('Failed to delete spec category:', error)
