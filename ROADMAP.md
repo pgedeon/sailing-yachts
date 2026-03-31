@@ -35,7 +35,7 @@ Cron: sailing-yachts-builder (every 6h)
 ## Phase 2 — Core Features (Priority: High) — IN PROGRESS
 - [x] Advanced comparison tool (side-by-side 2-4 yachts, all specs) — Issue #27, PR #28
 - [x] Search with autocomplete (manufacturer + model name) — Issue #25, PR #26
-- [ ] Saved comparisons (localStorage + shareable URLs)
+- [x] Saved comparisons (localStorage + shareable URLs) — Issue #29, PR #30
 - [ ] Responsive mobile UX audit and fixes
 - [x] SEO: dynamic meta tags, Open Graph, structured data (JSON-LD)
 - [x] Sitemap.xml generation — Issue #11, PR #14
