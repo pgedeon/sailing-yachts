@@ -101,7 +101,6 @@ function Header() {
     <header className="border-b border-border bg-white/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <a
             href="/"
             className="text-xl font-bold text-primary tracking-tight flex-shrink-0"
@@ -109,15 +108,16 @@ function Header() {
             Sailing Yachts
           </a>
 
-          {/* Desktop nav — hidden on mobile */}
+          {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6">
             <NavLink href="/yachts">Browse</NavLink>
             <NavLink href="/search">Search</NavLink>
             <NavLink href="/compare">Compare</NavLink>
+            <NavLink href="/favorites">Favorites</NavLink>
             <NavLink href="/admin">Admin</NavLink>
           </nav>
 
-          {/* Mobile hamburger — visible only on mobile */}
+          {/* Mobile hamburger */}
           <MobileMenu />
         </div>
       </div>
@@ -139,7 +139,6 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
 function MobileMenu() {
   return (
     <div className="md:hidden">
-      {/* Hamburger button */}
       <button
         id="mobile-menu-btn"
         type="button"
@@ -147,17 +146,14 @@ function MobileMenu() {
         aria-label="Open menu"
         aria-expanded="false"
       >
-        {/* Hamburger icon */}
         <svg id="menu-icon-open" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
-        {/* Close icon (hidden by default) */}
         <svg id="menu-icon-close" className="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
 
-      {/* Mobile dropdown */}
       <div
         id="mobile-menu-panel"
         className="hidden absolute left-0 right-0 top-16 bg-white border-b border-border shadow-lg z-50"
@@ -172,13 +168,15 @@ function MobileMenu() {
           <a href="/compare" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
             Compare
           </a>
+          <a href="/favorites" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
+            Favorites
+          </a>
           <a href="/admin" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
             Admin
           </a>
         </nav>
       </div>
 
-      {/* Inline script for toggle — avoids converting layout to client component */}
       <script
         dangerouslySetInnerHTML={{
           __html: `
@@ -202,7 +200,6 @@ function MobileMenu() {
                   btn.setAttribute('aria-expanded', 'true');
                 }
               });
-              // Close on outside click
               document.addEventListener('click', function(e) {
                 if (!panel.contains(e.target) && !btn.contains(e.target)) {
                   panel.classList.add('hidden');

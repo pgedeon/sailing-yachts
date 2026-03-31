@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { FavoriteButton } from '@/app/components/FavoriteButton';
 
 interface Manufacturer { id: number; name: string; }
 
@@ -296,8 +297,11 @@ export default function YachtsClient() {
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {yachts.map(yacht => (
-                    <div key={yacht.id} className="border rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
-                      <h3 className="font-bold text-lg leading-tight">{yacht.manufacturer} {yacht.modelName}</h3>
+                    <div key={yacht.id} className="border rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow relative">
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="font-bold text-lg leading-tight">{yacht.manufacturer} {yacht.modelName}</h3>
+                        {yacht.slug && <FavoriteButton slug={yacht.slug} modelName={`${yacht.manufacturer} ${yacht.modelName}`} size="sm" />}
+                      </div>
                       <p className="text-sm text-gray-600 mt-0.5">{yacht.year ?? '—'}</p>
                       <dl className="mt-3 text-sm">
                         <div className="flex justify-between py-0.5"><dt className="text-gray-500">Length:</dt><dd className="font-medium">{fmt(yacht.lengthOverall)} m</dd></div>
