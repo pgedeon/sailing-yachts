@@ -1,7 +1,14 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Link from "next/link";
+import {
+  getSavedComparisons,
+  saveComparison,
+  deleteComparison,
+  getShareUrl,
+  type SavedComparison,
+} from "@/lib/savedComparisons";
 
 interface Yacht {
   id: number;
@@ -119,6 +126,63 @@ export function CompareClient({ initialIds }: CompareClientProps) {
   const [search, setSearch] = useState('');
   const [pickerOpen, setPickerOpen] = useState(false);
   const pickerRef = useRef<HTMLDivElement>(null);
+
+  // Saved comparisons state
+  const [savedList, setSavedList] = useState<SavedComparison[]>([]);
+  const [saveName, setSaveName] = useState('');
+  const [showSaveInput, setShowSaveInput] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [savedPanelOpen, setSavedPanelOpen] = useState(false);
+
+  // Load saved comparisons from localStorage on mount
+  useEffect(() => {
+    setSavedList(getSavedComparisons());
+  }, []);
+
+  const refreshSavedList = useCallback(() => {
+    setSavedList(getSavedComparisons());
+  }, []);
+
+  const handleSave = () => {
+    if (!saveName.trim() || selectedIds.length < 2) return;
+    const result = saveComparison(saveName, selectedIds);
+    if (result) {
+      setSaveName('');
+      setShowSaveInput(false);
+      refreshSavedList();
+    }
+  };
+
+  const handleDelete = (id: string) => {
+    deleteComparison(id);
+    refreshSavedList();
+  };
+
+  const handleLoadComparison = (ids: number[]) => {
+    setSelectedIds(ids.slice(0, MAX_COMPARE));
+    lastFetchKey.current = '';
+    updateUrl(ids.slice(0, MAX_COMPARE));
+    setSavedPanelOpen(false);
+  };
+
+  const handleCopyLink = async () => {
+    const url = getShareUrl(selectedIds);
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback
+      const input = document.createElement('input');
+      input.value = url;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   // Fetch all yachts for the picker
   useEffect(() => {
@@ -245,7 +309,6 @@ export function CompareClient({ initialIds }: CompareClientProps) {
   // Collect extra spec rows from specsByGroup, deduped across all yachts
   const extraSpecRows = useMemo(() => {
     const allSpecs: Record<string, Record<string, { name: string; value: string; unit: string | null }>> = {};
-    // Collect unique (group, name) pairs
     const keys = new Set<string>();
     for (const y of yachts) {
       for (const [group, entries] of Object.entries(y.specsByGroup || {})) {
@@ -255,7 +318,6 @@ export function CompareClient({ initialIds }: CompareClientProps) {
         }
       }
     }
-    // Build rows: group -> name -> { name, value (per yacht), unit }
     const rows: { group: string; name: string; unit: string | null; values: (string | null)[] }[] = [];
     const sortedKeys = [...keys].sort();
     for (const k of sortedKeys) {
@@ -272,7 +334,6 @@ export function CompareClient({ initialIds }: CompareClientProps) {
       });
       rows.push({ group, name, unit, values });
     }
-    // Group by spec group
     const grouped: Record<string, typeof rows> = {};
     for (const r of rows) {
       if (!grouped[r.group]) grouped[r.group] = [];
@@ -281,12 +342,10 @@ export function CompareClient({ initialIds }: CompareClientProps) {
     return grouped;
   }, [yachts]);
 
-  // Merge built-in groups with extra spec groups (skip duplicates with built-in fields)
   const builtInFieldKeys = new Set(ALL_COMPARE_FIELDS.map(f => f.label.toLowerCase()));
   const displayGroups = useMemo(() => {
     const result: { group: string; type: 'builtin' | 'extra' }[] = SPEC_GROUPS.map(g => ({ group: g.group, type: 'builtin' as const }));
     for (const group of Object.keys(extraSpecRows)) {
-      // Only add extra groups not already covered
       const hasUndupedSpecs = extraSpecRows[group]?.some(r => !builtInFieldKeys.has(r.name.toLowerCase()));
       if (hasUndupedSpecs) {
         if (!result.find(r => r.group === group)) {
@@ -302,10 +361,154 @@ export function CompareClient({ initialIds }: CompareClientProps) {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Compare Yachts</h1>
-        <p className="mt-1 text-gray-500">Select up to {MAX_COMPARE} yachts to compare side by side</p>
+      <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Compare Yachts</h1>
+          <p className="mt-1 text-gray-500">Select up to {MAX_COMPARE} yachts to compare side by side</p>
+        </div>
+        {/* Share + Save actions */}
+        {selectedIds.length >= 2 && (
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={handleCopyLink}
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors"
+              title="Copy share link"
+            >
+              {copied ? (
+                <>
+                  <svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-green-600">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                  <span>Share</span>
+                </>
+              )}
+            </button>
+            <button
+              onClick={() => { setShowSaveInput(!showSaveInput); setSaveName(''); }}
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors"
+            >
+              <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
+              <span>Save</span>
+            </button>
+            <button
+              onClick={() => setSavedPanelOpen(!savedPanelOpen)}
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors relative"
+            >
+              <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+              <span>Saved</span>
+              {savedList.length > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700 font-semibold">
+                  {savedList.length}
+                </span>
+              )}
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Save comparison input */}
+      {showSaveInput && selectedIds.length >= 2 && (
+        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Name this comparison</label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={saveName}
+              onChange={e => setSaveName(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleSave()}
+              placeholder="e.g. Family cruisers under 40ft"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400"
+              maxLength={80}
+              autoFocus
+            />
+            <button
+              onClick={handleSave}
+              disabled={!saveName.trim()}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Save
+            </button>
+            <button
+              onClick={() => { setShowSaveInput(false); setSaveName(''); }}
+              className="px-3 py-2 text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Saved comparisons panel */}
+      {savedPanelOpen && (
+        <div className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-gray-700">Saved Comparisons</h3>
+            <button
+              onClick={() => setSavedPanelOpen(false)}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          {savedList.length === 0 ? (
+            <div className="px-4 py-6 text-center text-gray-400 text-sm">
+              No saved comparisons yet. Select 2+ yachts and click Save.
+            </div>
+          ) : (
+            <ul className="divide-y divide-gray-100 max-h-64 overflow-y-auto">
+              {savedList.map(sc => (
+                <li key={sc.id} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors group">
+                  <button
+                    onClick={() => handleLoadComparison(sc.yachtIds)}
+                    className="flex-1 text-left min-w-0"
+                  >
+                    <div className="text-sm font-medium text-gray-800 truncate">{sc.name}</div>
+                    <div className="text-xs text-gray-400 mt-0.5">
+                      {sc.yachtIds.length} yachts · {new Date(sc.createdAt).toLocaleDateString()}
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => {
+                      const url = getShareUrl(sc.yachtIds);
+                      navigator.clipboard.writeText(url);
+                    }}
+                    className="text-gray-300 hover:text-blue-500 transition-colors p-1"
+                    title="Copy share link"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => handleDelete(sc.id)}
+                    className="text-gray-300 hover:text-red-500 transition-colors p-1"
+                    title="Delete"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
 
       {/* Selection Area */}
       <div className="mb-8">
@@ -535,10 +738,9 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                       );
                     }
                   } else {
-                    // Extra spec rows from spec_values table
                     const extraGroup = extraSpecRows[dg.group] || [];
                     for (const row of extraGroup) {
-                      if (builtInFieldKeys.has(row.name.toLowerCase())) continue; // skip dupes
+                      if (builtInFieldKeys.has(row.name.toLowerCase())) continue;
                       groupRows.push(
                         <tr key={`extra-${dg.group}-${row.name}`} className="hover:bg-gray-50/50 transition-colors">
                           <td className="px-5 py-3 text-gray-600 font-medium whitespace-nowrap sticky left-0 bg-white z-10">
@@ -557,7 +759,6 @@ export function CompareClient({ initialIds }: CompareClientProps) {
 
                   return (
                     <React.Fragment key={dg.group}>
-                      {/* Group header row */}
                       <tr className="bg-slate-50">
                         <td colSpan={yachts.length + 1} className="px-5 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
                           {dg.group}
@@ -568,7 +769,6 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                   );
                 })}
 
-                {/* Design Notes (if any) */}
                 {yachts.some(y => y.designNotes) && (
                   <>
                     <tr className="bg-slate-50">
