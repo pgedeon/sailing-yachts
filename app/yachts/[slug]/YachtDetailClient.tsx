@@ -134,9 +134,9 @@ export default function YachtDetailClient() {
     yacht.images.find((img) => img.isPrimary) || yacht.images[0];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       {/* Back link */}
-      <div className="mb-6">
+      <div className="mb-4 sm:mb-6">
         <Button asChild variant="ghost" size="sm">
           <Link href="/yachts">
             <ChevronLeft className="h-4 w-4 mr-1" />
@@ -146,7 +146,7 @@ export default function YachtDetailClient() {
       </div>
 
       {/* Hero */}
-      <div className="grid md:grid-cols-2 gap-8 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-10 sm:mb-12">
         <div>
           {primaryImage ? (
             <img
@@ -155,61 +155,61 @@ export default function YachtDetailClient() {
                 primaryImage.altText ||
                 `${yacht.manufacturer} ${yacht.modelName}`
               }
-              className="w-full h-80 object-cover rounded-lg"
+              className="w-full h-56 sm:h-72 md:h-80 object-cover rounded-lg"
             />
           ) : (
-            <div className="w-full h-80 bg-muted rounded-lg flex items-center justify-center text-muted-foreground">
+            <div className="w-full h-56 sm:h-72 md:h-80 bg-muted rounded-lg flex items-center justify-center text-muted-foreground">
               No image available
             </div>
           )}
         </div>
         <div>
-          <h1 className="text-3xl font-bold mb-2">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2">
             {yacht.manufacturer} {yacht.modelName} ({yacht.year})
           </h1>
-          <p className="text-lg text-muted-foreground mb-4">
+          <p className="text-base sm:text-lg text-muted-foreground mb-4">
             A sailing yacht built by {yacht.manufacturer}.
           </p>
           {yacht.description && (
-            <p className="text-muted-foreground mb-4 leading-relaxed">
+            <p className="text-muted-foreground mb-4 leading-relaxed text-sm sm:text-base">
               {yacht.description}
             </p>
           )}
 
           {/* Core specs quick view */}
-          <div className="grid grid-cols-2 gap-4 my-6">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 my-4 sm:my-6">
             {yacht.lengthOverall && (
-              <div className="bg-card border border-border rounded-lg p-4">
-                <div className="text-sm text-muted-foreground">
+              <div className="bg-card border border-border rounded-lg p-3 sm:p-4">
+                <div className="text-xs sm:text-sm text-muted-foreground">
                   Length Overall
                 </div>
-                <div className="text-2xl font-semibold">
+                <div className="text-xl sm:text-2xl font-semibold">
                   {formatNumber(yacht.lengthOverall)} m
                 </div>
               </div>
             )}
             {yacht.beam && (
-              <div className="bg-card border border-border rounded-lg p-4">
-                <div className="text-sm text-muted-foreground">Beam</div>
-                <div className="text-2xl font-semibold">
+              <div className="bg-card border border-border rounded-lg p-3 sm:p-4">
+                <div className="text-xs sm:text-sm text-muted-foreground">Beam</div>
+                <div className="text-xl sm:text-2xl font-semibold">
                   {formatNumber(yacht.beam)} m
                 </div>
               </div>
             )}
             {yacht.draft && (
-              <div className="bg-card border border-border rounded-lg p-4">
-                <div className="text-sm text-muted-foreground">Draft</div>
-                <div className="text-2xl font-semibold">
+              <div className="bg-card border border-border rounded-lg p-3 sm:p-4">
+                <div className="text-xs sm:text-sm text-muted-foreground">Draft</div>
+                <div className="text-xl sm:text-2xl font-semibold">
                   {formatNumber(yacht.draft)} m
                 </div>
               </div>
             )}
             {yacht.displacement && (
-              <div className="bg-card border border-border rounded-lg p-4">
-                <div className="text-sm text-muted-foreground">
+              <div className="bg-card border border-border rounded-lg p-3 sm:p-4">
+                <div className="text-xs sm:text-sm text-muted-foreground">
                   Displacement
                 </div>
-                <div className="text-2xl font-semibold">
+                <div className="text-xl sm:text-2xl font-semibold">
                   {(yacht.displacement / 1000).toFixed(1)} t
                 </div>
               </div>
@@ -218,7 +218,7 @@ export default function YachtDetailClient() {
 
           {/* Admin links */}
           {yacht.adminLinks && yacht.adminLinks.length > 0 && (
-            <div className="flex gap-3 mt-4">
+            <div className="flex flex-wrap gap-2 sm:gap-3 mt-4">
               {yacht.adminLinks.map((link, idx) => (
                 <Button key={idx} asChild variant="outline" size="sm">
                   <a href={link.url} target="_blank" rel="noopener noreferrer">
@@ -246,26 +246,26 @@ export default function YachtDetailClient() {
       </div>
 
       {/* Specs by Group */}
-      <div className="space-y-8">
+      <div className="space-y-6 sm:space-y-8">
         {Object.entries(yacht.specsByGroup).map(([group, specs]) => {
           const label = GROUP_LABELS[group] || group;
           const icon = GROUP_ICONS[group];
           return (
             <section key={group}>
-              <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center gap-2 mb-3 sm:mb-4">
                 {icon}
-                <h2 className="text-xl font-bold">{label}</h2>
+                <h2 className="text-lg sm:text-xl font-bold">{label}</h2>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                 {specs.map((spec, idx) => (
                   <div
                     key={idx}
-                    className="bg-card border border-border rounded-lg p-4"
+                    className="bg-card border border-border rounded-lg p-3 sm:p-4"
                   >
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-xs sm:text-sm text-muted-foreground">
                       {spec.category}
                     </div>
-                    <div className="text-lg font-medium mt-1">
+                    <div className="text-base sm:text-lg font-medium mt-1">
                       {formatSpecValue(spec.value, spec.unit)}
                     </div>
                   </div>
@@ -278,8 +278,8 @@ export default function YachtDetailClient() {
 
       {/* Reviews Section */}
       {yacht.reviews && yacht.reviews.length > 0 && (
-        <section className="mt-12">
-          <h2 className="text-xl font-bold mb-4">Customer Reviews</h2>
+        <section className="mt-10 sm:mt-12">
+          <h2 className="text-lg sm:text-xl font-bold mb-4">Customer Reviews</h2>
           <div className="space-y-4">
             {yacht.reviews.map((review, idx) => (
               <div key={idx} className="border border-border rounded-lg p-4">
@@ -296,7 +296,7 @@ export default function YachtDetailClient() {
                   <p className="mt-2 font-medium">{review.summary}</p>
                 )}
                 {review.fullText && (
-                  <p className="mt-1 text-muted-foreground">
+                  <p className="mt-1 text-muted-foreground text-sm">
                     {review.fullText}
                   </p>
                 )}
@@ -312,7 +312,7 @@ export default function YachtDetailClient() {
       )}
 
       {/* Compare Button */}
-      <div className="mt-12 text-center">
+      <div className="mt-10 sm:mt-12 text-center">
         <Button asChild size="lg">
           <Link href={`/compare?ids=${yacht.id}`}>Compare This Yacht</Link>
         </Button>
