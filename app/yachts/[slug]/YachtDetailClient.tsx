@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Ruler, Wind, Home, Wrench, Star } from "lucide-react";
+import { FavoriteButton } from "@/app/components/FavoriteButton";
 
 interface SpecGroup {
   [group: string]: Array<{
@@ -164,9 +165,7 @@ export default function YachtDetailClient() {
           )}
         </div>
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold mb-2">
-            {yacht.manufacturer} {yacht.modelName} ({yacht.year})
-          </h1>
+          <div className="flex items-start gap-3">            <h1 className="text-2xl sm:text-3xl font-bold mb-2">              {yacht.manufacturer} {yacht.modelName} ({yacht.year})            </h1>            <FavoriteButton slug={yacht.slug} modelName={`${yacht.manufacturer} ${yacht.modelName}`} size="lg" showLabel />          </div>
           <p className="text-base sm:text-lg text-muted-foreground mb-4">
             A sailing yacht built by {yacht.manufacturer}.
           </p>
