@@ -359,11 +359,11 @@ export function CompareClient({ initialIds }: CompareClientProps) {
   const colCount = Math.max(yachts.length, 1);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
       {/* Header */}
-      <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Compare Yachts</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Compare Yachts</h1>
           <p className="mt-1 text-gray-500">Select up to {MAX_COMPARE} yachts to compare side by side</p>
         </div>
         {/* Share + Save actions */}
@@ -693,8 +693,10 @@ export function CompareClient({ initialIds }: CompareClientProps) {
 
       {/* Comparison Table */}
       {yachts.length >= 2 && !loading && (
-        <div className="border rounded-xl overflow-hidden shadow-sm">
-          <div className="overflow-x-auto">
+        <div className="border rounded-xl overflow-hidden shadow-sm relative">
+          {/* Mobile scroll hint */}
+          <div className="md:hidden absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-200/80 to-transparent z-20 pointer-events-none" id="compare-scroll-hint" />
+          <div className="overflow-x-auto" id="compare-table-scroll">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-gray-50 border-b">
@@ -791,9 +793,21 @@ export function CompareClient({ initialIds }: CompareClientProps) {
               </tbody>
             </table>
           </div>
-          <div className="px-5 py-2.5 bg-gray-50 border-t text-xs text-gray-400 flex items-center gap-1">
-            <span className="font-semibold text-green-600">Green</span> = best value in row
+          <div className="px-5 py-2.5 bg-gray-50 border-t text-xs text-gray-400 flex items-center justify-between">
+            <span><span className="font-semibold text-green-600">Green</span> = best value in row</span>
+            <span className="md:hidden text-gray-400">← Swipe to see more →</span>
           </div>
+          <script dangerouslySetInnerHTML={{ __html: `
+            (function() {
+              var scroll = document.getElementById('compare-table-scroll');
+              var hint = document.getElementById('compare-scroll-hint');
+              if (!scroll || !hint) return;
+              scroll.addEventListener('scroll', function() {
+                if (scroll.scrollLeft > 30) hint.style.opacity = '0';
+                else hint.style.opacity = '1';
+              });
+            })();
+          `}} />
         </div>
       )}
 

@@ -172,7 +172,7 @@ export function SearchClient() {
 
       {/* Search Input */}
       <div className="relative mb-8">
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <div className="relative flex-1">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <svg
@@ -245,7 +245,7 @@ export function SearchClient() {
           <button
             onClick={() => handleSearch()}
             disabled={loading || !query.trim()}
-            className="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors sm:w-auto w-full"
           >
             {loading ? "Searching..." : "Search"}
           </button>
