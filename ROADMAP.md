@@ -32,11 +32,11 @@ Cron: sailing-yachts-builder (every 6h)
 - [x] Seed data script for bulk import (CSV/JSON support) — Issue #9, PR #17
 - [x] Data validation schema (Zod) for all inputs — Issue #8, PR #16
 
-## Phase 2 — Core Features (Priority: High) — IN PROGRESS
+## Phase 2 — Core Features (Priority: High) — COMPLETE
 - [x] Advanced comparison tool (side-by-side 2-4 yachts, all specs) — Issue #27, PR #28
 - [x] Search with autocomplete (manufacturer + model name) — Issue #25, PR #26
 - [x] Saved comparisons (localStorage + shareable URLs) — Issue #29, PR #30
-- [ ] Responsive mobile UX audit and fixes
+- [x] Responsive mobile UX audit and fixes — Issue #31, PR #32
 - [x] SEO: dynamic meta tags, Open Graph, structured data (JSON-LD)
 - [x] Sitemap.xml generation — Issue #11, PR #14
 
