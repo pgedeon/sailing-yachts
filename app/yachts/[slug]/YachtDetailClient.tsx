@@ -6,6 +6,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Ruler, Wind, Home, Wrench, Star } from "lucide-react";
 import { FavoriteButton } from "@/app/components/FavoriteButton";
+import { PriceTierDetail } from "@/app/components/PriceTierBadge";
+import { calculatePriceTier } from "@/lib/price-tier";
 import { SimilarYachts } from "./SimilarYachts";
 
 interface SpecGroup {
@@ -220,6 +222,17 @@ export default function YachtDetailClient() {
               </div>
             )}
           </div>
+
+          {/* Price Range Estimate */}
+          <PriceTierDetail info={calculatePriceTier({
+            lengthOverall: yacht.lengthOverall,
+            displacement: yacht.displacement,
+            beam: yacht.beam,
+            cabins: yacht.cabins,
+            hullMaterial: yacht.hullMaterial,
+            keelType: yacht.keelType,
+            rigType: yacht.rigType,
+          })} />
 
           {/* Admin links */}
           {yacht.adminLinks && yacht.adminLinks.length > 0 && (
