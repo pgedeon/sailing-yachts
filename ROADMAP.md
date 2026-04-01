@@ -44,7 +44,7 @@ Cron: sailing-yachts-builder (every 6h)
 - [x] User favorites / shortlist (localStorage, no auth needed) — Issue #33, PR #34
 - [ ] Find similar yachts feature (spec-based similarity scoring)
 - [x] Price range indicator (where data available) — Issue #41, PR #42
-- [ ] Filter presets (Bluewater cruisers, Racing yachts, Budget friendly)
+- [x] Filter presets (Bluewater cruisers, Racing yachts, Budget friendly) — Issue #43, PR #44
 - [ ] Print-friendly yacht spec sheets
 
 ## Phase 4 — Integration with sailboats.fr (Priority: Medium)
