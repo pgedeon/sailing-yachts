@@ -1,72 +1,63 @@
-## Session: 2026-03-31 08:36 CET (Cron: sailing-yachts-builder)
+## Session: 2026-04-01 14:40 CEST (Cron: sailing-yachts-builder)
 
 ### Completed Issue
-**Issue #31 — Responsive mobile UX audit and fixes** (PR #32, merged via squash)
+**Issue #41 — Price range indicator based on yacht specs** (PR #42, merged via squash)
 
 ### What was done:
-1. **Header — Mobile hamburger menu** (`app/layout.tsx`)
-   - Extracted header into `Header` and `MobileMenu` components within layout
-   - Desktop nav: `hidden md:flex` — horizontal links on md+
-   - Mobile: `md:hidden` hamburger button with slide-down nav panel
-   - Inline `<script>` for toggle (no client component needed for root layout)
-   - Closes on outside click
-   - Icons swap: hamburger ↔ X
+1. **lib/price-tier.ts** — Spec-based price tier calculation engine
+   - Four tiers: Budget (<$50k), Mid-Range ($50-150k), Premium ($150-500k), Luxury ($500k+)
+   - Primary scoring by LOA (length overall)
+   - Adjustments for displacement/LOA ratio, hull material (carbon/aluminum/steel bump tier), cabin count, keel type
+   - Confidence levels (high/medium/low) based on available data
+   - Human-readable reasons for each tier assignment
 
-2. **Yachts listing — Collapsible filter sidebar** (`app/yachts/YachtsClient.tsx`)
-   - Filter sidebar hidden by default on mobile (`hidden md:block`)
-   - Toggle button with filter icon + active count badge
-   - Extracted `FilterSidebar` component for conditional rendering
-   - Improved card styling: hover shadows, label colors, responsive gap
-   - Empty state with "Clear all filters" link
-   - Modal: responsive padding, single-column specs on mobile
+2. **app/components/PriceTierBadge.tsx** — Reusable badge + detail card components
+   - PriceTierBadge: colored rounded badge (green/blue/purple/amber) in sm/md/lg sizes
+   - PriceTierDetail: full card with estimated range, reasons list, and disclaimer
 
-3. **Yacht detail — Responsive sizing** (`app/yachts/[slug]/YachtDetailClient.tsx`)
-   - Hero image: `h-56 sm:h-72 md:h-80` (was fixed `h-80`)
-   - Title: `text-2xl sm:text-3xl` (was fixed `text-3xl`)
-   - Spec cards: responsive padding `p-3 sm:p-4`
-   - Admin links: `flex-wrap` on small screens
+3. **app/yachts/YachtsClient.tsx** — Price tier badge on listing cards
+   - Badge shown next to year on each yacht card
+   - Computed client-side from specs already in the Yacht interface
 
-4. **Compare page — Mobile scroll indicator** (`app/compare/CompareClient.tsx`)
-   - Gradient fade overlay (`#compare-scroll-hint`) on right edge, mobile only
-   - "Swipe to see more" footer text on mobile
-   - Auto-fades when table scrolled >30px via inline script
-   - Responsive outer padding: `px-3 sm:px-4`
-   - Responsive heading: `text-2xl sm:text-3xl`
+4. **app/yachts/[slug]/YachtDetailClient.tsx** — Price range estimate section
+   - PriceTierDetail card between core specs and admin links
+   - Shows estimated range, reasoning, and disclaimer
 
-5. **Search page — Vertical stack** (`app/search/SearchClient.tsx`)
-   - Search input + button stack vertically on mobile (`flex-col sm:flex-row`)
-   - Search button full-width on mobile
+5. **app/compare/CompareClient.tsx** — Price tier row in comparison table
+   - "Est. Price Range" row at top of table body
+   - Badge + range text for each yacht being compared
 
-6. **Homepage — Responsive sizing** (`app/page.tsx`)
-   - Title: `text-2xl sm:text-3xl md:text-4xl`
-   - Dual CTA buttons: "Browse Yachts" + "Compare" in flex layout
-
-7. **Tests** — `tests/mobile-ux.spec.ts` (12 tests)
-   - Mobile (375×667): hamburger visibility, open/close, filter toggle, responsive text, scroll hints
-   - Desktop (1280×720): desktop nav visible, sidebar always shown, no scroll hint
+6. **tests/price-tier.spec.ts** — 4 Playwright tests
+   - Badge appears on listing cards
+   - Price range section on detail page
+   - Price tier row in comparison table
+   - Badge has colored background
 
 ### Verification:
 - ✅ `npm run typecheck` passes clean
-- ✅ `npm run build` succeeds (21/21 pages)
-- ✅ All CI checks pass (Build, Lint, TypeScript, Vercel Preview × 2)
-- ✅ PR #32 merged via squash to main, branch deleted
-- ✅ Issue #31 auto-closed by PR merge
-- ✅ Production deploy confirmed (HTTP 200 on all pages)
-- ✅ Mobile menu elements confirmed in production HTML
-- ✅ ROADMAP.md updated — Phase 2 marked COMPLETE
+- ✅ `npm run build` succeeds (22/22 pages)
+- ✅ All 6 CI checks pass (TypeScript, Build, Lint, Vercel Preview ×2, Preview Comments)
+- ✅ PR #42 merged via squash to main, branch deleted
+- ✅ Issue #41 auto-closed by PR merge
+- ✅ Production returns HTTP 200
 
-### PR: https://github.com/pgedeon/sailing-yachts/pull/32
-### Issue: https://github.com/pgedeon/sailing-yachts/issues/31
+### PR: https://github.com/pgedeon/sailing-yachts/pull/42
+### Issue: https://github.com/pgedeon/sailing-yachts/issues/41
 ### Deploy: https://sailing-yachts.vercel.app/
 
 ### ROADMAP Progress
 - **Phase 0**: ✅ Complete (5/5)
-- **Phase 1**: 🟡 In Progress (4/5 — need more yacht models for 200+ target)
-- **Phase 2**: ✅ COMPLETE (6/6) 🎉
-- **Phase 3–5**: Not started
+- **Phase 1**: ✅ Complete (5/5)
+- **Phase 2**: ✅ Complete (6/6)
+- **Phase 3**: 🟡 In Progress (2/4)
+  - [x] User favorites / shortlist
+  - [x] Find similar yachts
+  - [x] Price range indicator
+  - [ ] Filter presets
+  - [ ] Print-friendly yacht spec sheets
+- **Phase 4–5**: Not started
 
 ### Next Recommended Tasks (from ROADMAP)
-1. **Expand yacht models to 200+** (Phase 1, High) — need ~121 more models — this is the last Phase 1 blocker
-2. **User favorites / shortlist** (Phase 3, Medium) — localStorage, no auth needed
-3. **Find similar yachts** (Phase 3, Medium) — spec-based similarity scoring
-4. **Price range indicator** (Phase 3, Medium) — where data available
+1. **Filter presets** (Phase 3, Medium) — Bluewater cruisers, Racing yachts, Budget friendly
+2. **Print-friendly yacht spec sheets** (Phase 3, Medium) — CSS print styles for detail pages
+3. **Embeddable comparison widget** (Phase 4, Medium) — For sailboats.fr integration

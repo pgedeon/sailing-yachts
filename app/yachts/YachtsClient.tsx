@@ -3,6 +3,7 @@
 import { FavoriteButton } from '@/app/components/FavoriteButton';
 import { PriceTierBadge } from '@/app/components/PriceTierBadge';
 import { calculatePriceTier } from '@/lib/price-tier';
+import { FILTER_PRESETS, detectActivePreset, type FilterPreset } from '@/lib/filter-presets';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 
@@ -39,8 +40,9 @@ interface Yacht {
 }
 
 // Serialize filters to a string key for stable comparison
-function filterKey(mfgIds: number[], rigType?: string, keelType?: string, hullMaterial?: string): string {
-  return `${mfgIds.sort().join(',')}:${rigType ?? ''}:${keelType ?? ''}:${hullMaterial ?? ''}`;
+function filterKey(searchParams: URLSearchParams): string {
+  const keys = Array.from(searchParams.keys()).filter(k => k.startsWith('filters[')).sort();
+  return keys.map(k => `${k}=${searchParams.get(k)}`).join('&');
 }
 
 export default function YachtsClient() {
@@ -58,17 +60,26 @@ export default function YachtsClient() {
   const [selectedYacht, setSelectedYacht] = useState<Yacht | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  // Parse filters from URL once on mount and when URL actually changes
+  // Parse filters from URL
   const mfgIds = searchParams.getAll('filters[manufacturers]').map(Number).filter(Boolean);
   const rigType = searchParams.get('filters[rigType]') ?? undefined;
   const keelType = searchParams.get('filters[keelType]') ?? undefined;
   const hullMaterial = searchParams.get('filters[hullMaterial]') ?? undefined;
+  const lengthMin = searchParams.get('filters[lengthMin]') ?? undefined;
+  const lengthMax = searchParams.get('filters[lengthMax]') ?? undefined;
+  const displacementMin = searchParams.get('filters[displacementMin]') ?? undefined;
+  const displacementMax = searchParams.get('filters[displacementMax]') ?? undefined;
+  const cabinsMin = searchParams.get('filters[cabinsMin]') ?? undefined;
 
-  // Active filter count for badge
-  const activeFilterCount = mfgIds.length + (rigType ? 1 : 0) + (keelType ? 1 : 0) + (hullMaterial ? 1 : 0);
+  // Active filter count for badge (count non-empty filter params)
+  const activeFilterCount = Array.from(searchParams.keys()).filter(k => k.startsWith('filters[') && searchParams.get(k)).length;
+
+  // Detect active preset
+  const activePresetId = detectActivePreset(searchParams);
+  const activePreset = activePresetId ? FILTER_PRESETS.find(p => p.id === activePresetId) : null;
 
   // Stable filter key to prevent re-fetching on same params
-  const currentKey = filterKey(mfgIds, rigType, keelType, hullMaterial);
+  const currentKey = filterKey(searchParams);
   const lastFetchedKey = useRef<string>('');
   const abortRef = useRef<AbortController | null>(null);
 
@@ -113,6 +124,11 @@ export default function YachtsClient() {
     if (rigType) q.set('filters[rigType]', rigType);
     if (keelType) q.set('filters[keelType]', keelType);
     if (hullMaterial) q.set('filters[hullMaterial]', hullMaterial);
+    if (lengthMin) q.set('filters[lengthMin]', lengthMin);
+    if (lengthMax) q.set('filters[lengthMax]', lengthMax);
+    if (displacementMin) q.set('filters[displacementMin]', displacementMin);
+    if (displacementMax) q.set('filters[displacementMax]', displacementMax);
+    if (cabinsMin) q.set('filters[cabinsMin]', cabinsMin);
 
     fetch(`/api/yachts?${q.toString()}`, { cache: 'no-store', signal: controller.signal })
       .then(r => {
@@ -159,6 +175,22 @@ export default function YachtsClient() {
 
   const clearFilters = () => {
     window.history.pushState({}, '', '?page=1');
+    setPage(1);
+    lastFetchedKey.current = '';
+  };
+
+  const applyPreset = (preset: FilterPreset) => {
+    // If this preset is already active, clear it (toggle off)
+    if (activePresetId === preset.id) {
+      clearFilters();
+      return;
+    }
+    const url = new URLSearchParams();
+    url.set('page', '1');
+    Object.entries(preset.params).forEach(([key, value]) => {
+      url.set(key, value);
+    });
+    window.history.pushState({}, '', `?${url.toString()}`);
     setPage(1);
     lastFetchedKey.current = '';
   };
@@ -280,6 +312,38 @@ export default function YachtsClient() {
               </span>
             )}
           </button>
+        </div>
+
+        {/* Filter Presets */}
+        <div className="mb-4 sm:mb-6">
+          <div className="flex flex-wrap gap-2">
+            {FILTER_PRESETS.map(preset => (
+              <button
+                key={preset.id}
+                onClick={() => applyPreset(preset)}
+                title={preset.description}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                  activePresetId === preset.id
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                    : 'bg-white text-gray-700 border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                }`}
+              >
+                <span>{preset.icon}</span>
+                <span>{preset.label}</span>
+              </button>
+            ))}
+          </div>
+          {activePreset && (
+            <div className="mt-2 flex items-center gap-2">
+              <span className="text-sm text-gray-500">{activePreset.icon} {activePreset.description}</span>
+              <button
+                onClick={clearFilters}
+                className="text-xs text-blue-600 hover:text-blue-800 underline"
+              >
+                Clear preset
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col md:flex-row gap-6">
