@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db, yachtModels, manufacturers, images } from "@/lib/db";
-import { eq, ne, inArray } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
@@ -27,9 +27,8 @@ interface ScoredYacht extends SpecRow {
 }
 
 /**
- * Compute weighted Euclidean similarity between the source yacht and candidates.
- * Weights prioritize dimensional proximity (LOA > displacement > beam > draft > sail area).
- * Normalizes each dimension by the source value so the distance is scale-independent.
+ * Weighted Euclidean similarity based on dimensional specs.
+ * Weights: LOA 30%, displacement 25%, beam 20%, draft 15%, sail area 10%.
  */
 function computeSimilarity(source: SpecRow, candidates: SpecRow[]): ScoredYacht[] {
   type DimKey = "lengthOverall" | "beam" | "draft" | "displacement" | "sailAreaMain";
@@ -41,7 +40,7 @@ function computeSimilarity(source: SpecRow, candidates: SpecRow[]): ScoredYacht[
     { key: "sailAreaMain", weight: 0.10 },
   ];
 
-  const scored = candidates
+  return candidates
     .map((c) => {
       let totalWeight = 0;
       let weightedDist = 0;
@@ -49,29 +48,18 @@ function computeSimilarity(source: SpecRow, candidates: SpecRow[]): ScoredYacht[
       for (const dim of dims) {
         const sv = source[dim.key] !== null ? parseFloat(source[dim.key]!) : null;
         const cv = c[dim.key] !== null ? parseFloat(c[dim.key]!) : null;
-
         if (sv === null || cv === null || sv === 0) continue;
-
-        // Normalized absolute difference
-        const normDiff = Math.abs(sv - cv) / sv;
-        weightedDist += dim.weight * normDiff;
+        weightedDist += dim.weight * (Math.abs(sv - cv) / sv);
         totalWeight += dim.weight;
       }
 
-      // If we had no overlapping dimensions, skip
       if (totalWeight === 0) return null;
-
-      // Convert to a 0-1 similarity score (1 = identical)
-      const normalizedDist = weightedDist / totalWeight;
-      const score = Math.max(0, 1 - normalizedDist);
-
+      const score = Math.max(0, 1 - weightedDist / totalWeight);
       return { ...c, score };
     })
-    .filter((x): x is ScoredYacht & { score: number } => x !== null && x.score > 0.3)
+    .filter((x): x is ScoredYacht => x !== null && x.score > 0.3)
     .sort((a, b) => b.score - a.score)
     .slice(0, 5);
-
-  return scored;
 }
 
 export async function GET(
@@ -110,7 +98,8 @@ export async function GET(
 
     const source = sourceResult[0];
 
-    // Fetch all other yachts as candidates
+    // Fetch candidate yachts — exclude source, limit to reasonable set
+    // Fetch all yachts (200 is fine for in-memory similarity)
     const candidates = await db
       .select({
         id: yachtModels.id,
@@ -129,37 +118,31 @@ export async function GET(
         cabins: yachtModels.cabins,
       })
       .from(yachtModels)
-      .leftJoin(manufacturers, eq(yachtModels.manufacturerId, manufacturers.id))
-      .where(ne(yachtModels.id, source.id));
+      .leftJoin(manufacturers, eq(yachtModels.manufacturerId, manufacturers.id));
+
+    // Filter out source in JS (avoids ne() issues with Neon HTTP)
+    const filteredCandidates = candidates.filter((c: any) => c.id !== source.id);
 
     // Compute similarity
-    const similar = computeSimilarity(source, candidates);
+    const similar = computeSimilarity(source, filteredCandidates);
 
-    // Fetch primary images for similar yachts
+    // Fetch primary images for similar yachts individually
     if (similar.length > 0) {
-      const similarIds = similar.map((y) => y.id);
-
-      const allImages = await db
-        .select({
-          yachtModelId: images.yachtModelId,
-          url: images.url,
-          altText: images.altText,
-          isPrimary: images.isPrimary,
-        })
-        .from(images)
-        .where(inArray(images.yachtModelId, similarIds));
-
-      // Build a map of yachtId -> primary image (fallback to first)
-      const imageMap = new Map<number, { url: string; altText: string | null }>();
-      for (const img of allImages) {
-        if (img.isPrimary || !imageMap.has(img.yachtModelId)) {
-          imageMap.set(img.yachtModelId, { url: img.url, altText: img.altText });
-        }
-      }
-
-      // Attach images to results
       for (const yacht of similar) {
-        (yacht as any).primaryImage = imageMap.get(yacht.id)?.url || null;
+        try {
+          const yachtImages = await db
+            .select({
+              url: images.url,
+              isPrimary: images.isPrimary,
+            })
+            .from(images)
+            .where(eq(images.yachtModelId, yacht.id))
+            .limit(1);
+
+          (yacht as any).primaryImage = yachtImages.length > 0 ? yachtImages[0].url : null;
+        } catch {
+          (yacht as any).primaryImage = null;
+        }
       }
     }
 
