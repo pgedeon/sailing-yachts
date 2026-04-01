@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db, yachtModels, manufacturers, images } from "@/lib/db";
-import { eq, ne, sql, and } from "drizzle-orm";
+import { eq, ne, inArray } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +32,6 @@ interface ScoredYacht extends SpecRow {
  * Normalizes each dimension by the source value so the distance is scale-independent.
  */
 function computeSimilarity(source: SpecRow, candidates: SpecRow[]): ScoredYacht[] {
-  // Define dimensions with weights
   type DimKey = "lengthOverall" | "beam" | "draft" | "displacement" | "sailAreaMain";
   const dims: Array<{ key: DimKey; weight: number }> = [
     { key: "lengthOverall", weight: 0.30 },
@@ -51,7 +50,7 @@ function computeSimilarity(source: SpecRow, candidates: SpecRow[]): ScoredYacht[
         const sv = source[dim.key] !== null ? parseFloat(source[dim.key]!) : null;
         const cv = c[dim.key] !== null ? parseFloat(c[dim.key]!) : null;
 
-        if (sv === null || cv === null) continue;
+        if (sv === null || cv === null || sv === 0) continue;
 
         // Normalized absolute difference
         const normDiff = Math.abs(sv - cv) / sv;
@@ -139,21 +138,22 @@ export async function GET(
     // Fetch primary images for similar yachts
     if (similar.length > 0) {
       const similarIds = similar.map((y) => y.id);
+
       const allImages = await db
         .select({
-          id: images.yachtModelId,
+          yachtModelId: images.yachtModelId,
           url: images.url,
           altText: images.altText,
           isPrimary: images.isPrimary,
         })
         .from(images)
-        .where(sql`${images.yachtModelId} = ANY(${similarIds})`);
+        .where(inArray(images.yachtModelId, similarIds));
 
-      // Build a map of yachtId -> primary image
+      // Build a map of yachtId -> primary image (fallback to first)
       const imageMap = new Map<number, { url: string; altText: string | null }>();
       for (const img of allImages) {
-        if (img.isPrimary || !imageMap.has(img.id)) {
-          imageMap.set(img.id, { url: img.url, altText: img.altText });
+        if (img.isPrimary || !imageMap.has(img.yachtModelId)) {
+          imageMap.set(img.yachtModelId, { url: img.url, altText: img.altText });
         }
       }
 
