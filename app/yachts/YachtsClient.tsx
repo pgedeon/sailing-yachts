@@ -1,8 +1,10 @@
 'use client';
 
+import { FavoriteButton } from '@/app/components/FavoriteButton';
+import { PriceTierBadge } from '@/app/components/PriceTierBadge';
+import { calculatePriceTier } from '@/lib/price-tier';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { FavoriteButton } from '@/app/components/FavoriteButton';
 
 interface Manufacturer { id: number; name: string; }
 
@@ -302,7 +304,18 @@ export default function YachtsClient() {
                         <h3 className="font-bold text-lg leading-tight">{yacht.manufacturer} {yacht.modelName}</h3>
                         {yacht.slug && <FavoriteButton slug={yacht.slug} modelName={`${yacht.manufacturer} ${yacht.modelName}`} size="sm" />}
                       </div>
-                      <p className="text-sm text-gray-600 mt-0.5">{yacht.year ?? '—'}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <p className="text-sm text-gray-600">{yacht.year ?? '—'}</p>
+                        <PriceTierBadge info={calculatePriceTier({
+                          lengthOverall: yacht.lengthOverall,
+                          displacement: yacht.displacement,
+                          beam: yacht.beam,
+                          cabins: yacht.cabins,
+                          hullMaterial: yacht.hullMaterial,
+                          keelType: yacht.keelType,
+                          rigType: yacht.rigType,
+                        })} />
+                      </div>
                       <dl className="mt-3 text-sm">
                         <div className="flex justify-between py-0.5"><dt className="text-gray-500">Length:</dt><dd className="font-medium">{fmt(yacht.lengthOverall)} m</dd></div>
                         <div className="flex justify-between py-0.5"><dt className="text-gray-500">Beam:</dt><dd className="font-medium">{fmt(yacht.beam)} m</dd></div>
