@@ -36,6 +36,33 @@ export async function GET(request: Request) {
       params.push(searchParams.get('filters[hullMaterial]'));
     }
 
+    // Range filters for presets
+    const lengthMin = parseFloat(searchParams.get('filters[lengthMin]') || '');
+    if (!isNaN(lengthMin)) {
+      conditions.push(`y.length_overall >= $${paramIdx++}`);
+      params.push(lengthMin);
+    }
+    const lengthMax = parseFloat(searchParams.get('filters[lengthMax]') || '');
+    if (!isNaN(lengthMax)) {
+      conditions.push(`y.length_overall <= $${paramIdx++}`);
+      params.push(lengthMax);
+    }
+    const displacementMin = parseFloat(searchParams.get('filters[displacementMin]') || '');
+    if (!isNaN(displacementMin)) {
+      conditions.push(`y.displacement >= $${paramIdx++}`);
+      params.push(displacementMin);
+    }
+    const displacementMax = parseFloat(searchParams.get('filters[displacementMax]') || '');
+    if (!isNaN(displacementMax)) {
+      conditions.push(`y.displacement <= $${paramIdx++}`);
+      params.push(displacementMax);
+    }
+    const cabinsMin = parseInt(searchParams.get('filters[cabinsMin]') || '', 10);
+    if (!isNaN(cabinsMin)) {
+      conditions.push(`y.cabins >= $${paramIdx++}`);
+      params.push(cabinsMin);
+    }
+
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
     // Count query
