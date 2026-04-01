@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { PriceTierBadge } from "@/app/components/PriceTierBadge";
+import { calculatePriceTier } from "@/lib/price-tier";
 import Link from "next/link";
 import {
   getSavedComparisons,
@@ -714,6 +716,33 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
+                {/* Price Tier Row */}
+                <tr className="bg-gray-50/50">
+                  <td className="px-5 py-3 text-gray-600 font-medium whitespace-nowrap sticky left-0 bg-gray-50/50 z-10">
+                    Est. Price Range
+                  </td>
+                  {yachts.map((yacht, i) => {
+                    const priceInfo = calculatePriceTier({
+                      lengthOverall: yacht.lengthOverall,
+                      displacement: yacht.displacement,
+                      beam: yacht.beam,
+                      cabins: yacht.cabins,
+                      hullMaterial: yacht.hullMaterial,
+                      keelType: yacht.keelType,
+                      rigType: yacht.rigType,
+                    });
+                    return (
+                      <td key={yacht.id} className="px-5 py-3">
+                        <div className="flex items-center gap-2">
+                          <PriceTierBadge info={priceInfo} size="sm" />
+                          {priceInfo.tier !== "unknown" && (
+                            <span className="text-xs text-gray-500">{priceInfo.range}</span>
+                          )}
+                        </div>
+                      </td>
+                    );
+                  })}
+                </tr>
                 {displayGroups.map(dg => {
                   const groupRows: React.ReactNode[] = [];
 
