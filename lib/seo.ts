@@ -10,6 +10,29 @@ export function getSiteUrl(path = ""): string {
   return `${SITE_URL}${path}`;
 }
 
+export function buildOgImageUrl(params: {
+  title: string;
+  description?: string | null;
+  length?: number | string | null;
+}): string {
+  const searchParams = new URLSearchParams();
+  searchParams.set("title", params.title);
+
+  if (params.description) {
+    searchParams.set("description", params.description);
+  }
+
+  if (params.length !== null && params.length !== undefined && params.length !== "") {
+    const length =
+      typeof params.length === "number"
+        ? `${params.length.toFixed(1)}m LOA`
+        : params.length;
+    searchParams.set("length", length);
+  }
+
+  return getSiteUrl(`/api/og?${searchParams.toString()}`);
+}
+
 /* ------------------------------------------------------------------ */
 /*  JSON-LD Structured Data                                           */
 /* ------------------------------------------------------------------ */
@@ -147,6 +170,13 @@ export function generateYachtPageMetadata(yacht: {
   const desc =
     yacht.description ||
     `${yacht.manufacturer} ${yacht.modelName} sailing yacht — detailed specs, dimensions, sail plan and accommodation. ${yacht.lengthOverall ? `${yacht.lengthOverall}m LOA.` : ""}`;
+  const ogImage =
+    yacht.primaryImage ||
+    buildOgImageUrl({
+      title: yacht.modelName,
+      description: yacht.manufacturer,
+      length: yacht.lengthOverall,
+    });
 
   return {
     title,
@@ -165,13 +195,20 @@ export function generateYachtPageMetadata(yacht: {
       url: getSiteUrl(`/yachts/${yacht.slug}`),
       type: "website",
       siteName: SITE_NAME,
-      ...(yacht.primaryImage ? { images: [{ url: yacht.primaryImage }] } : {}),
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: `${yacht.manufacturer} ${yacht.modelName}`,
+        },
+      ],
     },
     twitter: {
-      card: yacht.primaryImage ? "summary_large_image" : "summary",
+      card: "summary_large_image",
       title,
       description: desc,
-      ...(yacht.primaryImage ? { images: [yacht.primaryImage] } : {}),
+      images: [ogImage],
     },
     alternates: {
       canonical: getSiteUrl(`/yachts/${yacht.slug}`),
