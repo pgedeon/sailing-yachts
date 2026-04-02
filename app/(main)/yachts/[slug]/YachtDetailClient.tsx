@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, Ruler, Wind, Home, Wrench, Star, Printer } from "lucide-react";
+import { ChevronLeft, ChevronRight, Ruler, Wind, Home, Wrench, Star, Printer } from "lucide-react";
 import { FavoriteButton } from "@/app/components/FavoriteButton";
 import { PriceTierDetail } from "@/app/components/PriceTierBadge";
 import { calculatePriceTier } from "@/lib/price-tier";
+import { slugify } from "@/lib/utils/slugify";
 import { SimilarYachts } from "./SimilarYachts";
 import { RelatedArticles } from "./RelatedArticles";
 
@@ -148,6 +149,41 @@ export default function YachtDetailClient() {
       <div className="print-header hidden" data-testid="print-header">
         <h1>Sailing Yachts Database — Spec Sheet</h1>
       </div>
+
+      <nav aria-label="Breadcrumb" className="mb-4 sm:mb-6 no-print">
+        <ol className="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
+          <li>
+            <Link href="/" className="hover:text-foreground transition-colors">
+              Home
+            </Link>
+          </li>
+          <li aria-hidden="true">
+            <ChevronRight className="h-4 w-4" />
+          </li>
+          <li>
+            <Link href="/yachts" className="hover:text-foreground transition-colors">
+              Yachts
+            </Link>
+          </li>
+          <li aria-hidden="true">
+            <ChevronRight className="h-4 w-4" />
+          </li>
+          <li>
+            <Link
+              href={`/manufacturers/${slugify(yacht.manufacturer)}`}
+              className="hover:text-foreground transition-colors"
+            >
+              {yacht.manufacturer}
+            </Link>
+          </li>
+          <li aria-hidden="true">
+            <ChevronRight className="h-4 w-4" />
+          </li>
+          <li aria-current="page" className="text-foreground font-medium">
+            {yacht.modelName}
+          </li>
+        </ol>
+      </nav>
 
       {/* Back link + Print button */}
       <div className="mb-4 sm:mb-6 flex items-center justify-between">
