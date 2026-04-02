@@ -48,7 +48,7 @@ Cron: sailing-yachts-builder (every 6h)
 - [x] Print-friendly yacht spec sheets — Issue #45, PR #46
 
 ## Phase 4 — Integration with sailboats.fr (Priority: Medium)
-- [ ] Embeddable yacht comparison widget for sailboats.fr posts
+- [x] Embeddable yacht comparison widget for sailboats.fr posts — Issue #49, PRs #50 #51 #52
 - [x] Cross-linking: yacht pages link to relevant sailboats.fr articles — Issue #47, PR #48
 - [ ] Shared affiliate links on yacht recommendation pages
 - [ ] Yacht manufacturer guides on sailboats.fr linking back to database
