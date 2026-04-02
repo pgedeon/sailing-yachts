@@ -1,63 +1,38 @@
-## Session: 2026-04-01 14:40 CEST (Cron: sailing-yachts-builder)
+# Sailing Yachts — Build Session Notes
 
-### Completed Issue
-**Issue #41 — Price range indicator based on yacht specs** (PR #42, merged via squash)
+## Session: 2026-04-02 02:40 AM (Europe/Berlin)
 
-### What was done:
-1. **lib/price-tier.ts** — Spec-based price tier calculation engine
-   - Four tiers: Budget (<$50k), Mid-Range ($50-150k), Premium ($150-500k), Luxury ($500k+)
-   - Primary scoring by LOA (length overall)
-   - Adjustments for displacement/LOA ratio, hull material (carbon/aluminum/steel bump tier), cabin count, keel type
-   - Confidence levels (high/medium/low) based on available data
-   - Human-readable reasons for each tier assignment
+### Issue Worked On
+- **Issue #45**: Add print-friendly yacht spec sheets
+- **PR #46**: merged to main
 
-2. **app/components/PriceTierBadge.tsx** — Reusable badge + detail card components
-   - PriceTierBadge: colored rounded badge (green/blue/purple/amber) in sm/md/lg sizes
-   - PriceTierDetail: full card with estimated range, reasons list, and disclaimer
+### What Was Implemented
+1. **Print CSS** (`globals.css`): Full `@media print` stylesheet that hides header, footer, nav, interactive elements (favorites, compare, similar yachts, print button), and produces a clean black-on-white spec sheet layout with proper page breaks
+2. **Print header/footer**: Hidden on screen, visible in print — "Sailing Yachts Database — Spec Sheet" header and date-stamped footer
+3. **Print Spec Sheet button**: Added to yacht detail page toolbar with Printer icon, triggers `window.print()`
+4. **Semantic CSS classes**: `no-print`, `spec-group`, `spec-grid`, `spec-item`, `yacht-hero`, `yacht-detail-page` for clean print targeting
+5. **7 Playwright tests**: Button visibility, print mode emulation, element hiding, spec visibility, print trigger
 
-3. **app/yachts/YachtsClient.tsx** — Price tier badge on listing cards
-   - Badge shown next to year on each yacht card
-   - Computed client-side from specs already in the Yacht interface
+### Additional
+- Marked "Find similar yachts" as COMPLETE in ROADMAP (was already fully implemented with API + UI + 6 tests)
+- **Phase 3 is now 100% COMPLETE** — all items checked off
+- ROADMAP updated to reflect Phase 3 completion
 
-4. **app/yachts/[slug]/YachtDetailClient.tsx** — Price range estimate section
-   - PriceTierDetail card between core specs and admin links
-   - Shows estimated range, reasoning, and disclaimer
+### Build/Test Results
+- ✅ TypeScript typecheck: pass
+- ✅ `next build`: pass (22 static pages generated)
+- ✅ GitHub CI (build + lint + typecheck): all pass
+- ✅ Vercel production deploy: `a4d1991` live, then `b7f538a` (ROADMAP update)
 
-5. **app/compare/CompareClient.tsx** — Price tier row in comparison table
-   - "Est. Price Range" row at top of table body
-   - Badge + range text for each yacht being compared
+### Deploy Status
+- Production: https://sailing-yachts.vercel.app — live, commit `b7f538a`
+- PR #46: merged (squash), branch deleted
 
-6. **tests/price-tier.spec.ts** — 4 Playwright tests
-   - Badge appears on listing cards
-   - Price range section on detail page
-   - Price tier row in comparison table
-   - Badge has colored background
+### Next Recommended Task
+Phase 4 is next — **Integration with sailboats.fr**:
+1. **Embeddable yacht comparison widget** for sailboats.fr posts
+2. **Cross-linking**: yacht pages link to relevant sailboats.fr articles
+3. **Shared affiliate links** on yacht recommendation pages
+4. **Yacht manufacturer guides** on sailboats.fr linking back to database
 
-### Verification:
-- ✅ `npm run typecheck` passes clean
-- ✅ `npm run build` succeeds (22/22 pages)
-- ✅ All 6 CI checks pass (TypeScript, Build, Lint, Vercel Preview ×2, Preview Comments)
-- ✅ PR #42 merged via squash to main, branch deleted
-- ✅ Issue #41 auto-closed by PR merge
-- ✅ Production returns HTTP 200
-
-### PR: https://github.com/pgedeon/sailing-yachts/pull/42
-### Issue: https://github.com/pgedeon/sailing-yachts/issues/41
-### Deploy: https://sailing-yachts.vercel.app/
-
-### ROADMAP Progress
-- **Phase 0**: ✅ Complete (5/5)
-- **Phase 1**: ✅ Complete (5/5)
-- **Phase 2**: ✅ Complete (6/6)
-- **Phase 3**: 🟡 In Progress (2/4)
-  - [x] User favorites / shortlist
-  - [x] Find similar yachts
-  - [x] Price range indicator
-  - [ ] Filter presets
-  - [ ] Print-friendly yacht spec sheets
-- **Phase 4–5**: Not started
-
-### Next Recommended Tasks (from ROADMAP)
-1. **Filter presets** (Phase 3, Medium) — Bluewater cruisers, Racing yachts, Budget friendly
-2. **Print-friendly yacht spec sheets** (Phase 3, Medium) — CSS print styles for detail pages
-3. **Embeddable comparison widget** (Phase 4, Medium) — For sailboats.fr integration
+Priority order: Cross-linking first (simplest), then embeddable widget, then affiliate links, then manufacturer guides.
