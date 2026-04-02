@@ -9,6 +9,7 @@ import { FavoriteButton } from "@/app/components/FavoriteButton";
 import { PriceTierDetail } from "@/app/components/PriceTierBadge";
 import { calculatePriceTier } from "@/lib/price-tier";
 import { SimilarYachts } from "./SimilarYachts";
+import { RelatedArticles } from "./RelatedArticles";
 
 interface SpecGroup {
   [group: string]: Array<{
@@ -352,6 +353,19 @@ export default function YachtDetailClient() {
       {/* Similar Yachts */}
       <div className="similar-yachts-section no-print">
         <SimilarYachts slug={slug} />
+      </div>
+
+      {/* Related Sailing Articles from sailboats.fr */}
+      <div className="related-articles-wrapper no-print">
+        <RelatedArticles
+          manufacturer={yacht.manufacturer}
+          lengthOverall={yacht.lengthOverall}
+          rigType={yacht.rigType}
+          keelType={yacht.keelType}
+          hullMaterial={yacht.hullMaterial}
+          cabins={yacht.cabins}
+          displacement={yacht.displacement}
+        />
       </div>
 
       {/* Compare Button */}
