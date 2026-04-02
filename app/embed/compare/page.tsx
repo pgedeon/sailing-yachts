@@ -126,7 +126,7 @@ export default async function EmbedComparePage({
       <div className="p-6 text-center text-gray-500">
         <p className="text-lg font-medium">No yachts selected</p>
         <p className="text-sm mt-1">
-          Usage: <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs">/embed/compare?ids=1,2</code>
+          Usage: <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs">/embed/compare?ids=26,27</code>
         </p>
       </div>
     );

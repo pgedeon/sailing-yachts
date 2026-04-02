@@ -6,7 +6,7 @@ test.describe("Embeddable Comparison Widget", () => {
   test("should show usage hint without ids parameter", async ({ page }) => {
     await page.goto(`${BASE_URL}/embed/compare`);
     await expect(page.locator("text=No yachts selected")).toBeVisible();
-    await expect(page.locator("text=/embed/compare?ids=1,2")).toBeVisible();
+    await expect(page.locator("text=/embed/compare?ids=26,27")).toBeVisible();
   });
 
   test("should show error for only 1 yacht ID", async ({ page }) => {
@@ -16,12 +16,12 @@ test.describe("Embeddable Comparison Widget", () => {
   });
 
   test("should show error for more than 4 yacht IDs", async ({ page }) => {
-    await page.goto(`${BASE_URL}/embed/compare?ids=1,2,3,4,5`);
+    await page.goto(`${BASE_URL}/embed/compare?ids=26,27,3,4,5`);
     await expect(page.locator("text=Invalid selection")).toBeVisible();
   });
 
   test("should render comparison of 2 yachts", async ({ page }) => {
-    await page.goto(`${BASE_URL}/embed/compare?ids=1,2`);
+    await page.goto(`${BASE_URL}/embed/compare?ids=26,27`);
     await page.waitForLoadState("networkidle");
 
     // Should show branding header
@@ -41,7 +41,7 @@ test.describe("Embeddable Comparison Widget", () => {
   });
 
   test("should link yacht names to detail pages", async ({ page }) => {
-    await page.goto(`${BASE_URL}/embed/compare?ids=1,2`);
+    await page.goto(`${BASE_URL}/embed/compare?ids=26,27`);
     await page.waitForLoadState("networkidle");
 
     // Yacht name links should point to /yachts/ paths
@@ -51,17 +51,17 @@ test.describe("Embeddable Comparison Widget", () => {
   });
 
   test("full comparison link should have correct URL", async ({ page }) => {
-    await page.goto(`${BASE_URL}/embed/compare?ids=1,2`);
+    await page.goto(`${BASE_URL}/embed/compare?ids=26,27`);
     await page.waitForLoadState("networkidle");
 
     const link = page.locator('a:has-text("Full comparison")');
     const href = await link.getAttribute("href");
-    expect(href).toContain("/compare?ids=1,2");
+    expect(href).toContain("/compare?ids=26,27");
     expect(href).toContain("target");
   });
 
   test("should render comparison of 3 yachts", async ({ page }) => {
-    await page.goto(`${BASE_URL}/embed/compare?ids=1,2,3`);
+    await page.goto(`${BASE_URL}/embed/compare?ids=26,27,3`);
     await page.waitForLoadState("networkidle");
 
     await expect(page.locator("text=Yacht Comparison")).toBeVisible();
@@ -72,7 +72,7 @@ test.describe("Embeddable Comparison Widget", () => {
   });
 
   test("should show Est. Price badges", async ({ page }) => {
-    await page.goto(`${BASE_URL}/embed/compare?ids=1,2`);
+    await page.goto(`${BASE_URL}/embed/compare?ids=26,27`);
     await page.waitForLoadState("networkidle");
 
     // Price tier badges should be visible (Budget, Mid-Range, Premium, Luxury, or Unknown)
@@ -81,7 +81,7 @@ test.describe("Embeddable Comparison Widget", () => {
   });
 
   test("should show spec labels (LOA, Beam, Draft)", async ({ page }) => {
-    await page.goto(`${BASE_URL}/embed/compare?ids=1,2`);
+    await page.goto(`${BASE_URL}/embed/compare?ids=26,27`);
     await page.waitForLoadState("networkidle");
 
     await expect(page.locator("text=LOA").first()).toBeVisible();
@@ -90,7 +90,7 @@ test.describe("Embeddable Comparison Widget", () => {
   });
 
   test("should have no main site footer", async ({ page }) => {
-    await page.goto(`${BASE_URL}/embed/compare?ids=1,2`);
+    await page.goto(`${BASE_URL}/embed/compare?ids=26,27`);
     await page.waitForLoadState("networkidle");
 
     // The main site has "All rights reserved" — embed should not
