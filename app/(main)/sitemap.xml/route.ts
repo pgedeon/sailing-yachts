@@ -1,5 +1,6 @@
 import { db, yachtModels, manufacturers } from "@/lib/db";
 import { isNotNull } from "drizzle-orm";
+import { slugify } from "@/lib/utils/slugify";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://sailing-yachts.vercel.app";
@@ -56,6 +57,7 @@ export async function GET() {
       // Static pages
       { loc: `${SITE_URL}/`, changefreq: "daily", priority: "1.0" },
       { loc: `${SITE_URL}/yachts`, changefreq: "daily", priority: "0.9" },
+      { loc: `${SITE_URL}/manufacturers`, changefreq: "weekly", priority: "0.8" },
       { loc: `${SITE_URL}/compare`, changefreq: "weekly", priority: "0.7" },
     ];
 
@@ -71,12 +73,12 @@ export async function GET() {
       }
     }
 
-    // Dynamic manufacturer pages (if individual pages exist)
+    // Dynamic manufacturer pages
     for (const m of mfrs) {
-      if (m.id && m.name) {
-        const slug = m.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      if (m.name) {
+        const slug = slugify(m.name);
         entries.push({
-          loc: `${SITE_URL}/yachts?manufacturer=${encodeURIComponent(slug)}`,
+          loc: `${SITE_URL}/manufacturers/${slug}`,
           changefreq: "weekly",
           priority: "0.6",
         });

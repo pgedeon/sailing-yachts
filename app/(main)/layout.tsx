@@ -43,6 +43,7 @@ function Header() {
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6">
             <NavLink href="/yachts">Browse</NavLink>
+            <NavLink href="/manufacturers">Manufacturers</NavLink>
             <NavLink href="/search">Search</NavLink>
             <NavLink href="/compare">Compare</NavLink>
             <NavLink href="/favorites">Favorites</NavLink>
@@ -93,6 +94,9 @@ function MobileMenu() {
         <nav className="flex flex-col py-2">
           <a href="/yachts" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
             Browse Yachts
+          </a>
+          <a href="/manufacturers" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
+            Manufacturers
           </a>
           <a href="/search" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
             Search
