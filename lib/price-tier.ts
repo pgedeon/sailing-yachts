@@ -50,10 +50,16 @@ const TIER_CONFIG: Record<PriceTier, { label: string; range: string; color: stri
  */
 export function calculatePriceTier(specs: YachtSpecs): PriceTierInfo {
   const { lengthOverall, displacement, beam, cabins, hullMaterial, keelType, rigType } = specs;
+  // Coerce string values from API to numbers (DB returns decimal columns as strings)
+  const loa = typeof lengthOverall === 'string' ? parseFloat(lengthOverall) : lengthOverall;
+  const disp = typeof displacement === 'string' ? parseFloat(displacement as any) : displacement;
+  const b = typeof beam === 'string' ? parseFloat(beam as any) : beam;
+  const cab = typeof cabins === 'string' ? parseInt(cabins as any, 10) : cabins;
+
   const reasons: string[] = [];
 
   // Need at least LOA to make any determination
-  if (!lengthOverall) {
+  if (!loa) {
     return {
       tier: "unknown",
       ...TIER_CONFIG["unknown"],
@@ -61,8 +67,6 @@ export function calculatePriceTier(specs: YachtSpecs): PriceTierInfo {
       reasons: ["Insufficient data to estimate price range"],
     };
   }
-
-  const loa = lengthOverall;
   let tier: PriceTier;
   let confidence: "high" | "medium" | "low" = "high";
 
@@ -85,8 +89,8 @@ export function calculatePriceTier(specs: YachtSpecs): PriceTierInfo {
   }
 
   // Adjustments based on displacement (heavier = more expensive per foot)
-  if (displacement && loa) {
-    const dispPerMeter = displacement / loa;
+  if (disp && loa) {
+    const dispPerMeter = disp / loa;
     if (dispPerMeter > 4000 && tier === "mid-range") {
       tier = "premium";
       reasons.push("Heavy displacement suggests higher build quality");
@@ -95,8 +99,8 @@ export function calculatePriceTier(specs: YachtSpecs): PriceTierInfo {
       tier = "luxury";
       reasons.push("Very heavy displacement for length");
       confidence = "medium";
-    } else if (displacement) {
-      reasons.push(`Displacement: ${(displacement / 1000).toFixed(1)}t`);
+    } else if (disp) {
+      reasons.push(`Displacement: ${(disp / 1000).toFixed(1)}t`);
     }
   }
 
@@ -142,7 +146,7 @@ export function calculatePriceTier(specs: YachtSpecs): PriceTierInfo {
   }
 
   // If we only have LOA and no other confirming data, reduce confidence
-  if (!displacement && !hullMaterial && !cabins) {
+  if (!disp && !hullMaterial && !cabins) {
     confidence = "low";
   }
 
