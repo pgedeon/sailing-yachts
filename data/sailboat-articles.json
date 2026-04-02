@@ -1,0 +1,556 @@
+{
+  "articles": [
+    {
+      "id": "anchors-beginner",
+      "title": "Best Anchor for Sailboat 2025: Complete Ground Tackle Guide",
+      "description": "Complete guide to choosing the right anchor for your sailboat, including types, sizing, and recommendations for different seabeds.",
+      "url": "https://sailboats.fr/best-anchor-for-sailboat-2025-complete-ground-tackle-guide/",
+      "categories": ["anchors", "gear", "beginner", "coastal", "offshore"],
+      "manufacturers": [],
+      "tags": ["anchoring", "safety", "ground-tackle"]
+    },
+    {
+      "id": "anchors-complete",
+      "title": "Best Marine Anchors for Sailboats: The Complete Guide",
+      "description": "Comprehensive anchor comparison covering all anchor types, holding power, and practical recommendations for cruising sailors.",
+      "url": "https://sailboats.fr/best-marine-anchors-sailboats-complete-guide/",
+      "categories": ["anchors", "gear", "cruising"],
+      "manufacturers": [],
+      "tags": ["anchoring", "safety", "cruising"]
+    },
+    {
+      "id": "anchoring-practices",
+      "title": "Anchoring Best Practices: Choosing the Right Gear and Spot",
+      "description": "Expert advice on anchoring techniques, scope calculations, and how to choose the best spot for a secure night at anchor.",
+      "url": "https://sailboats.fr/anchoring-best-practices-choosing-gear-spot/",
+      "categories": ["anchors", "technique", "cruising"],
+      "manufacturers": [],
+      "tags": ["anchoring", "technique"]
+    },
+    {
+      "id": "vhf-radios",
+      "title": "Best Marine VHF Radios for Sailboats: Stay Connected and Safe",
+      "description": "Top-rated marine VHF radios for sailboats with AIS integration, DSC, and waterproof ratings compared.",
+      "url": "https://sailboats.fr/best-marine-vhf-radios-sailboats-2026/",
+      "categories": ["electronics", "gear", "safety"],
+      "manufacturers": [],
+      "tags": ["communication", "safety", "electronics"]
+    },
+    {
+      "id": "vhf-ais",
+      "title": "Best Marine VHF Radios with AIS for Sailboats",
+      "description": "VHF radios with built-in AIS receivers for collision avoidance and enhanced situational awareness.",
+      "url": "https://sailboats.fr/best-marine-vhf-radios-ais-sailboats-communication-safety-2026/",
+      "categories": ["electronics", "gear", "safety", "offshore"],
+      "manufacturers": [],
+      "tags": ["AIS", "safety", "electronics"]
+    },
+    {
+      "id": "chartplotters",
+      "title": "Best Chartplotters for Sailboats in 2026",
+      "description": "In-depth comparison of marine chartplotters with sailing-specific features like tide overlays, wind routing, and AIS integration.",
+      "url": "https://sailboats.fr/best-chartplotters-for-sailboats-in-2026/",
+      "categories": ["electronics", "gear", "navigation"],
+      "manufacturers": [],
+      "tags": ["navigation", "electronics", "GPS"]
+    },
+    {
+      "id": "gps-chartplotters",
+      "title": "Best Marine GPS and Chartplotters for Sailboats",
+      "description": "Navigate with confidence using the latest GPS and chartplotter systems designed for sailing.",
+      "url": "https://sailboats.fr/best-marine-gps-chartplotters-sailboats-navigation-2026/",
+      "categories": ["electronics", "gear", "navigation"],
+      "manufacturers": [],
+      "tags": ["navigation", "GPS", "electronics"]
+    },
+    {
+      "id": "windlasses",
+      "title": "Best Anchor Windlasses for Sailboats: Electric and Manual Systems",
+      "description": "Complete windlass guide covering electric vs manual systems, sizing for your boat, and installation tips.",
+      "url": "https://sailboats.fr/best-anchor-windlasses-sailboats-electric-manual-2026/",
+      "categories": ["anchors", "gear", "equipment"],
+      "manufacturers": [],
+      "tags": ["windlass", "anchoring", "equipment"]
+    },
+    {
+      "id": "batteries-agm-lithium",
+      "title": "Best Marine Deep Cycle Batteries: AGM vs Lithium Guide",
+      "description": "AGM vs Lithium vs Lead-Acid batteries compared for sailboat house banks, with real-world performance data.",
+      "url": "https://sailboats.fr/best-marine-deep-cycle-batteries-for-sailboats-in-2026-agm-vs-lithium-guide/",
+      "categories": ["electronics", "gear", "cruising", "offshore"],
+      "manufacturers": [],
+      "tags": ["batteries", "electrical", "power"]
+    },
+    {
+      "id": "batteries-fr",
+      "title": "Meilleures Batteries Marine pour Voiliers : AGM vs Lithium vs Acide",
+      "description": "Comparatif complet des batteries marine pour voiliers : AGM, lithium et acide-plomb, avec recommandations par usage.",
+      "url": "https://sailboats.fr/meilleures-batteries-marine-pour-voiliers-agm-vs-lithium-vs-acide-2026/",
+      "categories": ["electronics", "gear", "cruising"],
+      "manufacturers": [],
+      "tags": ["batteries", "electrical", "power"]
+    },
+    {
+      "id": "autopilot",
+      "title": "Best Marine Autopilot Systems for Sailboats: Navigate Hands-Free",
+      "description": "Autopilot systems for sailboats compared: tiller pilots, wheel pilots, and below-deck systems for bluewater cruising.",
+      "url": "https://sailboats.fr/best-marine-autopilot-systems-sailboats-2026/",
+      "categories": ["electronics", "gear", "cruising", "offshore"],
+      "manufacturers": [],
+      "tags": ["autopilot", "navigation", "cruising"]
+    },
+    {
+      "id": "winches",
+      "title": "Best Sailboat Winches and Winch Maintenance Gear",
+      "description": "Complete guide to sailboat winches — self-tailing, electric, and two-speed — plus maintenance essentials.",
+      "url": "https://sailboats.fr/best-sailboat-winches-maintenance-gear-2026/",
+      "categories": ["rigging", "gear", "maintenance"],
+      "manufacturers": [],
+      "tags": ["winches", "rigging", "hardware"]
+    },
+    {
+      "id": "sailing-gloves",
+      "title": "Best Sailing Gloves and Foul Weather Gear for 2026",
+      "description": "Stay dry and protected with the best sailing gloves, jackets, and bibs rated for offshore and coastal sailing.",
+      "url": "https://sailboats.fr/best-sailing-gloves-foul-weather-gear-2026/",
+      "categories": ["gear", "clothing", "offshore", "coastal"],
+      "manufacturers": [],
+      "tags": ["clothing", "safety", "gear"]
+    },
+    {
+      "id": "epirbs",
+      "title": "Best Emergency Beacons for Sailboats: EPIRBs and PLBs",
+      "description": "EPIRBs and Personal Locator Beacons that could save your life — features, pricing, and registration guide.",
+      "url": "https://sailboats.fr/best-emergency-beacons-for-sailboats-epirbs-and-plbs-that-could-save-your-life/",
+      "categories": ["safety", "gear", "offshore"],
+      "manufacturers": [],
+      "tags": ["EPIRB", "PLB", "safety", "emergency"]
+    },
+    {
+      "id": "life-rafts",
+      "title": "Best Life Rafts for Sailors 2025: Essential Survival Guide",
+      "description": "Life raft comparison for coastal and offshore sailing, including packing, servicing, and deployment tips.",
+      "url": "https://sailboats.fr/best-life-rafts-for-sailors-2025-essential-survival-guide/",
+      "categories": ["safety", "gear", "offshore", "cruising"],
+      "manufacturers": [],
+      "tags": ["life-raft", "safety", "survival"]
+    },
+    {
+      "id": "reefing",
+      "title": "Reefing Strategies for Heavy Weather Sailing",
+      "description": "When and how to reef — slab reefing, in-mast furling, and single-line systems compared for heavy weather.",
+      "url": "https://sailboats.fr/reefing-strategies-for-heavy-weather-sailing/",
+      "categories": ["technique", "sailing", "offshore"],
+      "manufacturers": [],
+      "tags": ["reefing", "heavy-weather", "safety"]
+    },
+    {
+      "id": "mob-recovery",
+      "title": "Man Overboard Recovery: Equipment and Techniques",
+      "description": "MOB recovery methods, equipment, and drills every crew should practice before heading offshore.",
+      "url": "https://sailboats.fr/man-overboard-recovery-equipment-and-techniques/",
+      "categories": ["safety", "technique", "offshore"],
+      "manufacturers": [],
+      "tags": ["MOB", "safety", "emergency"]
+    },
+    {
+      "id": "engine-maintenance",
+      "title": "Sailboat Engine Maintenance Guide: Diesel, Electric, and Hybrid",
+      "description": "Complete engine maintenance guide covering diesel servicing, electric conversions, and hybrid systems for sailboats.",
+      "url": "https://sailboats.fr/sailboat-engine-maintenance-guide-2026-diesel-electric-and-hybrid-systems/",
+      "categories": ["maintenance", "engine", "gear"],
+      "manufacturers": [],
+      "tags": ["engine", "maintenance", "diesel", "electric"]
+    },
+    {
+      "id": "electrical-systems",
+      "title": "Marine Electrical Systems: Wiring, Charging, and Troubleshooting",
+      "description": "Complete guide to sailboat electrical systems — wiring best practices, charging setups, and common troubleshooting.",
+      "url": "https://sailboats.fr/marine-electrical-systems-wiring-charging-troubleshooting-guide/",
+      "categories": ["electronics", "maintenance", "cruising"],
+      "manufacturers": [],
+      "tags": ["electrical", "wiring", "power"]
+    },
+    {
+      "id": "bilge-pumps",
+      "title": "Boat Bilge Pumps: Essential Water Management for Every Sailor",
+      "description": "Bilge pump sizing, types, and installation guide to keep your sailboat safe and dry.",
+      "url": "https://sailboats.fr/boat-bilge-pumps-essential-water-management-for-every-sailor/",
+      "categories": ["safety", "gear", "maintenance"],
+      "manufacturers": [],
+      "tags": ["bilge", "safety", "pumps"]
+    },
+    {
+      "id": "refrigeration",
+      "title": "Marine Refrigeration Guide: Complete Systems for Cruising Sailors",
+      "description": "Fridge and freezer systems for sailboats — compressor types, insulation, and power consumption compared.",
+      "url": "https://sailboats.fr/marine-refrigeration-guide-complete-systems-for-cruising-sailors/",
+      "categories": ["gear", "cruising", "equipment"],
+      "manufacturers": [],
+      "tags": ["refrigeration", "cruising", "comfort"]
+    },
+    {
+      "id": "cleaning",
+      "title": "Best Marine Cleaning Supplies for Sailboats: Complete Maintenance Guide",
+      "description": "Hull cleaners, deck treatments, and stainless steel care products rated and reviewed.",
+      "url": "https://sailboats.fr/best-marine-cleaning-supplies-for-sailboats-2025-complete-maintenance-guide/",
+      "categories": ["maintenance", "gear"],
+      "manufacturers": [],
+      "tags": ["cleaning", "maintenance", "hull-care"]
+    },
+    {
+      "id": "led-lighting",
+      "title": "Best Marine LED Lighting for Sailboats: Interior, Deck, and Navigation",
+      "description": "Waterproof LED lighting solutions for cabin, deck, and navigation lights with power draw comparisons.",
+      "url": "https://sailboats.fr/best-marine-led-lighting-sailboats/",
+      "categories": ["electronics", "gear", "equipment"],
+      "manufacturers": [],
+      "tags": ["LED", "lighting", "electrical"]
+    },
+    {
+      "id": "rope-guide",
+      "title": "Best Marine Rope for Sailboats: Complete Halyard and Sheet Guide",
+      "description": "Line selection guide covering Dyneema, polyester, and blended ropes for halyards, sheets, and control lines.",
+      "url": "https://sailboats.fr/best-marine-rope-for-sailboats-2025-complete-halyard-and-sheet-guide/",
+      "categories": ["rigging", "gear"],
+      "manufacturers": [],
+      "tags": ["rope", "rigging", "lines", "halyard"]
+    },
+    {
+      "id": "safety-gear",
+      "title": "Essential Sailing Safety Gear Every Sailor Should Own",
+      "description": "Checklist of essential safety equipment from PFDs and harnesses to flares and fire extinguishers.",
+      "url": "https://sailboats.fr/essential-sailing-safety-gear-every-sailor-should-own/",
+      "categories": ["safety", "gear", "beginner"],
+      "manufacturers": [],
+      "tags": ["safety", "checklist", "essential"]
+    },
+    {
+      "id": "corsica-guide",
+      "title": "Ultimate Sailing Guide to Corsica: Routes, Anchorages, and Marinas",
+      "description": "Complete Corsica sailing guide with routes, anchorages, marina details, and seasonal wind advice.",
+      "url": "https://sailboats.fr/ultimate-sailing-guide-corsica-2026/",
+      "categories": ["destinations", "cruising", "mediterranean"],
+      "manufacturers": [],
+      "tags": ["Corsica", "Mediterranean", "cruising", "destinations"]
+    },
+    {
+      "id": "la-rochelle-itinerary",
+      "title": "Week-Long Sailing Itinerary from La Rochelle: French Atlantic Coast",
+      "description": "Day-by-day sailing itinerary from La Rochelle exploring the Atlantic coast, islands, and hidden anchorages.",
+      "url": "https://sailboats.fr/sailing-itinerary-la-rochelle-2026/",
+      "categories": ["destinations", "cruising", "atlantic"],
+      "manufacturers": [],
+      "tags": ["La Rochelle", "Atlantic", "itinerary", "France"]
+    },
+    {
+      "id": "brittany-guide",
+      "title": "Brittany Cruising Guide: Best Ports and Anchorages",
+      "description": "Comprehensive cruising guide to Brittany's coast — tidal planning, ports of refuge, and must-visit anchorages.",
+      "url": "https://sailboats.fr/brittany-cruising-guide/",
+      "categories": ["destinations", "cruising", "atlantic"],
+      "manufacturers": [],
+      "tags": ["Brittany", "Atlantic", "cruising", "France"]
+    },
+    {
+      "id": "mistral-anchorages",
+      "title": "Best Mediterranean Anchorages for Mistral Shelter",
+      "description": "Safe havens when the Mistral blows — tested anchorages along the French and Italian Mediterranean coasts.",
+      "url": "https://sailboats.fr/best-mediterranean-anchorages-mistral-shelter-2026/",
+      "categories": ["destinations", "cruising", "mediterranean"],
+      "manufacturers": [],
+      "tags": ["Mistral", "Mediterranean", "anchorages"]
+    },
+    {
+      "id": "atlantic-stopovers",
+      "title": "Best Atlantic Stopovers for Sailors",
+      "description": "Essential Atlantic crossing stopovers from the Canary Islands to the Caribbean, with harbor details and tips.",
+      "url": "https://sailboats.fr/best-atlantic-stopovers/",
+      "categories": ["destinations", "cruising", "offshore", "atlantic"],
+      "manufacturers": [],
+      "tags": ["Atlantic", "crossing", "stopovers"]
+    },
+    {
+      "id": "fastnet-2026",
+      "title": "Rolex Fastnet Race 2026: Preview and Route Analysis",
+      "description": "Complete preview of the Rolex Fastnet Race 2026 — route analysis, entry categories, and tactical considerations.",
+      "url": "https://sailboats.fr/rolex-fastnet-race-2026-preview-and-route-analysis/",
+      "categories": ["racing", "regatta", "offshore"],
+      "manufacturers": [],
+      "tags": ["Fastnet", "racing", "offshore"]
+    },
+    {
+      "id": "tjv-2026",
+      "title": "Transat Jacques Vabre 2026: Route, Teams, and How to Follow",
+      "description": "Everything about the Transat Jacques Vabre 2026 — the iconic double-handed transatlantic race from Le Havre.",
+      "url": "https://sailboats.fr/transat-jacques-vabre-2026-route-teams-and-how-to-follow/",
+      "categories": ["racing", "regatta", "offshore"],
+      "manufacturers": [],
+      "tags": ["Transat Jacques Vabre", "racing", "transatlantic"]
+    },
+    {
+      "id": "52-super-series",
+      "title": "52 Super Series 2026 Season Preview: Teams to Watch",
+      "description": "TP52 racing circuit preview — teams, venues, and what to expect in the 2026 52 Super Series season.",
+      "url": "https://sailboats.fr/52-super-series-2026-season-preview-teams-to-watch/",
+      "categories": ["racing", "regatta"],
+      "manufacturers": [],
+      "tags": ["TP52", "racing", "circuit"]
+    },
+    {
+      "id": "gybe-spinnaker",
+      "title": "How to Gybe a Spinnaker: Step-by-Step Guide",
+      "description": "Master the spinnaker gybe with this detailed technique guide for racing and cruising sailors.",
+      "url": "https://sailboats.fr/how-to-gybe-a-spinnaker-step-by-step-guide/",
+      "categories": ["technique", "racing", "sailing"],
+      "manufacturers": [],
+      "tags": ["spinnaker", "gybe", "technique"]
+    },
+    {
+      "id": "starting-strategy",
+      "title": "Starting Strategy in Sailboat Racing: How to Win the Start",
+      "description": "Race-winning starting strategies including timing, positioning, and boat handling at the start line.",
+      "url": "https://sailboats.fr/starting-strategy-in-sailboat-racing-how-to-win-the-premature-start/",
+      "categories": ["technique", "racing"],
+      "manufacturers": [],
+      "tags": ["starting", "racing", "strategy"]
+    },
+    {
+      "id": "depth-sounders",
+      "title": "Best Marine Depth Sounders for Sailors: Essential Navigation Guide",
+      "description": "Depth sounder and fishfinder comparison for sailboats — transducer types, display quality, and installation tips.",
+      "url": "https://sailboats.fr/best-marine-depth-sounders-for-sailors-2025-essential-navigation-guide/",
+      "categories": ["electronics", "gear", "navigation"],
+      "manufacturers": [],
+      "tags": ["depth-sounder", "navigation", "electronics"]
+    },
+    {
+      "id": "binoculars",
+      "title": "Best Marine Binoculars: Essential Gear for Sailors",
+      "description": "Waterproof, stabilized, and budget binoculars for sailing — tested and rated for marine use.",
+      "url": "https://sailboats.fr/best-marine-binoculars-2025-essential-gear-for-sailors/",
+      "categories": ["gear", "navigation"],
+      "manufacturers": [],
+      "tags": ["binoculars", "navigation", "gear"]
+    },
+    {
+      "id": "sailing-watch",
+      "title": "Best Sailing Watch: Complete Buying Guide",
+      "description": "Sailing watches with tide functions, countdown timers, and GPS — from budget to premium models.",
+      "url": "https://sailboats.fr/best-sailing-watch-2025-complete-buying-guide/",
+      "categories": ["gear", "racing"],
+      "manufacturers": [],
+      "tags": ["watch", "timing", "gear"]
+    },
+    {
+      "id": "audio-systems",
+      "title": "Best Marine Audio Systems for Sailboats: Waterproof Speakers",
+      "description": "Waterproof marine speakers, Bluetooth players, and stereo systems rated for the sailing environment.",
+      "url": "https://sailboats.fr/best-marine-audio-systems-sailboats-waterproof-speakers-2/",
+      "categories": ["gear", "equipment", "cruising"],
+      "manufacturers": [],
+      "tags": ["audio", "speakers", "comfort"]
+    },
+    {
+      "id": "maintenance-gear",
+      "title": "Essential Sailboat Maintenance Gear Every Owner Needs",
+      "description": "Must-have tools and supplies for sailboat maintenance — from bottom paint to rigging inspection kits.",
+      "url": "https://sailboats.fr/essential-sailboat-maintenance-gear-every-owner-needs/",
+      "categories": ["maintenance", "gear"],
+      "manufacturers": [],
+      "tags": ["maintenance", "tools", "essential"]
+    },
+    {
+      "id": "pfd-harness",
+      "title": "Best Safety Harness for Sailing: Complete PFD Guide",
+      "description": "Inflatable PFDs, safety harnesses, and tether systems compared for coastal and offshore sailing.",
+      "url": "https://sailboats.fr/best-safety-harness-for-sailing-2025-complete-pfd-guide/",
+      "categories": ["safety", "gear", "offshore"],
+      "manufacturers": [],
+      "tags": ["PFD", "harness", "safety"]
+    },
+    {
+      "id": "epirb-registration",
+      "title": "EPIRB Registration and Activation: Complete Guide",
+      "description": "Step-by-step EPIRB registration, testing, and activation procedures for emergency beacons.",
+      "url": "https://sailboats.fr/epirb-registration-activation-complete-guide-2026/",
+      "categories": ["safety", "gear", "offshore"],
+      "manufacturers": [],
+      "tags": ["EPIRB", "registration", "safety"]
+    },
+    {
+      "id": "wind-instruments",
+      "title": "Best Wind Instruments for Sailors: Complete Guide",
+      "description": "Masthead and ultrasonic wind instruments for precision sailing — installation, calibration, and data integration.",
+      "url": "https://sailboats.fr/best-wind-instruments-for-sailors-2025-complete-guide/",
+      "categories": ["electronics", "gear", "racing"],
+      "manufacturers": [],
+      "tags": ["wind", "instruments", "electronics"]
+    },
+    {
+      "id": "first-aid",
+      "title": "Best Marine First Aid Kits for Sailors: Safety Guide",
+      "description": "Marine first aid kits compared — contents, waterproof ratings, and what to add for offshore passages.",
+      "url": "https://sailboats.fr/best-marine-first-aid-kits-for-sailors-2025-safety-guide/",
+      "categories": ["safety", "gear", "offshore"],
+      "manufacturers": [],
+      "tags": ["first-aid", "safety", "medical"]
+    },
+    {
+      "id": "navigation-lights",
+      "title": "Best Navigation Lights for Boats: Complete Lighting Guide",
+      "description": "LED navigation lights meeting COLREGS requirements — tricolor, bi-color, and all-round lights compared.",
+      "url": "https://sailboats.fr/best-navigation-lights-for-boats-2025-complete-lighting-guide/",
+      "categories": ["safety", "electronics", "gear"],
+      "manufacturers": [],
+      "tags": ["navigation-lights", "COLREGS", "safety"]
+    },
+    {
+      "id": "gps-handhelds",
+      "title": "Best Marine GPS Handhelds: Essential Navigation for Sailors",
+      "description": "Handheld GPS units for backup navigation — battery life, waterproofing, and sailing-specific features.",
+      "url": "https://sailboats.fr/best-marine-gps-handhelds-2025-essential-navigation-for-sailors/",
+      "categories": ["electronics", "gear", "navigation", "offshore"],
+      "manufacturers": [],
+      "tags": ["GPS", "handheld", "backup", "navigation"]
+    },
+    {
+      "id": "mfds",
+      "title": "Best Marine Multifunction Displays: Complete Navigation Guide",
+      "description": "MFD systems compared for sailboats — screen size, chart compatibility, radar integration, and sailing features.",
+      "url": "https://sailboats.fr/best-marine-multifunction-displays-2025-complete-navigation-guide/",
+      "categories": ["electronics", "gear", "navigation"],
+      "manufacturers": [],
+      "tags": ["MFD", "navigation", "electronics"]
+    },
+    {
+      "id": "filming-sailing",
+      "title": "How to Capture Sailing Footage: Camera Gear and Shooting Techniques",
+      "description": "Camera gear, mounts, and techniques for filming sailing action — from drone shots to onboard POV.",
+      "url": "https://sailboats.fr/how-to-capture-sailing-footage-camera-gear-shooting-techniques/",
+      "categories": ["gear", "technique", "lifestyle"],
+      "manufacturers": [],
+      "tags": ["filming", "camera", "drone"]
+    },
+    {
+      "id": "anchors-beginner-fr",
+      "title": "Meilleures ancres pour débutants 2026 : Guide de Comparaison",
+      "description": "Guide comparatif des meilleures ancres pour navigateurs débutants, avec conseils d'utilisation.",
+      "url": "https://sailboats.fr/meilleures-ancres-debutants-2026-guide-comparaison/",
+      "categories": ["anchors", "gear", "beginner"],
+      "manufacturers": [],
+      "tags": ["ancres", "débutant", "guide"]
+    },
+    {
+      "id": "anchors-offshore-fr",
+      "title": "Meilleures ancres pour au large 2026 : Guide de Comparaison",
+      "description": "Comparatif des ancres adaptées à la navigation hauturière, résistance et fiabilité testées.",
+      "url": "https://sailboats.fr/meilleures-ancres-large-2026-guide-comparaison/",
+      "categories": ["anchors", "gear", "offshore"],
+      "manufacturers": [],
+      "tags": ["ancres", "hauturier", "sécurité"]
+    },
+    {
+      "id": "greement-croisiere-fr",
+      "title": "Meilleures gréement pour croisière 2026 : Guide de Comparaison",
+      "description": "Guide comparatif du gréement pour la croisière côtière et hauturière.",
+      "url": "https://sailboats.fr/meilleur-greement-bateau-croisiere-2026-guide-comparaison/",
+      "categories": ["rigging", "gear", "cruising"],
+      "manufacturers": [],
+      "tags": ["gréement", "croisière"]
+    }
+  ],
+  "manufacturerGuides": {
+    "Beneteau": {
+      "articles": ["corsica-guide", "fastnet-2026", "tjv-2026"],
+      "note": "Beneteau models are popular in Mediterranean cruising and offshore racing"
+    },
+    "Jeanneau": {
+      "articles": ["corsica-guide", "la-rochelle-itinerary", "brittany-guide"],
+      "note": "Jeanneau yachts are widely used for Atlantic and Mediterranean cruising"
+    },
+    "Bavaria": {
+      "articles": ["la-rochelle-itinerary", "corsica-guide"],
+      "note": "Bavaria cruising yachts popular for Mediterranean charter"
+    },
+    "Hanse": {
+      "articles": ["corsica-guide", "atlantic-stopovers", "fastnet-2026"],
+      "note": "Hanse performance cruisers excel in offshore passages"
+    },
+    "Lagoon": {
+      "articles": ["corsica-guide", "mistral-anchorages", "atlantic-stopovers"],
+      "note": "Lagoon catamarans are top choices for long-range cruising"
+    },
+    "Fountaine Pajot": {
+      "articles": ["atlantic-stopovers", "corsica-guide", "mistral-anchorages"],
+      "note": "Fountaine Pajot catamarans designed for ocean cruising"
+    },
+    "Hallerberg-Rassy": {
+      "articles": ["atlantic-stopovers", "fastnet-2026", "anchors-offshore-fr"],
+      "note": "Hallberg-Rassy bluewater cruisers built for offshore passages"
+    },
+    "Oyster": {
+      "articles": ["atlantic-stopovers", "epirbs", "life-rafts", "autopilot"],
+      "note": "Oyster yachts are premium bluewater cruisers"
+    },
+    "Swan": {
+      "articles": ["fastnet-2026", "tjv-2026", "52-super-series", "starting-strategy"],
+      "note": "Nautor's Swan combines racing heritage with luxury cruising"
+    },
+    "J Boats": {
+      "articles": ["fastnet-2026", "starting-strategy", "gybe-spinnaker"],
+      "note": "J Boats are dominant in IRC racing worldwide"
+    },
+    "X-Yachts": {
+      "articles": ["fastnet-2026", "52-super-series", "starting-strategy"],
+      "note": "X-Yachts performance cruisers competitive in ORC/IRC"
+    },
+    "Grand Soleil": {
+      "articles": ["fastnet-2026", "starting-strategy", "gybe-spinnaker"],
+      "note": "Italian performance cruisers with strong racing pedigree"
+    },
+    "Wauquiez": {
+      "articles": ["atlantic-stopovers", "brittany-guide", "fastnet-2026"],
+      "note": "Wauquiez yachts built for offshore performance"
+    },
+    "Amel": {
+      "articles": ["atlantic-stopovers", "autopilot", "batteries-agm-lithium", "epirbs"],
+      "note": "Amel is synonymous with safe, comfortable ocean cruising"
+    },
+    "Tartan": {
+      "articles": ["fastnet-2026", "reefing", "starting-strategy"],
+      "note": "Tartan performance cruisers with strong racing heritage"
+    },
+    "Catalina": {
+      "articles": ["anchors-beginner", "safety-gear", "maintenance-gear"],
+      "note": "Catalina yachts are popular coastal cruisers"
+    },
+    "Hunter": {
+      "articles": ["anchors-beginner", "safety-gear", "cleaning"],
+      "note": "Hunter yachts are accessible cruising sailboats"
+    },
+    "Dufour": {
+      "articles": ["corsica-guide", "la-rochelle-itinerary", "mistral-anchorages"],
+      "note": "Dufour yachts are popular in Mediterranean charter fleets"
+    },
+    "Sunbeam": {
+      "articles": ["mistral-anchorages", "corsica-guide"],
+      "note": "Sunbeam yachts from Austria, popular in the Med"
+    },
+    "Moody": {
+      "articles": ["atlantic-stopovers", "brittany-guide", "autopilot"],
+      "note": "Moody deck-saloon yachts designed for long-range cruising"
+    }
+  },
+  "categoryMappings": {
+    "racing": ["racing", "regatta"],
+    "cruising": ["cruising", "destinations"],
+    "offshore": ["offshore"],
+    "coastal": ["coastal", "beginner"],
+    "gear": ["gear", "electronics"],
+    "maintenance": ["maintenance"],
+    "safety": ["safety"],
+    "rigging": ["rigging"],
+    "anchors": ["anchors"]
+  }
+}
