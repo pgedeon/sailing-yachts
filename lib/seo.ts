@@ -282,3 +282,103 @@ export function generateCompareMetadata(ids: number[]): Metadata {
     },
   };
 }
+
+/* ------------------------------------------------------------------ */
+/*  FAQ Structured Data                                               */
+/* ------------------------------------------------------------------ */
+
+export interface JsonLdFAQ {
+  "@context": "https://schema.org";
+  "@type": "FAQPage";
+  mainEntity: Array<{
+    "@type": "Question";
+    name: string;
+    acceptedAnswer: {
+      "@type": "Answer";
+      text: string;
+    };
+  }>;
+}
+
+export function generateFaqJsonLd(yacht: {
+  manufacturer: string;
+  modelName: string;
+  displacement?: number | null;
+  lengthOverall?: number | null;
+  draft?: number | null;
+  cabins?: number | null;
+  beam?: number | null;
+}): JsonLdFAQ | null {
+  const fullName = `${yacht.manufacturer} ${yacht.modelName}`;
+  const questions: JsonLdFAQ["mainEntity"] = [];
+
+  if (yacht.displacement) {
+    questions.push({
+      "@type": "Question",
+      name: `How much does the ${fullName} weigh?`,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: `The ${fullName} has a displacement of ${yacht.displacement.toLocaleString()} kg (${(yacht.displacement * 2.20462).toLocaleString(undefined, {maximumFractionDigits: 0})} lbs).`,
+      },
+    });
+  }
+
+  if (yacht.lengthOverall) {
+    questions.push({
+      "@type": "Question",
+      name: `How long is the ${fullName}?`,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: `The ${fullName} has a length overall (LOA) of ${yacht.lengthOverall} m (${(yacht.lengthOverall * 3.28084).toFixed(1)} ft).`,
+      },
+    });
+  }
+
+  if (yacht.draft) {
+    questions.push({
+      "@type": "Question",
+      name: `What is the draft of the ${fullName}?`,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: `The ${fullName} has a draft of ${yacht.draft} m (${(yacht.draft * 3.28084).toFixed(1)} ft).`,
+      },
+    });
+  }
+
+  if (yacht.cabins) {
+    questions.push({
+      "@type": "Question",
+      name: `How many cabins does the ${fullName} have?`,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: `The ${fullName} has ${yacht.cabins} cabin${yacht.cabins > 1 ? "s" : ""}.`,
+      },
+    });
+  }
+
+  if (questions.length === 0) return null;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: questions,
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/*  SiteNavigationElement Structured Data                             */
+/* ------------------------------------------------------------------ */
+
+export function generateSiteNavigationJsonLd(navItems: Array<{name: string; path: string}>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Site Navigation",
+    itemListElement: navItems.map((item, idx) => ({
+      "@type": "SiteNavigationElement",
+      position: idx + 1,
+      name: item.name,
+      url: getSiteUrl(item.path),
+    })),
+  };
+}
