@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, Ruler, Wind, Home, Wrench, Star, Printer } from "lucide-react";
+import { ChevronLeft, ChevronRight, Ruler, Wind, Home, Wrench, Star, Printer } from "lucide-react";
 import { FavoriteButton } from "@/app/components/FavoriteButton";
 import { PriceTierDetail } from "@/app/components/PriceTierBadge";
 import { calculatePriceTier } from "@/lib/price-tier";
+import { slugify } from "@/lib/utils/slugify";
 import { SimilarYachts } from "./SimilarYachts";
 import { RelatedArticles } from "./RelatedArticles";
 import AffiliateRecommendations from "@/app/components/AffiliateRecommendations";
@@ -174,6 +175,41 @@ export default function YachtDetailClient() {
         <h1>Sailing Yachts Database — Spec Sheet</h1>
       </div>
 
+      <nav aria-label="Breadcrumb" className="mb-4 sm:mb-6 no-print">
+        <ol className="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
+          <li>
+            <Link href="/" className="hover:text-foreground transition-colors">
+              Home
+            </Link>
+          </li>
+          <li aria-hidden="true">
+            <ChevronRight className="h-4 w-4" />
+          </li>
+          <li>
+            <Link href="/yachts" className="hover:text-foreground transition-colors">
+              Yachts
+            </Link>
+          </li>
+          <li aria-hidden="true">
+            <ChevronRight className="h-4 w-4" />
+          </li>
+          <li>
+            <Link
+              href={`/manufacturers/${slugify(yacht.manufacturer)}`}
+              className="hover:text-foreground transition-colors"
+            >
+              {yacht.manufacturer}
+            </Link>
+          </li>
+          <li aria-hidden="true">
+            <ChevronRight className="h-4 w-4" />
+          </li>
+          <li aria-current="page" className="text-foreground font-medium">
+            {yacht.modelName}
+          </li>
+        </ol>
+      </nav>
+
       {/* Back link + Print button */}
       <div className="mb-4 sm:mb-6 flex items-center justify-between">
         <Button asChild variant="ghost" size="sm" className="no-print">
@@ -332,6 +368,55 @@ export default function YachtDetailClient() {
         })}
       </div>
 
+
+      {/* Performance Ratios Section */}
+      {(() => {
+        const ratios = calculatePerformanceRatios(yacht);
+        if (ratios.length === 0) return null;
+        return (
+          <section className="mt-10 sm:mt-12">
+            <h2 className="text-lg sm:text-xl font-bold mb-4">Performance Ratios</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {ratios.map((ratio) => (
+                <div key={ratio.name} className="border border-border rounded-lg p-4 bg-card">
+                  <div className="text-sm text-muted-foreground">{ratio.name}</div>
+                  <div className="text-2xl font-bold mt-1">{ratio.value}</div>
+                  <div className="text-xs text-muted-foreground mt-2">{ratio.description}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      })()}
+
+      {/* Who is this boat for? Section */}
+      {(() => {
+        const recommendation = getBoatRecommendation(yacht);
+        if (!recommendation) return null;
+        return (
+          <section className="mt-10 sm:mt-12 bg-gradient-to-r from-sky-50 to-cyan-50 border border-sky-200 rounded-xl p-6">
+            <h2 className="text-lg sm:text-xl font-bold mb-3 text-sky-900">Who is this boat for?</h2>
+            <p className="text-muted-foreground leading-relaxed">{recommendation}</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {yacht.lengthOverall && yacht.lengthOverall < 10 && (
+                <span className="inline-flex items-center rounded-full bg-sky-100 px-3 py-1 text-xs font-medium text-sky-700">Day Sailer</span>
+              )}
+              {yacht.lengthOverall && yacht.lengthOverall >= 10 && yacht.lengthOverall < 13 && (
+                <span className="inline-flex items-center rounded-full bg-sky-100 px-3 py-1 text-xs font-medium text-sky-700">Coastal Cruiser</span>
+              )}
+              {yacht.lengthOverall && yacht.lengthOverall >= 13 && (
+                <span className="inline-flex items-center rounded-full bg-sky-100 px-3 py-1 text-xs font-medium text-sky-700">Bluewater</span>
+              )}
+              {yacht.berths && yacht.berths >= 4 && (
+                <span className="inline-flex items-center rounded-full bg-sky-100 px-3 py-1 text-xs font-medium text-sky-700">Family Friendly</span>
+              )}
+              {yacht.rigType?.toLowerCase().includes("sloop") && (
+                <span className="inline-flex items-center rounded-full bg-sky-100 px-3 py-1 text-xs font-medium text-sky-700">Easy Handling</span>
+              )}
+            </div>
+          </section>
+        );
+      })()}
       {/* Reviews Section */}
       {yacht.reviews && yacht.reviews.length > 0 && (
         <section className="mt-10 sm:mt-12">
@@ -403,4 +488,78 @@ export default function YachtDetailClient() {
       </div>
     </div>
   );
+}
+
+// Performance ratio calculations
+function calculatePerformanceRatios(yacht: YachtData) {
+  const ratios: { name: string; value: string; description: string }[] = [];
+  
+  const loa = yacht.lengthOverall;
+  const disp = yacht.displacement;
+  const ballast = yacht.ballast;
+  const sailArea = yacht.sailAreaMain;
+  
+  // Displacement/Length ratio (D/L)
+  if (loa && disp) {
+    const dl = (disp / 2240) / Math.pow(loa / 100, 3);
+    let dlDesc = dl < 100 ? "Ultra light (racing)" : dl < 200 ? "Light (performance cruiser)" : dl < 300 ? "Moderate (cruiser)" : "Heavy (bluewater cruiser)";
+    ratios.push({ name: "Displacement/Length", value: dl.toFixed(1), description: dlDesc });
+  }
+  
+  // Sail Area/Displacement ratio (SA/D)
+  if (sailArea && disp) {
+    const sad = (sailArea * 64) / Math.pow(disp / 64, 2/3);
+    let sadDesc = sad < 16 ? "Under-canvased (easy handling)" : sad < 18 ? "Moderate (cruising)" : sad < 22 ? "Performance cruiser" : "High performance (racing)";
+    ratios.push({ name: "Sail Area/Displacement", value: sad.toFixed(1), description: sadDesc });
+  }
+  
+  // Ballast Ratio
+  if (ballast && disp) {
+    const br = (ballast / disp) * 100;
+    let brDesc = br < 30 ? "Low (more heel, less stability)" : br < 40 ? "Moderate (good balance)" : "High (stiff, stable)";
+    ratios.push({ name: "Ballast Ratio", value: `${br.toFixed(0)}%`, description: brDesc });
+  }
+  
+  // Capsize Screening Formula (CSF)
+  if (loa && disp) {
+    const csf = loa / Math.pow(disp / 64, 1/3);
+    let csfDesc = csf < 2 ? "Excellent offshore stability" : csf < 2.5 ? "Good coastal/offshore" : csf < 3 ? "Moderate (coastal)" : "High (light displacement, care needed offshore)";
+    ratios.push({ name: "Capsize Screening", value: csf.toFixed(2), description: csfDesc });
+  }
+  
+  return ratios;
+}
+
+// "Who is this boat for?" logic
+function getBoatRecommendation(yacht: YachtData): string | null {
+  const parts: string[] = [];
+  const loa = yacht.lengthOverall || 0;
+  const cabins = yacht.cabins || 0;
+  const berths = yacht.berths || 0;
+  const disp = yacht.displacement || 0;
+  const rig = yacht.rigType?.toLowerCase() || "";
+  
+  if (loa < 9) {
+    parts.push("ideal for day sailing and weekend trips");
+  } else if (loa < 12) {
+    parts.push("a versatile size for coastal cruising and occasional extended voyages");
+  } else {
+    parts.push("suited for extended cruising and bluewater passages");
+  }
+  
+  if (berths >= 4 || cabins >= 3) {
+    parts.push("family-friendly layout with generous accommodation");
+  } else if (berths >= 2) {
+    parts.push("comfortable for couples or small families");
+  }
+  
+  if (disp > 5000 && loa > 10) {
+    parts.push("solid construction inspires confidence in varied conditions");
+  }
+  
+  if (rig.includes("ketch") || rig.includes("cutter") || rig.includes("sloop")) {
+    parts.push("classic rig configuration offers proven handling characteristics");
+  }
+  
+  return parts.length > 0 ? `This yacht is ${parts.join(", ")}.` : null;
 }

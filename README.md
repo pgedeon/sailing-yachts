@@ -218,7 +218,7 @@ Manufacturers are not affiliated with this project; all specs are based on publi
 
 ## License
 
-MIT (or choose your preferred license)
+Custom Non-Commercial License — free for individuals and organizations with under $100k/year gross revenue. See [LICENSE](LICENSE) for full details.
 
 ## Contributing
 
