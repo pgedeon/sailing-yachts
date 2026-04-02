@@ -10,6 +10,8 @@ import { PriceTierDetail } from "@/app/components/PriceTierBadge";
 import { calculatePriceTier } from "@/lib/price-tier";
 import { SimilarYachts } from "./SimilarYachts";
 import { RelatedArticles } from "./RelatedArticles";
+import AffiliateRecommendations from "@/app/components/AffiliateRecommendations";
+import { getAffiliateRecommendations } from "@/lib/affiliate-recommendations";
 
 interface SpecGroup {
   [group: string]: Array<{
@@ -138,6 +140,29 @@ export default function YachtDetailClient() {
     return value;
   };
 
+  // Calculate price tier
+  const priceTierInfo = calculatePriceTier({
+    lengthOverall: yacht.lengthOverall,
+    displacement: yacht.displacement,
+    beam: yacht.beam,
+    cabins: yacht.cabins,
+    hullMaterial: yacht.hullMaterial,
+    keelType: yacht.keelType,
+    rigType: yacht.rigType,
+  });
+
+  // Get affiliate recommendations
+  const affiliateRecommendations = getAffiliateRecommendations({
+    lengthOverall: yacht.lengthOverall,
+    displacement: yacht.displacement,
+    beam: yacht.beam,
+    cabins: yacht.cabins,
+    hullMaterial: yacht.hullMaterial,
+    keelType: yacht.keelType,
+    rigType: yacht.rigType,
+    priceTier: priceTierInfo.tier,
+  });
+
   // Primary image
   const primaryImage =
     yacht.images.find((img) => img.isPrimary) || yacht.images[0];
@@ -245,15 +270,7 @@ export default function YachtDetailClient() {
           </div>
 
           {/* Price Range Estimate */}
-          <PriceTierDetail info={calculatePriceTier({
-            lengthOverall: yacht.lengthOverall,
-            displacement: yacht.displacement,
-            beam: yacht.beam,
-            cabins: yacht.cabins,
-            hullMaterial: yacht.hullMaterial,
-            keelType: yacht.keelType,
-            rigType: yacht.rigType,
-          })} />
+          <PriceTierDetail info={priceTierInfo} />
 
           {/* Admin links */}
           {yacht.adminLinks && yacht.adminLinks.length > 0 && (
@@ -366,6 +383,11 @@ export default function YachtDetailClient() {
           cabins={yacht.cabins}
           displacement={yacht.displacement}
         />
+      </div>
+
+      {/* Affiliate Recommendations */}
+      <div className="affiliate-recommendations-section no-print">
+        <AffiliateRecommendations categories={affiliateRecommendations} />
       </div>
 
       {/* Compare Button */}

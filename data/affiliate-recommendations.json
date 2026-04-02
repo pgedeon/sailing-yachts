@@ -1,0 +1,224 @@
+{
+  "affiliateTag": "pgedeon-20",
+  "gearCategories": {
+    "sailingEquipment": {
+      "label": "Sailing Equipment",
+      "icon": "⛵",
+      "products": [
+        {
+          "id": "deck-watches",
+          "name": "Premium Deck Watches",
+          "description": "Water-resistant watches for sailing",
+          "priceRange": "$50-$300",
+          "amazonCategory": "electronics",
+          "tags": ["deck", "navigation", "precision"],
+          "urlPatterns": ["watch", "deck", "timing"],
+          "tierRecommendations": {
+            "budget": ["Basic sailing watch", "Water resistant watch"],
+            "mid-range": ["Premium sailing watch", "Yacht timer"],
+            "premium": ["Marine chronometer", "Sailing computer watch"],
+            "luxury": ["Luxury yacht watch", "Mariner's chronograph"]
+          }
+        },
+        {
+          "id": "navigation-tools",
+          "name": "Navigation Equipment",
+          "description": "Charts, compasses, and navigation aids",
+          "priceRange": "$20-$500",
+          "amazonCategory": "sports",
+          "tags": ["navigation", "charts", "compass", "pilot"],
+          "tierRecommendations": {
+            "budget": ["Basic marine compass", "Paper charts"],
+            "mid-range": ["Electronic navigation kit", "GPS compass"],
+            "premium": ["Marine GPS system", "Chart plotter"],
+            "luxury": ["Integrated navigation system", "Professional charting software"]
+          }
+        },
+        {
+          "id": "sailing-lines",
+          "name": "Ropes & Lines",
+          "description": "High-quality sailing lines and ropes",
+          "priceRange": "$30-$200",
+          "amazonCategory": "sports",
+          "tags": ["ropes", "lines", "deck", "rigging"],
+          "tierRecommendations": {
+            "budget": ["Basic rope sets", "Dock lines"],
+            "mid-range": ["Marine ropes", "Sailing line kit"],
+            "premium": ["Performance ropes", "High-end sailing lines"],
+            "luxury": ["Professional yacht ropes", "Rigging lines"]
+          }
+        }
+      ]
+    },
+    "navigation": {
+      "label": "Navigation & Safety",
+      "icon": "🧭",
+      "products": [
+        {
+          "id": "life-jackets",
+          "name": "Life Jackets & PFDs",
+          "description": "Personal flotation devices for safety",
+          "priceRange": "$50-$300",
+          "amazonCategory": "sports",
+          "tags": ["safety", "life jacket", "PFD", "vest"],
+          "tierRecommendations": {
+            "budget": ["Basic life jacket", "Standard PFD"],
+            "mid-range": ["Premium life jacket", "Coast guard approved PFD"],
+            "premium": ["Automatic inflation PFD", "Yacht safety vest"],
+            "luxury": ["Premium safety systems", "Professional life jacket"]
+          }
+        },
+        {
+          "id": "electronic-navigation",
+          "name": "Electronic Navigation",
+          "description": "GPS, chartplotters, and navigation systems",
+          "priceRange": "$200-$2000",
+          "amazonCategory": "electronics",
+          "tags": ["GPS", "electronics", "navigation", "chart"],
+          "tierRecommendations": {
+            "budget": ["Handheld GPS", "Basic chart plotter"],
+            "mid-range": ["Marine GPS system", "Chart plotter"],
+            "premium": ["Integrated navigation", "Multifunction display"],
+            "luxury": ["Professional navigation system", "Full yacht electronics"]
+          }
+        }
+      ]
+    },
+    "maintenance": {
+      "label": "Maintenance & Care",
+      "icon": "🔧",
+      "products": [
+        {
+          "id": "marine-tools",
+          "name": "Marine Tools",
+          "description": "Specialized tools for boat maintenance",
+          "priceRange": "$20-$200",
+          "amazonCategory": "tools",
+          "tags": ["tools", "maintenance", "repair", "marine"],
+          "tierRecommendations": {
+            "budget": ["Basic tool kit", "Marine maintenance set"],
+            "mid-range": ["Professional marine tools", "Yacht repair kit"],
+            "premium": ["High-end marine tools", "Complete yacht maintenance set"],
+            "luxury": ["Professional marine tool set", "Yacht maintenance systems"]
+          }
+        },
+        {
+          "id": "boat-cleaning",
+          "name": "Boat Cleaning Supplies",
+          "description": "Cleaning products for hull, deck, and interior",
+          "priceRange": "$30-$150",
+          "amazonCategory": "home",
+          "tags": ["cleaning", "maintenance", "hull", "deck"],
+          "tierRecommendations": {
+            "budget": ["Basic boat cleaner", "Deck soap"],
+            "mid-range": ["Premium boat cleaner", "Complete cleaning kit"],
+            "premium": ["Professional marine cleaner", "Yacht detailing kit"],
+            "luxury": ["Marine cleaning system", "Premium yacht care"]
+          }
+        }
+      ]
+    },
+    "comfort": {
+      "label": "Comfort & Living",
+      "icon": "🛋️",
+      "products": [
+        {
+          "id": "marine-electronics",
+          "name": "Marine Electronics",
+          "description": "Communication and entertainment systems",
+          "priceRange": "$100-$1000",
+          "amazonCategory": "electronics",
+          "tags": ["electronics", "communication", "entertainment"],
+          "tierRecommendations": {
+            "budget": ["Marine radio", "Basic sound system"],
+            "mid-range": ["VHF radio", "Marine stereo"],
+            "premium": ["Marine communication system", "Yacht entertainment"],
+            "luxury": ["Professional marine electronics", "Yacht audio system"]
+          }
+        },
+        {
+          "id": "galley-equipment",
+          "name": "Galley & Kitchen",
+          "description": "Cooking equipment for boat kitchens",
+          "priceRange": "$50-$300",
+          "amazonCategory": "home",
+          "tags": ["galley", "kitchen", "cooking", "boat"],
+          "tierRecommendations": {
+            "budget": ["Basic marine cookware", "Boat kitchen supplies"],
+            "mid-range": ["Marine cookware set", "Galley equipment"],
+            "premium": ["Professional marine cookware", "Yacht kitchen kit"],
+            "luxury": ["Premium yacht galley", "Professional marine kitchen"]
+          }
+        }
+      ]
+    },
+    "books": {
+      "label": "Books & Learning",
+      "icon": "📚",
+      "products": [
+        {
+          "id": "sailing-books",
+          "name": "Sailing Guides & Manuals",
+          "description": "Books for learning and improving sailing skills",
+          "priceRange": "$20-$50",
+          "amazonCategory": "books",
+          "tags": ["books", "sailing", "learning", "manual", "guide"],
+          "tierRecommendations": {
+            "budget": ["Basic sailing manual", "Beginner's guide"],
+            "mid-range": ["Complete sailing guide", "Advanced sailing techniques"],
+            "premium": ["Professional sailing manual", "Yacht captain's guide"],
+            "luxury": ["Complete sailing library", "Professional yacht master"]
+          }
+        },
+        {
+          "id": "navigation-books",
+          "name": "Navigation Books",
+          "description": "Navigation and charting guides",
+          "priceRange": "$25-$60",
+          "amazonCategory": "books",
+          "tags": ["navigation", "charts", "pilot", "guide"],
+          "tierRecommendations": {
+            "budget": ["Basic navigation guide", "Coastal pilot"],
+            "mid-range": ["Complete navigation manual", "Offshore navigation"],
+            "premium": ["Professional navigation guide", "Advanced charting"],
+            "luxury": ["Complete navigation library", "Professional yacht navigation"]
+          }
+        }
+      ]
+    },
+    "cruising": {
+      "label": "Cruising Gear",
+      "icon": "🌊",
+      "products": [
+        {
+          "id": "anchoring",
+          "name": "Anchoring & Mooring",
+          "description": "Anchors, chains, and mooring equipment",
+          "priceRange": "$100-$500",
+          "amazonCategory": "sports",
+          "tags": ["anchor", "anchoring", "mooring", "chain"],
+          "tierRecommendations": {
+            "budget": ["Basic anchor set", "Dock lines"],
+            "mid-range": ["Marine anchor system", "Complete anchoring kit"],
+            "premium": ["High-end anchor system", "Professional anchoring gear"],
+            "luxury": ["Premium yacht anchoring", "Commercial marine anchoring"]
+          }
+        },
+        {
+          "id": "deck-hardware",
+          "name": "Deck Hardware",
+          "description": "Winches, cleats, and deck fittings",
+          "priceRange": "$50-$400",
+          "amazonCategory": "sports",
+          "tags": ["deck", "hardware", "winches", "cleats", "fittings"],
+          "tierRecommendations": {
+            "budget": ["Basic deck hardware", "Standard cleats"],
+            "mid-range": ["Quality deck fittings", "Marine hardware set"],
+            "premium": ["High-end deck hardware", "Professional yacht fittings"],
+            "luxury": ["Premium yacht hardware", "Custom deck systems"]
+          }
+        }
+      ]
+    }
+  }
+}
