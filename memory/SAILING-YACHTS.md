@@ -1,44 +1,93 @@
-# Sailing Yachts — Build Session Notes
+# Sailing Yachts Build Session — 2026-04-02
 
-## Session: 2026-04-02 02:40 PM (Europe/Berlin)
+## Issue Worked On
+- **#53: Add shared affiliate links on yacht recommendation pages** (Phase 4 roadmap item)
 
-### Issue Worked On
-- **Issue #49**: Embeddable yacht comparison widget for sailboats.fr
-- **PR #50**: feat: embeddable widget (merged squash)
-- **PR #51**: fix: route group refactor to isolate embed layout (merged squash)
-- **PR #52**: fix: valid yacht IDs in tests (merged squash)
+## What Was Implemented
 
-### What Was Implemented
-1. **Embeddable comparison widget** at `/embed/compare?ids=26,27` — standalone page for iframe embedding on sailboats.fr
-2. **Minimal embed layout** — no header, footer, or nav, just the comparison content
-3. **Route group refactor** — moved all main-site pages to `app/(main)/` with dedicated header/footer layout; root layout is now minimal html/body only
-4. **CORS middleware** — `X-Frame-Options` and `Content-Security-Policy` headers for `/embed/*` routes allowing sailboats.fr embedding
-5. **postMessage auto-height** — `ResizeObserver` sends height updates to parent iframe
-6. **Branded design** — card-style yacht headers with color coding, spec comparison table, price tier badges, "Powered by Sailing Yachts Database" footer
-7. **9 Playwright tests** — embed functionality, no-header verification, valid IDs, spec labels
+1. **Affiliate Recommendation System**
+   - Created `lib/affiliate-recommendations.ts` with contextual product recommendation logic
+   - Recommendations based on yacht characteristics: LOA, price tier, rig type, keel type, hull material
+   - Scoring algorithm to match yacht specs with relevant gear categories
 
-### Architecture Change
-- `app/layout.tsx`: minimal root (html + body + globals.css only)
-- `app/(main)/layout.tsx`: main site wrapper (header, footer, nav)
-- `app/embed/layout.tsx`: plain wrapper for embed pages
-- `app/components/`: shared between both layouts
-- `middleware.ts`: CORS headers for `/embed/*` routes
+2. **Product Data**
+   - Created `data/affiliate-recommendations.json` with 6 gear categories
+   - Sailing Equipment, Navigation & Safety, Maintenance & Care, Comfort & Living, Books & Learning, Cruising Gear
+   - Each category has 2 products with tier-specific recommendations (budget/mid-range/premium/luxury)
+   - 12 total product types, each with multiple recommended search terms
 
-### Build/Test Results
-- ✅ TypeScript typecheck: pass
-- ✅ `next build`: pass (all routes intact)
-- ✅ GitHub CI (build + lint + typecheck): all pass (all 3 PRs)
-- ✅ Vercel production deploy: live
+3. **UI Component**
+   - Created `AffiliateRecommendations.tsx` React component
+   - Category-based display with icons (⛵🧭🔧🛋️📚🌊)
+   - Product cards with name, description, price range, recommended products
+   - Expandable affiliate disclosure button (required by Amazon Associates)
+   - Hidden on print (no-print class)
 
-### Deploy Status
-- Production: https://sailing-yachts.vercel.app — live
-- Embed widget: https://sailing-yachts.vercel.app/embed/compare?ids=26,27 — verified working
-- Main site: https://sailing-yachts.vercel.app — header/footer rendering normally
+4. **Integration**
+   - Added to `YachtDetailClient.tsx` below Related Articles section
+   - Price tier calculated on client side using existing `calculatePriceTier` function
+   - Affiliate recommendations displayed after sailboats.fr article links
 
-### Next Recommended Task
-Phase 4 remaining items:
-1. **Shared affiliate links** on yacht recommendation pages
-2. **Yacht manufacturer guides** on sailboats.fr linking back to database
+5. **Amazon Affiliate Configuration**
+   - All links use shared affiliate tag: `pgedeon-20` (sailboats.fr)
+   - Links include `target="_blank"` and `rel="noopener noreferrer"`
+   - Search URLs: `https://www.amazon.com/s?k={searchTerm}&i={category}&tag=pgedeon-20`
 
-Then Phase 5 (Advanced Features):
-- Newsletter signup, API for external consumption, performance monitoring, image optimization
+6. **Tests**
+   - Created `tests/affiliate-recommendations.spec.ts` with 5 E2E tests
+   - Tests verify: page loads, section renders, links have correct attributes, no console errors
+
+## Build & Test Results
+
+- Typecheck: ✅ PASS
+- Build: ✅ PASS
+- Playwright tests: ✅ 5/5 PASS
+
+## Deploy Status
+
+- PR #54 created and merged to main
+- Vercel deploy completed
+- Initial deploy had chunk cache issue (404 on chunk 124)
+- Fixed by forcing new rebuild with trivial commit
+- Production site verified: ✅ OK
+
+## Live Verification Results
+
+### Critical Pages
+- ✅ / (homepage): OK
+- ✅ /yachts (browse): OK
+- ✅ /search: OK
+- ✅ /compare: OK
+
+### API
+- ✅ /api/yachts: OK (201 yachts)
+
+### Client-side Console Errors
+- ✅ No console errors on /yachts or /yachts/[slug]
+
+### Affiliate Feature Verification
+- ✅ Affiliate section present on yacht detail page
+- ✅ Disclosure button works (expandable/collapsible)
+- ✅ Links include `tag=pgedeon-20`
+- ✅ Links have proper security attributes (`rel="noopener noreferrer"`, `target="_blank"`)
+- ✅ Multiple categories displayed (Sailing Equipment, Navigation & Safety, Maintenance & Care, Comfort & Living)
+- ✅ Each product has name, description, price range, recommended search terms
+
+## Issues Found & Fixed
+
+1. **Chunk Load Error (Post-Deploy)**
+   - Error: `ChunkLoadError: Loading chunk 124 failed` on yacht detail page
+   - Cause: Vercel cached old chunks after merge
+   - Fix: Forced new rebuild with trivial commit to .gitignore
+   - Result: Fixed, no console errors after rebuild
+
+2. **Merge Conflict**
+   - Conflict in `tsconfig.tsbuildinfo` during PR merge
+   - Cause: Build artifacts from different branches
+   - Fix: Deleted `tsconfig.tsbuildinfo` and committed
+   - Result: Merged successfully
+
+## Next Recommended Task
+
+- Continue Phase 4: "Add sharing integration for social networks (Twitter, Facebook, LinkedIn)"
+- Or: Next unchecked Phase 4 item in ROADMAP.md
