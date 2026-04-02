@@ -40,12 +40,12 @@ Cron: sailing-yachts-builder (every 6h)
 - [x] SEO: dynamic meta tags, Open Graph, structured data (JSON-LD)
 - [x] Sitemap.xml generation — Issue #11, PR #14
 
-## Phase 3 — User Features (Priority: Medium)
+## Phase 3 — User Features (Priority: Medium) — COMPLETE
 - [x] User favorites / shortlist (localStorage, no auth needed) — Issue #33, PR #34
 - [x] Find similar yachts feature (spec-based similarity scoring) — API + UI with match scores
 - [x] Price range indicator (where data available) — Issue #41, PR #42
 - [x] Filter presets (Bluewater cruisers, Racing yachts, Budget friendly) — Issue #43, PR #44
-- [ ] Print-friendly yacht spec sheets
+- [x] Print-friendly yacht spec sheets — Issue #45, PR #46
 
 ## Phase 4 — Integration with sailboats.fr (Priority: Medium)
 - [ ] Embeddable yacht comparison widget for sailboats.fr posts
