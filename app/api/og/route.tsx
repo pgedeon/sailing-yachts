@@ -140,7 +140,7 @@ export async function GET(request: Request) {
               lineHeight: 1,
               fontWeight: 800,
               letterSpacing: "-0.04em",
-              textWrap: "balance",
+              wordBreak: "break-word",
             }}
           >
             {title}
