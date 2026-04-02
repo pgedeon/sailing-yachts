@@ -1,38 +1,44 @@
 # Sailing Yachts — Build Session Notes
 
-## Session: 2026-04-02 02:40 AM (Europe/Berlin)
+## Session: 2026-04-02 02:40 PM (Europe/Berlin)
 
 ### Issue Worked On
-- **Issue #45**: Add print-friendly yacht spec sheets
-- **PR #46**: merged to main
+- **Issue #49**: Embeddable yacht comparison widget for sailboats.fr
+- **PR #50**: feat: embeddable widget (merged squash)
+- **PR #51**: fix: route group refactor to isolate embed layout (merged squash)
+- **PR #52**: fix: valid yacht IDs in tests (merged squash)
 
 ### What Was Implemented
-1. **Print CSS** (`globals.css`): Full `@media print` stylesheet that hides header, footer, nav, interactive elements (favorites, compare, similar yachts, print button), and produces a clean black-on-white spec sheet layout with proper page breaks
-2. **Print header/footer**: Hidden on screen, visible in print — "Sailing Yachts Database — Spec Sheet" header and date-stamped footer
-3. **Print Spec Sheet button**: Added to yacht detail page toolbar with Printer icon, triggers `window.print()`
-4. **Semantic CSS classes**: `no-print`, `spec-group`, `spec-grid`, `spec-item`, `yacht-hero`, `yacht-detail-page` for clean print targeting
-5. **7 Playwright tests**: Button visibility, print mode emulation, element hiding, spec visibility, print trigger
+1. **Embeddable comparison widget** at `/embed/compare?ids=26,27` — standalone page for iframe embedding on sailboats.fr
+2. **Minimal embed layout** — no header, footer, or nav, just the comparison content
+3. **Route group refactor** — moved all main-site pages to `app/(main)/` with dedicated header/footer layout; root layout is now minimal html/body only
+4. **CORS middleware** — `X-Frame-Options` and `Content-Security-Policy` headers for `/embed/*` routes allowing sailboats.fr embedding
+5. **postMessage auto-height** — `ResizeObserver` sends height updates to parent iframe
+6. **Branded design** — card-style yacht headers with color coding, spec comparison table, price tier badges, "Powered by Sailing Yachts Database" footer
+7. **9 Playwright tests** — embed functionality, no-header verification, valid IDs, spec labels
 
-### Additional
-- Marked "Find similar yachts" as COMPLETE in ROADMAP (was already fully implemented with API + UI + 6 tests)
-- **Phase 3 is now 100% COMPLETE** — all items checked off
-- ROADMAP updated to reflect Phase 3 completion
+### Architecture Change
+- `app/layout.tsx`: minimal root (html + body + globals.css only)
+- `app/(main)/layout.tsx`: main site wrapper (header, footer, nav)
+- `app/embed/layout.tsx`: plain wrapper for embed pages
+- `app/components/`: shared between both layouts
+- `middleware.ts`: CORS headers for `/embed/*` routes
 
 ### Build/Test Results
 - ✅ TypeScript typecheck: pass
-- ✅ `next build`: pass (22 static pages generated)
-- ✅ GitHub CI (build + lint + typecheck): all pass
-- ✅ Vercel production deploy: `a4d1991` live, then `b7f538a` (ROADMAP update)
+- ✅ `next build`: pass (all routes intact)
+- ✅ GitHub CI (build + lint + typecheck): all pass (all 3 PRs)
+- ✅ Vercel production deploy: live
 
 ### Deploy Status
-- Production: https://sailing-yachts.vercel.app — live, commit `b7f538a`
-- PR #46: merged (squash), branch deleted
+- Production: https://sailing-yachts.vercel.app — live
+- Embed widget: https://sailing-yachts.vercel.app/embed/compare?ids=26,27 — verified working
+- Main site: https://sailing-yachts.vercel.app — header/footer rendering normally
 
 ### Next Recommended Task
-Phase 4 is next — **Integration with sailboats.fr**:
-1. **Embeddable yacht comparison widget** for sailboats.fr posts
-2. **Cross-linking**: yacht pages link to relevant sailboats.fr articles
-3. **Shared affiliate links** on yacht recommendation pages
-4. **Yacht manufacturer guides** on sailboats.fr linking back to database
+Phase 4 remaining items:
+1. **Shared affiliate links** on yacht recommendation pages
+2. **Yacht manufacturer guides** on sailboats.fr linking back to database
 
-Priority order: Cross-linking first (simplest), then embeddable widget, then affiliate links, then manufacturer guides.
+Then Phase 5 (Advanced Features):
+- Newsletter signup, API for external consumption, performance monitoring, image optimization
