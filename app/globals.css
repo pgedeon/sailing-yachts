@@ -1,3 +1,132 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ── Print styles for yacht spec sheets ── */
+@media print {
+  /* Hide non-essential UI */
+  header,
+  footer,
+  nav,
+  .no-print,
+  [data-no-print],
+  #mobile-menu-btn,
+  #mobile-menu-panel,
+  .favorite-button,
+  .admin-links {
+    display: none !important;
+  }
+
+  /* Reset backgrounds */
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Remove sticky header offset */
+  main {
+    padding-top: 0 !important;
+  }
+
+  /* Yacht detail page */
+  .yacht-detail-page {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  /* Hero section: two columns */
+  .yacht-hero {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .yacht-hero img {
+    max-height: 250px !important;
+    object-fit: contain !important;
+    border-radius: 4px !important;
+  }
+
+  /* Spec groups */
+  .spec-group {
+    page-break-inside: avoid;
+    margin-bottom: 12px !important;
+  }
+
+  .spec-group h2 {
+    font-size: 14pt !important;
+    border-bottom: 1px solid #333 !important;
+    padding-bottom: 4px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .spec-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  .spec-item {
+    border: 1px solid #ddd !important;
+    border-radius: 4px !important;
+    padding: 6px 8px !important;
+    page-break-inside: avoid;
+  }
+
+  /* Similar yachts and compare button hidden */
+  .similar-yachts-section,
+  .compare-button-section {
+    display: none !important;
+  }
+
+  /* Print spec sheet button hidden */
+  .print-spec-sheet-btn {
+    display: none !important;
+  }
+
+  /* Show print header with branding */
+  .print-header {
+    display: block !important;
+    border-bottom: 2px solid #333 !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 16px !important;
+    text-align: center;
+  }
+
+  .print-header h1 {
+    font-size: 10pt !important;
+    color: #666 !important;
+    margin: 0 !important;
+  }
+
+  /* Print footer */
+  .print-footer {
+    display: block !important;
+    border-top: 1px solid #ccc !important;
+    padding-top: 8px !important;
+    margin-top: 20px !important;
+    font-size: 8pt !important;
+    color: #999 !important;
+    text-align: center;
+  }
+
+  /* Page margins */
+  @page {
+    margin: 1.5cm 2cm;
+  }
+
+  /* Prevent orphaned headings */
+  h2 {
+    page-break-after: avoid;
+  }
+
+  /* Prevent breaking inside cards */
+  .bg-card,
+  .border-border {
+    page-break-inside: avoid;
+  }
+}

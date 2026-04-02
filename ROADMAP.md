@@ -1,7 +1,7 @@
 # Sailing Yachts — Improvement Roadmap
 
 Created: 2026-03-27
-Updated: 2026-03-31
+Updated: 2026-04-02
 Status: Active
 Repo: https://github.com/pgedeon/sailing-yachts
 Vercel: sailing-yachts (peter-gedeons-projects)
@@ -42,7 +42,7 @@ Cron: sailing-yachts-builder (every 6h)
 
 ## Phase 3 — User Features (Priority: Medium)
 - [x] User favorites / shortlist (localStorage, no auth needed) — Issue #33, PR #34
-- [ ] Find similar yachts feature (spec-based similarity scoring)
+- [x] Find similar yachts feature (spec-based similarity scoring) — API + UI with match scores
 - [x] Price range indicator (where data available) — Issue #41, PR #42
 - [x] Filter presets (Bluewater cruisers, Racing yachts, Budget friendly) — Issue #43, PR #44
 - [ ] Print-friendly yacht spec sheets

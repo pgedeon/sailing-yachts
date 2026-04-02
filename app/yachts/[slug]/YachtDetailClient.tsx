@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, Ruler, Wind, Home, Wrench, Star } from "lucide-react";
+import { ChevronLeft, Ruler, Wind, Home, Wrench, Star, Printer } from "lucide-react";
 import { FavoriteButton } from "@/app/components/FavoriteButton";
 import { PriceTierDetail } from "@/app/components/PriceTierBadge";
 import { calculatePriceTier } from "@/lib/price-tier";
@@ -103,6 +103,10 @@ export default function YachtDetailClient() {
       .finally(() => setLoading(false));
   }, [slug]);
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   if (loading)
     return (
       <div className="max-w-7xl mx-auto px-4 py-12 text-center">
@@ -138,19 +142,33 @@ export default function YachtDetailClient() {
     yacht.images.find((img) => img.isPrimary) || yacht.images[0];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-      {/* Back link */}
-      <div className="mb-4 sm:mb-6">
-        <Button asChild variant="ghost" size="sm">
+    <div className="yacht-detail-page max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      {/* Print-only header */}
+      <div className="print-header hidden" data-testid="print-header">
+        <h1>Sailing Yachts Database — Spec Sheet</h1>
+      </div>
+
+      {/* Back link + Print button */}
+      <div className="mb-4 sm:mb-6 flex items-center justify-between">
+        <Button asChild variant="ghost" size="sm" className="no-print">
           <Link href="/yachts">
             <ChevronLeft className="h-4 w-4 mr-1" />
             Back to Browse
           </Link>
         </Button>
+        <button
+          onClick={handlePrint}
+          className="print-spec-sheet-btn no-print inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-border rounded-lg hover:bg-muted transition-colors"
+          data-testid="print-spec-sheet-btn"
+          type="button"
+        >
+          <Printer className="h-4 w-4" />
+          Print Spec Sheet
+        </button>
       </div>
 
       {/* Hero */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-10 sm:mb-12">
+      <div className="yacht-hero grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-10 sm:mb-12">
         <div>
           {primaryImage ? (
             <img
@@ -172,7 +190,9 @@ export default function YachtDetailClient() {
             <h1 className="text-2xl sm:text-3xl font-bold mb-2">
               {yacht.manufacturer} {yacht.modelName} ({yacht.year})
             </h1>
-            <FavoriteButton slug={yacht.slug} modelName={`${yacht.manufacturer} ${yacht.modelName}`} size="lg" showLabel />
+            <div className="no-print">
+              <FavoriteButton slug={yacht.slug} modelName={`${yacht.manufacturer} ${yacht.modelName}`} size="lg" showLabel />
+            </div>
           </div>
           <p className="text-base sm:text-lg text-muted-foreground mb-4">
             A sailing yacht built by {yacht.manufacturer}.
@@ -186,7 +206,7 @@ export default function YachtDetailClient() {
           {/* Core specs quick view */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4 my-4 sm:my-6">
             {yacht.lengthOverall && (
-              <div className="bg-card border border-border rounded-lg p-3 sm:p-4">
+              <div className="bg-card border border-border rounded-lg p-3 sm:p-4 spec-item">
                 <div className="text-xs sm:text-sm text-muted-foreground">
                   Length Overall
                 </div>
@@ -196,7 +216,7 @@ export default function YachtDetailClient() {
               </div>
             )}
             {yacht.beam && (
-              <div className="bg-card border border-border rounded-lg p-3 sm:p-4">
+              <div className="bg-card border border-border rounded-lg p-3 sm:p-4 spec-item">
                 <div className="text-xs sm:text-sm text-muted-foreground">Beam</div>
                 <div className="text-xl sm:text-2xl font-semibold">
                   {formatNumber(yacht.beam)} m
@@ -204,7 +224,7 @@ export default function YachtDetailClient() {
               </div>
             )}
             {yacht.draft && (
-              <div className="bg-card border border-border rounded-lg p-3 sm:p-4">
+              <div className="bg-card border border-border rounded-lg p-3 sm:p-4 spec-item">
                 <div className="text-xs sm:text-sm text-muted-foreground">Draft</div>
                 <div className="text-xl sm:text-2xl font-semibold">
                   {formatNumber(yacht.draft)} m
@@ -212,7 +232,7 @@ export default function YachtDetailClient() {
               </div>
             )}
             {yacht.displacement && (
-              <div className="bg-card border border-border rounded-lg p-3 sm:p-4">
+              <div className="bg-card border border-border rounded-lg p-3 sm:p-4 spec-item">
                 <div className="text-xs sm:text-sm text-muted-foreground">
                   Displacement
                 </div>
@@ -236,7 +256,7 @@ export default function YachtDetailClient() {
 
           {/* Admin links */}
           {yacht.adminLinks && yacht.adminLinks.length > 0 && (
-            <div className="flex flex-wrap gap-2 sm:gap-3 mt-4">
+            <div className="admin-links flex flex-wrap gap-2 sm:gap-3 mt-4 no-print">
               {yacht.adminLinks.map((link, idx) => (
                 <Button key={idx} asChild variant="outline" size="sm">
                   <a href={link.url} target="_blank" rel="noopener noreferrer">
@@ -269,16 +289,16 @@ export default function YachtDetailClient() {
           const label = GROUP_LABELS[group] || group;
           const icon = GROUP_ICONS[group];
           return (
-            <section key={group}>
+            <section key={group} className="spec-group">
               <div className="flex items-center gap-2 mb-3 sm:mb-4">
                 {icon}
                 <h2 className="text-lg sm:text-xl font-bold">{label}</h2>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+              <div className="spec-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                 {specs.map((spec, idx) => (
                   <div
                     key={idx}
-                    className="bg-card border border-border rounded-lg p-3 sm:p-4"
+                    className="spec-item bg-card border border-border rounded-lg p-3 sm:p-4"
                   >
                     <div className="text-xs sm:text-sm text-muted-foreground">
                       {spec.category}
@@ -330,13 +350,20 @@ export default function YachtDetailClient() {
       )}
 
       {/* Similar Yachts */}
-      <SimilarYachts slug={slug} />
+      <div className="similar-yachts-section no-print">
+        <SimilarYachts slug={slug} />
+      </div>
 
       {/* Compare Button */}
-      <div className="mt-10 sm:mt-12 text-center">
+      <div className="compare-button-section mt-10 sm:mt-12 text-center no-print">
         <Button asChild size="lg">
           <Link href={`/compare?ids=${yacht.id}`}>Compare This Yacht</Link>
         </Button>
+      </div>
+
+      {/* Print-only footer */}
+      <div className="print-footer hidden" data-testid="print-footer">
+        Printed from sailing-yachts.vercel.app — {yacht.manufacturer} {yacht.modelName} ({yacht.year}) — {new Date().toLocaleDateString()}
       </div>
     </div>
   );
