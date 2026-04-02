@@ -1,3 +1,4 @@
+import { generateSiteNavigationJsonLd } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 export default function MainLayout({
@@ -7,6 +8,7 @@ export default function MainLayout({
 }) {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateSiteNavigationJsonLd([{ name: "Browse", path: "/yachts" }, { name: "Manufacturers", path: "/manufacturers" }, { name: "Search", path: "/search" }, { name: "Compare", path: "/compare" }])) }} />
       <Header />
       <main className="min-h-screen">{children}</main>
       <footer className="border-t border-border py-8 mt-16">

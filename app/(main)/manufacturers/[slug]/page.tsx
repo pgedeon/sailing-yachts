@@ -195,6 +195,29 @@ export default async function ManufacturerPage({
           </div>
         </section>
 
+
+        {/* Cross-linking: Browse by Size */}
+        <section className="mt-10 sm:mt-12 bg-muted/30 rounded-xl p-6">
+          <h2 className="text-lg font-semibold mb-4">Browse {manufacturer.name} Yachts by Size</h2>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/yachts?minLength=0&maxLength=30" className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
+              Under 30ft
+            </Link>
+            <Link href="/yachts?minLength=30&maxLength=35" className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
+              30–35ft
+            </Link>
+            <Link href="/yachts?minLength=35&maxLength=40" className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
+              35–40ft
+            </Link>
+            <Link href="/yachts?minLength=40&maxLength=50" className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
+              40–50ft
+            </Link>
+            <Link href="/yachts?minLength=50" className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
+              50ft+
+            </Link>
+          </div>
+        </section>
+
         <section className="mt-10 sm:mt-12">
           <div className="flex items-end justify-between gap-4 mb-6">
             <div>

@@ -5,6 +5,8 @@ import {
   generateYachtPageMetadata,
   generateYachtJsonLd,
   generateBreadcrumbJsonLd,
+  generateFaqJsonLd,
+  getSiteUrl,
 } from "@/lib/seo";
 import YachtDetailClient from "./YachtDetailClient";
 
@@ -52,7 +54,7 @@ export async function generateMetadata({
 
   const primaryImage = yachtImages.find((img: any) => img.isPrimary) || yachtImages[0];
 
-  return generateYachtPageMetadata({
+  const baseMeta = generateYachtPageMetadata({
     manufacturer: result.manufacturer || "Unknown",
     modelName: result.yacht.modelName,
     year: result.yacht.year,
@@ -63,6 +65,18 @@ export async function generateMetadata({
       : null,
     primaryImage: primaryImage?.url,
   });
+
+  // Add hreflang alternates
+  return {
+    ...baseMeta,
+    alternates: {
+      canonical: getSiteUrl(`/yachts/${slug}`),
+      languages: {
+        en: getSiteUrl(`/yachts/${slug}`),
+        fr: "https://sailboats.fr",
+      },
+    },
+  };
 }
 
 export default async function YachtDetailPage({ params }: YachtDetailPageProps) {
@@ -111,11 +125,36 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
     primaryImage: primaryImage?.url,
   });
 
+  // Add Offer schema if price data exists
+  const priceLow = yachtData.priceLow ? parseFloat(yachtData.priceLow) : null;
+  const priceHigh = yachtData.priceHigh ? parseFloat(yachtData.priceHigh) : null;
+  if (priceLow || priceHigh) {
+    (jsonLd as any).offers = {
+      "@type": "Offer",
+      priceCurrency: "USD",
+      ...(priceLow && priceHigh
+        ? { price: `${priceLow}-${priceHigh}`, priceSpecification: { "@type": "PriceSpecification", price: priceLow, maxPrice: priceHigh, priceCurrency: "USD" } }
+        : { price: priceLow || priceHigh }),
+      availability: "https://schema.org/InStock",
+    };
+  }
+
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Home", path: "/" },
     { name: "Yachts", path: "/yachts" },
     { name: `${manufacturerName} ${yachtData.modelName}` },
   ]);
+
+  // FAQ structured data
+  const faqJsonLd = generateFaqJsonLd({
+    manufacturer: manufacturerName,
+    modelName: yachtData.modelName,
+    displacement: yachtData.displacement ? parseFloat(yachtData.displacement) : null,
+    lengthOverall: yachtData.lengthOverall ? parseFloat(yachtData.lengthOverall) : null,
+    draft: yachtData.draft ? parseFloat(yachtData.draft) : null,
+    cabins: yachtData.cabins,
+    beam: yachtData.beam ? parseFloat(yachtData.beam) : null,
+  });
 
   return (
     <>
@@ -127,6 +166,12 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
       <YachtDetailClient />
     </>
   );
