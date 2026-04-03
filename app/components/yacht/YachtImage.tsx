@@ -3,6 +3,11 @@
 import Image from 'next/image'
 import { useState } from 'react'
 
+// Compact shimmer blur placeholder (20x20 gray gradient)
+const SHIMMER_BLUR = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><defs><linearGradient id="s" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="%23e2e8f0"/><stop offset="50%" stop-color="%23cbd5e1"/><stop offset="100%" stop-color="%23e2e8f0"/></linearGradient></defs><rect width="20" height="20" fill="url(%23s)"/></svg>'
+)
+
 interface YachtImageProps {
   src: string
   alt: string
@@ -11,55 +16,81 @@ interface YachtImageProps {
   className?: string
   priority?: boolean
   fallback?: string
+  sizes?: string
+  fill?: boolean
+  quality?: number
 }
 
 export default function YachtImage({
   src,
   alt,
-  width = 400,
-  height = 300,
+  width,
+  height,
   className = '',
   priority = false,
-  fallback = '/placeholder-yacht.jpg'
+  fallback = '/placeholder-yacht.jpg',
+  sizes,
+  fill = false,
+  quality = 80,
 }: YachtImageProps) {
   const [imgSrc, setImgSrc] = useState(src)
-  const [isLoading, setIsLoading] = useState(true)
+  const [hasError, setHasError] = useState(false)
 
   const handleError = () => {
-    setImgSrc(fallback)
-    setIsLoading(false)
+    if (!hasError) {
+      setHasError(true)
+      setImgSrc(fallback)
+    }
+  }
+
+  if (fill) {
+    return (
+      <div className={`relative overflow-hidden ${className}`}>
+        <Image
+          src={imgSrc}
+          alt={alt}
+          fill
+          sizes={sizes || '(max-width: 768px) 100vw, 50vw'}
+          priority={priority}
+          quality={quality}
+          className="object-cover transition-opacity duration-300"
+          onError={handleError}
+          placeholder="blur"
+          blurDataURL={SHIMMER_BLUR}
+        />
+      </div>
+    )
   }
 
   return (
-    <div className={`relative ${isLoading ? 'animate-pulse bg-gray-200' : ''} ${className}`}>
+    <div className={`relative overflow-hidden ${className}`}>
       <Image
         src={imgSrc}
         alt={alt}
-        width={width}
-        height={height}
+        width={width || 400}
+        height={height || 300}
+        sizes={sizes || '(max-width: 768px) 100vw, 50vw'}
         priority={priority}
-        className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+        quality={quality}
+        className="object-cover transition-opacity duration-300"
         onError={handleError}
         placeholder="blur"
-        blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzAwMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkeD0iMCUiIGZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiPkhvbWU8L3RleHQ+PC9zdmc+"
+        blurDataURL={SHIMMER_BLUR}
       />
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-gray-400 text-sm">Loading...</div>
-        </div>
-      )}
     </div>
   )
 }
 
+interface YachtImageData {
+  url: string
+  caption?: string
+  altText?: string
+  isPrimary: boolean
+  sortOrder: number
+}
+
 interface YachtImageGalleryProps {
-  images: Array<{
-    url: string
-    caption?: string
-    altText?: string
-    isPrimary: boolean
-    sortOrder: number
-  }>
+  images: YachtImageData[]
   className?: string
 }
 
@@ -90,10 +121,10 @@ export function YachtImageGallery({ images, className = '' }: YachtImageGalleryP
         <YachtImage
           src={primaryImage.url}
           alt={primaryImage.altText || 'Primary yacht image'}
-          width={800}
-          height={600}
+          fill
+          className="w-full h-64 sm:h-80 md:h-96 rounded-lg"
           priority={true}
-          className="w-full rounded-lg"
+          sizes="(max-width: 768px) 100vw, 800px"
         />
         {primaryImage.caption && (
           <p className="mt-2 text-sm text-gray-600">{primaryImage.caption}</p>
@@ -104,13 +135,13 @@ export function YachtImageGallery({ images, className = '' }: YachtImageGalleryP
       {sortedImages.length > 1 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           {sortedImages.map((image, index) => (
-            <div key={image.url} className="relative">
+            <div key={image.url} className="relative h-24">
               <YachtImage
                 src={image.url}
                 alt={image.altText || `Yacht image ${index + 1}`}
-                width={150}
-                height={100}
-                className="w-full rounded-md cursor-pointer hover:opacity-80 transition-opacity"
+                fill
+                className="w-full h-full rounded-md cursor-pointer hover:opacity-80 transition-opacity"
+                sizes="(max-width: 768px) 50vw, 200px"
               />
               {image.isPrimary && (
                 <div className="absolute top-1 left-1 bg-blue-600 text-white text-xs px-1 rounded">

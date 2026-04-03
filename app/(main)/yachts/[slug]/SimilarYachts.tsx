@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import YachtImage from "@/app/components/yacht/YachtImage";
 
 interface SimilarYacht {
   id: number;
@@ -85,11 +86,12 @@ export function SimilarYachts({ slug }: SimilarYachtsProps) {
             {/* Image */}
             {yacht.primaryImage ? (
               <div className="h-36 sm:h-40 bg-muted overflow-hidden">
-                <img
+                <YachtImage
                   src={yacht.primaryImage}
                   alt={`${yacht.manufacturer} ${yacht.modelName}`}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                  loading="lazy"
+                  fill
+                  className="w-full h-full group-hover:scale-105 transition-transform duration-200"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
               </div>
             ) : (

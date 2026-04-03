@@ -8,3 +8,5 @@ out
 .vercel
 .env.vercel.*
 # 1775156318
+test-results/
+tsconfig.tsbuildinfo
