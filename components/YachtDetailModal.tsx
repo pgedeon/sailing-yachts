@@ -1,6 +1,6 @@
 "use client";
 
-"use client";
+import YachtImage from "@/app/components/yacht/YachtImage";
 
 import { useEffect } from "react";
 
@@ -151,7 +151,7 @@ export default function YachtDetailModal({
           <div className="space-y-6">
             {yacht.images && yacht.images.length > 0 ? (
               <div className="rounded-lg overflow-hidden border">
-                <img
+                <YachtImage
                   src={
                     yacht.images.find((img) => img.isPrimary)?.url ||
                     yacht.images[0].url
@@ -160,7 +160,9 @@ export default function YachtDetailModal({
                     yacht.images.find((img) => img.isPrimary)
                       ?.altText || `${yacht.manufacturer} ${yacht.modelName}`
                   }
-                  className="w-full h-64 object-cover"
+                  fill
+                  className="w-full h-64 rounded-lg"
+                  sizes="(max-width: 768px) 100vw, 400px"
                 />
               </div>
             ) : (

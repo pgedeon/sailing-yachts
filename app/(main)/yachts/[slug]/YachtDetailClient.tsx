@@ -12,6 +12,7 @@ import { slugify } from "@/lib/utils/slugify";
 import { SimilarYachts } from "./SimilarYachts";
 import { RelatedArticles } from "./RelatedArticles";
 import AffiliateRecommendations from "@/app/components/AffiliateRecommendations";
+import YachtImage from "@/app/components/yacht/YachtImage";
 import { getAffiliateRecommendations } from "@/lib/affiliate-recommendations";
 
 interface SpecGroup {
@@ -233,13 +234,16 @@ export default function YachtDetailClient() {
       <div className="yacht-hero grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-10 sm:mb-12">
         <div>
           {primaryImage ? (
-            <img
+            <YachtImage
               src={primaryImage.url}
               alt={
                 primaryImage.altText ||
                 `${yacht.manufacturer} ${yacht.modelName}`
               }
-              className="w-full h-56 sm:h-72 md:h-80 object-cover rounded-lg"
+              fill
+              className="w-full h-56 sm:h-72 md:h-80 rounded-lg"
+              priority
+              sizes="(max-width: 768px) 100vw, 50vw"
             />
           ) : (
             <div className="w-full h-56 sm:h-72 md:h-80 bg-muted rounded-lg flex items-center justify-center text-muted-foreground">
