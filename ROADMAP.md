@@ -58,7 +58,7 @@ Cron: sailing-yachts-builder (every 6h)
 - [ ] Newsletter signup for new yacht announcements
 - [ ] API for external consumption (rate-limited, documented)
 - [ ] Performance monitoring (Core Web Vitals tracking)
-- [ ] Image optimization pipeline (WebP, lazy loading, blur placeholders)
+- [x] Image optimization pipeline (WebP, lazy loading, blur placeholders) ✅ #55
 
 ## Cron Workflow
 The sailing-yachts-builder cron runs every 6 hours and:
