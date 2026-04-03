@@ -180,6 +180,23 @@ export const reviews = pgTable(
   }),
 );
 
+// Newsletter subscribers
+export const newsletterSubscribers = pgTable(
+  "newsletter_subscribers",
+  {
+    id: serial("id").primaryKey(),
+    email: varchar("email", { length: 255 }).notNull().unique(),
+    confirmed: boolean("confirmed").default(false),
+    source: varchar("source", { length: 100 }).default("website"),
+    createdAt: timestamp("created_at").defaultNow(),
+    confirmedAt: timestamp("confirmed_at"),
+  },
+  (table) => ({
+    idxEmail: uniqueIndex("idx_newsletter_email").on(table.email),
+    idxConfirmed: index("idx_newsletter_confirmed").on(table.confirmed),
+  }),
+);
+
 // ---------- Zod Schemas for validation ----------
 
 export const insertManufacturerSchema = createInsertSchema(manufacturers);
@@ -199,3 +216,6 @@ export const selectImageSchema = createSelectSchema(images);
 
 export const insertReviewSchema = createInsertSchema(reviews);
 export const selectReviewSchema = createSelectSchema(reviews);
+
+export const insertNewsletterSubscriberSchema = createInsertSchema(newsletterSubscribers);
+export const selectNewsletterSubscriberSchema = createSelectSchema(newsletterSubscribers);

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import NewsletterSignup from "@/components/NewsletterSignup";
 import { db, yachtModels, manufacturers } from "@/lib/db";
 import { desc, sql } from "drizzle-orm";
 import { generateWebsiteJsonLd, generateFaqJsonLd, getSiteUrl } from "@/lib/seo";
@@ -246,6 +247,13 @@ export default async function Home() {
           </div>
         </section>
 
+
+        {/* Newsletter Signup */}
+        <section className="py-12 px-4 bg-blue-50 border-t border-blue-100">
+          <div className="max-w-xl mx-auto text-center">
+            <NewsletterSignup source="homepage" />
+          </div>
+        </section>
         {/* CTA */}
         <section className="py-16 px-4 bg-gray-900 text-white text-center">
           <div className="max-w-3xl mx-auto">

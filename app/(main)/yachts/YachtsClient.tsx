@@ -2,6 +2,7 @@
 
 import { FavoriteButton } from '@/app/components/FavoriteButton';
 import { PriceTierBadge } from '@/app/components/PriceTierBadge';
+import NewsletterSignup from '@/components/NewsletterSignup';
 import { calculatePriceTier } from '@/lib/price-tier';
 import { FILTER_PRESETS, detectActivePreset, type FilterPreset } from '@/lib/filter-presets';
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -407,6 +408,10 @@ export default function YachtsClient() {
                 )}
               </>
             )}
+          {/* Newsletter Signup */}
+          <div className="mt-8 pt-8 border-t border-gray-200">
+            <NewsletterSignup source="yachts-listing" compact />
+          </div>
           </main>
         </div>
       </div>
