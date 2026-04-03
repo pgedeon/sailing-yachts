@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, newsletterSubscribers } from "@/lib/db";
+import { db, ensureSchema, newsletterSubscribers } from "@/lib/db";
 import { eq } from "drizzle-orm";
 
 export async function POST(request: NextRequest) {
   try {
+    await ensureSchema();
+
     const body = await request.json();
     const { email, source } = body;
 

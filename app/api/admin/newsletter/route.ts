@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db, newsletterSubscribers } from "@/lib/db";
+import { db, ensureSchema, newsletterSubscribers } from "@/lib/db";
 import { desc, sql } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
   try {
+    await ensureSchema();
+
     // Get query params for pagination
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1");
@@ -43,6 +45,8 @@ export async function GET(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    await ensureSchema();
+
     const body = await request.json();
     const { id } = body;
 
