@@ -162,6 +162,18 @@ export async function ensureSchema() {
       );
     `);
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        confirmed BOOLEAN DEFAULT FALSE,
+        source VARCHAR(100) DEFAULT 'website',
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        confirmed_at TIMESTAMPTZ
+      );
+    `);
+
+
     // After creating base tables, ensure yacht_models has all Drizzle columns
     // (migrate from minimal to full schema if needed)
     const columnResult = await client.query(`
