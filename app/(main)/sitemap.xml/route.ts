@@ -2,6 +2,8 @@ import { db, yachtModels, manufacturers } from "@/lib/db";
 import { isNotNull } from "drizzle-orm";
 import { slugify } from "@/lib/utils/slugify";
 
+export const dynamic = 'force-dynamic';
+
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://sailing-yachts.vercel.app";
 

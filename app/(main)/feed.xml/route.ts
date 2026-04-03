@@ -1,6 +1,8 @@
 import { db, yachtModels, manufacturers } from "@/lib/db";
 import { desc, eq } from "drizzle-orm";
 
+export const dynamic = 'force-dynamic';
+
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://sailing-yachts.vercel.app";
 

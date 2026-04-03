@@ -75,6 +75,30 @@ export const createSpecCategorySchema = z.object({
 
 export const updateSpecCategorySchema = createSpecCategorySchema.partial();
 
+// ─── Review Validation ────────────────────────────────────────────────────
+
+export const createReviewSchema = z.object({
+  yachtModelId: z.number().int().positive("Yacht model ID must be positive"),
+  source: z.string().min(1, "Source is required").max(100),
+  rating: z.number().min(0).max(10).multipleOf(0.1).optional().nullable(),
+  summary: z.string().max(500).optional().nullable(),
+  fullText: z.string().max(50000).optional().nullable(),
+  reviewDate: z.string().datetime({ message: "Invalid date format" }).optional().nullable(),
+  authorName: z.string().max(200).optional().nullable(),
+  sourceUrl: z.string().url("Invalid URL").max(500).optional().nullable().or(z.literal("")),
+});
+
+export const updateReviewSchema = z.object({
+  yachtModelId: z.number().int().positive().optional(),
+  source: z.string().min(1).max(100).optional(),
+  rating: z.number().min(0).max(10).multipleOf(0.1).optional().nullable(),
+  summary: z.string().max(500).optional().nullable(),
+  fullText: z.string().max(50000).optional().nullable(),
+  reviewDate: z.string().datetime({ message: "Invalid date format" }).optional().nullable(),
+  authorName: z.string().max(200).optional().nullable(),
+  sourceUrl: z.string().url("Invalid URL").max(500).optional().nullable().or(z.literal("")),
+});
+
 // ─── Query Parameter Validation ───────────────────────────────────────────
 
 export const yachtQuerySchema = z.object({
