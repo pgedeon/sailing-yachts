@@ -10,17 +10,15 @@ interface RateLimitEntry {
 
 const store = new Map<string, RateLimitEntry>();
 
-// Clean up expired entries every 5 minutes
-if (typeof setInterval !== 'undefined') {
-  setInterval(() => {
-    const now = Date.now();
-    for (const [key, entry] of store) {
-      if (now > entry.resetTime) {
-        store.delete(key);
-      }
+// Keep entries for 5 minutes max to prevent memory leaks
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of store) {
+    if (now > entry.resetTime) {
+      store.delete(key);
     }
-  }, 5 * 60 * 1000);
-}
+  }
+}, 5 * 60 * 1000);
 
 export interface RateLimitOptions {
   /** Max requests per window */
@@ -73,5 +71,6 @@ export function rateLimitHeaders(result: { remaining: number; resetAt: number; l
     'X-RateLimit-Limit': String(result.limit),
     'X-RateLimit-Remaining': String(result.remaining),
     'X-RateLimit-Reset': String(Math.ceil(result.resetAt / 1000)),
+    'Cache-Control': 'no-cache', // No caching for rate limit responses
   };
 }
