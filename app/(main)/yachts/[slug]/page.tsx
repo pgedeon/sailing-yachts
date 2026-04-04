@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { db, yachtModels, manufacturers, images } from "@/lib/db";
+import { db, yachtModels, manufacturers, images, reviews } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import {
   generateYachtPageMetadata,
@@ -109,6 +109,26 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
     .limit(1);
   const primaryImage = yachtImages.find((img: any) => img.isPrimary) || yachtImages[0];
 
+  // Fetch reviews for AggregateRating in JSON-LD
+  const yachtReviews = await db
+    .select({
+      rating: reviews.rating,
+      summary: reviews.summary,
+      authorName: reviews.authorName,
+      reviewDate: reviews.reviewDate,
+    })
+    .from(reviews)
+    .where(eq(reviews.yachtModelId, yachtData.id));
+
+  const reviewData = yachtReviews.length > 0
+    ? yachtReviews.map((r: any) => ({
+        rating: r.rating ? parseFloat(r.rating) : 0,
+        summary: r.summary,
+        authorName: r.authorName,
+        reviewDate: r.reviewDate,
+      }))
+    : undefined;
+
   const jsonLd = generateYachtJsonLd({
     manufacturer: manufacturerName,
     modelName: yachtData.modelName,
@@ -123,6 +143,7 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
     rigType: yachtData.rigType,
     cabins: yachtData.cabins,
     primaryImage: primaryImage?.url,
+    reviews: reviewData,
   });
 
   // Add Offer schema if price data exists
