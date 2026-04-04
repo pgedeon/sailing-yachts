@@ -56,7 +56,7 @@ Cron: sailing-yachts-builder (every 6h)
 ## Phase 5 — Advanced Features (Priority: Low)
 - [x] Yacht review system (admin-managed) — AggregateRating & Review entries in JSON-LD
 - [x] Newsletter signup for new yacht announcements
-- [ ] API for external consumption (rate-limited, documented)
+- [x] API for external consumption (rate-limited, documented) — Issue #70, PR #71
 - [ ] Performance monitoring (Core Web Vitals tracking)
 - [x] Image optimization pipeline (WebP, lazy loading, blur placeholders) ✅ #55
 
