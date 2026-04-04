@@ -433,7 +433,7 @@ export default function YachtDetailClient() {
                   {review.rating && (
                     <div className="flex items-center gap-1">
                       <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span>{review.rating.toFixed(1)}</span>
+                      <span>{parseFloat(String(review.rating)).toFixed(1)}</span>
                     </div>
                   )}
                 </div>
