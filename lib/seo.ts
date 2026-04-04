@@ -83,6 +83,20 @@ export interface JsonLdProduct {
     value: string | number;
     unitCode?: string;
   }>;
+  aggregateRating?: {
+    "@type": "AggregateRating";
+    ratingValue: number;
+    reviewCount: number;
+    bestRating: number;
+    worstRating: number;
+  };
+  review?: Array<{
+    "@type": "Review";
+    author: { "@type": "Person"; name: string };
+    datePublished?: string;
+    reviewRating: { "@type": "Rating"; ratingValue: number; bestRating: number; worstRating: number };
+    reviewBody?: string;
+  }>;
 }
 
 export function generateYachtJsonLd(yacht: {
@@ -99,6 +113,12 @@ export function generateYachtJsonLd(yacht: {
   rigType?: string | null;
   cabins?: number | null;
   primaryImage?: string;
+  reviews?: Array<{
+    rating: number;
+    summary?: string | null;
+    authorName?: string | null;
+    reviewDate?: Date | null;
+  }> | null;
 }): JsonLdProduct {
   const props: JsonLdProduct["additionalProperty"] = [];
 
@@ -110,7 +130,7 @@ export function generateYachtJsonLd(yacht: {
   if (yacht.rigType) props.push({ "@type": "PropertyValue", name: "Rig Type", value: yacht.rigType });
   if (yacht.cabins) props.push({ "@type": "PropertyValue", name: "Cabins", value: yacht.cabins });
 
-  return {
+  const result: JsonLdProduct = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: `${yacht.manufacturer} ${yacht.modelName} (${yacht.year})`,
@@ -123,6 +143,49 @@ export function generateYachtJsonLd(yacht: {
     image: yacht.primaryImage,
     additionalProperty: props,
   };
+
+  // Add AggregateRating and Review entries if reviews exist
+  if (yacht.reviews && yacht.reviews.length > 0) {
+    const ratings = yacht.reviews
+      .map((r) => r.rating)
+      .filter((r) => r > 0);
+    const avgRating =
+      ratings.length > 0
+        ? Math.round((ratings.reduce((a, b) => a + b, 0) / ratings.length) * 10) / 10
+        : 0;
+
+    if (avgRating > 0) {
+      result.aggregateRating = {
+        "@type": "AggregateRating",
+        ratingValue: avgRating,
+        reviewCount: ratings.length,
+        bestRating: 5,
+        worstRating: 1,
+      };
+
+      result.review = yacht.reviews
+        .filter((r) => r.rating > 0)
+        .map((r) => ({
+          "@type": "Review" as const,
+          author: {
+            "@type": "Person" as const,
+            name: r.authorName || "Anonymous",
+          },
+          ...(r.reviewDate
+            ? { datePublished: r.reviewDate.toISOString().split("T")[0] }
+            : {}),
+          reviewRating: {
+            "@type": "Rating" as const,
+            ratingValue: r.rating,
+            bestRating: 5,
+            worstRating: 1,
+          },
+          ...(r.summary ? { reviewBody: r.summary } : {}),
+        }));
+    }
+  }
+
+  return result;
 }
 
 export interface JsonLdBreadcrumb {
