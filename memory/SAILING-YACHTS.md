@@ -1,49 +1,47 @@
-# Sailing Yachts Builder Session Summary - 2026-04-03
+# Sailing Yachts — Session Notes
 
-## Issue Worked On
-- **Issue #58**: Admin review management (CRUD for yacht reviews)
+## 2026-04-04: AggregateRating JSON-LD + Bug Fixes
 
-## What Was Implemented
-- **Discovered**: The admin review CRUD functionality was already fully implemented!
-  - API routes: `app/api/admin/reviews/route.ts` and `app/api/admin/reviews/[id]/route.ts`
-  - UI pages: `app/(main)/admin/reviews/page.tsx`, `app/(main)/admin/reviews/new/NewReviewForm.tsx`, `app/(main)/admin/reviews/[id]/edit/EditReviewForm.tsx`
-  - Admin dashboard integration
-- **Added**: Missing Playwright E2E tests for admin review management (`tests/admin-reviews.spec.ts`)
-  - 14 test cases covering all CRUD operations
-  - Form validation and error handling
-  - Navigation and access control
-  - Console error monitoring
+### Issue #65: Add AggregateRating to yacht JSON-LD
+- **Status**: ✅ Complete
+- **PRs**: #66 (initial), #68 (bestRating fix), #69 (rating.toFixed fix)
 
-## Build/Test Results
-- **Type-check**: ✅ PASS
-- **Build**: ✅ PASS 
-- **Playwright Tests**: 10/14 passed (70% pass rate)
-  - Passes: auth, navigation, form operations, console errors, date handling
-  - Failures: related to empty database states (table visibility expectations)
-- **CI Pipeline**: ✅ All checks passed (TypeScript, Lint, Build)
-- **Test Coverage**: Comprehensive coverage of admin review management functionality
+### What was implemented
+1. Added `AggregateRating` and `Review` schema entries to yacht Product JSON-LD
+2. Updated `generateYachtJsonLd()` in `lib/seo.ts` to accept optional reviews
+3. Yacht detail page now fetches reviews from DB and passes to JSON-LD generator
+4. Fixed `bestRating` to be 10 (reviews use 1-10 scale, not 1-5)
+5. Fixed pre-existing `TypeError: e.rating.toFixed is not a function` on yacht detail pages with reviews (Neon DB returns numeric columns as strings)
 
-## Deploy Status
-- **Branch**: `feature/issue-58-admin-review-tests`
-- **PR**: #61 (merged successfully)
-- **Vercel**: ✅ Production deployment complete
-- **Auto-deployment**: Successfully deployed to `https://sailing-yachts.vercel.app`
+### Verification
+- ✅ Typecheck: PASS
+- ✅ Build: PASS
+- ✅ All critical pages: OK (/, /yachts, /search, /compare)
+- ✅ API: OK (201 yachts)
+- ✅ JSON-LD: AggregateRating 8.5/10 (3 reviews) + 3 Review entries on beneteau-oceanis-30-1
+- ✅ Browser console: No JS errors (only pre-existing 404 for test image on example.com)
+- ✅ Page snapshot: Full render confirmed
 
-## Live Verification Results
-- **Critical Pages**: ✅ All pass
-  - `/` - OK
-  - `/yachts` - OK  
-  - `/search` - OK
-  - `/compare` - OK
-- **API**: ✅ Returns valid data (201 yachts)
-- **Client-side**: ✅ No console errors detected
+### Key findings
+- Reviews in the database use a 1-10 scale, not 1-5
+- Neon DB numeric columns return strings — always use `parseFloat()` before `.toFixed()`
+- Only 1 yacht has reviews: beneteau-oceanis-30-1 (6 reviews in DB, 3 with non-null ratings)
+- The `reviews` table has columns: rating (numeric), summary, authorName, reviewDate, source
 
-## Issues Found and Fixed
-- **Syntax Errors**: Fixed template string issues in test file (backtick and quote problems)
-- **Test Robustness**: Adjusted tests to handle empty database states gracefully
-- **Test Limitations**: Some tests expect UI elements that only appear with data
+### Pre-existing test failures (not caused by this change)
+- admin-reviews tests: table/heading not found (6 failures)
+- compare tests: strict mode violation, table not loading (3 failures)
+- embed-compare: regex syntax error in test, target assertion (2 failures)
+- filter-presets: URL encoding mismatch (%5B vs [) (3 failures)
+- favorites/mobile-ux/newsletter: localhost:3000 not running (~30 failures)
+- price-tier: element not found (2 failures)
+- print-spec-sheet: timeout clicking yacht link (3 failures)
 
-## Next Recommended Task
-- Admin review CRUD functionality is complete and well-tested
-- Consider adding sample review data to improve test coverage for edit/delete operations
-- Review ROADMAP.md for next auto-build items if no other issues exist
+### ROADMAP status
+- Phase 5 item "Yacht review system" now complete
+- Remaining Phase 5 items:
+  - [ ] API for external consumption (rate-limited, documented)
+  - [ ] Performance monitoring (Core Web Vitals tracking)
+
+### Next recommended task
+- Pick from remaining Phase 5 items, or Phase 4 (Yacht manufacturer guides on sailboats.fr linking back to database)
