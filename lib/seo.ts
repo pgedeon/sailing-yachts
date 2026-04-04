@@ -159,7 +159,7 @@ export function generateYachtJsonLd(yacht: {
         "@type": "AggregateRating",
         ratingValue: avgRating,
         reviewCount: ratings.length,
-        bestRating: 5,
+        bestRating: 10,
         worstRating: 1,
       };
 
@@ -177,7 +177,7 @@ export function generateYachtJsonLd(yacht: {
           reviewRating: {
             "@type": "Rating" as const,
             ratingValue: r.rating,
-            bestRating: 5,
+            bestRating: 10,
             worstRating: 1,
           },
           ...(r.summary ? { reviewBody: r.summary } : {}),
