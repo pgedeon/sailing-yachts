@@ -57,7 +57,7 @@ Cron: sailing-yachts-builder (every 6h)
 - [x] Yacht review system (admin-managed) — AggregateRating & Review entries in JSON-LD
 - [x] Newsletter signup for new yacht announcements
 - [x] API for external consumption (rate-limited, documented) — Issue #70, PR #71
-- [ ] Performance monitoring (Core Web Vitals tracking)
+- [x] Performance monitoring (Core Web Vitals tracking) — Issue #74, PR #75
 - [x] Image optimization pipeline (WebP, lazy loading, blur placeholders) ✅ #55
 
 ## Cron Workflow
