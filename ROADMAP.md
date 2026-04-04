@@ -54,7 +54,7 @@ Cron: sailing-yachts-builder (every 6h)
 - [ ] Yacht manufacturer guides on sailboats.fr linking back to database
 
 ## Phase 5 — Advanced Features (Priority: Low)
-- [ ] Yacht review system (admin-managed, not user-generated)
+- [x] Yacht review system (admin-managed) — AggregateRating & Review entries in JSON-LD
 - [x] Newsletter signup for new yacht announcements
 - [ ] API for external consumption (rate-limited, documented)
 - [ ] Performance monitoring (Core Web Vitals tracking)
