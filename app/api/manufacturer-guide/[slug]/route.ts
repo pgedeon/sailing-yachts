@@ -40,7 +40,6 @@ interface ManufacturerGuide {
     hullMaterial: string | null;
     cabins: number | null;
     berths: number | null;
-    description: string | null;
     primaryImage: string | null;
     completenessScore: number;
   }>;
@@ -88,6 +87,7 @@ export async function GET(
     const guideData: ManufacturerGuide = {
       manufacturer: {
         ...manufacturer,
+        yachtCount: validYachts.length,
         canonicalUrl: `${baseUrl}/manufacturers/${manufacturer.slug}`,
         affiliateLink,
       },
@@ -113,9 +113,8 @@ export async function GET(
         hullMaterial: yacht.hullMaterial,
         cabins: yacht.cabins,
         berths: yacht.berths,
-        description: yacht.description,
         primaryImage: yacht.primaryImage,
-        completenessScore: 0, // Simplified for now
+        completenessScore: 0,
       })),
       highlights: {
         mostSpacious: null,
