@@ -1,12 +1,58 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { unstable_cache } from "next/cache";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import { db, yachtModels, manufacturers } from "@/lib/db";
 import { desc, sql } from "drizzle-orm";
 import { generateWebsiteJsonLd, generateFaqJsonLd, getSiteUrl } from "@/lib/seo";
 import { getSiteStats, formatYachtPhrase, formatYachtCountFAQ } from "@/lib/site-stats";
 
-export const dynamic = "force-dynamic";
+// ISR: Revalidate homepage cache every hour
+export const revalidate = 3600;
+
+// Cache featured yachts query with tag for invalidation
+async function getFeaturedYachts() {
+  return unstable_cache(
+    async () => {
+      return db
+        .select({
+          id: yachtModels.id,
+          modelName: yachtModels.modelName,
+          slug: yachtModels.slug,
+          year: yachtModels.year,
+          lengthOverall: yachtModels.lengthOverall,
+          manufacturer: manufacturers.name,
+        })
+        .from(yachtModels)
+        .leftJoin(manufacturers, sql`${yachtModels.manufacturerId} = ${manufacturers.id}`)
+        .orderBy(desc(yachtModels.createdAt))
+        .limit(6);
+    },
+    ["featured-yachts"],
+    { tags: ["yachts"], revalidate: 3600 }
+  )();
+}
+
+// Cache top manufacturers query with tag for invalidation
+async function getTopManufacturers() {
+  return unstable_cache(
+    async () => {
+      return db
+        .select({
+          name: manufacturers.name,
+          country: manufacturers.country,
+          yachtCount: sql<number>`count(${yachtModels.id})`.as("yacht_count"),
+        })
+        .from(manufacturers)
+        .leftJoin(yachtModels, sql`${manufacturers.id} = ${yachtModels.manufacturerId}`)
+        .groupBy(manufacturers.id, manufacturers.name, manufacturers.country)
+        .orderBy(desc(sql`count(${yachtModels.id})`))
+        .limit(8);
+    },
+    ["top-manufacturers"],
+    { tags: ["manufacturers"], revalidate: 3600 }
+  )();
+}
 
 // Fetch site stats for use in metadata and page content
 const statsPromise = getSiteStats();
@@ -54,7 +100,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const stats = await statsPromise;
+  const [featuredYachts, topManufacturers, stats] = await Promise.all([
+    getFeaturedYachts(),
+    getTopManufacturers(),
+    statsPromise,
+  ]);
   const yachtPhrase = formatYachtPhrase(stats);
 
   const FAQ_ITEMS = [
@@ -63,34 +113,6 @@ export default async function Home() {
     { q: "Is the database free to use?", a: "Yes, the Sailing Yachts Database is completely free for personal use and for organizations with annual revenue under $100,000." },
     { q: "Where does the data come from?", a: "Specifications are sourced from manufacturer brochures, official documentation, and verified owner contributions." },
   ];
-
-  // Fetch featured yachts (latest 6)
-  const featuredYachts = await db
-    .select({
-      id: yachtModels.id,
-      modelName: yachtModels.modelName,
-      slug: yachtModels.slug,
-      year: yachtModels.year,
-      lengthOverall: yachtModels.lengthOverall,
-      manufacturer: manufacturers.name,
-    })
-    .from(yachtModels)
-    .leftJoin(manufacturers, sql`${yachtModels.manufacturerId} = ${manufacturers.id}`)
-    .orderBy(desc(yachtModels.createdAt))
-    .limit(6);
-
-  // Fetch top manufacturers by yacht count
-  const topManufacturers = await db
-    .select({
-      name: manufacturers.name,
-      country: manufacturers.country,
-      yachtCount: sql<number>`count(${yachtModels.id})`.as("yacht_count"),
-    })
-    .from(manufacturers)
-    .leftJoin(yachtModels, sql`${manufacturers.id} = ${yachtModels.manufacturerId}`)
-    .groupBy(manufacturers.id, manufacturers.name, manufacturers.country)
-    .orderBy(desc(sql`count(${yachtModels.id})`))
-    .limit(8);
 
   const jsonLd = generateWebsiteJsonLd();
   const faqJsonLd = {
@@ -173,7 +195,7 @@ export default async function Home() {
                 View all →
               </Link>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:cols-2 lg:grid-cols-3 gap-6">
               {featuredYachts.map((yacht: any) => (
                 <Link
                   key={yacht.id}

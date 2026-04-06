@@ -1,19 +1,24 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-
-import { buildOgImageUrl, getSiteUrl } from "@/lib/seo";
+import { unstable_cache } from "next/cache";
 import { getManufacturersWithCounts } from "@/lib/manufacturers";
 
-export const dynamic = "force-dynamic";
+// ISR: Revalidate manufacturers list every hour
+export const revalidate = 3600;
+
+// Cache manufacturers query with tag for invalidation
+async function getManufacturers() {
+  return unstable_cache(
+    async () => getManufacturersWithCounts(),
+    ["manufacturers-list"],
+    { tags: ["manufacturers"], revalidate: 3600 }
+  )();
+}
 
 const title = "Sailing Yacht Manufacturers";
 const description =
   "Browse sailing yacht manufacturers, explore brand histories, and discover how many models each builder offers.";
-const ogImage = buildOgImageUrl({
-  title: "Sailing Yacht Manufacturers",
-  description: "Browse builders, brands, and model counts",
-  length: "Brand directory",
-});
+const ogImage = "https://sailing-yachts.vercel.app/api/og?title=Sailing%20Yacht%20Manufacturers&description=Browse%20builders%2C%20brands%2C%20and%20model%20counts&length=Brand%20directory";
 
 export const metadata: Metadata = {
   title,
@@ -21,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     title,
     description,
-    url: getSiteUrl("/manufacturers"),
+    url: "/manufacturers",
     type: "website",
     siteName: "Sailing Yachts Database",
     images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
@@ -33,12 +38,12 @@ export const metadata: Metadata = {
     images: [ogImage],
   },
   alternates: {
-    canonical: getSiteUrl("/manufacturers"),
+    canonical: "/manufacturers",
   },
 };
 
 export default async function ManufacturersPage() {
-  const manufacturers = await getManufacturersWithCounts();
+  const manufacturers = await getManufacturers();
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">

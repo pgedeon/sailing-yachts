@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { db, yachtModels, manufacturers, images, reviews } from "@/lib/db";
-import { eq } from "drizzle-orm";
+import { unstable_cache } from "next/cache";
+
 import {
   generateYachtPageMetadata,
   generateYachtJsonLd,
@@ -8,36 +8,41 @@ import {
   generateFaqJsonLd,
   getSiteUrl,
 } from "@/lib/seo";
+import { getYachtDetailData, getPrimaryImage } from "@/lib/yachts";
 import YachtDetailClient from "./YachtDetailClient";
 
-export const dynamic = "force-dynamic";
+// ISR: Revalidate yacht detail pages every hour
+export const revalidate = 3600;
+
+// Cache yacht detail data query with tag for invalidation
+async function getYachtData(slug: string) {
+  return unstable_cache(
+    async () => getYachtDetailData(slug),
+    [`yacht:${slug}`],
+    { tags: [`yacht:${slug}`, "yachts"], revalidate: 3600 }
+  )();
+}
+
+// Cache primary image query
+async function getYachtImage(slug: string) {
+  return unstable_cache(
+    async () => getPrimaryImage(slug),
+    [`yacht-image:${slug}`],
+    { tags: [`yacht:${slug}`, "yachts"], revalidate: 3600 }
+  )();
+}
 
 interface YachtDetailPageProps {
   params: Promise<{ slug: string }>;
-}
-
-async function getYachtBySlug(slug: string) {
-  const yachtResult = await db
-    .select({
-      yacht: yachtModels,
-      manufacturer: manufacturers.name,
-    })
-    .from(yachtModels)
-    .leftJoin(manufacturers, eq(yachtModels.manufacturerId, manufacturers.id))
-    .where(eq(yachtModels.slug, slug))
-    .limit(1);
-
-  if (yachtResult.length === 0) return null;
-  return yachtResult[0];
 }
 
 export async function generateMetadata({
   params,
 }: YachtDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const result = await getYachtBySlug(slug);
+  const data = await getYachtData(slug);
 
-  if (!result) {
+  if (!data) {
     return {
       title: "Yacht Not Found",
       description: "The requested sailing yacht could not be found.",
@@ -45,25 +50,18 @@ export async function generateMetadata({
   }
 
   // Fetch primary image for OG
-  const yachtImages = await db
-    .select()
-    .from(images)
-    .where(eq(images.yachtModelId, result.yacht.id))
-    .orderBy(images.sortOrder)
-    .limit(1);
-
-  const primaryImage = yachtImages.find((img: any) => img.isPrimary) || yachtImages[0];
+  const primaryImage = await getYachtImage(slug);
 
   const baseMeta = generateYachtPageMetadata({
-    manufacturer: result.manufacturer || "Unknown",
-    modelName: result.yacht.modelName,
-    year: result.yacht.year,
-    slug: result.yacht.slug,
-    description: result.yacht.description,
-    lengthOverall: result.yacht.lengthOverall
-      ? parseFloat(result.yacht.lengthOverall)
+    manufacturer: data.manufacturer,
+    modelName: data.yacht.modelName,
+    year: data.yacht.year,
+    slug: data.yacht.slug ?? "",
+    description: data.yacht.description ?? undefined,
+    lengthOverall: data.yacht.lengthOverall
+      ? parseFloat(data.yacht.lengthOverall)
       : null,
-    primaryImage: primaryImage?.url,
+    primaryImage: primaryImage ?? undefined,
   });
 
   // Add hreflang alternates
@@ -81,9 +79,9 @@ export async function generateMetadata({
 
 export default async function YachtDetailPage({ params }: YachtDetailPageProps) {
   const { slug } = await params;
-  const result = await getYachtBySlug(slug);
+  const data = await getYachtData(slug);
 
-  if (!result) {
+  if (!data) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-12 text-center">
         <h1 className="text-2xl font-bold text-red-600">Yacht not found</h1>
@@ -97,73 +95,44 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
     );
   }
 
-  const yachtData = result.yacht;
-  const manufacturerName = result.manufacturer || "Unknown";
+  const yachtData = data.yacht;
+  const manufacturerName = data.manufacturer;
 
   // JSON-LD structured data
-  const yachtImages = await db
-    .select()
-    .from(images)
-    .where(eq(images.yachtModelId, yachtData.id))
-    .orderBy(images.sortOrder)
-    .limit(1);
-  const primaryImage = yachtImages.find((img: any) => img.isPrimary) || yachtImages[0];
+  const primaryImage = data.images.find((img) => img.isPrimary) || data.images[0];
 
-  // Fetch reviews for AggregateRating in JSON-LD
-  const yachtReviews = await db
-    .select({
-      rating: reviews.rating,
-      summary: reviews.summary,
-      authorName: reviews.authorName,
-      reviewDate: reviews.reviewDate,
-    })
-    .from(reviews)
-    .where(eq(reviews.yachtModelId, yachtData.id));
-
-  const reviewData = yachtReviews.length > 0
-    ? yachtReviews.map((r: any) => ({
-        rating: r.rating ? parseFloat(r.rating) : 0,
-        summary: r.summary,
-        authorName: r.authorName,
-        reviewDate: r.reviewDate,
-      }))
+  const reviewData = data.reviews.length > 0
+    ? data.reviews
+        .filter((r) => r.rating !== null) // Only include reviews with ratings
+        .map((r) => ({
+          rating: r.rating as number, // Type guard: r.rating is not null here
+          summary: r.summary ?? undefined,
+          authorName: r.authorName ?? undefined,
+          reviewDate: r.reviewDate ? new Date(r.reviewDate) : undefined,
+        }))
     : undefined;
 
   const jsonLd = generateYachtJsonLd({
     manufacturer: manufacturerName,
     modelName: yachtData.modelName,
     year: yachtData.year,
-    slug: yachtData.slug,
-    description: yachtData.description,
+    slug: yachtData.slug ?? "",
+    description: yachtData.description ?? undefined,
     lengthOverall: yachtData.lengthOverall ? parseFloat(yachtData.lengthOverall) : null,
     beam: yachtData.beam ? parseFloat(yachtData.beam) : null,
     draft: yachtData.draft ? parseFloat(yachtData.draft) : null,
     displacement: yachtData.displacement ? parseFloat(yachtData.displacement) : null,
-    hullMaterial: yachtData.hullMaterial,
-    rigType: yachtData.rigType,
-    cabins: yachtData.cabins,
-    primaryImage: primaryImage?.url,
+    hullMaterial: yachtData.hullMaterial ?? undefined,
+    rigType: yachtData.rigType ?? undefined,
+    cabins: yachtData.cabins ?? undefined,
+    primaryImage: primaryImage?.url ?? undefined,
     reviews: reviewData,
   });
-
-  // Add Offer schema if price data exists
-  const priceLow = yachtData.priceLow ? parseFloat(yachtData.priceLow) : null;
-  const priceHigh = yachtData.priceHigh ? parseFloat(yachtData.priceHigh) : null;
-  if (priceLow || priceHigh) {
-    (jsonLd as any).offers = {
-      "@type": "Offer",
-      priceCurrency: "USD",
-      ...(priceLow && priceHigh
-        ? { price: `${priceLow}-${priceHigh}`, priceSpecification: { "@type": "PriceSpecification", price: priceLow, maxPrice: priceHigh, priceCurrency: "USD" } }
-        : { price: priceLow || priceHigh }),
-      availability: "https://schema.org/InStock",
-    };
-  }
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Home", path: "/" },
     { name: "Yachts", path: "/yachts" },
-    { name: `${manufacturerName} ${yachtData.modelName}` },
+    { name: `${manufacturerName} ${yachtData.modelName}`, path: `/yachts/${slug}` },
   ]);
 
   // FAQ structured data
@@ -173,7 +142,7 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
     displacement: yachtData.displacement ? parseFloat(yachtData.displacement) : null,
     lengthOverall: yachtData.lengthOverall ? parseFloat(yachtData.lengthOverall) : null,
     draft: yachtData.draft ? parseFloat(yachtData.draft) : null,
-    cabins: yachtData.cabins,
+    cabins: yachtData.cabins ?? undefined,
     beam: yachtData.beam ? parseFloat(yachtData.beam) : null,
   });
 
