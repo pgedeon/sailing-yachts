@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { ensureSchema, pool } from '@/lib/db'
 import { validate, updateManufacturerSchema } from '@/lib/validations'
 import { revalidateTag } from 'next/cache'
+import { slugify } from '@/lib/utils/slugify'
 
 function mapManufacturer(row: any) {
   return {
@@ -98,6 +99,17 @@ export async function PUT(
     }
 
     const data = validation.data
+
+    // Get old name for revalidation if name changed
+    let oldSlug: string | null = null
+    const oldResult = await pool.query(
+      'SELECT name FROM manufacturers WHERE id = $1',
+      [manufacturerId]
+    )
+    if (oldResult.rows.length > 0 && oldResult.rows[0].name) {
+      oldSlug = slugify(oldResult.rows[0].name)
+    }
+
     const result = await pool.query(
       `
         UPDATE manufacturers
@@ -123,8 +135,23 @@ export async function PUT(
     if (result.rows.length === 0) {
       return NextResponse.json({ error: 'Manufacturer not found' }, { status: 404 })
     }
-    revalidateTag('manufacturers');
+
     const manufacturer = mapManufacturer(result.rows[0])
+    const newSlug = manufacturer.name ? slugify(manufacturer.name) : null
+
+    // Revalidate manufacturer list cache
+    revalidateTag('manufacturers')
+
+    // Revalidate old slug if name changed
+    if (oldSlug && oldSlug !== newSlug) {
+      revalidateTag(`manufacturer:${oldSlug}`)
+    }
+
+    // Revalidate new slug
+    if (newSlug) {
+      revalidateTag(`manufacturer:${newSlug}`)
+    }
+
     return NextResponse.json({ manufacturer })
   } catch (error) {
     console.error('Failed to update manufacturer:', error)
@@ -156,6 +183,16 @@ export async function DELETE(
   }
 
   try {
+    // Get name for revalidation before delete
+    let slug: string | null = null
+    const oldResult = await pool.query(
+      'SELECT name FROM manufacturers WHERE id = $1',
+      [manufacturerId]
+    )
+    if (oldResult.rows.length > 0 && oldResult.rows[0].name) {
+      slug = slugify(oldResult.rows[0].name)
+    }
+
     await ensureSchema()
     const result = await pool.query(
       'DELETE FROM manufacturers WHERE id = $1',
@@ -164,7 +201,13 @@ export async function DELETE(
     if (result.rowCount === 0) {
       return NextResponse.json({ error: 'Manufacturer not found' }, { status: 404 })
     }
-    revalidateTag('manufacturers');
+
+    // Revalidate manufacturer list and detail cache
+    revalidateTag('manufacturers')
+    if (slug) {
+      revalidateTag(`manufacturer:${slug}`)
+    }
+
     return new NextResponse(null, { status: 204 })
   } catch (error) {
     console.error('Failed to delete manufacturer:', error)

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { generateCompareMetadata } from "@/lib/seo";
 import { CompareClient } from "./CompareClient";
 
-export const dynamic = "force-dynamic";
+// Removed force-dynamic - this page is a client component shell
+// No need for ISR since it's entirely client-rendered
 
 export async function generateMetadata({
   searchParams,
