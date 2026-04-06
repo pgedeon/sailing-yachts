@@ -1,19 +1,76 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { unstable_cache } from "next/cache";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import { db, yachtModels, manufacturers } from "@/lib/db";
 import { desc, sql } from "drizzle-orm";
 import { generateWebsiteJsonLd, generateFaqJsonLd, getSiteUrl } from "@/lib/seo";
 import { getSiteStats, formatYachtPhrase, formatYachtCountFAQ } from "@/lib/site-stats";
+import { buildSafeQuery } from "@/lib/build-safe";
 
-export const dynamic = "force-dynamic";
+// ISR: Revalidate homepage cache every hour
+export const revalidate = 3600;
 
-// Fetch site stats for use in metadata and page content
-const statsPromise = getSiteStats();
+const FALLBACK_YACHTS: any[] = [];
+const FALLBACK_MANUFACTURERS: any[] = [];
+
+// Cache featured yachts query with tag for invalidation
+async function getFeaturedYachts() {
+  return unstable_cache(
+    async () => {
+      return buildSafeQuery(
+        async () => {
+          return db
+            .select({
+              id: yachtModels.id,
+              modelName: yachtModels.modelName,
+              slug: yachtModels.slug,
+              year: yachtModels.year,
+              lengthOverall: yachtModels.lengthOverall,
+              manufacturer: manufacturers.name,
+            })
+            .from(yachtModels)
+            .leftJoin(manufacturers, sql`${yachtModels.manufacturerId} = ${manufacturers.id}`)
+            .orderBy(desc(yachtModels.createdAt))
+            .limit(6);
+        },
+        FALLBACK_YACHTS
+      );
+    },
+    ["featured-yachts"],
+    { tags: ["yachts"], revalidate: 3600 }
+  )();
+}
+
+// Cache top manufacturers query with tag for invalidation
+async function getTopManufacturers() {
+  return unstable_cache(
+    async () => {
+      return buildSafeQuery(
+        async () => {
+          return db
+            .select({
+              name: manufacturers.name,
+              country: manufacturers.country,
+              yachtCount: sql<number>`count(${yachtModels.id})`.as("yacht_count"),
+            })
+            .from(manufacturers)
+            .leftJoin(yachtModels, sql`${manufacturers.id} = ${yachtModels.manufacturerId}`)
+            .groupBy(manufacturers.id, manufacturers.name, manufacturers.country)
+            .orderBy(desc(sql`count(${yachtModels.id})`))
+            .limit(8);
+        },
+        FALLBACK_MANUFACTURERS
+      );
+    },
+    ["top-manufacturers"],
+    { tags: ["manufacturers"], revalidate: 3600 }
+  )();
+}
 
 // Generate metadata with live yacht count
 export async function generateMetadata(): Promise<Metadata> {
-  const stats = await statsPromise;
+  const stats = await getSiteStats();
   const yachtPhrase = formatYachtPhrase(stats);
 
   return {
@@ -54,7 +111,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const stats = await statsPromise;
+  const [featuredYachts, topManufacturers, stats] = await Promise.all([
+    getFeaturedYachts(),
+    getTopManufacturers(),
+    getSiteStats(),
+  ]);
   const yachtPhrase = formatYachtPhrase(stats);
 
   const FAQ_ITEMS = [
@@ -63,34 +124,6 @@ export default async function Home() {
     { q: "Is the database free to use?", a: "Yes, the Sailing Yachts Database is completely free for personal use and for organizations with annual revenue under $100,000." },
     { q: "Where does the data come from?", a: "Specifications are sourced from manufacturer brochures, official documentation, and verified owner contributions." },
   ];
-
-  // Fetch featured yachts (latest 6)
-  const featuredYachts = await db
-    .select({
-      id: yachtModels.id,
-      modelName: yachtModels.modelName,
-      slug: yachtModels.slug,
-      year: yachtModels.year,
-      lengthOverall: yachtModels.lengthOverall,
-      manufacturer: manufacturers.name,
-    })
-    .from(yachtModels)
-    .leftJoin(manufacturers, sql`${yachtModels.manufacturerId} = ${manufacturers.id}`)
-    .orderBy(desc(yachtModels.createdAt))
-    .limit(6);
-
-  // Fetch top manufacturers by yacht count
-  const topManufacturers = await db
-    .select({
-      name: manufacturers.name,
-      country: manufacturers.country,
-      yachtCount: sql<number>`count(${yachtModels.id})`.as("yacht_count"),
-    })
-    .from(manufacturers)
-    .leftJoin(yachtModels, sql`${manufacturers.id} = ${yachtModels.manufacturerId}`)
-    .groupBy(manufacturers.id, manufacturers.name, manufacturers.country)
-    .orderBy(desc(sql`count(${yachtModels.id})`))
-    .limit(8);
 
   const jsonLd = generateWebsiteJsonLd();
   const faqJsonLd = {
@@ -173,21 +206,28 @@ export default async function Home() {
                 View all →
               </Link>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredYachts.map((yacht: any) => (
-                <Link
-                  key={yacht.id}
-                  href={`/yachts/${yacht.slug}`}
-                  className="block bg-white rounded-xl border border-gray-200 p-5 hover:shadow-lg hover:border-blue-200 transition"
-                >
-                  <div className="text-sm text-gray-500 mb-1">{yacht.manufacturer || "Unknown"}</div>
-                  <h3 className="font-semibold text-gray-900 text-lg">{yacht.modelName}</h3>
-                  <div className="mt-3 flex items-center gap-4 text-sm text-gray-600">
-                    {yacht.year && <span>{yacht.year}</span>}
-                    {yacht.lengthOverall && <span>{Number(yacht.lengthOverall).toFixed(1)}m LOA</span>}
-                  </div>
-                </Link>
-              ))}
+            <div className="grid grid-cols-1 sm:cols-2 lg:grid-cols-3 gap-6">
+              {featuredYachts.length > 0 ? (
+                featuredYachts.map((yacht: any) => (
+                  <Link
+                    key={yacht.id}
+                    href={`/yachts/${yacht.slug}`}
+                    className="block bg-white rounded-xl border border-gray-200 p-5 hover:shadow-lg hover:border-blue-200 transition"
+                  >
+                    <div className="text-sm text-gray-500 mb-1">{yacht.manufacturer || "Unknown"}</div>
+                    <h3 className="font-semibold text-gray-900 text-lg">{yacht.modelName}</h3>
+                    <div className="mt-3 flex items-center gap-4 text-sm text-gray-600">
+                      {yacht.year && <span>{yacht.year}</span>}
+                      {yacht.lengthOverall && <span>{Number(yacht.lengthOverall).toFixed(1)}m LOA</span>}
+                    </div>
+                  </Link>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-8">
+                  <div className="text-gray-500">Building yacht database...</div>
+                  <div className="text-sm text-gray-400 mt-1">Featured yachts will appear here once deployment completes.</div>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -205,18 +245,25 @@ export default async function Home() {
               </Link>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-              {topManufacturers.map((mfr: any) => (
-                <Link
-                  key={mfr.name}
-                  href={`/manufacturers/${mfr.name?.toLowerCase().replace(/\s+/g, "-")}`}
-                  className="block bg-gray-50 rounded-lg p-4 hover:bg-blue-50 transition border border-gray-100"
-                >
-                  <div className="font-semibold text-gray-900">{mfr.name}</div>
-                  <div className="text-sm text-gray-500 mt-1">
-                    {mfr.yachtCount} model{mfr.yachtCount !== 1 ? "s" : ""}
-                  </div>
-                </Link>
-              ))}
+              {topManufacturers.length > 0 ? (
+                topManufacturers.map((mfr: any) => (
+                  <Link
+                    key={mfr.name}
+                    href={`/manufacturers/${mfr.name?.toLowerCase().replace(/\s+/g, "-")}`}
+                    className="block bg-gray-50 rounded-lg p-4 hover:bg-blue-50 transition border border-gray-100"
+                  >
+                    <div className="font-semibold text-gray-900">{mfr.name}</div>
+                    <div className="text-sm text-gray-500 mt-1">
+                      {mfr.yachtCount} model{mfr.yachtCount !== 1 ? "s" : ""}
+                    </div>
+                  </Link>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-8">
+                  <div className="text-gray-500">Building manufacturer database...</div>
+                  <div className="text-sm text-gray-400 mt-1">Popular manufacturers will appear here once deployment completes.</div>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -232,7 +279,7 @@ export default async function Home() {
                 <p className="text-gray-600 text-sm">LOA, beam, draft, displacement, sail area, rig type, cabins, berths, and more.</p>
               </div>
               <div className="text-center">
-                <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4 text-white text-2xl">⚖️</div>
+                <div className="w-14 h14 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4 text-white text-2xl">⚖️</div>
                 <h3 className="font-semibold text-gray-900 mb-2">Side-by-Side Compare</h3>
                 <p className="text-gray-600 text-sm">Select up to 4 yachts and compare every spec in one view.</p>
               </div>
