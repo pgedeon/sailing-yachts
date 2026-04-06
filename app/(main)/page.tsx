@@ -4,53 +4,66 @@ import NewsletterSignup from "@/components/NewsletterSignup";
 import { db, yachtModels, manufacturers } from "@/lib/db";
 import { desc, sql } from "drizzle-orm";
 import { generateWebsiteJsonLd, generateFaqJsonLd, getSiteUrl } from "@/lib/seo";
+import { getSiteStats, formatYachtPhrase, formatYachtCountFAQ } from "@/lib/site-stats";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Sailing Yachts Database — Specs, Dimensions & Comparison Tool",
-  description:
-    "Comprehensive database of sailing yacht specifications. Search 1,000+ boats by length, year, manufacturer. Compare dimensions, sail plans, and accommodation. Free to use.",
-  keywords: [
-    "sailing yacht specs",
-    "sailboat dimensions",
-    "yacht comparison",
-    "boat specifications database",
-    "sailboat database",
-    "yacht LOA",
-    "sail area displacement",
-    "sailing yacht database",
-    "compare yachts",
-    "boat specs",
-  ],
-  openGraph: {
+// Fetch site stats for use in metadata and page content
+const statsPromise = getSiteStats();
+
+// Generate metadata with live yacht count
+export async function generateMetadata(): Promise<Metadata> {
+  const stats = await statsPromise;
+  const yachtPhrase = formatYachtPhrase(stats);
+
+  return {
     title: "Sailing Yachts Database — Specs, Dimensions & Comparison Tool",
     description:
-      "Search 1,000+ sailing yachts by manufacturer, length, year. Compare specs side by side. Free database for sailors and buyers.",
-    url: getSiteUrl("/"),
-    type: "website",
-    siteName: "Sailing Yachts Database",
-    images: [{ url: getSiteUrl("/api/og?title=Sailing%20Yachts%20Database&description=Specs%2C%20Dimensions%20%26%20Comparison"), width: 1200, height: 630 }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Sailing Yachts Database — Specs & Comparison Tool",
-    description: "Search 1,000+ sailing yachts. Compare dimensions, sail plans, accommodation. Free.",
-  },
-  alternates: {
-    canonical: getSiteUrl("/"),
-    languages: { en: getSiteUrl("/"), fr: "https://sailboats.fr" },
-  },
-};
-
-const FAQ_ITEMS = [
-  { q: "How many yachts are in the database?", a: "The database includes over 1,000 sailing yacht models from major manufacturers worldwide, with detailed specifications including dimensions, sail plans, and accommodation." },
-  { q: "Can I compare yachts side by side?", a: "Yes! Select up to 4 yachts from the browse page and click Compare to see specs side by side — length, displacement, sail area, cabins, and more." },
-  { q: "Is the database free to use?", a: "Yes, the Sailing Yachts Database is completely free for personal use and for organizations with annual revenue under $100,000." },
-  { q: "Where does the data come from?", a: "Specifications are sourced from manufacturer brochures, official documentation, and verified owner contributions." },
-];
+      `Comprehensive database of sailing yacht specifications. Search ${yachtPhrase} by length, year, manufacturer. Compare dimensions, sail plans, and accommodation. Free to use.`,
+    keywords: [
+      "sailing yacht specs",
+      "sailboat dimensions",
+      "yacht comparison",
+      "boat specifications database",
+      "sailboat database",
+      "yacht LOA",
+      "sail area displacement",
+      "sailing yacht database",
+      "compare yachts",
+      "boat specs",
+    ],
+    openGraph: {
+      title: "Sailing Yachts Database — Specs, Dimensions & Comparison Tool",
+      description:
+        `Search ${yachtPhrase} by manufacturer, length, year. Compare specs side by side. Free database for sailors and buyers.`,
+      url: getSiteUrl("/"),
+      type: "website",
+      siteName: "Sailing Yachts Database",
+      images: [{ url: getSiteUrl("/api/og?title=Sailing%20Yachts%20Database&description=Specs%2C%20Dimensions%20%26%20Comparison"), width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Sailing Yachts Database — Specs & Comparison Tool",
+      description: `Search ${yachtPhrase}. Compare dimensions, sail plans, accommodation. Free.`,
+    },
+    alternates: {
+      canonical: getSiteUrl("/"),
+      languages: { en: getSiteUrl("/"), fr: "https://sailboats.fr" },
+    },
+  };
+}
 
 export default async function Home() {
+  const stats = await statsPromise;
+  const yachtPhrase = formatYachtPhrase(stats);
+
+  const FAQ_ITEMS = [
+    { q: "How many yachts are in the database?", a: formatYachtCountFAQ(stats) },
+    { q: "Can I compare yachts side by side?", a: "Yes! Select up to 4 yachts from the browse page and click Compare to see specs side by side — length, displacement, sail area, cabins, and more." },
+    { q: "Is the database free to use?", a: "Yes, the Sailing Yachts Database is completely free for personal use and for organizations with annual revenue under $100,000." },
+    { q: "Where does the data come from?", a: "Specifications are sourced from manufacturer brochures, official documentation, and verified owner contributions." },
+  ];
+
   // Fetch featured yachts (latest 6)
   const featuredYachts = await db
     .select({
@@ -103,7 +116,7 @@ export default async function Home() {
               Sailing Yacht Specs & Comparison
             </h1>
             <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Search <strong>1,000+ sailing yachts</strong> by manufacturer, length, year. Compare dimensions,
+              Search <strong>{yachtPhrase}</strong> by manufacturer, length, year. Compare dimensions,
               sail plans, and accommodation. Free database for sailors, buyers, and brokers.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -247,13 +260,13 @@ export default async function Home() {
           </div>
         </section>
 
-
         {/* Newsletter Signup */}
         <section className="py-12 px-4 bg-blue-50 border-t border-blue-100">
           <div className="max-w-xl mx-auto text-center">
             <NewsletterSignup source="homepage" />
           </div>
         </section>
+
         {/* CTA */}
         <section className="py-16 px-4 bg-gray-900 text-white text-center">
           <div className="max-w-3xl mx-auto">
