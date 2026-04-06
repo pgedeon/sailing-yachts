@@ -1,8 +1,10 @@
+import { unstable_cache } from "next/cache";
 import { db, yachtModels, manufacturers } from "@/lib/db";
 import { isNotNull } from "drizzle-orm";
 import { slugify } from "@/lib/utils/slugify";
 
-export const dynamic = 'force-dynamic';
+// ISR: Revalidate sitemap every hour
+export const revalidate = 3600;
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://sailing-yachts.vercel.app";
@@ -40,52 +42,65 @@ function buildUrl(entry: SitemapEntry): string {
   </url>`;
 }
 
+// Cache sitemap entries with tags for invalidation
+async function getSitemapEntries(): Promise<SitemapEntry[]> {
+  return unstable_cache(
+    async () => {
+      // Fetch yacht slugs with updatedAt
+      const yachts: Array<{ slug: string | null; updatedAt: Date | null }> =
+        await db
+          .select({
+            slug: yachtModels.slug,
+            updatedAt: yachtModels.updatedAt,
+          })
+          .from(yachtModels);
+
+      // Fetch manufacturers
+      const mfrs: Array<{ id: number | null; name: string | null }> =
+        await db.select({ id: manufacturers.id, name: manufacturers.name }).from(manufacturers);
+
+      const entries: SitemapEntry[] = [
+        // Static pages
+        { loc: `${SITE_URL}/`, changefreq: "daily", priority: "1.0" },
+        { loc: `${SITE_URL}/yachts`, changefreq: "daily", priority: "0.9" },
+        { loc: `${SITE_URL}/manufacturers`, changefreq: "weekly", priority: "0.8" },
+        { loc: `${SITE_URL}/compare`, changefreq: "weekly", priority: "0.7" },
+      ];
+
+      // Dynamic yacht pages
+      for (const y of yachts) {
+        if (y.slug) {
+          entries.push({
+            loc: `${SITE_URL}/yachts/${y.slug}`,
+            lastmod: y.updatedAt ? new Date(y.updatedAt).toISOString() : undefined,
+            changefreq: "weekly",
+            priority: "0.8",
+          });
+        }
+      }
+
+      // Dynamic manufacturer pages
+      for (const m of mfrs) {
+        if (m.name) {
+          const slug = slugify(m.name);
+          entries.push({
+            loc: `${SITE_URL}/manufacturers/${slug}`,
+            changefreq: "weekly",
+            priority: "0.6",
+          });
+        }
+      }
+
+      return entries;
+    },
+    ["sitemap-entries"],
+    { tags: ["yachts", "manufacturers"], revalidate: 3600 }
+  )();
+}
+
 export async function GET() {
   try {
-    // Fetch yacht slugs with updatedAt
-    const yachts: Array<{ slug: string | null; updatedAt: Date | null }> =
-      await db
-        .select({
-          slug: yachtModels.slug,
-          updatedAt: yachtModels.updatedAt,
-        })
-        .from(yachtModels);
-
-    // Fetch manufacturers
-    const mfrs: Array<{ id: number | null; name: string | null }> =
-      await db.select({ id: manufacturers.id, name: manufacturers.name }).from(manufacturers);
-
-    const entries: SitemapEntry[] = [
-      // Static pages
-      { loc: `${SITE_URL}/`, changefreq: "daily", priority: "1.0" },
-      { loc: `${SITE_URL}/yachts`, changefreq: "daily", priority: "0.9" },
-      { loc: `${SITE_URL}/manufacturers`, changefreq: "weekly", priority: "0.8" },
-      { loc: `${SITE_URL}/compare`, changefreq: "weekly", priority: "0.7" },
-    ];
-
-    // Dynamic yacht pages
-    for (const y of yachts) {
-      if (y.slug) {
-        entries.push({
-          loc: `${SITE_URL}/yachts/${y.slug}`,
-          lastmod: y.updatedAt ? new Date(y.updatedAt).toISOString() : undefined,
-          changefreq: "weekly",
-          priority: "0.8",
-        });
-      }
-    }
-
-    // Dynamic manufacturer pages
-    for (const m of mfrs) {
-      if (m.name) {
-        const slug = slugify(m.name);
-        entries.push({
-          loc: `${SITE_URL}/manufacturers/${slug}`,
-          changefreq: "weekly",
-          priority: "0.6",
-        });
-      }
-    }
+    const entries = await getSitemapEntries();
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -95,7 +110,7 @@ ${entries.map(buildUrl).join("\n")}
     return new Response(xml, {
       headers: {
         "Content-Type": "application/xml",
-        "Cache-Control": "s-maxage=3600, stale-while-revalidate",
+        "Cache-Control": "public, max-age=3600, s-maxage=3600",
       },
     });
   } catch (error) {

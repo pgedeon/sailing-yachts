@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { unstable_cache } from "next/cache";
 
 import {
   generateBreadcrumbJsonLd,
-  buildOgImageUrl,
   getSiteUrl,
 } from "@/lib/seo";
 import {
@@ -12,7 +12,24 @@ import {
   getYachtsByManufacturerId,
 } from "@/lib/manufacturers";
 
-export const dynamic = "force-dynamic";
+// ISR: Revalidate manufacturer detail pages every hour
+export const revalidate = 3600;
+
+// Cache manufacturer data query with tag for invalidation
+async function getManufacturerData(slug: string) {
+  return unstable_cache(
+    async () => {
+      const manufacturer = await getManufacturerBySlug(slug);
+      if (!manufacturer) return null;
+
+      const yachts = await getYachtsByManufacturerId(manufacturer.id);
+
+      return { manufacturer, yachts };
+    },
+    [`manufacturer:${slug}`],
+    { tags: [`manufacturer:${slug}`, "manufacturers"], revalidate: 3600 }
+  )();
+}
 
 interface ManufacturerPageProps {
   params: Promise<{ slug: string }>;
@@ -30,24 +47,20 @@ export async function generateMetadata({
   params,
 }: ManufacturerPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const manufacturer = await getManufacturerBySlug(slug);
+  const data = await getManufacturerData(slug);
 
-  if (!manufacturer) {
+  if (!data || !data.manufacturer) {
     return {
       title: "Manufacturer Not Found",
       description: "The requested sailing yacht manufacturer could not be found.",
     };
   }
 
+  const manufacturer = data.manufacturer;
   const title = `${manufacturer.name} Yachts | Models & Specs`;
   const description = manufacturer.description
     ? manufacturer.description
     : `Browse ${manufacturer.name} sailing yachts, model specs, and builder information${manufacturer.country ? ` from ${manufacturer.country}` : ""}${manufacturer.foundedYear ? ` since ${manufacturer.foundedYear}` : ""}.`;
-  const ogImage = buildOgImageUrl({
-    title: `${manufacturer.name} Yachts`,
-    description: manufacturer.country || "Sailing yacht manufacturer",
-    length: `${manufacturer.yachtCount} models`,
-  });
 
   return {
     title,
@@ -65,13 +78,13 @@ export async function generateMetadata({
       url: getSiteUrl(`/manufacturers/${slug}`),
       type: "website",
       siteName: "Sailing Yachts Database",
-      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
+      images: [{ url: getSiteUrl("/api/og"), width: 1200, height: 630, alt: title }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [ogImage],
+      images: [getSiteUrl("/api/og")],
     },
     alternates: {
       canonical: getSiteUrl(`/manufacturers/${slug}`),
@@ -83,13 +96,13 @@ export default async function ManufacturerPage({
   params,
 }: ManufacturerPageProps) {
   const { slug } = await params;
-  const manufacturer = await getManufacturerBySlug(slug);
+  const data = await getManufacturerData(slug);
 
-  if (!manufacturer) {
+  if (!data || !data.manufacturer) {
     notFound();
   }
 
-  const yachts = await getYachtsByManufacturerId(manufacturer.id);
+  const { manufacturer, yachts } = data;
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Home", path: "/" },

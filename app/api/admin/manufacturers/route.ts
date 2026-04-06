@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { ensureSchema, pool } from '@/lib/db'
 import { validate, createManufacturerSchema, updateManufacturerSchema } from '@/lib/validations'
 import { revalidateTag } from 'next/cache'
+import { slugify } from '@/lib/utils/slugify'
 
 function mapManufacturer(row: any) {
   return {
@@ -86,7 +87,12 @@ export async function POST(request: Request) {
       ]
     )
     const manufacturer = mapManufacturer(result.rows[0])
+    // Revalidate manufacturer list and detail cache
     revalidateTag('manufacturers');
+    if (manufacturer.name) {
+      const slug = slugify(manufacturer.name)
+      revalidateTag(`manufacturer:${slug}`)
+    }
     return NextResponse.json({ manufacturer }, { status: 201 })
   } catch (error) {
     console.error('Failed to create manufacturer:', error)

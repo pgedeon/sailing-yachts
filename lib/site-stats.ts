@@ -1,5 +1,6 @@
 import { db, yachtModels, manufacturers } from "@/lib/db";
 import { sql, count } from "drizzle-orm";
+import { buildSafeQuery } from "./build-safe";
 
 export interface SiteStats {
   yachtCount: number;
@@ -11,6 +12,12 @@ let cachedStats: SiteStats | null = null;
 let cachedAt = 0;
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
+const FALLBACK_STATS: SiteStats = {
+  yachtCount: 0,
+  manufacturerCount: 0,
+  lastUpdated: new Date().toISOString(),
+};
+
 /**
  * Get live site statistics from the database.
  * Results are cached in-memory for 5 minutes to avoid hammering the DB on every page load.
@@ -21,20 +28,18 @@ export async function getSiteStats(): Promise<SiteStats> {
     return cachedStats;
   }
 
-  const [yachtResult, mfrResult] = await Promise.all([
-    db
-      .select({ count: count() })
-      .from(yachtModels),
-    db
-      .select({ count: count() })
-      .from(manufacturers),
-  ]);
+  const stats = await buildSafeQuery(async () => {
+    const [yachtResult, mfrResult] = await Promise.all([
+      db.select({ count: count() }).from(yachtModels),
+      db.select({ count: count() }).from(manufacturers),
+    ]);
 
-  const stats: SiteStats = {
-    yachtCount: Number(yachtResult[0]?.count ?? 0),
-    manufacturerCount: Number(mfrResult[0]?.count ?? 0),
-    lastUpdated: new Date().toISOString(),
-  };
+    return {
+      yachtCount: Number(yachtResult[0]?.count ?? 0),
+      manufacturerCount: Number(mfrResult[0]?.count ?? 0),
+      lastUpdated: new Date().toISOString(),
+    } as SiteStats;
+  }, FALLBACK_STATS);
 
   cachedStats = stats;
   cachedAt = now;
