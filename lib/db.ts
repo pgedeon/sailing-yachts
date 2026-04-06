@@ -10,14 +10,22 @@ let schemaPromise: Promise<void> | null = null;
 function getDatabaseUrl() {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {
-    throw new Error("DATABASE_URL environment variable is required");
+    // During build time (e.g., Vercel preview builds), DATABASE_URL may not be available
+    // This is okay for build - runtime will have DATABASE_URL
+    return null;
   }
+  return connectionString;
   return connectionString;
 }
 
 function getDb() {
   if (!dbInstance) {
-    const sql = neon(getDatabaseUrl());
+    const connectionString = getDatabaseUrl();
+    if (!connectionString) {
+      // During build, return null - will be resolved at runtime
+      return null as any;
+    }
+    const sql = neon(connectionString);
     dbInstance = drizzle(sql, { schema });
   }
   return dbInstance;
@@ -25,8 +33,13 @@ function getDb() {
 
 function getPool() {
   if (!poolInstance) {
+    const connectionString = getDatabaseUrl();
+    if (!connectionString) {
+      // During build, return null - will be resolved at runtime
+      return null as any;
+    }
     poolInstance = new Pool({
-      connectionString: getDatabaseUrl(),
+      connectionString,
       max: 10,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000,
@@ -40,6 +53,9 @@ export const db = new Proxy({}, {
   get(_, prop: string | symbol) {
     if (typeof prop === "symbol") return undefined;
     const instance = getDb() as any;
+    if (!instance) {
+      throw new Error("Cannot access database during build (DATABASE_URL is not set)");
+    }
     const value = instance[prop];
     if (typeof value === "function") {
       return (...args: any[]) => value.apply(instance, args);
@@ -52,6 +68,9 @@ export const pool = new Proxy({}, {
   get(_, prop: string | symbol) {
     if (typeof prop === "symbol") return undefined;
     const instance = getPool() as any;
+    if (!instance) {
+      throw new Error("Cannot access database during build (DATABASE_URL is not set)");
+    }
     const value = instance[prop];
     if (typeof value === "function") {
       return (...args: any[]) => value.apply(instance, args);
