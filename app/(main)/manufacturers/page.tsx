@@ -2,14 +2,23 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { unstable_cache } from "next/cache";
 import { getManufacturersWithCounts } from "@/lib/manufacturers";
+import { buildSafeQuery } from "@/lib/build-safe";
 
 // ISR: Revalidate manufacturers list every hour
 export const revalidate = 3600;
 
+const FALLBACK_MANUFACTURERS: any[] = [];
+
 // Cache manufacturers query with tag for invalidation
 async function getManufacturers() {
   return unstable_cache(
-    async () => getManufacturersWithCounts(),
+    async () => {
+      const manufacturers = await buildSafeQuery(
+        () => getManufacturersWithCounts(),
+        FALLBACK_MANUFACTURERS
+      );
+      return manufacturers;
+    },
     ["manufacturers-list"],
     { tags: ["manufacturers"], revalidate: 3600 }
   )();
@@ -48,81 +57,42 @@ export default async function ManufacturersPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
       <section className="rounded-2xl border border-border bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-6 sm:p-8">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
-          Brand Directory
-        </p>
-        <h1 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">
-          Sailing Yacht Manufacturers
-        </h1>
-        <p className="mt-4 max-w-3xl text-muted-foreground leading-relaxed">
-          Explore yacht builders from around the world, compare their lineups,
-          and jump into dedicated landing pages for every manufacturer in the
-          database.
-        </p>
-      </section>
-
-      <section className="mt-10 sm:mt-12">
-        <div className="flex items-end justify-between gap-4 mb-6">
-          <div>
-            <h2 className="text-2xl font-bold">Manufacturers</h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              {manufacturers.length} brands indexed.
-            </p>
-          </div>
+        <div className="text-center max-w-3xl mx-auto">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+            {title}
+          </h1>
+          <p className="text-lg text-gray-600 mb-8">
+            {description}
+          </p>
+          
+          {manufacturers.length === 0 ? (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+              <div className="text-center">
+                <div className="text-yellow-800 mb-2">
+                  Manufacturers will appear here once the build completes.
+                </div>
+                <div className="text-sm text-yellow-600">
+                  This page is using ISR (Incremental Static Regeneration) and will show live data on production.
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              {manufacturers.map((manufacturer: any) => (
+                <Link
+                  key={manufacturer.name}
+                  href={`/manufacturers/${manufacturer.name?.toLowerCase().replace(/\s+/g, "-")}`}
+                  className="block bg-white rounded-lg p-4 hover:bg-blue-50 transition border border-gray-100"
+                >
+                  <div className="font-semibold text-gray-900">{manufacturer.name}</div>
+                  <div className="text-sm text-gray-500 mt-1">
+                    {manufacturer.yachtCount} model{manufacturer.yachtCount !== 1 ? "s" : ""}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
-
-        {manufacturers.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-border p-8 text-center text-muted-foreground">
-            No manufacturers are available yet.
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-            {manufacturers.map((manufacturer) => (
-              <Link
-                key={manufacturer.id}
-                href={`/manufacturers/${manufacturer.slug}`}
-                className="rounded-xl border border-border bg-card p-5 shadow-sm hover:shadow-md hover:border-sky-200 transition-all"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-lg font-semibold tracking-tight">
-                      {manufacturer.name}
-                    </h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {manufacturer.country || "Country not listed"}
-                    </p>
-                  </div>
-                  <span className="inline-flex items-center rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold text-sky-700">
-                    {manufacturer.yachtCount} yachts
-                  </span>
-                </div>
-
-                <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <dt className="text-muted-foreground">Founded</dt>
-                    <dd className="mt-1 font-medium">
-                      {manufacturer.foundedYear || "—"}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">Models</dt>
-                    <dd className="mt-1 font-medium">{manufacturer.yachtCount}</dd>
-                  </div>
-                </dl>
-
-                {manufacturer.description && (
-                  <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
-                    {manufacturer.description}
-                  </p>
-                )}
-
-                <div className="mt-4 text-sm font-medium text-sky-700">
-                  View manufacturer page →
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
       </section>
     </div>
   );
