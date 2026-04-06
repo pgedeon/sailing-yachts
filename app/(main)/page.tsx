@@ -54,12 +54,9 @@ async function getTopManufacturers() {
   )();
 }
 
-// Fetch site stats for use in metadata and page content
-const statsPromise = getSiteStats();
-
 // Generate metadata with live yacht count
 export async function generateMetadata(): Promise<Metadata> {
-  const stats = await statsPromise;
+  const stats = await getSiteStats();
   const yachtPhrase = formatYachtPhrase(stats);
 
   return {
@@ -103,7 +100,7 @@ export default async function Home() {
   const [featuredYachts, topManufacturers, stats] = await Promise.all([
     getFeaturedYachts(),
     getTopManufacturers(),
-    statsPromise,
+    getSiteStats(),
   ]);
   const yachtPhrase = formatYachtPhrase(stats);
 
