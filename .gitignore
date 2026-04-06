@@ -10,3 +10,4 @@ out
 # 1775156318
 test-results/
 tsconfig.tsbuildinfo
+.env*.local
