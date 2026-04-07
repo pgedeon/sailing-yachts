@@ -1,5 +1,5 @@
-import { db, yachtModels, manufacturers } from "@/lib/db";
-import { eq, or } from "drizzle-orm";
+import { db, yachtModels, manufacturers, images } from "@/lib/db";
+import { eq, or, and } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
 
 export interface YachtComparisonData {
@@ -34,7 +34,8 @@ async function getYachtsBySlugsUncached(
   slugA: string,
   slugB: string
 ): Promise<{ yachtA: YachtComparisonData | null; yachtB: YachtComparisonData | null }> {
-  const results = await db
+  // Query yacht models with slugs
+  const yachtData = await db
     .select({
       id: yachtModels.id,
       manufacturer: manufacturers.name,
@@ -65,8 +66,15 @@ async function getYachtsBySlugsUncached(
     .leftJoin(manufacturers, eq(yachtModels.manufacturerId, manufacturers.id))
     .where(or(eq(yachtModels.slug, slugA), eq(yachtModels.slug, slugB)));
 
-  const yachtA = results.find((y: YachtComparisonData) => y.slug === slugA) || null;
-  const yachtB = results.find((y: YachtComparisonData) => y.slug === slugB) || null;
+  console.log(`[canonical-compare] Query returned ${yachtData.length} yachts for slugs: ${slugA}, ${slugB}`);
+  if (yachtData.length > 0) {
+    console.log(`[canonical-compare] First yacht slug: ${yachtData[0].slug}, manufacturer: ${yachtData[0].manufacturer}`);
+  }
+
+  const yachtA = yachtData.find((y: YachtComparisonData) => y.slug === slugA) || null;
+  const yachtB = yachtData.find((y: YachtComparisonData) => y.slug === slugB) || null;
+
+  console.log(`[canonical-compare] yachtA found: ${!!yachtA}, yachtB found: ${!!yachtB}`);
 
   return { yachtA, yachtB };
 }
@@ -79,6 +87,27 @@ export async function getYachtsBySlugs(
     async () => getYachtsBySlugsUncached(slugA, slugB),
     [`compare-canonical-${slugA}-${slugB}`],
     { tags: ["yachts"], revalidate: 3600 }
+  )();
+}
+
+export async function getPrimaryImage(slug: string): Promise<string | null> {
+  return unstable_cache(
+    async () => {
+      const result = await db
+        .select({ url: images.url })
+        .from(images)
+        .where(
+          and(
+            eq(images.yachtModelId, db.select({ id: yachtModels.id }).from(yachtModels).where(eq(yachtModels.slug, slug))),
+            eq(images.isPrimary, true)
+          )
+        )
+        .limit(1);
+
+      return result[0]?.url || null;
+    },
+    [`primary-image-${slug}`],
+    { tags: ["images"], revalidate: 3600 }
   )();
 }
 
