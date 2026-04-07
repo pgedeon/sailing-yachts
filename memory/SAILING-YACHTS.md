@@ -1,5 +1,48 @@
 # Sailing Yachts — Session Notes
 
+## 2026-04-07: P6.3 Programmatic Long-Tail Landing Pages (Issue #80)
+
+### Issue #80: Programmatic long-tail landing pages
+- **Status**: ✅ Complete
+- **PR**: #88 (merged)
+
+### What was implemented
+1. Created `/data/landing-pages.ts` with 5 high-intent landing page definitions:
+   - /best/40-foot-cruising-sailboats
+   - /best/bluewater-sailboats-under-45-feet
+   - /best/liveaboard-sailboats-with-3-cabins
+   - /best/performance-cruisers-under-35-feet
+   - /best/family-cruisers-3-cabins
+2. Created `/lib/landing-pages.ts` service to fetch matching yachts from DB with filter criteria
+3. Implemented `/best/[slug]` dynamic route with ISR (6h revalidation)
+4. Added `generateStaticParams` for SSG with known slugs
+5. Extended `lib/seo.ts` with `generateCollectionPageJsonLd` function
+6. Each page includes unique intro copy, H1, meta description, and canonical tags
+7. CollectionPage, BreadcrumbList, and Product JSON-LD for rich search results
+8. Related categories cross-linking for internal navigation
+9. Added Playwright tests for landing pages
+
+### Verification
+- ✅ Typecheck: PASS
+- ✅ Build: PASS
+- ✅ All critical pages: OK (/, /yachts, /search, /compare)
+- ✅ API: OK (201 yachts)
+- ✅ Landing pages: OK (all 5 pages load: 40ft cruisers, bluewater, liveaboard, performance, family)
+- ✅ Browser console: No JS errors on /best/* or /yachts
+- ✅ JSON-LD: CollectionPage, BreadcrumbList, and Product schemas present
+- ✅ Yacht cards render with key specs (LOA, cabins, displacement)
+- ✅ Related categories section renders and links correctly
+
+### Next recommended task
+Continue with Phase 6 remaining items in priority order:
+- P6.4: Canonical X vs Y comparison pages (Issue #81)
+- P6.5: Schema enrichment sweep (Issue #82)
+- P6.6: Split sitemaps + image sitemap (Issue #83)
+- P6.7: Internal linking modules (Issue #84)
+- P6.8: Thin-page governance (Issue #85)
+
+---
+
 ## 2026-04-04: AggregateRating JSON-LD + Bug Fixes
 
 ### Issue #65: Add AggregateRating to yacht JSON-LD
