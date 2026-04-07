@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getYachtsBySlugs, generateComparisonIntro, generateComparisonMetadata, type YachtComparisonData } from "@/lib/compare-canonical";
+import { getYachtsBySlugs, generateComparisonIntro, generateComparisonMetadata, getPrimaryImage, type YachtComparisonData } from "@/lib/compare-canonical";
 import { getSiteUrl, generateBreadcrumbJsonLd, generateYachtJsonLd } from "@/lib/seo";
 import { PriceTierBadge } from "@/app/components/PriceTierBadge";
 import { calculatePriceTier } from "@/lib/price-tier";
-import { unstable_cache } from "next/cache";
-import { pool } from "@/lib/db";
 
 // ISR: Revalidate comparison pages every 6 hours
 export const revalidate = 21600;
@@ -589,18 +587,4 @@ export default async function CanonicalComparePage({
       </section>
     </>
   );
-}
-
-async function getPrimaryImage(slug: string): Promise<string | null> {
-  return unstable_cache(
-    async () => {
-      const result = await pool.query(
-        `SELECT url FROM images WHERE yacht_model_id = (SELECT id FROM yacht_models WHERE slug = $1) AND is_primary = true LIMIT 1`,
-        [slug]
-      );
-      return result.rows[0]?.url || null;
-    },
-    [`primary-image-${slug}`],
-    { tags: ["images"], revalidate: 3600 }
-  )();
 }
