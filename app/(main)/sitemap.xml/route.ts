@@ -2,6 +2,7 @@ import { unstable_cache } from "next/cache";
 import { db, yachtModels, manufacturers } from "@/lib/db";
 import { isNotNull } from "drizzle-orm";
 import { slugify } from "@/lib/utils/slugify";
+import { pool } from "@/lib/db";
 
 // ISR: Revalidate sitemap every hour
 export const revalidate = 3600;
@@ -88,6 +89,30 @@ async function getSitemapEntries(): Promise<SitemapEntry[]> {
             changefreq: "weekly",
             priority: "0.6",
           });
+        }
+      }
+
+      // Canonical comparison pages (subset of popular pairs)
+      // We limit to top yachts by ID to keep sitemap manageable
+      const topYachtIds = await pool.query(
+        `SELECT id, slug FROM yacht_models WHERE id <= 50 ORDER BY id`
+      );
+      
+      const topYachts = topYachtIds.rows as Array<{ id: number; slug: string }>;
+      
+      // Generate comparison pairs for top 50 yachts
+      for (let i = 0; i < topYachts.length; i++) {
+        for (let j = i + 1; j < topYachts.length; j++) {
+          const yachtA = topYachts[i];
+          const yachtB = topYachts[j];
+          
+          if (yachtA.slug && yachtB.slug) {
+            entries.push({
+              loc: `${SITE_URL}/compare/${yachtA.slug}-vs-${yachtB.slug}`,
+              changefreq: "monthly",
+              priority: "0.5",
+            });
+          }
         }
       }
 
