@@ -215,6 +215,35 @@ export function generateBreadcrumbJsonLd(
 }
 
 /* ------------------------------------------------------------------ */
+/*  CollectionPage Structured Data                                      */
+/* ------------------------------------------------------------------ */
+
+export interface JsonLdCollectionPage {
+  "@context": "https://schema.org";
+  "@type": "CollectionPage";
+  name: string;
+  description: string;
+  url: string;
+  numberOfItems?: number;
+}
+
+export function generateCollectionPageJsonLd(params: {
+  name: string;
+  description: string;
+  url: string;
+  itemCount?: number;
+}): JsonLdCollectionPage {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: params.name,
+    description: params.description,
+    url: params.url,
+    numberOfItems: params.itemCount,
+  };
+}
+
+/* ------------------------------------------------------------------ */
 /*  Page-level metadata helpers                                       */
 /* ------------------------------------------------------------------ */
 
@@ -378,7 +407,7 @@ export function generateFaqJsonLd(yacht: {
   if (yacht.displacement) {
     questions.push({
       "@type": "Question",
-      name: `How much does the ${fullName} weigh?`,
+      name: `How much does ${fullName} weigh?`,
       acceptedAnswer: {
         "@type": "Answer",
         text: `The ${fullName} has a displacement of ${yacht.displacement.toLocaleString()} kg (${(yacht.displacement * 2.20462).toLocaleString(undefined, {maximumFractionDigits: 0})} lbs).`,
@@ -389,7 +418,7 @@ export function generateFaqJsonLd(yacht: {
   if (yacht.lengthOverall) {
     questions.push({
       "@type": "Question",
-      name: `How long is the ${fullName}?`,
+      name: `How long is ${fullName}?`,
       acceptedAnswer: {
         "@type": "Answer",
         text: `The ${fullName} has a length overall (LOA) of ${yacht.lengthOverall} m (${(yacht.lengthOverall * 3.28084).toFixed(1)} ft).`,
@@ -400,7 +429,7 @@ export function generateFaqJsonLd(yacht: {
   if (yacht.draft) {
     questions.push({
       "@type": "Question",
-      name: `What is the draft of the ${fullName}?`,
+      name: `What is the draft of ${fullName}?`,
       acceptedAnswer: {
         "@type": "Answer",
         text: `The ${fullName} has a draft of ${yacht.draft} m (${(yacht.draft * 3.28084).toFixed(1)} ft).`,
@@ -411,7 +440,7 @@ export function generateFaqJsonLd(yacht: {
   if (yacht.cabins) {
     questions.push({
       "@type": "Question",
-      name: `How many cabins does the ${fullName} have?`,
+      name: `How many cabins does ${fullName} have?`,
       acceptedAnswer: {
         "@type": "Answer",
         text: `The ${fullName} has ${yacht.cabins} cabin${yacht.cabins > 1 ? "s" : ""}.`,
