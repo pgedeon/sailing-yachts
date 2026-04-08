@@ -5,6 +5,7 @@ import { unstable_cache } from "next/cache";
 
 import {
   generateBreadcrumbJsonLd,
+  generateCollectionPageJsonLd,
   getSiteUrl,
 } from "@/lib/seo";
 import {
@@ -110,6 +111,13 @@ export default async function ManufacturerPage({
     { name: manufacturer.name },
   ]);
 
+  const collectionJsonLd = generateCollectionPageJsonLd({
+    name: `${manufacturer.name} Yachts`,
+    description: manufacturer.description || `Browse ${manufacturer.name} sailing yachts, model specs, and builder information.`,
+    url: getSiteUrl(`/manufacturers/${slug}`),
+    itemCount: yachts.length,
+  });
+
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -129,6 +137,10 @@ export default async function ManufacturerPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
       />
       <script
         type="application/ld+json"
