@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { generateBreadcrumbJsonLd, getSiteUrl } from "@/lib/seo";
 import { SearchClient } from "./SearchClient";
 
 // Removed force-dynamic - this page is a client component shell
@@ -16,5 +17,18 @@ export const metadata: Metadata = {
 };
 
 export default function SearchPage() {
-  return <SearchClient />;
+  const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Search" },
+  ]);
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <SearchClient />
+    </>
+  );
 }
