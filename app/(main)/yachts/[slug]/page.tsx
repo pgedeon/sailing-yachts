@@ -7,6 +7,7 @@ import {
   generateBreadcrumbJsonLd,
   generateFaqJsonLd,
   getSiteUrl,
+  generateImageObjectJsonLd,
 } from "@/lib/seo";
 import { getYachtDetailData, getPrimaryImage } from "@/lib/yachts";
 import YachtDetailClient from "./YachtDetailClient";
@@ -135,6 +136,15 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
     { name: `${manufacturerName} ${yachtData.modelName}`, path: `/yachts/${slug}` },
   ]);
 
+  // ImageObject structured data for primary image
+  const imageObjectJsonLd = primaryImage?.url
+    ? generateImageObjectJsonLd({
+        url: primaryImage.url,
+        name: `${manufacturerName} ${yachtData.modelName}`,
+        description: yachtData.description ?? `Photo of ${manufacturerName} ${yachtData.modelName} sailing yacht.`,
+      })
+    : null;
+
   // FAQ structured data
   const faqJsonLd = generateFaqJsonLd({
     manufacturer: manufacturerName,
@@ -160,6 +170,12 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
+      {imageObjectJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(imageObjectJsonLd) }}
         />
       )}
       <YachtDetailClient />

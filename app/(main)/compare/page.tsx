@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { generateCompareMetadata } from "@/lib/seo";
+import { generateCompareMetadata, generateBreadcrumbJsonLd, getSiteUrl } from "@/lib/seo";
 import { CompareClient } from "./CompareClient";
 
 // Removed force-dynamic - this page is a client component shell
@@ -32,5 +32,19 @@ export default async function ComparePage({
         .map((id) => parseInt(id.trim(), 10))
         .filter((id) => !isNaN(id))
     : [];
-  return <CompareClient initialIds={initialIds} />;
+
+  const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Compare Yachts" },
+  ]);
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <CompareClient initialIds={initialIds} />
+    </>
+  );
 }
