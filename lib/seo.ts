@@ -474,3 +474,76 @@ export function generateSiteNavigationJsonLd(navItems: Array<{name: string; path
     })),
   };
 }
+
+/* ------------------------------------------------------------------ */
+/*  ImageObject Structured Data                                       */
+/* ------------------------------------------------------------------ */
+
+export interface JsonLdImageObject {
+  "@context": "https://schema.org";
+  "@type": "ImageObject";
+  contentUrl: string;
+  name?: string;
+  description?: string;
+  width?: number;
+  height?: number;
+  creditText?: string;
+}
+
+export function generateImageObjectJsonLd(params: {
+  url: string;
+  name?: string;
+  description?: string;
+  width?: number;
+  height?: number;
+  creditText?: string;
+}): JsonLdImageObject {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ImageObject",
+    contentUrl: params.url,
+    ...(params.name ? { name: params.name } : {}),
+    ...(params.description ? { description: params.description } : {}),
+    ...(params.width ? { width: params.width } : {}),
+    ...(params.height ? { height: params.height } : {}),
+    ...(params.creditText ? { creditText: params.creditText } : {}),
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/*  ItemList for browse/list pages                                    */
+/* ------------------------------------------------------------------ */
+
+export interface JsonLdItemList {
+  "@context": "https://schema.org";
+  "@type": "ItemList";
+  name: string;
+  description?: string;
+  numberOfItems?: number;
+  itemListElement: Array<{
+    "@type": "ListItem";
+    position: number;
+    name: string;
+    url: string;
+  }>;
+}
+
+export function generateItemListJsonLd(params: {
+  name: string;
+  description?: string;
+  items: Array<{ name: string; url: string }>;
+}): JsonLdItemList {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: params.name,
+    ...(params.description ? { description: params.description } : {}),
+    numberOfItems: params.items.length,
+    itemListElement: params.items.map((item, idx) => ({
+      "@type": "ListItem",
+      position: idx + 1,
+      name: item.name,
+      url: item.url.startsWith("http") ? item.url : getSiteUrl(item.url),
+    })),
+  };
+}
