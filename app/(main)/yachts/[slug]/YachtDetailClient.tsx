@@ -10,6 +10,9 @@ import { PriceTierDetail } from "@/app/components/PriceTierBadge";
 import { calculatePriceTier } from "@/lib/price-tier";
 import { slugify } from "@/lib/utils/slugify";
 import { SimilarYachts } from "./SimilarYachts";
+import { SameSizeAlternatives } from "./SameSizeAlternatives";
+import { RelatedManufacturers } from "./RelatedManufacturers";
+import { RelatedGuides } from "./RelatedGuides";
 import { RelatedArticles } from "./RelatedArticles";
 import AffiliateRecommendations from "@/app/components/AffiliateRecommendations";
 import YachtImage from "@/app/components/yacht/YachtImage";
@@ -26,6 +29,7 @@ interface SpecGroup {
 interface YachtData {
   id: number;
   manufacturer: string;
+  manufacturerId: number | null;
   modelName: string;
   year: number;
   slug: string;
@@ -456,9 +460,41 @@ export default function YachtDetailClient() {
         </section>
       )}
 
-      {/* Similar Yachts */}
+      {/* INTERNAL LINKING MODULES (P6.7) */}
+
+      {/* 1. Compare with similar boats - already implemented as SimilarYachts */}
       <div className="similar-yachts-section no-print">
         <SimilarYachts slug={slug} />
+      </div>
+
+      {/* 2. Same size alternatives - NEW */}
+      {yacht.lengthOverall && (
+        <div className="same-size-alternatives-section no-print">
+          <SameSizeAlternatives
+            targetLength={yacht.lengthOverall}
+            currentYachtId={yacht.id}
+          />
+        </div>
+      )}
+
+      {/* 3. More from this manufacturer - NEW */}
+      {yacht.manufacturerId && (
+        <div className="related-manufacturers-section no-print">
+          <RelatedManufacturers
+            manufacturerId={yacht.manufacturerId}
+            manufacturerSlug={slugify(yacht.manufacturer)}
+            currentYachtId={yacht.id}
+          />
+        </div>
+      )}
+
+      {/* 4. Related guides - NEW (Phase 7 placeholder) */}
+      <div className="related-guides-section no-print">
+        <RelatedGuides
+          manufacturer={yacht.manufacturer}
+          lengthOverall={yacht.lengthOverall}
+          rigType={yacht.rigType}
+        />
       </div>
 
       {/* Related Sailing Articles from sailboats.fr */}

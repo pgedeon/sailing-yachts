@@ -33,6 +33,7 @@ export async function GET(
 
         const response = {
           id: yacht.id,
+          manufacturerId: yacht.manufacturerId,
           manufacturer: manufacturer,
           modelName: yacht.modelName,
           year: yacht.year,
@@ -61,8 +62,8 @@ export async function GET(
           sourceUrl: yacht.sourceUrl,
           sourceAttribution: yacht.sourceAttribution,
           specsByGroup,
-          images: images,
-          reviews: reviews,
+          images,
+          reviews,
         };
 
         return response;
