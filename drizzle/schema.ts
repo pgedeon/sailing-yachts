@@ -197,6 +197,46 @@ export const newsletterSubscribers = pgTable(
   }),
 );
 
+// Search intents for P6.9: Search intent pages from real usage
+export const searchIntents = pgTable(
+  "search_intents",
+  {
+    id: serial("id").primaryKey(),
+    slug: varchar("slug", { length: 255 }).notNull().unique(),
+    title: varchar("title", { length: 500 }).notNull(),
+    metaDescription: varchar("meta_description", { length: 500 }),
+    intro: text("intro").notNull(),
+    icon: varchar("icon", { length: 50 }).default("🔍"),
+    filters: jsonb("filters").$type<{
+      lengthMin?: number;
+      lengthMax?: number;
+      cabinsMin?: number;
+      cabinsMax?: number;
+      keelType?: string;
+      rigType?: string;
+      hullMaterial?: string;
+      displacementMin?: number;
+      displacementMax?: number;
+    }>(),
+    maxResults: integer("max_results").default(12),
+    category: varchar("category", { length: 100 }),
+    isPublished: boolean("is_published").default(false),
+    searchQuery: varchar("search_query", { length: 500 }),
+    searchCount: integer("search_count").default(0),
+    lastSearchedAt: timestamp("last_searched_at"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    idxSlug: uniqueIndex("idx_search_intents_slug").on(table.slug),
+    idxPublished: index("idx_search_intents_published").on(table.isPublished),
+    idxSearchCount: index("idx_search_intents_search_count").on(
+      table.searchCount,
+    ),
+    idxCategory: index("idx_search_intents_category").on(table.category),
+  }),
+);
+
 // ---------- Zod Schemas for validation ----------
 
 export const insertManufacturerSchema = createInsertSchema(manufacturers);
@@ -219,3 +259,6 @@ export const selectReviewSchema = createSelectSchema(reviews);
 
 export const insertNewsletterSubscriberSchema = createInsertSchema(newsletterSubscribers);
 export const selectNewsletterSubscriberSchema = createSelectSchema(newsletterSubscribers);
+
+export const insertSearchIntentSchema = createInsertSchema(searchIntents);
+export const selectSearchIntentSchema = createSelectSchema(searchIntents);
