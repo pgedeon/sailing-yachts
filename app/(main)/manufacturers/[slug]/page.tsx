@@ -12,6 +12,7 @@ import {
   getManufacturerBySlug,
   getYachtsByManufacturerId,
 } from "@/lib/manufacturers";
+import { ManufacturerComparisons } from "./ManufacturerComparisons";
 
 // ISR: Revalidate manufacturer detail pages every hour
 export const revalidate = 3600;
@@ -352,6 +353,9 @@ export default async function ManufacturerPage({
             </div>
           )}
         </section>
+
+        {/* INTERNAL LINKING MODULE (P6.7) */}
+        <ManufacturerComparisons manufacturerName={manufacturer.name} yachts={yachts} />
       </div>
     </>
   );
