@@ -301,6 +301,149 @@ export const BUYING_GUIDE_TEMPLATES: BuyingGuideTemplate[] = [
     maxResults: 15,
     icon: "⚖️",
   },
+  {
+    id: "monohull-vs-catamaran-explained",
+    type: "x-vs-y-explained",
+    title: "Monohull vs Catamaran: Explained",
+    description:
+      "A detailed comparison of monohull sailboats and catamarans to help you decide which is right for your sailing style.",
+    intro: `The choice between monohull and catamaran is one of the most fundamental decisions in sailboat selection. Monohulls have been the traditional choice for centuries, offering familiar handling, upwind performance, and the romantic heeling experience. Catamarans provide stability, space, and speed, revolutionizing modern sailing. Understanding the key differences in design, performance, and livability will help you choose the right platform for your adventures.`,
+    faqs: [
+      {
+        question: "What are the main performance differences between monohulls and catamarans?",
+        answer:
+          "Monohulls generally point higher and sail faster upwind, especially in choppy conditions. Catamarans often sail faster on reaches and downwind, benefitting from less drag. Monohulls can self-right if capsized in most cases, while catamarans generally cannot. Monohulls heel, which can be uncomfortable but provides feedback; catamarans sail flat, which many find more comfortable.",
+      },
+      {
+        question: "Are catamarans harder to dock and maneuver than monohulls?",
+        answer:
+          "Catamarans have twin engines spaced far apart, giving them excellent maneuverability in close quarters. They can spin in their own length and have powerful thrust from two props. Monohulls have a single prop and rely on rudder angle and prop walk for maneuvering. Both have learning curves, but many find catamarans easier to handle in tight spaces once you master the twin-engine technique.",
+      },
+      {
+        question: "How does space and comfort compare between monohulls and catamarans?",
+        answer:
+          "Catamarans offer significantly more interior space due to their wide beam. You get two hulls, a large saloon, and typically more deck space. This means more privacy (separate hulls), shallower draft for anchoring close to beaches, and level sailing. Monohulls have cozy, efficient layouts with good sea berths for offshore sailing but less overall living space and headroom.",
+      },
+      {
+        question: "Are catamarans more expensive to buy and maintain than monohulls?",
+        answer:
+          "Catamarans are typically more expensive to buy than equivalent monohulls due to more materials (two hulls, two engines, more surface area). Maintenance is also higher: two engines to service, two of many systems, and more bottom paint. However, marina fees can be challenging since many marinas charge by beam length, making wide catamarans expensive to dock.",
+      },
+      {
+        question: "Which is safer: monohull or catamaran?",
+        answer:
+          "Both can be extremely safe when designed and maintained properly. Monohulls have the advantage of self-righting in most capsize scenarios. Catamarans are extremely stable and rarely capsize, but if they do, they often stay inverted. Both types have completed safe ocean crossings. Safety ultimately comes down to the skipper's judgment, preparation, and seamanship skills rather than hull configuration.",
+      },
+      {
+        question: "What are the anchoring advantages of catamarans?",
+        answer:
+          "Catamarans have shallow draft (typically 3-5 feet) compared to monohulls (6-9 feet), allowing them to anchor much closer to beaches and in shallower water. This is a huge advantage in popular cruising areas where deep-water anchorages are crowded. The wide beam also provides a very stable platform at anchor, reducing rolling motion compared to monohulls.",
+      },
+    ],
+    filters: {
+      lengthMin: 8,
+      lengthMax: 15,
+    },
+    maxResults: 12,
+    icon: "⛵🐱",
+  },
+  {
+    id: "fin-keel-vs-wing-keel-explained",
+    type: "x-vs-y-explained",
+    title: "Fin Keel vs Wing Keel: Explained",
+    description:
+      "Understanding the differences between fin keels and wing keels for different sailing conditions and preferences.",
+    intro: `Keel design significantly affects a sailboat's performance, handling, and where you can sail. Fin keels are the most common configuration on modern sailboats, offering excellent upwind performance and directional stability. Wing keels provide a shallower draft alternative, allowing access to shallow cruising grounds while maintaining reasonable performance. The choice between these two designs often comes down to your sailing grounds and performance priorities.`,
+    faqs: [
+      {
+        question: "What is a fin keel and how does it perform?",
+        answer:
+          "A fin keel is a relatively narrow, deep keel that extends straight down from the hull. Fin keels offer excellent upwind performance, good tracking, and efficient hydrodynamics. They allow the boat to sail close to the wind and typically point higher than other keel types. The trade-off is deeper draft, which limits access to shallow anchorages and some harbors.",
+      },
+      {
+        question: "What is a wing keel and when would you choose one?",
+        answer:
+          "A wing keel has a horizontal wing or bulb at the bottom, often with a shallower depth than a traditional fin keel. Wing keels are designed to reduce draft while maintaining ballast weight and some performance benefits. They're ideal for sailors in areas with shallow waters, such as the Bahamas, Chesapeake Bay, or inland lakes, where a deep keel would be limiting.",
+      },
+      {
+        question: "How does performance compare between fin keels and wing keels?",
+        answer:
+          "Fin keels generally offer better upwind performance, higher pointing ability, and less drag. Wing keels sacrifice some upwind performance and pointing ability for reduced draft. The performance difference isn't dramatic for cruising sailors, but racers and performance-oriented sailors typically prefer fin keels for their superior windward performance.",
+      },
+      {
+        question: "Are wing keels better for shallow water cruising?",
+        answer:
+          "Absolutely. The primary advantage of wing keels is reduced draft, allowing you to anchor in shallower water and access harbors that deep-keel boats cannot. This opens up many popular cruising destinations like the Bahamas, Florida Keys, and parts of the Caribbean. If your sailing dreams involve shallow anchorages, a wing keel may be the right choice.",
+      },
+      {
+        question: "How do maintenance and repair considerations differ?",
+        answer:
+          "Both keel types require regular inspection for corrosion, loose bolts, and damage. Wing keels can be more complex to haul and block due to their shape, and some boatyards are less familiar with them. Fin keels are straightforward and universally understood. If groundings occur, wing keels can suffer damage to the wing structure that may be more challenging to repair than a simple fin keel.",
+      },
+      {
+        question: "What about handling and maneuverability?",
+        answer:
+          "Both keel types provide good directional stability when sailing. The differences are most noticeable when backing down or maneuvering in tight spaces. Wing keels may have different characteristics when backing due to their shape, but most sailors adapt quickly. For day-to-day handling under sail, the differences are minor for cruising sailors.",
+      },
+    ],
+    filters: {
+      lengthMin: 8,
+      lengthMax: 14,
+    },
+    maxResults: 10,
+    icon: "⚓🪽",
+  },
+  {
+    id: "cutter-vs-sloop-rig-explained",
+    type: "x-vs-y-explained",
+    title: "Cutter Rig vs Sloop Rig: Explained",
+    description:
+      "Comparing cutter and sloop rig configurations for different sailing styles and conditions.",
+    intro: `The choice between cutter and sloop rigs affects sail handling, versatility, and sailing performance. The sloop is the simplest and most common rig, with a single mast and two sails (mainsail and headsail). The cutter adds a second headsail (staysail) on an inner forestay, offering more flexibility and sail combinations. Understanding these configurations helps you choose a rig that matches your sailing style and crew size.`,
+    faqs: [
+      {
+        question: "What is a sloop rig?",
+        answer:
+          "A sloop rig is the most common sailboat configuration, featuring a single mast supporting a mainsail and a single headsail (usually a genoa or jib). Sloops are simple to set up, have fewer lines to manage, and offer excellent performance. With just two sails, sail handling is straightforward, making sloops popular for racing and coastal cruising.",
+      },
+      {
+        question: "What is a cutter rig?",
+        answer:
+          "A cutter rig features a mast set slightly further aft with two headsails: a larger outer headsail (yankee or genoa) and a smaller inner staysail. The staysail is set on an inner forestay and can be reefed or furled independently. This configuration offers more sail area options and better balance in a wider range of wind conditions.",
+      },
+      {
+        question: "What are the advantages of a sloop rig?",
+        answer:
+          "Sloops are simple with fewer sails to manage, making them ideal for shorthanded sailing. They have excellent performance, especially upwind, with less windage and drag. With fewer components, there's less maintenance and lower cost. Sloops are also easier to dock and handle in tight spaces due to the simpler mast setup.",
+      },
+      {
+        question: "What are the advantages of a cutter rig?",
+        answer:
+          "Cutters offer superior versatility with multiple sail combinations. In heavy weather, you can reef the genoa and keep the staysail flying for balanced performance. The staysail can be set on its own in light air or combined with other sails. Cutters also provide better balance in reaching conditions and are favored by many offshore cruisers for their adaptability.",
+      },
+      {
+        question: "Which rig is better for offshore cruising?",
+        answer:
+          "Many offshore cruisers prefer cutter rigs for their versatility. The ability to vary sail combinations for different wind conditions is valuable on long passages. The staysail provides a good heavy-weather sail option, and the rig can be balanced without relying on large overlapping headsails that can be challenging to handle short-handed.",
+      },
+      {
+        question: "Which rig is better for coastal and day sailing?",
+        answer:
+          "Sloops are often preferred for coastal and day sailing due to their simplicity. With just two sails to manage, you can spend more time enjoying the sail and less time managing the rig. Sloops also tend to have better light-wind performance with large overlapping headsails, which is common in coastal sailing conditions.",
+      },
+      {
+        question: "How do windward performance compare between the two?",
+        answer:
+          "Sloops typically have the edge in pure upwind performance, especially with large overlapping genoas. Cutters sacrifice some upwind pointing ability due to the mast position and multiple headsails, but this is rarely a concern for cruising sailors. Both can sail efficiently to windward; the difference is more noticeable in racing than cruising.",
+      },
+    ],
+    filters: {
+      lengthMin: 10,
+      lengthMax: 15,
+    },
+    maxResults: 10,
+    icon: "⛵🔺",
+  },
 ];
 
 /**
