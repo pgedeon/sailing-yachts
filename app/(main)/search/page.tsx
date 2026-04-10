@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
 import { generateBreadcrumbJsonLd, getSiteUrl } from "@/lib/seo";
 import { SearchClient } from "./SearchClient";
+import { shouldNoindexSearchPage } from "@/lib/thin-page-governance";
 
 // Removed force-dynamic - this page is a client component shell
 // No need for ISR since it's entirely client-rendered
 
+/**
+ * Search page metadata.
+ * Search results pages should be noindexed (user-specific queries).
+ */
 export const metadata: Metadata = {
   title: "Search Yachts — Sailing Yachts Database",
   description:
@@ -14,6 +19,9 @@ export const metadata: Metadata = {
     description:
       "Search and find sailing yachts by manufacturer, model, and specifications.",
   },
+  robots: shouldNoindexSearchPage()
+    ? { index: false, follow: false }
+    : { index: true, follow: true },
 };
 
 export default function SearchPage() {
