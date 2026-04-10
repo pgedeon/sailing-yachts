@@ -197,6 +197,35 @@ export const newsletterSubscribers = pgTable(
   }),
 );
 
+
+// ---------- Articles / Guides ----------
+
+export const articles = pgTable(
+  "articles",
+  {
+    id: serial("id").primaryKey(),
+    slug: varchar("slug", { length: 255 }).notNull().unique(),
+    title: varchar("title", { length: 500 }).notNull(),
+    excerpt: varchar("excerpt", { length: 1000 }),
+    content: text("content"),
+    contentMarkdown: text("content_markdown"),
+    category: varchar("category", { length: 100 }),
+    author: varchar("author", { length: 255 }),
+    authorTitle: varchar("author_title", { length: 255 }),
+    featuredImage: varchar("featured_image", { length: 500 }),
+    readingTimeMinutes: integer("reading_time_minutes"),
+    isPublished: boolean("is_published").default(false),
+    publishedAt: timestamp("published_at"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    idxSlug: uniqueIndex("idx_articles_slug").on(table.slug),
+    idxCategory: index("idx_articles_category").on(table.category),
+    idxPublished: index("idx_articles_published").on(table.isPublished),
+  }),
+);
+
 // ---------- Zod Schemas for validation ----------
 
 export const insertManufacturerSchema = createInsertSchema(manufacturers);
@@ -219,3 +248,6 @@ export const selectReviewSchema = createSelectSchema(reviews);
 
 export const insertNewsletterSubscriberSchema = createInsertSchema(newsletterSubscribers);
 export const selectNewsletterSubscriberSchema = createSelectSchema(newsletterSubscribers);
+
+export const insertArticleSchema = createInsertSchema(articles);
+export const selectArticleSchema = createSelectSchema(articles);
