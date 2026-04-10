@@ -212,6 +212,7 @@ export const articles = pgTable(
     authorTitle: varchar("author_title", { length: 255 }),
     featuredImage: varchar("featured_image", { length: 500 }),
     readingTimeMinutes: integer("reading_time_minutes"),
+    buyingGuideTemplateId: varchar("buying_guide_template_id", { length: 100 }),
     isPublished: boolean("is_published").default(false),
     publishedAt: timestamp("published_at"),
     createdAt: timestamp("created_at").defaultNow(),
