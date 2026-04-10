@@ -1,5 +1,5 @@
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://sailing-yachts.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://info.sailboats.fr";
 
 export const revalidate = 86400;
 

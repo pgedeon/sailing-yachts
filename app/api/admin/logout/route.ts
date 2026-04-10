@@ -11,5 +11,5 @@ export async function POST(request: Request) {
 }
 
 export async function GET() {
-  return NextResponse.redirect(new URL('/admin', new URL('https://sailing-yachts.vercel.app')), 302)
+  return NextResponse.redirect(new URL('/admin', new URL('https://info.sailboats.fr')), 302)
 }

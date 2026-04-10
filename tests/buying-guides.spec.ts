@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Buying Guides", () => {
-  const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || "https://sailing-yachts.vercel.app";
+  const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || "https://info.sailboats.fr";
 
   test.describe("/guides landing page", () => {
     test("should load and show guide cards", async ({ page }) => {

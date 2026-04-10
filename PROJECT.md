@@ -81,7 +81,7 @@ Sample data has been seeded:
 7. Implement export/import functionality for data management
 
 ## Deployment
-The application is deployed at: https://sailing-yachts.vercel.app/yachts
+The application is deployed at: https://info.sailboats.fr/yachts
 
 ### Environment Variables
 - `DATABASE_URL`: Neon PostgreSQL connection string (required)
@@ -227,7 +227,7 @@ Command: npx playwright test tests/admin.spec.ts --reporter=html --output=test-r
 
 **Date:** February 27, 2026  
 **Browser:** Chromium (Headless)  
-**Target URL:** https://sailing-yachts.vercel.app/admin  
+**Target URL:** https://info.sailboats.fr/admin  
 **Test File:** `tests/admin.spec.ts`  
 **Total Tests:** 15
 

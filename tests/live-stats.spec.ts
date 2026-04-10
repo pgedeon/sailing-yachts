@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'https://sailing-yachts.vercel.app';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'https://info.sailboats.fr';
 
 test.describe('Live Site Stats', () => {
   test.beforeEach(async ({ page }) => {

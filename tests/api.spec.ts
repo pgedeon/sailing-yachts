@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Public API v1 Endpoints', () => {
-  const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'https://sailing-yachts.vercel.app';
+  const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'https://info.sailboats.fr';
 
   test.describe('/api/v1/yachts', () => {
     test('should return valid yacht list with pagination', async ({ request }) => {

@@ -33,7 +33,7 @@ async function getManufacturers() {
 const title = "Sailing Yacht Manufacturers";
 const description =
   "Browse sailing yacht manufacturers, explore brand histories, and discover how many models each builder offers.";
-const ogImage = "https://sailing-yachts.vercel.app/api/og?title=Sailing%20Yacht%20Manufacturers&description=Browse%20builders%2C%20brands%2C%20and%20model%20counts&length=Brand%20directory";
+const ogImage = "https://info.sailboats.fr/api/og?title=Sailing%20Yacht%20Manufacturers&description=Browse%20builders%2C%20brands%2C%20and%20model%20counts&length=Brand%20directory";
 
 export const metadata: Metadata = {
   title,

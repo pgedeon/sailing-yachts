@@ -524,7 +524,7 @@ export default function YachtDetailClient() {
 
       {/* Print-only footer */}
       <div className="print-footer hidden" data-testid="print-footer">
-        Printed from sailing-yachts.vercel.app — {yacht.manufacturer} {yacht.modelName} ({yacht.year}) — {new Date().toLocaleDateString()}
+        Printed from info.sailboats.fr — {yacht.manufacturer} {yacht.modelName} ({yacht.year}) — {new Date().toLocaleDateString()}
       </div>
     </div>
   );

@@ -3,7 +3,7 @@
  * and JSON-LD structured data across the Sailing Yachts app.
  */
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://sailing-yachts.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://info.sailboats.fr";
 const SITE_NAME = "Sailing Yachts Database";
 
 export function getSiteUrl(path = ""): string {

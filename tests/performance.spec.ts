@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Performance Monitoring', () => {
-  const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'https://sailing-yachts.vercel.app';
+  const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'https://info.sailboats.fr';
 
   test.describe('/api/vitals endpoint', () => {
     test('POST should accept valid metric batches', async ({ request }) => {

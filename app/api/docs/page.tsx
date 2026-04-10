@@ -61,7 +61,7 @@ export default function ApiPage() {
         <div className="bg-gray-100 rounded-lg p-4 font-mono text-sm">
           <p className="mb-2">Try from your terminal:</p>
           <div className="bg-white p-3 rounded border">
-            <p>$ curl "https://sailing-yachts.vercel.app/api/v1/yachts?limit=3"</p>
+            <p>$ curl "https://info.sailboats.fr/api/v1/yachts?limit=3"</p>
           </div>
         </div>
       </div>

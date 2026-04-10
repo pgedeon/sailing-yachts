@@ -12,7 +12,7 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        baseURL: process.env.PLAYWRIGHT_BASE_URL || 'https://sailing-yachts.vercel.app',
+        baseURL: process.env.PLAYWRIGHT_BASE_URL || 'https://info.sailboats.fr',
         trace: 'on-first-retry',
         screenshot: 'only-on-failure',
         headless: true,

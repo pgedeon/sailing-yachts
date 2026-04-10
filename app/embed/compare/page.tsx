@@ -119,7 +119,7 @@ export default async function EmbedComparePage({
 }) {
   const params = await searchParams;
   const idsParam = params.ids;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sailing-yachts.vercel.app";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://info.sailboats.fr";
 
   if (!idsParam) {
     return (

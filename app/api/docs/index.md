@@ -4,7 +4,7 @@ The public API provides access to sailing yacht data for external applications. 
 
 ## Base URL
 ```
-https://sailing-yachts.vercel.app/api/v1
+https://info.sailboats.fr/api/v1
 ```
 
 ## Rate Limiting
@@ -62,7 +62,7 @@ List all yachts with pagination, filtering, and sorting.
 
 **Example:**
 ```bash
-curl "https://sailing-yachts.vercel.app/api/v1/yachts?sort=lengthOverall&order=desc&limit=10"
+curl "https://info.sailboats.fr/api/v1/yachts?sort=lengthOverall&order=desc&limit=10"
 ```
 
 ### GET /yachts/[slug]
@@ -73,7 +73,7 @@ Get single yacht by slug with manufacturer details, images, and reviews.
 
 **Example:**
 ```bash
-curl "https://sailing-yachts.vercel.app/api/v1/yachts/beneteau-oceanis-30-1"
+curl "https://info.sailboats.fr/api/v1/yachts/beneteau-oceanis-30-1"
 ```
 
 ### GET /manufacturers
@@ -85,7 +85,7 @@ List all manufacturers with yacht count.
 
 **Example:**
 ```bash
-curl "https://sailing-yachts.vercel.app/api/v1/manufacturers?country=France"
+curl "https://info.sailboats.fr/api/v1/manufacturers?country=France"
 ```
 
 ### GET /manufacturers/[id]
@@ -96,7 +96,7 @@ Get single manufacturer with all its yachts.
 
 **Example:**
 ```bash
-curl "https://sailing-yachts.vercel.app/api/v1/manufacturers/82"
+curl "https://info.sailboats.fr/api/v1/manufacturers/82"
 ```
 
 ### GET /search
@@ -108,7 +108,7 @@ Search yachts by name, manufacturer, or other fields.
 
 **Example:**
 ```bash
-curl "https://sailing-yachts.vercel.app/api/v1/search?q=oceanis&limit=5"
+curl "https://info.sailboats.fr/api/v1/search?q=oceanis&limit=5"
 ```
 
 ## Data Schema
@@ -179,15 +179,15 @@ All endpoints support cross-origin requests with appropriate headers:
 
 ### Find all Bavaria Yachts over 30 feet
 ```bash
-curl "https://sailing-yachts.vercel.app/api/v1/yachts?manufacturer=bavaria&lengthMin=10"
+curl "https://info.sailboats.fr/api/v1/yachts?manufacturer=bavaria&lengthMin=10"
 ```
 
 ### Search for catamarans
 ```bash
-curl "https://sailing-yachts.vercel.app/api/v1/search?q=catamaran"
+curl "https://info.sailboats.fr/api/v1/search?q=catamaran"
 ```
 
 ### Get manufacturer with all yachts
 ```bash
-curl "https://sailing-yachts.vercel.app/api/v1/manufacturers/57"
+curl "https://info.sailboats.fr/api/v1/manufacturers/57"
 ```

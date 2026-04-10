@@ -80,7 +80,7 @@ export async function GET(
     // Get base URL from environment or default
     const baseUrl = process.env.VERCEL_URL 
       ? `https://${process.env.VERCEL_URL}` 
-      : 'https://sailing-yachts.vercel.app';
+      : 'https://info.sailboats.fr';
 
     const affiliateLink = `${baseUrl}/manufacturers/${manufacturer.slug}?tag=pgedeon-20`;
 

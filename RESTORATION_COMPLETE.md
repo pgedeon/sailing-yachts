@@ -173,7 +173,7 @@ The application is ready for deployment to Vercel. All features are working:
 ```
 DATABASE_URL=postgresql://username:password@host:port/database?sslmode=require&channel_binding=require
 ADMIN_API_KEY=your-secure-random-key-here
-NEXT_PUBLIC_APP_URL=https://sailing-yachts.vercel.app
+NEXT_PUBLIC_APP_URL=https://info.sailboats.fr
 ```
 
 ## Verification Commands

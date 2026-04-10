@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Split Sitemap System", () => {
-  const BASE = process.env.PLAYWRIGHT_BASE_URL || "https://sailing-yachts.vercel.app";
+  const BASE = process.env.PLAYWRIGHT_BASE_URL || "https://info.sailboats.fr";
 
   test("sitemap index should be valid XML with sub-sitemaps", async ({ request }) => {
     const resp = await request.get(`${BASE}/sitemap.xml`);
@@ -132,7 +132,7 @@ test.describe("Split Sitemap System", () => {
 });
 
 test.describe("Sitemap XML Validity", () => {
-  const BASE = process.env.PLAYWRIGHT_BASE_URL || "https://sailing-yachts.vercel.app";
+  const BASE = process.env.PLAYWRIGHT_BASE_URL || "https://info.sailboats.fr";
 
   async function validateXmlStructure(request: any, url: string) {
     const resp = await request.get(url);

@@ -7,7 +7,7 @@ import { buildSafeQuery } from "@/lib/build-safe";
 export const revalidate = 3600;
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://sailing-yachts.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://info.sailboats.fr";
 
 const FALLBACK_FEED = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">

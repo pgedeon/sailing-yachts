@@ -2,7 +2,7 @@
 
 **Date:** February 27, 2026  
 **Browser:** Chromium (Headless)  
-**Target URL:** https://sailing-yachts.vercel.app/admin  
+**Target URL:** https://info.sailboats.fr/admin  
 **Test File:** `tests/admin.spec.ts`  
 **Total Tests:** 15
 

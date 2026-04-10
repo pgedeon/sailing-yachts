@@ -174,7 +174,7 @@ export async function GET(request: Request) {
             <span>•</span>
             <span>Reviews</span>
           </div>
-          <div style={{ fontWeight: 600 }}>sailing-yachts.vercel.app</div>
+          <div style={{ fontWeight: 600 }}>info.sailboats.fr</div>
         </div>
       </div>
     ),

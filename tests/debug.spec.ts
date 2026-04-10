@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'https://sailing-yachts.vercel.app';
+const BASE_URL = 'https://info.sailboats.fr';
 const ADMIN_USER = 'admin';
 const ADMIN_PASS = 'SailBoatAdmin!';
 
