@@ -1,8 +1,8 @@
 /**
  * Articles/Guides Data Service
  *
- * Manages editorial content for the guides platform.
- * Supports markdown content, categories, and SEO.
+ * Manages editorial content for guides platform.
+ * Supports markdown content, categories, buying guide templates, and SEO.
  */
 
 import { pool } from "@/lib/db";
@@ -20,6 +20,7 @@ export interface Article {
   authorTitle: string | null;
   featuredImage: string | null;
   readingTimeMinutes: number | null;
+  buyingGuideTemplateId: string | null;
   isPublished: boolean;
   publishedAt: Date | null;
   createdAt: Date;
@@ -42,6 +43,7 @@ const FALLBACK_ARTICLE: Article = {
   authorTitle: null,
   featuredImage: null,
   readingTimeMinutes: null,
+  buyingGuideTemplateId: null,
   isPublished: false,
   publishedAt: null,
   createdAt: new Date(),
@@ -79,6 +81,7 @@ export async function getArticleBySlug(
       authorTitle: row.author_title,
       featuredImage: row.featured_image,
       readingTimeMinutes: row.reading_time_minutes,
+      buyingGuideTemplateId: row.buying_guide_template_id || null,
       isPublished: row.is_published,
       publishedAt: row.published_at,
       createdAt: row.created_at,
@@ -110,6 +113,7 @@ export async function getAllPublishedArticles(): Promise<Article[]> {
       authorTitle: row.author_title,
       featuredImage: row.featured_image,
       readingTimeMinutes: row.reading_time_minutes,
+      buyingGuideTemplateId: row.buying_guide_template_id || null,
       isPublished: row.is_published,
       publishedAt: row.published_at,
       createdAt: row.created_at,
@@ -144,6 +148,7 @@ export async function getArticlesByCategory(
       authorTitle: row.author_title,
       featuredImage: row.featured_image,
       readingTimeMinutes: row.reading_time_minutes,
+      buyingGuideTemplateId: row.buying_guide_template_id || null,
       isPublished: row.is_published,
       publishedAt: row.published_at,
       createdAt: row.created_at,
@@ -208,12 +213,45 @@ export async function getRelatedArticles(
       authorTitle: row.author_title,
       featuredImage: row.featured_image,
       readingTimeMinutes: row.reading_time_minutes,
+      buyingGuideTemplateId: row.buying_guide_template_id || null,
       isPublished: row.is_published,
       publishedAt: row.published_at,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     }));
   }, []);
+}
+
+/**
+ * Get articles with buying guide templates
+ */
+export async function getBuyingGuideArticles(): Promise<Article[]> {
+  return buildSafeQuery(async () => {
+    const result = await pool.query(
+      `SELECT * FROM articles
+       WHERE is_published = true AND buying_guide_template_id IS NOT NULL
+       ORDER BY published_at DESC`
+    );
+
+    return result.rows.map((row) => ({
+      id: row.id,
+      slug: row.slug,
+      title: row.title,
+      excerpt: row.excerpt,
+      content: row.content,
+      contentMarkdown: row.content_markdown,
+      category: row.category,
+      author: row.author,
+      authorTitle: row.author_title,
+      featuredImage: row.featured_image,
+      readingTimeMinutes: row.reading_time_minutes,
+      buyingGuideTemplateId: row.buying_guide_template_id || null,
+      isPublished: row.is_published,
+      publishedAt: row.published_at,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    }));
+  }, FALLBACK_ARTICLES);
 }
 
 /**
@@ -230,13 +268,14 @@ export async function createArticle(data: {
   authorTitle?: string | null;
   featuredImage?: string | null;
   readingTimeMinutes?: number | null;
+  buyingGuideTemplateId?: string | null;
   isPublished?: boolean;
   publishedAt?: string | null;
 }): Promise<Article | null> {
   return buildSafeQuery(async () => {
     const result = await pool.query(
-      `INSERT INTO articles (slug, title, excerpt, content, content_markdown, category, author, author_title, featured_image, reading_time_minutes, is_published, published_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+      `INSERT INTO articles (slug, title, excerpt, content, content_markdown, category, author, author_title, featured_image, reading_time_minutes, buying_guide_template_id, is_published, published_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
        RETURNING *`,
       [
         data.slug,
@@ -249,6 +288,7 @@ export async function createArticle(data: {
         data.authorTitle || null,
         data.featuredImage || null,
         data.readingTimeMinutes || null,
+        data.buyingGuideTemplateId || null,
         data.isPublished ?? false,
         data.publishedAt || null,
       ]
@@ -267,6 +307,7 @@ export async function createArticle(data: {
       authorTitle: row.author_title,
       featuredImage: row.featured_image,
       readingTimeMinutes: row.reading_time_minutes,
+      buyingGuideTemplateId: row.buying_guide_template_id || null,
       isPublished: row.is_published,
       publishedAt: row.published_at,
       createdAt: row.created_at,

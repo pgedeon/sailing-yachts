@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { marked } from "marked";
-import { getArticleBySlug, getRelatedArticles } from "@/lib/articles";
 import {
-  getSiteUrl,
-  generateBreadcrumbJsonLd,
-} from "@/lib/seo";
+  getArticleBySlug,
+  getRelatedArticles,
+} from "@/lib/articles";
+import { getSiteUrl, generateBreadcrumbJsonLd } from "@/lib/seo";
 import NewsletterSignup from "@/components/NewsletterSignup";
+import BuyingGuideYachtList from "@/components/BuyingGuideYachtList";
+import { getTemplateById, generateBuyingGuideJsonLd } from "@/lib/buying-guides";
 
 export const revalidate = 3600;
 
@@ -129,12 +131,18 @@ export default async function GuideArticlePage({ params }: PageProps) {
 
   const relatedArticles = await getRelatedArticles(article.id, article.category);
 
+  // Get buying guide template if this article is linked to one
+  const template = article.buyingGuideTemplateId
+    ? getTemplateById(article.buyingGuideTemplateId)
+    : null;
+
   const breadcrumb = generateBreadcrumbJsonLd([
     { name: "Home", path: "/" },
     { name: "Guides", path: "/guides" },
     { name: article.title, path: `/guides/${article.slug}` },
   ]);
 
+  // Generate structured data
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -161,6 +169,17 @@ export default async function GuideArticlePage({ params }: PageProps) {
     },
   };
 
+  const structuredData = template
+    ? generateBuyingGuideJsonLd(
+        article.title,
+        article.excerpt || "",
+        article.slug,
+        template.faqs,
+        article.publishedAt,
+        article.author
+      )
+    : { "@context": "https://schema.org", "@graph": [articleJsonLd] };
+
   return (
     <>
       <script
@@ -169,7 +188,7 @@ export default async function GuideArticlePage({ params }: PageProps) {
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
       <main className="min-h-screen">
@@ -284,6 +303,38 @@ export default async function GuideArticlePage({ params }: PageProps) {
                 className="prose prose-lg max-w-none prose-headings:scroll-mt-20 prose-a:text-blue-600 prose-img:rounded-lg"
                 dangerouslySetInnerHTML={{ __html: contentHtml }}
               />
+
+              {/* Buying Guide Yacht List */}
+              {template && (
+                <div className="mt-12">
+                  <BuyingGuideYachtList
+                    templateId={article.buyingGuideTemplateId!}
+                    title={template.title}
+                    description={template.description}
+                  />
+                </div>
+              )}
+
+              {/* FAQ Section (if template exists) */}
+              {template && template.faqs.length > 0 && (
+                <section className="mt-12 bg-white rounded-lg border border-gray-200 overflow-hidden">
+                  <div className="p-6 border-b border-gray-200">
+                    <h3 className="text-xl font-bold text-gray-900">
+                      Frequently Asked Questions
+                    </h3>
+                  </div>
+                  <div className="divide-y divide-gray-200">
+                    {template.faqs.map((faq, idx) => (
+                      <div key={idx} className="p-6">
+                        <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                          {faq.question}
+                        </h4>
+                        <p className="text-gray-600">{faq.answer}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
 
               {/* Newsletter CTA */}
               <div className="mt-12 bg-blue-50 rounded-xl p-8 border border-blue-100">
