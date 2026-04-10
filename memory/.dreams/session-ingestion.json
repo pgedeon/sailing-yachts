@@ -1,0 +1,15 @@
+{
+  "version": 3,
+  "files": {
+    "sailing-yachts:sessions/ff57dbf4-c7f8-49f8-a7bf-54c6680722ee.jsonl.deleted.2026-03-13T10-29-34.427Z": {
+      "mtimeMs": 1773394141760,
+      "size": 1705,
+      "contentHash": "b5e20480b41a3023c951ac2822cfe3e96b913cc6a839a381d1f314efe03c4727",
+      "lineCount": 2,
+      "lastContentLine": 2
+    }
+  },
+  "seenMessages": {
+    "sailing-yachts:ff57dbf4-c7f8-49f8-a7bf-54c6680722ee": []
+  }
+}

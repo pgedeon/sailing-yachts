@@ -8,6 +8,13 @@
       "when": 1775731010843,
       "tag": "0000_wandering_invaders",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1775809658994,
+      "tag": "0001_cloudy_magik",
+      "breakpoints": true
     }
   ]
 }
