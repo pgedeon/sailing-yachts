@@ -8,7 +8,21 @@ export default function MainLayout({
 }) {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateSiteNavigationJsonLd([{ name: "Browse", path: "/yachts" }, { name: "Manufacturers", path: "/manufacturers" }, { name: "Search", path: "/search" }, { name: "Compare", path: "/compare" }])) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            generateSiteNavigationJsonLd([
+              { name: "Browse", path: "/yachts" },
+              { name: "Manufacturers", path: "/manufacturers" },
+              { name: "Guides", path: "/guides" },
+              { name: "Glossary", path: "/glossary" },
+              { name: "Search", path: "/search" },
+              { name: "Compare", path: "/compare" },
+            ])
+          ),
+        }}
+      />
       <Header />
       <main className="min-h-screen">{children}</main>
       <footer className="border-t border-border py-8 mt-16">
@@ -46,6 +60,8 @@ function Header() {
           <nav className="hidden md:flex items-center gap-6">
             <NavLink href="/yachts">Browse</NavLink>
             <NavLink href="/manufacturers">Manufacturers</NavLink>
+            <NavLink href="/guides">Guides</NavLink>
+            <NavLink href="/glossary">Glossary</NavLink>
             <NavLink href="/search">Search</NavLink>
             <NavLink href="/compare">Compare</NavLink>
             <NavLink href="/favorites">Favorites</NavLink>
@@ -99,6 +115,12 @@ function MobileMenu() {
           </a>
           <a href="/manufacturers" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
             Manufacturers
+          </a>
+          <a href="/guides" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
+            Guides
+          </a>
+          <a href="/glossary" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
+            Glossary
           </a>
           <a href="/search" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
             Search
