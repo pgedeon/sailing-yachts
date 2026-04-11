@@ -25,6 +25,8 @@ export interface Article {
   publishedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
+  lastReviewedAt: Date | null;
+  reviewStatus: string | null;
 }
 
 export interface ArticleWithStats extends Article {
@@ -48,6 +50,8 @@ const FALLBACK_ARTICLE: Article = {
   publishedAt: null,
   createdAt: new Date(),
   updatedAt: new Date(),
+  lastReviewedAt: null,
+  reviewStatus: null,
 };
 
 const FALLBACK_ARTICLES: Article[] = [];
@@ -86,6 +90,8 @@ export async function getArticleBySlug(
       publishedAt: row.published_at,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
+      lastReviewedAt: row.last_reviewed_at || null,
+      reviewStatus: row.review_status || null,
     };
   }, null);
 }
@@ -118,6 +124,8 @@ export async function getAllPublishedArticles(): Promise<Article[]> {
       publishedAt: row.published_at,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
+      lastReviewedAt: row.last_reviewed_at || null,
+      reviewStatus: row.review_status || null,
     }));
   }, FALLBACK_ARTICLES);
 }
@@ -153,6 +161,8 @@ export async function getArticlesByCategory(
       publishedAt: row.published_at,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
+      lastReviewedAt: row.last_reviewed_at || null,
+      reviewStatus: row.review_status || null,
     }));
   }, FALLBACK_ARTICLES);
 }
@@ -218,6 +228,8 @@ export async function getRelatedArticles(
       publishedAt: row.published_at,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
+      lastReviewedAt: row.last_reviewed_at || null,
+      reviewStatus: row.review_status || null,
     }));
   }, []);
 }
@@ -250,6 +262,8 @@ export async function getBuyingGuideArticles(): Promise<Article[]> {
       publishedAt: row.published_at,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
+      lastReviewedAt: row.last_reviewed_at || null,
+      reviewStatus: row.review_status || null,
     }));
   }, FALLBACK_ARTICLES);
 }
@@ -312,6 +326,8 @@ export async function createArticle(data: {
       publishedAt: row.published_at,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
+      lastReviewedAt: row.last_reviewed_at || null,
+      reviewStatus: row.review_status || null,
     };
   }, null);
 }

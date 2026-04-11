@@ -249,6 +249,9 @@ export default async function GuideArticlePage({ params }: PageProps) {
               {article.readingTimeMinutes && (
                 <span>{article.readingTimeMinutes} min read</span>
               )}
+              {article.lastReviewedAt && (
+                <span className="text-green-600">Reviewed {formatDate(article.lastReviewedAt)}</span>
+              )}
             </div>
           </div>
         </header>
