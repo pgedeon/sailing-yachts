@@ -15,6 +15,13 @@
       "when": 1775809658994,
       "tag": "0001_cloudy_magik",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1775851501878,
+      "tag": "0002_big_master_mold",
+      "breakpoints": true
     }
   ]
 }
