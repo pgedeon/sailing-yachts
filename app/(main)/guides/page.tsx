@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getAllPublishedArticles, getAllCategories } from "@/lib/articles";
+import { getAllPublishedArticles, getAllCategories, getBuyingGuideArticles } from "@/lib/articles";
 import { getSiteUrl } from "@/lib/seo";
+import { BUYING_GUIDE_TEMPLATES, type GuideType } from "@/lib/buying-guides";
 
 // ISR: Revalidate guides hub every hour
 export const revalidate = 3600;
@@ -39,11 +40,32 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+const GUIDE_TYPE_LABELS: Record<GuideType, string> = {
+  "best-sailboats-for": "Best Sailboats For",
+  "how-to-choose": "How to Choose",
+  "x-vs-y-explained": "X vs Y Explained",
+  "new-vs-used": "New vs Used",
+  "what-size-cruiser": "What Size Cruiser",
+};
+
 export default async function GuidesPage() {
-  const [articles, categories] = await Promise.all([
+  const [articles, categories, buyingGuideArticles] = await Promise.all([
     getAllPublishedArticles(),
     getAllCategories(),
+    getBuyingGuideArticles(),
   ]);
+
+  // Group buying guides by type
+  const guidesByType = new Map<GuideType, typeof buyingGuideArticles>();
+  for (const guide of buyingGuideArticles) {
+    if (guide.buyingGuideTemplateId) {
+      const template = BUYING_GUIDE_TEMPLATES.find(t => t.id === guide.buyingGuideTemplateId);
+      if (template) {
+        const typeGuides = guidesByType.get(template.type) || [];
+        guidesByType.set(template.type, [...typeGuides, guide]);
+      }
+    }
+  }
 
   return (
     <main className="min-h-screen">
@@ -116,12 +138,64 @@ export default async function GuidesPage() {
               </div>
             </aside>
 
-            {/* Main Content: Articles Grid */}
+            {/* Main Content */}
             <div className="lg:col-span-3">
-              {articles.length > 0 ? (
+              {/* Buying Guides Section */}
+              {buyingGuideArticles.length > 0 && (
+                <div className="mb-12">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Buying Guides</h2>
+                  <div className="space-y-8">
+                    {Array.from(guidesByType.entries()).map(([type, guides]) => (
+                      <div key={type} className="bg-white rounded-lg border border-gray-200 p-6">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                          {GUIDE_TYPE_LABELS[type]}
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {guides.map((guide) => (
+                            <Link
+                              key={guide.id}
+                              href={`/guides/${guide.slug}`}
+                              className="block p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-md transition group"
+                            >
+                              <div className="flex items-start gap-3">
+                                <span className="text-2xl">
+                                  {BUYING_GUIDE_TEMPLATES.find(t => t.id === guide.buyingGuideTemplateId)?.icon || "📖"}
+                                </span>
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="font-semibold text-gray-900 group-hover:text-blue-600 transition truncate">
+                                    {guide.title}
+                                  </h4>
+                                  {guide.excerpt && (
+                                    <p className="text-sm text-gray-600 line-clamp-2 mt-1">
+                                      {guide.excerpt}
+                                    </p>
+                                  )}
+                                  {guide.readingTimeMinutes && (
+                                    <span className="text-xs text-gray-500 mt-2 block">
+                                      {guide.readingTimeMinutes} min read
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Other Guides Section */}
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                {buyingGuideArticles.length > 0 ? "Other Guides" : "All Guides"}
+              </h2>
+              {articles.length > buyingGuideArticles.length ? (
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {articles.map((article) => (
+                    {articles
+                      .filter(a => !a.buyingGuideTemplateId)
+                      .map((article) => (
                       <Link
                         key={article.id}
                         href={`/guides/${article.slug}`}
@@ -193,6 +267,23 @@ export default async function GuidesPage() {
                     </Link>
                   </div>
                 </>
+              ) : articles.length > 0 ? (
+                <div className="text-center py-16 bg-white rounded-lg border border-gray-200">
+                  <div className="text-6xl mb-4">📚</div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    More guides coming soon
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    We're working on creating more comprehensive sailing guides and
+                    resources for you.
+                  </p>
+                  <Link
+                    href="/yachts"
+                    className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition"
+                  >
+                    Browse Yachts
+                  </Link>
+                </div>
               ) : (
                 <div className="text-center py-16 bg-white rounded-lg border border-gray-200">
                   <div className="text-6xl mb-4">📚</div>
