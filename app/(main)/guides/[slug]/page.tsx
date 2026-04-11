@@ -319,24 +319,24 @@ export default async function GuideArticlePage({ params }: PageProps) {
               {template && template.faqs.length > 0 && (
                 <section className="mt-12 bg-white rounded-lg border border-gray-200 overflow-hidden">
                   <div className="p-6 border-b border-gray-200">
-                    <h3 className="text-xl font-bold text-gray-900">
+                    <h2 className="text-xl font-bold text-gray-900">
                       Frequently Asked Questions
-                    </h3>
+                    </h2>
                   </div>
                   <div className="divide-y divide-gray-200">
                     {template.faqs.map((faq, idx) => (
-                      <div key={idx} className="p-6">
-                        <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                      <details key={idx} className="p-6 group">
+                        <summary className="text-lg font-semibold text-gray-900 cursor-pointer list-none flex items-center justify-between hover:text-blue-600 transition">
                           {faq.question}
-                        </h4>
-                        <p className="text-gray-600">{faq.answer}</p>
-                      </div>
+                          <span className="text-gray-400 group-open:rotate-180 transition-transform duration-200">▶</span>
+                        </summary>
+                        <p className="text-gray-600 mt-3 pl-4 border-l-4 border-blue-200">{faq.answer}</p>
+                      </details>
                     ))}
                   </div>
                 </section>
               )}
 
-              {/* Newsletter CTA */}
               <div className="mt-12 bg-blue-50 rounded-xl p-8 border border-blue-100">
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   Get New Guides in Your Inbox
