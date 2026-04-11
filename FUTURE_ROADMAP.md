@@ -106,7 +106,7 @@ These are the first issue titles I would create for the cron agent, in order:
 ### Concrete PR-Sized Backlog
 
 - **P7.1 — Guides platform:** Introduce MDX or a lightweight content model for editorial content, including category pages, author metadata, RSS feed support, and article layouts. Tests: route generation tests, metadata checks, and smoke coverage for guide pages.
-- **P7.2 — Yacht buying guide templates:** Publish templates for “best sailboats for…”, “how to choose…”, “X vs Y explained”, “new vs used”, and “what size cruiser do I need?” pages. Tests: template render tests and structured data assertions for `Article`/`FAQPage`.
+- **P7.2 — Yacht buying guide templates:** ✅ DONE — Publish templates for “best sailboats for…”, “how to choose…”, “X vs Y explained”, “new vs used”, and “what size cruiser do I need?” pages. Tests: template render tests and structured data assertions for `Article`/`FAQPage`.
 - **P7.3 — Manufacturer spotlights:** Create long-form builder pages with history, brand positioning, notable models, and links into current manufacturer/yacht records. Tests: render and internal-link coverage.
 - **P7.4 — Sailing glossary:** Add glossary pages for LOA, beam, ballast ratio, fin keel, cutter rig, shoal draft, displacement, and other spec-related terms. Auto-link glossary terms from yacht detail pages and guides. Tests: glossary route tests and inline link insertion assertions.
 - **P7.5 — Content cluster linking engine:** Add reusable “related guides” blocks to yacht pages and reusable “related yachts” blocks to guide pages. Tests: Playwright verification that guides and yacht pages cross-link properly.
