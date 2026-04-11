@@ -12,6 +12,7 @@ import {
   getManufacturerBySlug,
   getYachtsByManufacturerId,
 } from "@/lib/manufacturers";
+import { getSpotlightByManufacturerId } from "@/lib/manufacturer-spotlights";
 import { ManufacturerComparisons } from "./ManufacturerComparisons";
 
 // ISR: Revalidate manufacturer detail pages every hour
@@ -24,9 +25,12 @@ async function getManufacturerData(slug: string) {
       const manufacturer = await getManufacturerBySlug(slug);
       if (!manufacturer) return null;
 
-      const yachts = await getYachtsByManufacturerId(manufacturer.id);
+      const [yachts, spotlight] = await Promise.all([
+        getYachtsByManufacturerId(manufacturer.id),
+        getSpotlightByManufacturerId(manufacturer.id),
+      ]);
 
-      return { manufacturer, yachts };
+      return { manufacturer, yachts, spotlight };
     },
     [`manufacturer:${slug}`],
     { tags: [`manufacturer:${slug}`, "manufacturers"], revalidate: 3600 }
@@ -104,7 +108,7 @@ export default async function ManufacturerPage({
     notFound();
   }
 
-  const { manufacturer, yachts } = data;
+  const { manufacturer, yachts, spotlight } = data;
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Home", path: "/" },
@@ -220,6 +224,32 @@ export default async function ManufacturerPage({
             </div>
           </div>
         </section>
+
+        {spotlight && (
+          <section className="mt-8 rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-6 sm:p-8">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-3xl">
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
+                  Manufacturer Spotlight
+                </p>
+                <h2 className="mt-3 text-2xl font-bold tracking-tight">
+                  Read our {manufacturer.name} spotlight
+                </h2>
+                <p className="mt-3 text-muted-foreground leading-relaxed">
+                  {spotlight.metaDescription ||
+                    `Go deeper on ${manufacturer.name}'s history, brand positioning, major milestones, and notable yacht models.`}
+                </p>
+              </div>
+
+              <Link
+                href={`/manufacturers/${manufacturer.slug}/spotlight`}
+                className="inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 transition-colors"
+              >
+                Open spotlight →
+              </Link>
+            </div>
+          </section>
+        )}
 
 
         {/* Cross-linking: Browse by Size */}

@@ -11,3 +11,4 @@ out
 test-results/
 tsconfig.tsbuildinfo
 .env*.local
+.env.vercel

@@ -99,6 +99,40 @@ export const updateReviewSchema = z.object({
   sourceUrl: z.string().url("Invalid URL").max(500).optional().nullable().or(z.literal("")),
 });
 
+// ─── Manufacturer Spotlight Validation ───────────────────────────────────
+
+const manufacturerSpotlightNotableModelSchema = z.object({
+  yachtSlug: z.string().min(1, "Yacht slug is required").max(500),
+  reason: z.string().min(1, "Reason is required").max(1000),
+});
+
+const manufacturerSpotlightMilestoneSchema = z.object({
+  year: z.number().int().min(1800).max(new Date().getFullYear() + 2),
+  event: z.string().min(1, "Milestone event is required").max(1000),
+});
+
+export const createManufacturerSpotlightSchema = z.object({
+  manufacturerId: z.number().int().positive("Manufacturer ID must be positive"),
+  slug: z.string().min(1, "Slug is required").max(255),
+  title: z.string().min(1, "Title is required").max(500),
+  metaDescription: z.string().max(500).optional().nullable(),
+  historyMarkdown: z.string().min(1, "History markdown is required").max(50000),
+  brandPositioning: z.string().max(20000).optional().nullable(),
+  notableModels: z.array(manufacturerSpotlightNotableModelSchema).max(20).optional(),
+  milestones: z.array(manufacturerSpotlightMilestoneSchema).max(50).optional(),
+  isPublished: z.boolean().optional(),
+  publishedAt: z.string().datetime({ message: "Invalid date format" }).optional().nullable(),
+});
+
+export const updateManufacturerSpotlightSchema = createManufacturerSpotlightSchema
+  .partial()
+  .extend({
+    manufacturerId: z.number().int().positive().optional(),
+    slug: z.string().min(1).max(255).optional(),
+    title: z.string().min(1).max(500).optional(),
+    historyMarkdown: z.string().min(1).max(50000).optional(),
+  });
+
 // ─── Query Parameter Validation ───────────────────────────────────────────
 
 export const yachtQuerySchema = z.object({

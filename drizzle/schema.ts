@@ -265,6 +265,41 @@ export const searchIntents = pgTable(
   }),
 );
 
+// Manufacturer spotlights for P7.3: Long-form builder pages
+export const manufacturerSpotlights = pgTable(
+  "manufacturer_spotlights",
+  {
+    id: serial("id").primaryKey(),
+    manufacturerId: integer("manufacturer_id")
+      .notNull()
+      .references(() => manufacturers.id, { onDelete: "cascade" }),
+    slug: varchar("slug", { length: 255 }).notNull().unique(),
+    title: varchar("title", { length: 500 }).notNull(),
+    metaDescription: varchar("meta_description", { length: 500 }),
+    historyMarkdown: text("history_markdown").notNull(),
+    brandPositioning: text("brand_positioning"),
+    notableModels:
+      jsonb("notable_models").$type<
+        Array<{ yacht_slug: string; reason: string }>
+      >(),
+    milestones:
+      jsonb("milestones").$type<Array<{ year: number; event: string }>>(),
+    isPublished: boolean("is_published").default(false),
+    publishedAt: timestamp("published_at"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    idxManufacturer: uniqueIndex("idx_manufacturer_spotlights_manufacturer").on(
+      table.manufacturerId,
+    ),
+    idxSlug: uniqueIndex("idx_manufacturer_spotlights_slug").on(table.slug),
+    idxPublished: index("idx_manufacturer_spotlights_published").on(
+      table.isPublished,
+    ),
+  }),
+);
+
 // ---------- Zod Schemas for validation ----------
 
 export const insertManufacturerSchema = createInsertSchema(manufacturers);
@@ -293,3 +328,6 @@ export const selectArticleSchema = createSelectSchema(articles);
 
 export const insertSearchIntentSchema = createInsertSchema(searchIntents);
 export const selectSearchIntentSchema = createSelectSchema(searchIntents);
+
+export const insertManufacturerSpotlightSchema = createInsertSchema(manufacturerSpotlights);
+export const selectManufacturerSpotlightSchema = createSelectSchema(manufacturerSpotlights);
