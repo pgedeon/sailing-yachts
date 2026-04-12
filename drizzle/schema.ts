@@ -383,3 +383,64 @@ export const insertFaqProposalSchema = createInsertSchema(faqProposals);
 export const selectFaqProposalSchema = createSelectSchema(faqProposals);
 export const insertCompareUsageSchema = createInsertSchema(compareUsage);
 export const selectCompareUsageSchema = createSelectSchema(compareUsage);
+
+// P8.1: Price data schema for yacht pricing intelligence
+export const yachtPrices = pgTable(
+  "yacht_prices",
+  {
+    id: serial("id").primaryKey(),
+    yachtModelId: integer("yacht_model_id").notNull().references(() => yachtModels.id, { onDelete: "cascade" }),
+    priceMin: numeric("price_min", { precision: 12, scale: 2 }).notNull(),
+    priceMax: numeric("price_max", { precision: 12, scale: 2 }).notNull(),
+    currency: varchar("currency", { length: 3 }).notNull().default("USD"),
+    condition: varchar("condition", { length: 20 }).notNull().default("new"),
+    year: integer("year"),
+    source: varchar("source", { length: 255 }).notNull(),
+    sourceType: varchar("source_type", { length: 30 }).notNull().default("manual"),
+    sourceUrl: varchar("source_url", { length: 500 }),
+    confidenceScore: integer("confidence_score").notNull().default(50),
+    notes: text("notes"),
+    effectiveDate: timestamp("effective_date", { withTimezone: true }).notNull().defaultNow(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }),
+    isActive: boolean("is_active").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxYachtId: index("idx_yacht_prices_yacht_id").on(table.yachtModelId),
+    idxCondition: index("idx_yacht_prices_condition").on(table.condition),
+    idxActive: index("idx_yacht_prices_active").on(table.isActive),
+    idxEffective: index("idx_yacht_prices_effective_date").on(table.effectiveDate),
+    idxSourceType: index("idx_yacht_prices_source_type").on(table.sourceType),
+    idxUnique: uniqueIndex("idx_yacht_prices_unique").on(table.yachtModelId, table.condition, table.source, table.effectiveDate),
+  }),
+);
+
+export const priceSnapshots = pgTable(
+  "price_snapshots",
+  {
+    id: serial("id").primaryKey(),
+    yachtModelId: integer("yacht_model_id").notNull().references(() => yachtModels.id, { onDelete: "cascade" }),
+    priceMin: numeric("price_min", { precision: 12, scale: 2 }).notNull(),
+    priceMax: numeric("price_max", { precision: 12, scale: 2 }).notNull(),
+    currency: varchar("currency", { length: 3 }).notNull().default("USD"),
+    condition: varchar("condition", { length: 20 }).notNull().default("new"),
+    sourceType: varchar("source_type", { length: 30 }).notNull().default("manual"),
+    confidenceScore: integer("confidence_score").notNull().default(50),
+    snapshotDate: timestamp("snapshot_date", { withTimezone: true }).notNull().defaultNow(),
+    snapshotReason: varchar("snapshot_reason", { length: 30 }).notNull().default("scheduled"),
+    recordCount: integer("record_count").default(1),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxYachtId: index("idx_price_snapshots_yacht_id").on(table.yachtModelId),
+    idxDate: index("idx_price_snapshots_date").on(table.snapshotDate),
+    idxYachtDate: index("idx_price_snapshots_yacht_date").on(table.yachtModelId, table.snapshotDate),
+    idxCondition: index("idx_price_snapshots_condition").on(table.condition),
+  }),
+);
+
+export const insertYachtPriceSchema = createInsertSchema(yachtPrices);
+export const selectYachtPriceSchema = createSelectSchema(yachtPrices);
+export const insertPriceSnapshotSchema = createInsertSchema(priceSnapshots);
+export const selectPriceSnapshotSchema = createSelectSchema(priceSnapshots);
