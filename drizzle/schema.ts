@@ -331,3 +331,55 @@ export const selectSearchIntentSchema = createSelectSchema(searchIntents);
 
 export const insertManufacturerSpotlightSchema = createInsertSchema(manufacturerSpotlights);
 export const selectManufacturerSpotlightSchema = createSelectSchema(manufacturerSpotlights);
+
+// FAQ Proposals for P7.6: FAQ harvesting pipeline
+export const faqProposals = pgTable(
+  "faq_proposals",
+  {
+    id: serial("id").primaryKey(),
+    source: varchar("source", { length: 50 }).notNull().default("search"),
+    sourceQuery: text("source_query"),
+    question: text("question").notNull(),
+    suggestedAnswer: text("suggested_answer"),
+    category: varchar("category", { length: 100 }),
+    intentType: varchar("intent_type", { length: 50 }),
+    frequency: integer("frequency").notNull().default(1),
+    priorityScore: numeric("priority_score", { precision: 5, scale: 2 }).notNull().default("0"),
+    status: varchar("status", { length: 30 }).notNull().default("proposed"),
+    relatedYachtSlugs: jsonb("related_yacht_slugs").$type<string[]>(),
+    relatedArticleSlugs: jsonb("related_article_slugs").$type<string[]>(),
+    matchedSearchIntentSlug: varchar("matched_search_intent_slug", { length: 255 }),
+    adminNotes: text("admin_notes"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+    reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+  },
+  (table) => ({
+    idxStatus: index("idx_faq_proposals_status").on(table.status),
+    idxSource: index("idx_faq_proposals_source").on(table.source),
+    idxPriority: index("idx_faq_proposals_priority").on(table.priorityScore),
+    idxCategory: index("idx_faq_proposals_category").on(table.category),
+  }),
+);
+
+// Compare usage tracking for P7.6
+export const compareUsage = pgTable(
+  "compare_usage",
+  {
+    id: serial("id").primaryKey(),
+    yachtSlugA: varchar("yacht_slug_a", { length: 255 }).notNull(),
+    yachtSlugB: varchar("yacht_slug_b", { length: 255 }).notNull(),
+    compareCount: integer("compare_count").notNull().default(1),
+    lastComparedAt: timestamp("last_compared_at", { withTimezone: true }).notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxUnique: uniqueIndex("idx_compare_usage_unique").on(table.yachtSlugA, table.yachtSlugB),
+    idxCount: index("idx_compare_usage_count").on(table.compareCount),
+  }),
+);
+
+export const insertFaqProposalSchema = createInsertSchema(faqProposals);
+export const selectFaqProposalSchema = createSelectSchema(faqProposals);
+export const insertCompareUsageSchema = createInsertSchema(compareUsage);
+export const selectCompareUsageSchema = createSelectSchema(compareUsage);

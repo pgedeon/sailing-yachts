@@ -1,3 +1,4 @@
+import { recordCompareUsage } from "@/lib/faq-harvesting";
 import { NextResponse } from "next/server";
 import { pool } from "@/lib/db";
 
@@ -148,6 +149,10 @@ export async function GET(request: Request) {
       reviews: [],
     }));
 
+    // Track compare usage for FAQ harvesting (P7.6)
+    if (yachts.length >= 2 && yachts[0].slug && yachts[1].slug) {
+      recordCompareUsage(yachts[0].slug, yachts[1].slug).catch(() => {});
+    }
     return NextResponse.json({ yachts });
   } catch (error: any) {
     console.error('Compare API error:', error);
