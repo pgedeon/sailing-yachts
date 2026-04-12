@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Ruler, Wind, Home, Wrench, Star, Printer } from "lucide-react";
 import { FavoriteButton } from "@/app/components/FavoriteButton";
 import { PriceTierDetail } from "@/app/components/PriceTierBadge";
+import { PriceInsightBlock } from "@/app/components/PriceInsightBlock";
 import { calculatePriceTier } from "@/lib/price-tier";
 import { slugify } from "@/lib/utils/slugify";
 import { SimilarYachts } from "./SimilarYachts";
@@ -315,6 +316,9 @@ export default function YachtDetailClient() {
 
           {/* Price Range Estimate */}
           <PriceTierDetail info={priceTierInfo} />
+
+          {/* Real price data from DB (P8.2) */}
+          <PriceInsightBlock yachtId={yacht.id} modelName={yacht.modelName} />
 
           {/* Admin links */}
           {yacht.adminLinks && yacht.adminLinks.length > 0 && (

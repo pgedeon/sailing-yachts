@@ -10,6 +10,7 @@ import {
   generateImageObjectJsonLd,
 } from "@/lib/seo";
 import { getYachtDetailData, getPrimaryImage } from "@/lib/yachts";
+import { getPriceSummary } from "@/lib/price-data";
 import YachtDetailClient from "./YachtDetailClient";
 
 // ISR: Revalidate yacht detail pages every hour
@@ -31,6 +32,62 @@ async function getYachtImage(slug: string) {
     [`yacht-image:${slug}`],
     { tags: [`yacht:${slug}`, "yachts"], revalidate: 3600 }
   )();
+}
+
+function generateOfferJsonLd(params: {
+  name: string;
+  url: string;
+  image?: string;
+  newPriceMin: number | null;
+  newPriceMax: number | null;
+  usedPriceMin: number | null;
+  usedPriceMax: number | null;
+  currency: string;
+}) {
+  const offers: any[] = [];
+
+  if (params.newPriceMin != null && params.newPriceMax != null) {
+    offers.push({
+      "@type": "Offer",
+      priceCurrency: params.currency,
+      price: params.newPriceMin,
+      highPrice: params.newPriceMax,
+      availability: "https://schema.org/InStock",
+      itemCondition: "https://schema.org/NewCondition",
+      url: params.url,
+    });
+  }
+
+  if (params.usedPriceMin != null && params.usedPriceMax != null) {
+    offers.push({
+      "@type": "Offer",
+      priceCurrency: params.currency,
+      price: params.usedPriceMin,
+      highPrice: params.usedPriceMax,
+      availability: "https://schema.org/InStock",
+      itemCondition: "https://schema.org/UsedCondition",
+      url: params.url,
+    });
+  }
+
+  if (offers.length === 0) return null;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "AggregateOffer",
+    name: params.name,
+    url: params.url,
+    ...(params.image && { image: params.image }),
+    priceCurrency: params.currency,
+    lowPrice: Math.min(
+      ...[params.newPriceMin, params.usedPriceMin].filter((p): p is number => p != null)
+    ),
+    highPrice: Math.max(
+      ...[params.newPriceMax, params.usedPriceMax].filter((p): p is number => p != null)
+    ),
+    offerCount: offers.length,
+    offers,
+  };
 }
 
 interface YachtDetailPageProps {
@@ -156,6 +213,26 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
     beam: yachtData.beam ? parseFloat(yachtData.beam) : null,
   });
 
+  // P8.2: Fetch price data for AggregateOffer JSON-LD
+  let offerJsonLd: any = null;
+  try {
+    const priceSummary = await getPriceSummary(data.yacht.id);
+    if (priceSummary && (priceSummary.newPriceMin != null || priceSummary.usedPriceMin != null)) {
+      offerJsonLd = generateOfferJsonLd({
+        name: `${manufacturerName} ${yachtData.modelName}`,
+        url: getSiteUrl(`/yachts/${slug}`),
+        image: primaryImage?.url,
+        newPriceMin: priceSummary.newPriceMin,
+        newPriceMax: priceSummary.newPriceMax,
+        usedPriceMin: priceSummary.usedPriceMin,
+        usedPriceMax: priceSummary.usedPriceMax,
+        currency: priceSummary.currency,
+      });
+    }
+  } catch {
+    // Price data unavailable — skip offer schema silently
+  }
+
   return (
     <>
       <script
@@ -176,6 +253,12 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(imageObjectJsonLd) }}
+        />
+      )}
+      {offerJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(offerJsonLd) }}
         />
       )}
       <YachtDetailClient />
