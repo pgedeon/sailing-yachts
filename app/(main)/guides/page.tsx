@@ -48,6 +48,45 @@ const GUIDE_TYPE_LABELS: Record<GuideType, string> = {
   "what-size-cruiser": "What Size Cruiser",
 };
 
+function formatDate(date: Date | string | null): string {
+  if (!date) return "";
+  const d = typeof date === "string" ? new Date(date) : date;
+  return d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
+function FreshnessBadge({ reviewStatus, lastReviewedAt }: { reviewStatus: string | null; lastReviewedAt: Date | string | null }) {
+  const status = reviewStatus || "fresh";
+  if (status === "stale") {
+    return (
+      <span className="inline-flex items-center gap-1 text-xs text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
+        <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+        Needs review
+      </span>
+    );
+  }
+  if (status === "due") {
+    return (
+      <span className="inline-flex items-center gap-1 text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 px-2 py-0.5 rounded-full">
+        <span className="w-1.5 h-1.5 rounded-full bg-yellow-400" />
+        Due for review
+      </span>
+    );
+  }
+  if (lastReviewedAt) {
+    return (
+      <span className="inline-flex items-center gap-1 text-xs text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
+        <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
+        Reviewed {formatDate(lastReviewedAt)}
+      </span>
+    );
+  }
+  return null;
+}
+
 export default async function GuidesPage() {
   const [articles, categories, buyingGuideArticles] = await Promise.all([
     getAllPublishedArticles(),
@@ -170,11 +209,14 @@ export default async function GuidesPage() {
                                       {guide.excerpt}
                                     </p>
                                   )}
-                                  {guide.readingTimeMinutes && (
-                                    <span className="text-xs text-gray-500 mt-2 block">
-                                      {guide.readingTimeMinutes} min read
-                                    </span>
-                                  )}
+                                  <div className="flex items-center gap-2 mt-2 flex-wrap">
+                                    {guide.readingTimeMinutes && (
+                                      <span className="text-xs text-gray-500">
+                                        {guide.readingTimeMinutes} min read
+                                      </span>
+                                    )}
+                                    <FreshnessBadge reviewStatus={guide.reviewStatus} lastReviewedAt={guide.lastReviewedAt} />
+                                  </div>
                                 </div>
                               </div>
                             </Link>
@@ -230,22 +272,25 @@ export default async function GuidesPage() {
                             {article.excerpt}
                           </p>
                         )}
-                        {article.author && (
-                          <div className="mt-4 flex items-center gap-2">
-                            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-xs font-medium text-gray-600">
-                              {article.author.charAt(0)}
+                        <div className="mt-4 flex items-center justify-between">
+                          {article.author && (
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-xs font-medium text-gray-600">
+                                {article.author.charAt(0)}
+                              </div>
+                              <span className="text-sm text-gray-600">
+                                {article.author}
+                                {article.authorTitle && (
+                                  <span className="text-gray-400">
+                                    {" "}
+                                    · {article.authorTitle}
+                                  </span>
+                                )}
+                              </span>
                             </div>
-                            <span className="text-sm text-gray-600">
-                              {article.author}
-                              {article.authorTitle && (
-                                <span className="text-gray-400">
-                                  {" "}
-                                  · {article.authorTitle}
-                                </span>
-                              )}
-                            </span>
-                          </div>
-                        )}
+                          )}
+                          <FreshnessBadge reviewStatus={article.reviewStatus} lastReviewedAt={article.lastReviewedAt} />
+                        </div>
                       </Link>
                     ))}
                   </div>
