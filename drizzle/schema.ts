@@ -300,6 +300,30 @@ export const manufacturerSpotlights = pgTable(
   }),
 );
 
+
+export const leads = pgTable(
+  "leads",
+  {
+    id: serial("id").primaryKey(),
+    name: varchar("name", { length: 255 }).notNull(),
+    email: varchar("email", { length: 255 }).notNull(),
+    phone: varchar("phone", { length: 50 }),
+    message: text("message"),
+    yachtIds: text("yacht_ids").notNull(),
+    source: varchar("source", { length: 100 }).default("compare_page"),
+    status: varchar("status", { length: 50 }).default("new"),
+    metadata: jsonb("metadata").$type<Record<string, unknown>>(),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    idxEmail: index("idx_leads_email").on(table.email),
+    idxStatus: index("idx_leads_status").on(table.status),
+    idxSource: index("idx_leads_source").on(table.source),
+    idxCreated: index("idx_leads_created").on(table.createdAt),
+  }),
+);
+
 // ---------- Zod Schemas for validation ----------
 
 export const insertManufacturerSchema = createInsertSchema(manufacturers);
