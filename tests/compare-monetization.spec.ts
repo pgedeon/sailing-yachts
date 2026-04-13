@@ -7,11 +7,21 @@ test.describe("Compare Page Monetization", () => {
     await page.setViewportSize({ width: 1280, height: 720 });
   });
 
-  test("shows monetization CTAs when 2+ yachts are selected", async ({ page }) => {
-    await page.goto(`${BASE_URL}/compare?ids=1,2`);
+  test("hides monetization when no yachts selected", async ({ page }) => {
+    await page.goto(`${BASE_URL}/compare`);
     await page.waitForLoadState("networkidle");
 
-    // Wait for comparison table to load (confirms yachts loaded)
+    // No yachts selected - monetization should not appear
+    const monetizationSection = page.locator(".compare-monetization");
+    await expect(monetizationSection).not.toBeVisible();
+  });
+
+  test("shows monetization CTAs when 2+ yachts are selected", async ({ page }) => {
+    // Use valid yacht IDs (26,27 exist in the database)
+    await page.goto(`${BASE_URL}/compare?ids=26,27`);
+    await page.waitForLoadState("networkidle");
+
+    // Wait for comparison table or error to resolve
     await page.waitForSelector("table", { timeout: 20000 }).catch(() => {});
 
     // Check that the monetization section appears
@@ -31,7 +41,7 @@ test.describe("Compare Page Monetization", () => {
   });
 
   test("opens inquiry modal when Talk to a Broker is clicked", async ({ page }) => {
-    await page.goto(`${BASE_URL}/compare?ids=1,2`);
+    await page.goto(`${BASE_URL}/compare?ids=26,27`);
     await page.waitForLoadState("networkidle");
     await page.waitForSelector("table", { timeout: 20000 }).catch(() => {});
 
@@ -49,16 +59,8 @@ test.describe("Compare Page Monetization", () => {
     await expect(page.locator("text=Inquiring about:")).toBeVisible();
   });
 
-  test("hides monetization when no yachts selected", async ({ page }) => {
-    await page.goto(`${BASE_URL}/compare`);
-
-    // No yachts selected - monetization should not appear
-    const monetizationSection = page.locator(".compare-monetization");
-    await expect(monetizationSection).not.toBeVisible();
-  });
-
   test("insurance CTA has correct link", async ({ page }) => {
-    await page.goto(`${BASE_URL}/compare?ids=1,2`);
+    await page.goto(`${BASE_URL}/compare?ids=26,27`);
     await page.waitForLoadState("networkidle");
     await page.waitForSelector("table", { timeout: 20000 }).catch(() => {});
 
@@ -68,7 +70,7 @@ test.describe("Compare Page Monetization", () => {
   });
 
   test("charter CTA has correct link", async ({ page }) => {
-    await page.goto(`${BASE_URL}/compare?ids=1,2`);
+    await page.goto(`${BASE_URL}/compare?ids=26,27`);
     await page.waitForLoadState("networkidle");
     await page.waitForSelector("table", { timeout: 20000 }).catch(() => {});
 
