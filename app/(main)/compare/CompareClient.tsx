@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import { PriceTierBadge } from "@/app/components/PriceTierBadge";
 import { calculatePriceTier } from "@/lib/price-tier";
 import Link from "next/link";
+import { CompareMonetization } from "@/app/components/CompareMonetization";
 import {
   getSavedComparisons,
   saveComparison,
@@ -838,6 +839,22 @@ export function CompareClient({ initialIds }: CompareClientProps) {
             })();
           `}} />
         </div>
+      )}
+
+      {/* Monetization CTAs */}
+      {yachts.length >= 2 && !loading && (
+        <CompareMonetization yachts={yachts.map(y => ({
+          id: y.id,
+          manufacturer: y.manufacturer,
+          modelName: y.modelName,
+          lengthOverall: y.lengthOverall,
+          displacement: y.displacement,
+          beam: y.beam,
+          cabins: y.cabins,
+          hullMaterial: y.hullMaterial,
+          keelType: y.keelType,
+          rigType: y.rigType,
+        }))} />
       )}
 
       <div className="mt-8">
