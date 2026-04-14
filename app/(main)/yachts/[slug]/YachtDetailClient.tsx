@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { LeadForm } from "@/app/components/LeadForm";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Ruler, Wind, Home, Wrench, Star, Printer } from "lucide-react";
 import { FavoriteButton } from "@/app/components/FavoriteButton";
@@ -512,6 +513,12 @@ export default function YachtDetailClient() {
           cabins={yacht.cabins}
           displacement={yacht.displacement}
         />
+      </div>
+
+      {/* Lead Forms */}
+      <div className="lead-forms-section mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 no-print">
+        <LeadForm yachtIds={[yacht.id]} leadType="dealer_inquiry" yachtName={`${yacht.manufacturer} ${yacht.modelName}`} />
+        <LeadForm yachtIds={[yacht.id]} leadType="price_request" yachtName={`${yacht.manufacturer} ${yacht.modelName}`} />
       </div>
 
       {/* Affiliate Recommendations */}
