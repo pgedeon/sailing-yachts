@@ -68,7 +68,6 @@ export async function GET(
     }
 
     const limitClause = maxResults ? `LIMIT ${parseInt(String(maxResults), 10)}` : "";
-
     const whereClause = conditions.join(" AND ");
 
     // Count query
@@ -78,7 +77,7 @@ export async function GET(
     );
     const total = parseInt(countResult.rows[0]?.total || "0", 10);
 
-    // Main query with manufacturer join and primary image
+    // Main query — manufacturers table has no slug column, derive from name
     const dataQuery = `
       SELECT
         ym.id,
@@ -95,7 +94,7 @@ export async function GET(
         ym.rig_type,
         ym.keel_type,
         m.name AS manufacturer,
-        m.slug AS manufacturer_slug,
+        LOWER(REPLACE(REPLACE(m.name, ' ', '-'), '.', '')) AS manufacturer_slug,
         img.url AS primary_image_url
       FROM yacht_models ym
       LEFT JOIN manufacturers m ON ym.manufacturer_id = m.id
