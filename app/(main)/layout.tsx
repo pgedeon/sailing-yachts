@@ -65,7 +65,6 @@ function Header() {
             <NavLink href="/search">Search</NavLink>
             <NavLink href="/compare">Compare</NavLink>
             <NavLink href="/favorites">Favorites</NavLink>
-            <NavLink href="/admin">Admin</NavLink>
           </nav>
 
           {/* Mobile hamburger */}
@@ -130,9 +129,6 @@ function MobileMenu() {
           </a>
           <a href="/favorites" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
             Favorites
-          </a>
-          <a href="/admin" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
-            Admin
           </a>
         </nav>
       </div>
