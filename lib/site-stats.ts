@@ -1,10 +1,9 @@
-import { db, yachtModels, manufacturers } from "@/lib/db";
-import { sql, count } from "drizzle-orm";
-import { buildSafeQuery } from "./build-safe";
+import { pool } from "./db";
 
 export interface SiteStats {
-  yachtCount: number;
   manufacturerCount: number;
+  yachtModelCount: number;
+  reviewCount: number;
   lastUpdated: string;
 }
 
@@ -13,8 +12,9 @@ let cachedAt = 0;
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 const FALLBACK_STATS: SiteStats = {
-  yachtCount: 0,
   manufacturerCount: 0,
+  yachtModelCount: 0,
+  reviewCount: 0,
   lastUpdated: new Date().toISOString(),
 };
 
@@ -28,22 +28,26 @@ export async function getSiteStats(): Promise<SiteStats> {
     return cachedStats;
   }
 
-  const stats = await buildSafeQuery(async () => {
-    const [yachtResult, mfrResult] = await Promise.all([
-      db.select({ count: count() }).from(yachtModels),
-      db.select({ count: count() }).from(manufacturers),
-    ]);
+  const stats = await pool.query(`
+    SELECT 
+      (SELECT COUNT(*) FROM manufacturers WHERE name IS NOT NULL) as manufacturer_count,
+      (SELECT COUNT(*) FROM yacht_models WHERE model_name IS NOT NULL) as yacht_model_count,
+      (SELECT COUNT(*) FROM yacht_models) as yacht_count,
+      (SELECT COUNT(*) FROM reviews) as review_count
+  `);
 
-    return {
-      yachtCount: Number(yachtResult[0]?.count ?? 0),
-      manufacturerCount: Number(mfrResult[0]?.count ?? 0),
-      lastUpdated: new Date().toISOString(),
-    } as SiteStats;
-  }, FALLBACK_STATS);
+  const counts = stats.rows[0];
 
-  cachedStats = stats;
+  const result: SiteStats = {
+    manufacturerCount: parseInt(counts.manufacturer_count || "0", 10),
+    yachtModelCount: parseInt(counts.yacht_model_count || "0", 10),
+    reviewCount: parseInt(counts.review_count || "0", 10),
+    lastUpdated: new Date().toISOString(),
+  };
+
+  cachedStats = result;
   cachedAt = now;
-  return stats;
+  return result;
 }
 
 /**
@@ -67,14 +71,15 @@ export function formatCount(n: number): string {
  * Build a human-readable phrase like "200+ sailing yachts" using the actual DB count.
  */
 export function formatYachtPhrase(stats: SiteStats): string {
-  return `${formatCount(stats.yachtCount)} sailing yachts`;
+  // Use yacht model count for the main claim
+  return `${formatCount(stats.yachtModelCount)} sailing yachts`;
 }
 
 /**
  * Build FAQ answer text for "How many yachts are in the database?"
  */
 export function formatYachtCountFAQ(stats: SiteStats): string {
-  const yachts = stats.yachtCount;
+  const models = stats.yachtModelCount;
   const mfrs = stats.manufacturerCount;
-  return `The database includes ${yachts} sailing yacht model${yachts !== 1 ? "s" : ""} from ${mfrs} manufacturer${mfrs !== 1 ? "s" : ""} worldwide, with detailed specifications including dimensions, sail plans, and accommodation.`;
+  return `The database includes ${models} sailing yacht models across ${mfrs} manufacturers worldwide, with detailed specifications including dimensions, sail plans, and accommodation.`;
 }
