@@ -2,6 +2,150 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Guide pages: luxury typography & table styling ── */
+.article-content {
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.85;
+  color: #334155;
+}
+
+.article-content h2,
+.article-content h3,
+.article-content h4 {
+  font-family: Georgia, 'Times New Roman', serif;
+  letter-spacing: -0.01em;
+  color: #1e293b;
+}
+
+.article-content h2 {
+  margin-top: 2.5em;
+  margin-bottom: 0.8em;
+  padding-bottom: 0.4em;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.article-content p {
+  margin-bottom: 1.4em;
+}
+
+.article-content a {
+  color: #b45309;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(180, 83, 9, 0.3);
+  transition: border-color 0.2s;
+}
+
+.article-content a:hover {
+  color: #92400e;
+  border-bottom-color: #92400e;
+}
+
+/* Elegant table styling */
+.article-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 2em 0;
+  font-size: 0.9rem;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+.article-content thead tr {
+  background: #1e293b;
+}
+
+.article-content th {
+  color: #fde68a;
+  font-weight: 600;
+  padding: 0.8rem 1rem;
+  text-align: left;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.article-content td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.88rem;
+}
+
+.article-content tbody tr:hover {
+  background: rgba(245, 158, 11, 0.04);
+}
+
+.article-content tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Blockquotes */
+.article-content blockquote {
+  border-left: 3px solid rgba(245, 158, 11, 0.5);
+  background: rgba(255, 251, 235, 0.5);
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 1em 1.5em;
+  margin: 1.5em 0;
+  font-style: italic;
+}
+
+.article-content blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Lists */
+.article-content ul,
+.article-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.4em;
+}
+
+.article-content li {
+  margin-bottom: 0.4em;
+}
+
+.article-content li::marker {
+  color: #d97706;
+}
+
+/* Horizontal rules */
+.article-content hr {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  margin: 2.5em 0;
+}
+
+/* Images inside articles */
+.article-content img {
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin: 1.5em 0;
+}
+
+/* Code blocks */
+.article-content code {
+  font-size: 0.88em;
+  background: #f8fafc;
+  padding: 0.15em 0.4em;
+  border-radius: 0.25rem;
+  border: 1px solid #e2e8f0;
+}
+
+.article-content pre {
+  background: #1e293b;
+  border-radius: 0.75rem;
+  padding: 1.25em;
+  overflow-x: auto;
+}
+
+.article-content pre code {
+  background: none;
+  border: none;
+  color: #e2e8f0;
+  padding: 0;
+}
+
 /* ── Print styles for yacht spec sheets ── */
 @media print {
   /* Hide non-essential UI */
