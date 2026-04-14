@@ -9,7 +9,7 @@ import {
 import { getSiteUrl, generateBreadcrumbJsonLd } from "@/lib/seo";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import BuyingGuideYachtList from "@/components/BuyingGuideYachtList";
-import { getTemplateById, generateBuyingGuideJsonLd } from "@/lib/buying-guides";
+import { getTemplateById } from "@/lib/buying-guides";
 
 export const revalidate = 3600;
 
@@ -82,6 +82,10 @@ function formatCategoryName(category: string): string {
     .join(" ");
 }
 
+function countWords(text: string): number {
+  return text.replace(/<[^>]+>/g, "").split(/\s+/).filter(Boolean).length;
+}
+
 interface PageProps {
   params: { slug: string };
 }
@@ -142,13 +146,25 @@ export default async function GuideArticlePage({ params }: PageProps) {
     { name: article.title, path: `/guides/${article.slug}` },
   ]);
 
-  // Generate structured data
-  const articleJsonLd = {
-    "@context": "https://schema.org",
+  const articleUrl = getSiteUrl(`/guides/${article.slug}`);
+  const wordCount = countWords(contentHtml);
+  const articleSection = article.category
+    ? formatCategoryName(article.category)
+    : "Sailing Guides";
+
+  // Enhanced Article JSON-LD with wordCount, articleSection, about, speakable
+  const articleJsonLd: Record<string, any> = {
     "@type": "Article",
     headline: article.title,
     description: article.excerpt || undefined,
     image: article.featuredImage || undefined,
+    url: articleUrl,
+    wordCount,
+    articleSection,
+    about: [
+      { "@type": "Thing", name: "Sailing", url: "https://en.wikipedia.org/wiki/Sailing" },
+      { "@type": "Thing", name: "Sailboat", url: "https://en.wikipedia.org/wiki/Sailboat" },
+    ],
     author: article.author
       ? {
           "@type": "Person",
@@ -160,81 +176,100 @@ export default async function GuideArticlePage({ params }: PageProps) {
       "@type": "Organization",
       name: "Sailing Yachts Database",
       url: getSiteUrl(),
+      logo: {
+        "@type": "ImageObject",
+        url: getSiteUrl("/logo.png"),
+      },
     },
     datePublished: article.publishedAt?.toISOString(),
     dateModified: article.updatedAt?.toISOString(),
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": getSiteUrl(`/guides/${article.slug}`),
+      "@id": articleUrl,
+    },
+    speakable: {
+      "@type": "SpeakableSpecification",
+      cssSelector: ["h1", ".article-content h2", ".article-content h3"],
     },
   };
 
-  const structuredData = template
-    ? generateBuyingGuideJsonLd(
-        article.title,
-        article.excerpt || "",
-        article.slug,
-        template.faqs,
-        article.publishedAt,
-        article.author
-      )
-    : { "@context": "https://schema.org", "@graph": [articleJsonLd] };
+  // Build structured data graph
+  const graphNodes: Record<string, any>[] = [articleJsonLd, breadcrumb];
+
+  // Add FAQPage schema if template has FAQs
+  if (template && template.faqs.length > 0) {
+    graphNodes.push({
+      "@type": "FAQPage",
+      url: articleUrl,
+      mainEntity: template.faqs.map((faq) => ({
+        "@type": "Question",
+        name: faq.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: faq.answer,
+        },
+      })),
+    });
+  }
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": graphNodes,
+  };
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
-      />
-      <script
-        type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
-      <main className="min-h-screen">
+      <main className="min-h-screen bg-white">
         {/* Breadcrumb */}
-        <nav className="bg-gray-50 border-b border-gray-200 py-3 px-4">
-          <div className="max-w-5xl mx-auto flex items-center gap-2 text-sm text-gray-600">
-            <Link href="/" className="hover:text-blue-600">
+        <nav className="bg-slate-900 border-b border-slate-700/50 py-3 px-4">
+          <div className="max-w-5xl mx-auto flex items-center gap-2 text-sm">
+            <Link href="/" className="text-amber-300/80 hover:text-amber-200 transition">
               Home
             </Link>
-            <span>/</span>
-            <Link href="/guides" className="hover:text-blue-600">
+            <span className="text-slate-600">/</span>
+            <Link href="/guides" className="text-amber-300/80 hover:text-amber-200 transition">
               Guides
             </Link>
-            <span>/</span>
-            <span className="text-gray-900 font-medium truncate">
+            <span className="text-slate-600">/</span>
+            <span className="text-slate-300 font-medium truncate">
               {article.title}
             </span>
           </div>
         </nav>
 
         {/* Article Header */}
-        <header className="bg-gradient-to-b from-sky-50 to-white py-12 px-4">
-          <div className="max-w-3xl mx-auto">
+        <header className="bg-gradient-to-b from-slate-900 via-slate-800 to-slate-700 pt-16 pb-20 px-4 relative">
+          <div className="max-w-3xl mx-auto relative z-10">
             {article.category && (
-              <span className="inline-block px-3 py-1 text-sm font-medium bg-blue-100 text-blue-700 rounded-full mb-4">
+              <span className="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-widest bg-amber-500/15 text-amber-300 rounded-full mb-6 border border-amber-500/20">
                 {formatCategoryName(article.category)}
               </span>
             )}
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h1 className="text-3xl md:text-5xl font-bold text-white mb-5 leading-tight" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
               {article.title}
             </h1>
             {article.excerpt && (
-              <p className="text-lg text-gray-600 mb-6">{article.excerpt}</p>
+              <p className="text-lg md:text-xl text-slate-300 mb-8 leading-relaxed">
+                {article.excerpt}
+              </p>
             )}
-            <div className="flex items-center gap-4 text-sm text-gray-500">
+            <div className="flex flex-wrap items-center gap-4 text-sm">
               {article.author && (
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-xs font-medium text-gray-600">
+                  <div className="w-9 h-9 bg-amber-500/20 rounded-full flex items-center justify-center text-sm font-semibold text-amber-300 border border-amber-500/30">
                     {article.author.charAt(0)}
                   </div>
                   <div>
-                    <span className="font-medium text-gray-700">
+                    <span className="font-medium text-amber-200">
                       {article.author}
                     </span>
                     {article.authorTitle && (
-                      <span className="text-gray-400 ml-1">
+                      <span className="text-slate-400 ml-1">
                         · {article.authorTitle}
                       </span>
                     )}
@@ -242,17 +277,24 @@ export default async function GuideArticlePage({ params }: PageProps) {
                 </div>
               )}
               {article.publishedAt && (
-                <time dateTime={article.publishedAt.toISOString()}>
+                <time dateTime={article.publishedAt.toISOString()} className="text-slate-400">
                   {formatDate(article.publishedAt)}
                 </time>
               )}
               {article.readingTimeMinutes && (
-                <span>{article.readingTimeMinutes} min read</span>
+                <span className="text-slate-400">{article.readingTimeMinutes} min read</span>
               )}
               {article.lastReviewedAt && (
-                <span className="text-green-600">Reviewed {formatDate(article.lastReviewedAt)}</span>
+                <span className="text-emerald-400/80 text-xs">Reviewed {formatDate(article.lastReviewedAt)}</span>
               )}
             </div>
+          </div>
+
+          {/* Wave divider */}
+          <div className="absolute bottom-0 left-0 right-0">
+            <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full block" preserveAspectRatio="none">
+              <path d="M0 60V30C240 0 480 0 720 30C960 60 1200 60 1440 30V60H0Z" fill="white"/>
+            </svg>
           </div>
         </header>
 
@@ -262,26 +304,28 @@ export default async function GuideArticlePage({ params }: PageProps) {
             {/* TOC Sidebar */}
             {headings.length > 0 && (
               <aside className="hidden lg:block lg:col-span-1">
-                <div className="sticky top-8">
-                  <h2 className="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wider">
-                    On This Page
-                  </h2>
-                  <nav>
-                    <ul className="space-y-2">
-                      {headings.map((h) => (
-                        <li key={h.id}>
-                          <a
-                            href={`#${h.id}`}
-                            className={`text-sm hover:text-blue-600 transition block ${
-                              h.depth === 3 ? "pl-4" : ""
-                            } text-gray-600`}
-                          >
-                            {h.text}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </nav>
+                <div className="sticky top-8 bg-slate-50/50 rounded-xl border border-slate-100 p-6">
+                  <div className="border-l-2 border-amber-500/40 pl-4">
+                    <h2 className="text-xs font-semibold text-slate-400 mb-4 uppercase tracking-[0.2em]">
+                      On This Page
+                    </h2>
+                    <nav>
+                      <ul className="space-y-2.5">
+                        {headings.map((h) => (
+                          <li key={h.id}>
+                            <a
+                              href={`#${h.id}`}
+                              className={`text-sm text-slate-500 hover:text-amber-600 transition-colors block leading-snug ${
+                                h.depth === 3 ? "pl-3 text-slate-400" : ""
+                              }`}
+                            >
+                              {h.text}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </nav>
+                  </div>
                 </div>
               </aside>
             )}
@@ -293,7 +337,7 @@ export default async function GuideArticlePage({ params }: PageProps) {
               } max-w-3xl`}
             >
               {article.featuredImage && (
-                <div className="mb-8 aspect-video bg-gray-100 rounded-lg overflow-hidden">
+                <div className="mb-8 aspect-video bg-slate-100 rounded-xl overflow-hidden shadow-lg">
                   <img
                     src={article.featuredImage}
                     alt={article.title}
@@ -303,48 +347,52 @@ export default async function GuideArticlePage({ params }: PageProps) {
               )}
 
               <div
-                className="prose prose-lg max-w-none prose-headings:scroll-mt-20 prose-a:text-blue-600 prose-img:rounded-lg"
+                className="article-content prose prose-lg max-w-none prose-headings:font-serif prose-headings:text-slate-800 prose-a:text-amber-700 prose-a:no-underline hover:prose-a:underline prose-strong:text-slate-800 prose-li:marker:text-amber-500 prose-blockquote:border-l-amber-500/50 prose-blockquote:bg-amber-50/30 prose-blockquote:rounded-r-lg prose-hr:border-slate-200"
                 dangerouslySetInnerHTML={{ __html: contentHtml }}
               />
 
               {/* Buying Guide Yacht List */}
               {template && (
-                <div className="mt-12">
+                <div className="mt-14">
+                  <div className="mb-6">
+                    <h2 className="text-2xl font-bold text-slate-800 font-serif mb-2">
+                      {template.title}
+                    </h2>
+                    <p className="text-slate-500 text-sm">{template.description}</p>
+                  </div>
                   <BuyingGuideYachtList
                     templateId={article.buyingGuideTemplateId!}
-                    title={template.title}
-                    description={template.description}
                   />
                 </div>
               )}
 
               {/* FAQ Section (if template exists) */}
               {template && template.faqs.length > 0 && (
-                <section className="mt-12 bg-white rounded-lg border border-gray-200 overflow-hidden">
-                  <div className="p-6 border-b border-gray-200">
-                    <h2 className="text-xl font-bold text-gray-900">
+                <section className="mt-14 bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden">
+                  <div className="p-6 border-b border-slate-200">
+                    <h2 className="text-xl font-bold text-slate-800 font-serif">
                       Frequently Asked Questions
                     </h2>
                   </div>
-                  <div className="divide-y divide-gray-200">
+                  <div className="divide-y divide-slate-200">
                     {template.faqs.map((faq, idx) => (
                       <details key={idx} className="p-6 group">
-                        <summary className="text-lg font-semibold text-gray-900 cursor-pointer list-none flex items-center justify-between hover:text-blue-600 transition">
+                        <summary className="text-lg font-semibold text-slate-800 cursor-pointer list-none flex items-center justify-between hover:text-amber-700 transition font-serif">
                           {faq.question}
-                          <span className="text-gray-400 group-open:rotate-180 transition-transform duration-200">▶</span>
+                          <span className="text-amber-500 group-open:rotate-180 transition-transform duration-200 ml-4 flex-shrink-0">▼</span>
                         </summary>
-                        <p className="text-gray-600 mt-3 pl-4 border-l-4 border-blue-200">{faq.answer}</p>
+                        <p className="text-slate-600 mt-4 pl-4 border-l-4 border-amber-500/50 leading-relaxed">{faq.answer}</p>
                       </details>
                     ))}
                   </div>
                 </section>
               )}
 
-              <div className="mt-12 bg-blue-50 rounded-xl p-8 border border-blue-100">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <div className="mt-14 bg-slate-900 rounded-2xl p-10 text-white shadow-xl">
+                <h3 className="text-xl font-semibold text-amber-300 mb-2 font-serif">
                   Get New Guides in Your Inbox
                 </h3>
-                <p className="text-gray-600 mb-4">
+                <p className="text-slate-300 mb-5">
                   Subscribe to receive the latest sailing guides, buying advice,
                   and resources.
                 </p>
@@ -352,20 +400,23 @@ export default async function GuideArticlePage({ params }: PageProps) {
               </div>
 
               {/* Browse Yachts CTA */}
-              <div className="mt-8 bg-gradient-to-r from-blue-600 to-sky-500 rounded-xl p-8 text-center text-white">
-                <h3 className="text-2xl font-semibold mb-3">
-                  Explore Our Yacht Database
-                </h3>
-                <p className="text-blue-50 mb-5">
-                  Compare specs, read reviews, and find your perfect sailing
-                  yacht.
-                </p>
-                <Link
-                  href="/yachts"
-                  className="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-blue-50 transition"
-                >
-                  Browse Yachts
-                </Link>
+              <div className="mt-8 bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 rounded-2xl p-10 text-center text-white shadow-xl relative overflow-hidden">
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMwLTkuOTQtOC4wNi0xOC0xOC0xOGgydjM2YzAgOS45NCA4LjA2IDE4IDE4IDE4SDE4Yy05Ljk0IDAtMTgtOC4wNi0xOC0xOHYtMzZoMzZ6IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9Ii4wMyIvPjwvZz48L3N2Zz4=')] opacity-30" />
+                <div className="relative z-10">
+                  <h3 className="text-2xl font-semibold mb-3 font-serif">
+                    Explore Our Yacht Database
+                  </h3>
+                  <p className="text-amber-100 mb-6 max-w-md mx-auto">
+                    Compare specs, read reviews, and find your perfect sailing
+                    yacht from our curated collection.
+                  </p>
+                  <Link
+                    href="/yachts"
+                    className="inline-block bg-white text-amber-700 px-8 py-3.5 rounded-xl font-semibold hover:bg-amber-50 transition shadow-lg"
+                  >
+                    Browse Yachts →
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -373,9 +424,9 @@ export default async function GuideArticlePage({ params }: PageProps) {
 
         {/* Related Guides */}
         {relatedArticles && relatedArticles.length > 0 && (
-          <section className="py-12 px-4 bg-gray-50 border-t border-gray-200">
+          <section className="py-16 px-4 bg-slate-50 border-t border-slate-200">
             <div className="max-w-5xl mx-auto">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              <h2 className="text-2xl font-bold text-slate-800 mb-8 font-serif">
                 Related Guides
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -383,18 +434,18 @@ export default async function GuideArticlePage({ params }: PageProps) {
                   <Link
                     key={related.id}
                     href={`/guides/${related.slug}`}
-                    className="block bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg hover:border-blue-200 transition group"
+                    className="block bg-white rounded-xl border border-slate-200 p-6 hover:border-amber-300 hover:shadow-xl transition-all duration-300 group"
                   >
                     {related.category && (
-                      <span className="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full mb-3">
+                      <span className="inline-block px-2.5 py-1 text-xs font-medium bg-amber-50 text-amber-700 rounded-full mb-3 border border-amber-200/50">
                         {formatCategoryName(related.category)}
                       </span>
                     )}
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition">
+                    <h3 className="text-lg font-semibold text-slate-800 mb-2 group-hover:text-amber-700 transition font-serif">
                       {related.title}
                     </h3>
                     {related.excerpt && (
-                      <p className="text-sm text-gray-600 line-clamp-2">
+                      <p className="text-sm text-slate-500 line-clamp-2">
                         {related.excerpt}
                       </p>
                     )}

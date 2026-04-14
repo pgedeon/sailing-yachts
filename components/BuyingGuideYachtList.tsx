@@ -63,14 +63,18 @@ export default function BuyingGuideYachtList({
 
   if (loading) {
     return (
-      <div className="bg-gray-50 rounded-lg border border-gray-200 p-8 text-center">
-        <div className="animate-pulse space-y-4">
-          <div className="h-4 bg-gray-300 rounded w-1/3 mx-auto"></div>
-          <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-24 bg-gray-200 rounded"></div>
-            ))}
-          </div>
+      <div className="bg-slate-50 rounded-2xl border border-slate-200 p-8">
+        <div className="animate-pulse space-y-5">
+          <div className="h-4 bg-slate-200 rounded w-1/3 mx-auto"></div>
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex gap-4">
+              <div className="w-28 h-20 bg-slate-200 rounded-xl flex-shrink-0"></div>
+              <div className="flex-1 space-y-2">
+                <div className="h-4 bg-slate-200 rounded w-2/3"></div>
+                <div className="h-3 bg-slate-100 rounded w-1/2"></div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -78,106 +82,95 @@ export default function BuyingGuideYachtList({
 
   if (error) {
     return (
-      <div className="bg-red-50 rounded-lg border border-red-200 p-6 text-center">
-        <p className="text-red-600">{error}</p>
+      <div className="bg-red-50/50 rounded-2xl border border-red-200/60 p-6 text-center">
+        <p className="text-red-600 text-sm">{error}</p>
       </div>
     );
   }
 
   if (yachts.length === 0) {
     return (
-      <div className="bg-gray-50 rounded-lg border border-gray-200 p-8 text-center">
+      <div className="bg-slate-50 rounded-2xl border border-slate-200 p-10 text-center">
         <div className="text-4xl mb-4">⚓</div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+        <h3 className="text-lg font-semibold text-slate-800 mb-2 font-serif">
           No matching yachts found
         </h3>
-        <p className="text-gray-600">
-          We couldn't find any yachts matching these criteria. Try browsing our
-          full catalog or adjusting your filters.
+        <p className="text-slate-500 text-sm">
+          We couldn&apos;t find any yachts matching these criteria. Try browsing our
+          full catalog instead.
         </p>
       </div>
     );
   }
 
   return (
-    <section className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <section className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
       {(title || description) && (
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6 border-b border-slate-100 bg-slate-50/50">
           {title && (
-            <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
+            <h3 className="text-lg font-bold text-slate-800 mb-1 font-serif">{title}</h3>
           )}
           {description && (
-            <p className="text-gray-600 text-sm">{description}</p>
+            <p className="text-slate-500 text-sm">{description}</p>
           )}
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="text-xs text-slate-400 mt-2">
             Showing {yachts.length} of {total} matching yachts
           </p>
         </div>
       )}
 
-      <div className="divide-y divide-gray-200">
+      <div className="divide-y divide-slate-100">
         {yachts.map((yacht) => (
           <Link
             key={yacht.id}
             href={`/yachts/${yacht.slug}`}
-            className="block hover:bg-blue-50 transition p-6"
+            className="block hover:bg-amber-50/40 transition-colors duration-200 p-5 group"
           >
             <div className="flex flex-col sm:flex-row gap-4">
-              {yacht.primaryImageUrl && (
-                <div className="w-full sm:w-32 h-24 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+              {yacht.primaryImageUrl ? (
+                <div className="w-full sm:w-28 h-20 bg-slate-100 rounded-xl overflow-hidden flex-shrink-0">
                   <img
                     src={yacht.primaryImageUrl}
                     alt={`${yacht.manufacturer} ${yacht.modelName}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
+                </div>
+              ) : (
+                <div className="w-full sm:w-28 h-20 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex-shrink-0 flex items-center justify-center">
+                  <span className="text-2xl opacity-40">⛵</span>
                 </div>
               )}
               <div className="flex-grow min-w-0">
-                <div className="flex flex-wrap items-center gap-2 mb-1">
-                  <h4 className="text-lg font-semibold text-gray-900 truncate">
+                <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                  <h4 className="text-base font-semibold text-slate-800 group-hover:text-amber-700 transition font-serif truncate">
                     {yacht.manufacturer} {yacht.modelName}
                   </h4>
                   {yacht.year && (
-                    <span className="text-sm text-gray-500">{yacht.year}</span>
+                    <span className="text-xs text-slate-400 font-mono">{yacht.year}</span>
                   )}
                 </div>
 
-                <div className="flex flex-wrap gap-3 text-sm text-gray-600">
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
                   {yacht.lengthOverall && (
-                    <span className="flex items-center gap-1">
-                      <span className="text-gray-400">📏</span>
-                      {yacht.lengthOverall.toFixed(1)} ft
-                    </span>
+                    <span>LOA {yacht.lengthOverall.toFixed(1)}m</span>
                   )}
                   {yacht.beam && (
-                    <span className="flex items-center gap-1">
-                      <span className="text-gray-400">↔️</span>
-                      {yacht.beam.toFixed(1)} ft beam
-                    </span>
+                    <span>Beam {yacht.beam.toFixed(1)}m</span>
                   )}
                   {yacht.cabins && (
-                    <span className="flex items-center gap-1">
-                      <span className="text-gray-400">🛏️</span>
-                      {yacht.cabins} cabin{yacht.cabins > 1 ? "s" : ""}
-                    </span>
+                    <span>{yacht.cabins} cabin{yacht.cabins > 1 ? "s" : ""}</span>
                   )}
                   {yacht.hullMaterial && (
-                    <span className="flex items-center gap-1">
-                      <span className="text-gray-400">🔨</span>
-                      {yacht.hullMaterial}
-                    </span>
+                    <span>{yacht.hullMaterial}</span>
                   )}
                   {yacht.rigType && (
-                    <span className="flex items-center gap-1">
-                      <span className="text-gray-400">⛵</span>
-                      {yacht.rigType}
-                    </span>
+                    <span>{yacht.rigType}</span>
                   )}
                 </div>
               </div>
-              <div className="flex items-center justify-end">
-                <span className="text-blue-600 font-medium text-sm whitespace-nowrap">
-                  View Details →
+              <div className="hidden sm:flex items-center">
+                <span className="text-amber-600 font-medium text-xs whitespace-nowrap group-hover:translate-x-1 transition-transform">
+                  View →
                 </span>
               </div>
             </div>
@@ -186,10 +179,10 @@ export default function BuyingGuideYachtList({
       </div>
 
       {showAllLink && total > yachts.length && (
-        <div className="p-4 bg-white border-t border-gray-200 text-center">
+        <div className="p-4 bg-slate-50/50 border-t border-slate-100 text-center">
           <Link
-            href={`/yachts`}
-            className="text-blue-600 hover:text-blue-700 font-medium"
+            href="/yachts"
+            className="text-amber-700 hover:text-amber-800 text-sm font-medium transition"
           >
             Browse all {total} matching yachts →
           </Link>
