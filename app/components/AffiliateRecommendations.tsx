@@ -3,6 +3,7 @@
 import { ShoppingBag, ExternalLink, Info } from "lucide-react";
 import type { AffiliateCategory } from "@/lib/affiliate-recommendations";
 import { getAffiliateDisclosure } from "@/lib/affiliate-recommendations";
+import { trackAffiliateClick } from "@/lib/revenue-analytics";
 import { useState } from "react";
 
 interface AffiliateRecommendationsProps {
@@ -63,6 +64,13 @@ export default function AffiliateRecommendations({ categories }: AffiliateRecomm
                     rel="noopener noreferrer"
                     className="block bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md hover:border-blue-300 transition-all group"
                     data-testid={`affiliate-product-${product.id}`}
+                    onClick={() =>
+                      trackAffiliateClick({
+                        productId: product.id,
+                        productName: product.name,
+                        category: category.label,
+                      })
+                    }
                   >
                     <div className="flex items-start justify-between mb-2">
                       <h4 className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors text-sm sm:text-base">

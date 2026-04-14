@@ -474,3 +474,27 @@ export const insertYachtPriceSchema = createInsertSchema(yachtPrices);
 export const selectYachtPriceSchema = createSelectSchema(yachtPrices);
 export const insertPriceSnapshotSchema = createInsertSchema(priceSnapshots);
 export const selectPriceSnapshotSchema = createSelectSchema(priceSnapshots);
+
+// --- Revenue Events (P8.6) ---
+
+export const revenueEvents = pgTable(
+  "revenue_events",
+  {
+    id: serial("id").primaryKey(),
+    eventType: varchar("event_type", { length: 50 }).notNull(),
+    page: varchar("page", { length: 500 }).notNull(),
+    source: varchar("source", { length: 100 }).notNull(),
+    metadata: jsonb("metadata"),
+    sessionId: varchar("session_id", { length: 100 }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxEventType: index("idx_revenue_events_type").on(table.eventType),
+    idxCreatedAt: index("idx_revenue_events_created").on(table.createdAt),
+    idxSessionId: index("idx_revenue_events_session").on(table.sessionId),
+    idxPage: index("idx_revenue_events_page").on(table.page),
+  }),
+);
+
+export const insertRevenueEventSchema = createInsertSchema(revenueEvents);
+export const selectRevenueEventSchema = createSelectSchema(revenueEvents);

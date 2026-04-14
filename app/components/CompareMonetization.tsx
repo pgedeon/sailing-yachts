@@ -1,5 +1,7 @@
 "use client";
 
+import { trackLeadSubmit, trackInquiryModalOpen, trackGuideCtaClick } from "@/lib/revenue-analytics";
+
 import { useState } from "react";
 import { ShoppingBag, Mail, Phone, Info, ExternalLink, Clock, CheckCircle2 } from "lucide-react";
 import AffiliateRecommendations from "./AffiliateRecommendations";
@@ -127,6 +129,7 @@ export function CompareMonetization({ yachts }: CompareMonetizationProps) {
         throw new Error("Failed to submit inquiry");
       }
 
+      trackLeadSubmit({ leadType: "dealer_inquiry", yachtIds: yachts.map(y => y.id) });
       setInquirySubmitted(true);
     } catch (error) {
       setInquiryError("Unable to submit inquiry. Please try again.");
@@ -145,7 +148,7 @@ export function CompareMonetization({ yachts }: CompareMonetizationProps) {
             <p className="text-blue-100 text-sm">{contextualMessage}</p>
           </div>
           <button
-            onClick={() => setShowInquiryModal(true)}
+            onClick={() => { setShowInquiryModal(true); trackInquiryModalOpen({ yachtIds: yachts.map(y => y.id), source: "broker_cta_banner" }); }}
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors"
           >
             <Mail className="w-4 h-4" />
@@ -163,6 +166,7 @@ export function CompareMonetization({ yachts }: CompareMonetizationProps) {
           rel="noopener noreferrer"
           className="group block bg-white border border-gray-200 rounded-xl p-5 hover:shadow-md hover:border-blue-300 transition-all"
           data-testid="cta-insurance"
+          onClick={() => trackGuideCtaClick({ ctaType: "insurance", targetUrl: "/insurance" })}
         >
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
@@ -185,6 +189,7 @@ export function CompareMonetization({ yachts }: CompareMonetizationProps) {
           rel="noopener noreferrer"
           className="group block bg-white border border-gray-200 rounded-xl p-5 hover:shadow-md hover:border-blue-300 transition-all"
           data-testid="cta-charter-demo"
+          onClick={() => trackGuideCtaClick({ ctaType: "charter_demo", targetUrl: "/charter" })}
         >
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
@@ -208,6 +213,7 @@ export function CompareMonetization({ yachts }: CompareMonetizationProps) {
           rel="noopener noreferrer"
           className="group block bg-white border border-gray-200 rounded-xl p-5 hover:shadow-md hover:border-blue-300 transition-all"
           data-testid="cta-financing"
+          onClick={() => trackGuideCtaClick({ ctaType: "financing", targetUrl: "/financing" })}
         >
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
@@ -241,7 +247,7 @@ export function CompareMonetization({ yachts }: CompareMonetizationProps) {
             </span>
           </button>
           <button
-            onClick={() => setShowInquiryModal(true)}
+            onClick={() => { setShowInquiryModal(true); trackInquiryModalOpen({ yachtIds: yachts.map(y => y.id), source: "inquiry_tab" }); }}
             className={`pb-3 px-1 text-sm font-medium transition-colors border-b-2 ${
               showInquiryModal
                 ? "border-blue-600 text-blue-600"
