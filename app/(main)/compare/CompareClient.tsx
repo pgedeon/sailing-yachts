@@ -5,6 +5,7 @@ import { PriceTierBadge } from "@/app/components/PriceTierBadge";
 import { calculatePriceTier } from "@/lib/price-tier";
 import Link from "next/link";
 import { CompareMonetization } from "@/app/components/CompareMonetization";
+import { LeadForm } from "@/app/components/LeadForm";
 import {
   getSavedComparisons,
   saveComparison,
@@ -858,6 +859,17 @@ export function CompareClient({ initialIds }: CompareClientProps) {
       )}
 
       <div className="mt-8">
+
+      {/* Find Similar Lead Form */}
+      {yachts.length >= 2 && !loading && (
+        <div className="mt-6 no-print">
+          <LeadForm
+            yachtIds={yachts.map(y => y.id)}
+            leadType="find_similar"
+            yachtName={yachts.map(y => `${y.manufacturer} ${y.modelName}`).join(", ")}
+          />
+        </div>
+      )}
         <Link href="/yachts" className="text-blue-600 hover:underline text-sm">← Back to browse</Link>
       </div>
     </div>
