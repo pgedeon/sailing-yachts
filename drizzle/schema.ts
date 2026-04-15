@@ -568,3 +568,40 @@ export const users = pgTable(
 
 export const insertUserSchema = createInsertSchema(users);
 export const selectUserSchema = createSelectSchema(users);
+
+// User favorites table (P9.2 — DB-backed favorites)
+export const userFavorites = pgTable(
+  "user_favorites",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    yachtModelId: integer("yacht_model_id").notNull().references(() => yachtModels.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxUser: index("idx_user_favorites_user").on(table.userId),
+    idxYacht: index("idx_user_favorites_yacht").on(table.yachtModelId),
+    idxUnique: uniqueIndex("idx_user_favorites_unique").on(table.userId, table.yachtModelId),
+  }),
+);
+
+// Saved comparisons table (P9.2)
+export const savedComparisons = pgTable(
+  "saved_comparisons",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    name: varchar("name", { length: 255 }),
+    yachtIds: jsonb("yacht_ids").$type<number[]>().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxUser: index("idx_saved_comparisons_user").on(table.userId),
+  }),
+);
+
+export const insertUserFavoriteSchema = createInsertSchema(userFavorites);
+export const selectUserFavoriteSchema = createSelectSchema(userFavorites);
+export const insertSavedComparisonSchema = createInsertSchema(savedComparisons);
+export const selectSavedComparisonSchema = createSelectSchema(savedComparisons);
