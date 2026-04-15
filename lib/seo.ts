@@ -227,6 +227,91 @@ export interface JsonLdCollectionPage {
   numberOfItems?: number;
 }
 
+
+/* ------------------------------------------------------------------ */
+/*  LocalBusiness Structured Data (Partner Offers)                    */
+/* ------------------------------------------------------------------ */
+
+export interface JsonLdLocalBusiness {
+  "@context": "https://schema.org";
+  "@type": "LocalBusiness";
+  name: string;
+  description: string;
+  url: string;
+  address?: {
+    "@type": "PostalAddress";
+    addressLocality?: string;
+    addressCountry?: string;
+  };
+  contactPoint?: {
+    "@type": "ContactPoint";
+    email?: string;
+    telephone?: string;
+    contactType: string;
+  };
+  openingHoursSpecification?: Array<{
+    "@type": "OpeningHoursSpecification";
+    dayOfWeek: string[];
+    opens: string;
+    closes: string;
+  }>;
+}
+
+export function generateLocalBusinessJsonLd(params: {
+  name: string;
+  description: string;
+  url: string;
+  address?: {
+    city?: string;
+    country?: string;
+  };
+  contact?: {
+    email?: string;
+    phone?: string;
+  };
+  openingHours?: Array<{
+    dayOfWeek: string[];
+    opens: string;
+    closes: string;
+  }>;
+}): JsonLdLocalBusiness {
+  const result: JsonLdLocalBusiness = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: params.name,
+    description: params.description,
+    url: params.url,
+  };
+
+  if (params.address) {
+    result.address = {
+      "@type": "PostalAddress",
+      ...(params.address.city ? { addressLocality: params.address.city } : {}),
+      ...(params.address.country ? { addressCountry: params.address.country } : {}),
+    };
+  }
+
+  if (params.contact) {
+    result.contactPoint = {
+      "@type": "ContactPoint",
+      contactType: "sales",
+      ...(params.contact.email ? { email: params.contact.email } : {}),
+      ...(params.contact.phone ? { telephone: params.contact.phone } : {}),
+    };
+  }
+
+  if (params.openingHours && params.openingHours.length > 0) {
+    result.openingHoursSpecification = params.openingHours.map((oh) => ({
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: oh.dayOfWeek,
+      opens: oh.opens,
+      closes: oh.closes,
+    }));
+  }
+
+  return result;
+}
+
 export function generateCollectionPageJsonLd(params: {
   name: string;
   description: string;

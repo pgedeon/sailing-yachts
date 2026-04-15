@@ -193,6 +193,45 @@ export async function ensureSchema() {
     `);
 
 
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS partner_offers (
+        id SERIAL PRIMARY KEY,
+        manufacturer_id INT REFERENCES manufacturers(id) ON DELETE CASCADE,
+        dealer_name TEXT NOT NULL,
+        dealer_type TEXT NOT NULL DEFAULT 'dealer',
+        contact_name TEXT,
+        email TEXT,
+        phone TEXT,
+        website_url TEXT,
+        location_city TEXT,
+        location_country TEXT,
+        service_area TEXT,
+        specializations JSONB DEFAULT '[]'::jsonb,
+        offer_type TEXT NOT NULL DEFAULT 'new_sales',
+        offer_title TEXT NOT NULL,
+        offer_description TEXT,
+        price_range_min NUMERIC(12,2),
+        price_range_max NUMERIC(12,2),
+        currency TEXT DEFAULT 'EUR',
+        validity_start TIMESTAMPTZ,
+        validity_end TIMESTAMPTZ,
+        source_confidence INT NOT NULL DEFAULT 3,
+        data_source TEXT NOT NULL DEFAULT 'manual',
+        data_source_url TEXT,
+        last_verified_at TIMESTAMPTZ,
+        is_active BOOLEAN NOT NULL DEFAULT true,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_partner_offers_manufacturer ON partner_offers(manufacturer_id);
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_partner_offers_active ON partner_offers(is_active);
+    `);
     // After creating base tables, ensure yacht_models has all Drizzle columns
     // (migrate from minimal to full schema if needed)
     const columnResult = await client.query(`
