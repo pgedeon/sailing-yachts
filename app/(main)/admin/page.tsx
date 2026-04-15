@@ -1,25 +1,28 @@
 import { Suspense } from 'react'
-import { cookies } from 'next/headers'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import AdminLoginForm from './AdminLoginForm'
 
 export const dynamic = 'force-dynamic'
 
-export default function AdminPage() {
-  const cookieStore = cookies()
-  const authCookie = cookieStore.get('auth')
+export default async function AdminPage() {
+  const session = await getServerSession(authOptions)
 
-  if (authCookie?.value) {
+  if (session?.user && session.user.role === 'admin') {
     return (
       <div className="min-h-screen bg-gray-50 p-8">
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-            <a
-              href="/api/admin/logout"
-              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-200"
-            >
-              Logout
-            </a>
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-gray-500">Signed in as {session.user.email}</span>
+              <a
+                href="/api/auth/signout?callbackUrl=/admin"
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition duration-200"
+              >
+                Logout
+              </a>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

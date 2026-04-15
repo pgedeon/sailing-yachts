@@ -1,41 +1,12 @@
 import { NextResponse } from 'next/server'
 
-// Simple token generation (in production, use a proper JWT or random secret)
-function generateToken() {
-  return Math.random().toString(36).substring(2) + Date.now().toString(36)
+// Legacy login route — now handled by next-auth credentials provider
+// Redirect to admin page which shows the next-auth powered login form
+export async function POST(request: Request) {
+  // Redirect to admin page — the AdminLoginForm uses next-auth signIn()
+  return NextResponse.redirect(new URL('/admin', request.url))
 }
 
-// Force rebuild: 2026-02-27 12:59
-
-export async function POST(request: Request) {
-  const formData = await request.formData()
-  const username = formData.get('username') as string
-  const password = formData.get('password') as string
-
-  const AUTH_USER = "admin"
-  const AUTH_PASS = "SailBoatAdmin!"
-
-  if (username === AUTH_USER && password === AUTH_PASS) {
-    const token = generateToken()
-
-    // Set the auth cookie with the token, readable by JS
-    const response = NextResponse.redirect(new URL('/admin', request.url))
-    response.cookies.set('auth', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 3600,
-      path: '/',
-      sameSite: 'lax'
-    })
-    return response
-  }
-
-  // On failure, clear cookie and redirect
-  const response = NextResponse.redirect(new URL('/admin?error=invalid', request.url))
-  response.cookies.set('auth', '', {
-    expires: new Date(0),
-    path: '/',
-    sameSite: 'none',
-  })
-  return response
+export async function GET() {
+  return NextResponse.redirect(new URL('/admin', new URL('https://info.sailboats.fr')), 302)
 }

@@ -1,15 +1,10 @@
 import { NextResponse } from 'next/server'
 
-export async function POST(request: Request) {
-  const response = NextResponse.redirect(new URL('/admin', request.url), 302)
-  response.cookies.set('auth', '', {
-    expires: new Date(0),
-    path: '/',
-    sameSite: 'lax',
-  })
-  return response
+// Legacy logout route — redirects to next-auth signout
+export async function POST() {
+  return NextResponse.redirect(new URL('/api/auth/signout?callbackUrl=/admin', new URL('https://info.sailboats.fr')), 302)
 }
 
 export async function GET() {
-  return NextResponse.redirect(new URL('/admin', new URL('https://info.sailboats.fr')), 302)
+  return NextResponse.redirect(new URL('/api/auth/signout?callbackUrl=/admin', new URL('https://info.sailboats.fr')), 302)
 }
