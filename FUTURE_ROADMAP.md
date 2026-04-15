@@ -73,15 +73,15 @@ These are the first issue titles I would create for the cron agent, in order:
 
 ### Concrete PR-Sized Backlog
 
-- **P6.1 — Live stats service + truthfulness pass:** Create a `site-stats` helper that reads manufacturer/yacht counts from the database and replace all hardcoded “1,000+” copy on the homepage, FAQ, metadata, and API docs. Tests: Playwright assertions on homepage copy and metadata snapshots.
-- **P6.2 — Public page caching strategy:** Remove `force-dynamic` from the homepage, manufacturer pages, yacht detail pages, and SEO landing pages where data freshness can be handled with `revalidate` and `revalidateTag`. Tests: build validation, route rendering checks, and regression tests for cache invalidation after admin edits.
-- **P6.3 — Programmatic long-tail landing pages:** Create reusable templates for high-intent pages such as `/best/40-foot-cruising-sailboats`, `/best/bluewater-sailboats-under-45-feet`, `/best/liveaboard-sailboats-with-3-cabins`, and `/best/performance-cruisers-under-35-feet`. Tests: snapshot content assertions, internal link checks, canonical validation.
-- **P6.4 — Canonical “X vs Y” pages:** Add friendly comparison routes like `/compare/beneteau-oceanis-34-1-vs-jeanneau-sun-odyssey-349`, backed by the existing compare system. Include canonical tags, unique intro copy, and comparison-specific JSON-LD. Tests: Playwright coverage for canonical URL, heading, and comparison table render.
-- **P6.5 — Schema enrichment sweep:** Add `CollectionPage`, `ItemList`, `BreadcrumbList`, `FAQPage`, `ImageObject`, `Review`, and `AggregateOffer`/`Offer` where data exists. Tests: JSON-LD extraction tests and SEO assertions.
-- **P6.6 — Split sitemaps + image sitemap:** Break the current sitemap into logical groups (`yachts`, `manufacturers`, `guides`, `compare`, `images`) with better `lastmod` values sourced from DB timestamps. Tests: XML structure validation and route availability tests.
-- **P6.7 — Internal linking modules:** Add “compare with similar boats,” “same size alternatives,” “more from this manufacturer,” and “related guides” blocks to yacht and manufacturer pages. Tests: Playwright checks for link presence and no broken-link regressions.
-- **P6.8 — Thin-page governance:** Add canonical/noindex rules for low-value filter combinations and deduplicate list pages that only differ by query params. Tests: metadata assertions for indexable vs non-indexable routes.
-- **P6.9 — Search intent pages from real usage:** Mine popular search/autocomplete queries and generate curated landing pages for recurring intents like “best family cruiser,” “shoal draft sailboats,” and “sailboats with 3 cabins.” Tests: content generation snapshot tests and SEO metadata coverage.
+- ~~**P6.1 — Live stats service + truthfulness pass:**~~ Create a `site-stats` helper that reads manufacturer/yacht counts from the database and replace all hardcoded “1,000+” copy on the homepage, FAQ, metadata, and API docs. Tests: Playwright assertions on homepage copy and metadata snapshots.
+- ~~**P6.2 — Public page caching strategy:**~~ Remove `force-dynamic` from the homepage, manufacturer pages, yacht detail pages, and SEO landing pages where data freshness can be handled with `revalidate` and `revalidateTag`. Tests: build validation, route rendering checks, and regression tests for cache invalidation after admin edits. *(completed 2026-04-15)*   
+- ~~**P6.3 — Programmatic long-tail landing pages:**~~ Create reusable templates for high-intent pages such as `/best/40-foot-cruising-sailboats`, `/best/bluewater-sailboats-under-45-feet`, `/best/liveaboard-sailboats-with-3-cabins`, and `/best/performance-cruisers-under-35-feet`. Tests: snapshot content assertions, internal link checks, canonical validation. *(completed 2026-04-15)*   
+- ~~**P6.4 — Canonical “X vs Y” pages:** Add friendly comparison routes like `/compare/beneteau-oceanis-34-1-vs-jeanneau-sun-odyssey-349`, backed by the existing compare system. Include canonical tags, unique intro copy, and comparison-specific JSON-LD. Tests: Playwright coverage for canonical URL, heading, and comparison table render.
+- ~~**P6.5 — Schema enrichment sweep:**~~ Add `CollectionPage`, `ItemList`, `BreadcrumbList`, `FAQPage`, `ImageObject`, `Review`, and `AggregateOffer`/`Offer` where data exists. Tests: JSON-LD extraction tests and SEO assertions.
+- ~~**P6.6 — Split sitemaps + image sitemap:**~~ Break the current sitemap into logical groups (`yachts`, `manufacturers`, `guides`, `compare`, `images`) with better `lastmod` values sourced from DB timestamps. Tests: XML structure validation and route availability tests.
+- ~~**P6.7 — Internal linking modules:**~~ Add “compare with similar boats,” “same size alternatives,” “more from this manufacturer,” and “related guides” blocks to yacht and manufacturer pages. Tests: Playwright checks for link presence and no broken-link regressions.
+- ~~**P6.8 — Thin-page governance:**~~ Add canonical/noindex rules for low-value filter combinations and deduplicate list pages that only differ by query params. Tests: metadata assertions for indexable vs non-indexable routes.
+- ~~**P6.9 — Search intent pages from real usage:**~~ Mine popular search/autocomplete queries and generate curated landing pages for recurring intents like “best family cruiser,” “shoal draft sailboats,” and “sailboats with 3 cabins.” Tests: content generation snapshot tests and SEO metadata coverage.
 
 ### Notes
 
@@ -136,14 +136,14 @@ These are the first issue titles I would create for the cron agent, in order:
 
 ### Concrete PR-Sized Backlog
 
-- **P8.1 — Price data schema + ingestion:** Add tables for price range, currency, source, source type, confidence score, and historical snapshots. Start with admin import or partner CSV upload. Tests: schema migration tests, API tests, and UI render tests for price blocks.
-- **P8.2 — Price insight blocks on yacht pages:** Add “new price range,” “used market range,” “last updated,” and “confidence” UI modules where data exists. Tests: Playwright checks for price rendering and schema assertions for offer markup.
-- **P8.3 — Comparison-page monetization:** Add contextual affiliate and partner CTAs on compare pages such as gear recommendations, insurance, charter/demo leads, and broker inquiry forms. Tests: CTA visibility tests and click tracking event assertions.
-- **P8.4 — Dealer/broker lead routing:** Build forms like “ask a dealer”, “request market pricing”, and “find a similar used yacht,” routed via email/webhook/admin queue with source attribution. Tests: API validation tests and end-to-end form submission tests.
+- ~~**P8.1 — Price data schema + ingestion:**~~ Add tables for price range, currency, source, source type, confidence score, and historical snapshots. Start with admin import or partner CSV upload. Tests: schema migration tests, API tests, and UI render tests for price blocks.
+- ~~**P8.2 — Price insight blocks on yacht pages:**~~ Add “new price range,” “used market range,” “last updated,” and “confidence” UI modules where data exists. Tests: Playwright checks for price rendering and schema assertions for offer markup.
+- ~~**P8.3 — Comparison-page monetization:**~~ Add contextual affiliate and partner CTAs on compare pages such as gear recommendations, insurance, charter/demo leads, and broker inquiry forms. Tests: CTA visibility tests and click tracking event assertions.
+- ~~**P8.4 — Dealer/broker lead routing:**~~ Build forms like “ask a dealer”, “request market pricing”, and “find a similar used yacht,” routed via email/webhook/admin queue with source attribution. Tests: API validation tests and end-to-end form submission tests.
 - **P8.5 — Premium comparison exports:** Offer downloadable PDF/CSV comparison reports, buyer checklists, or shortlist packs for logged-in users. Tests: report generation tests and permission/entitlement checks.
 - ✅ **P8.6 — Revenue analytics instrumentation:** Track affiliate clicks, compare completion, lead submissions, and price-block engagement by page type and traffic source. Tests: analytics event unit tests and smoke tests around event dispatch.
 - **P8.7 — Best-value pages:** Use price + specs + reviews to create indexable pages such as “best value 40ft cruisers” or “cheaper alternatives to [model].” Tests: content generation and metadata coverage.
-- **P8.8 — Partner offer pages:** Create manufacturer/dealer landing pages for co-marketing and lead generation with clear disclosures and performance reporting. Tests: route and schema checks.
+- ~~**P8.8 — Partner offer pages:**~~ Create manufacturer/dealer landing pages for co-marketing and lead generation with clear disclosures and performance reporting. Tests: route and schema checks. *(completed 2026-04-15)*   
 
 ### Notes
 
