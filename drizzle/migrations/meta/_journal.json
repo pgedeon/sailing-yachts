@@ -36,6 +36,13 @@
       "when": 1776283882046,
       "tag": "0004_add_users_table",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1776284855011,
+      "tag": "0005_add_user_favorites_comparisons",
+      "breakpoints": true
     }
   ]
 }
