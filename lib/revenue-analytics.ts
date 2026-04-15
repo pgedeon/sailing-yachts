@@ -19,7 +19,8 @@ export type RevenueEventType =
   | "price_block_view"
   | "price_block_click"
   | "inquiry_modal_open"
-  | "guide_cta_click";
+  | "guide_cta_click"
+  | "export_download";
 
 export interface RevenueEvent {
   type: RevenueEventType;
@@ -262,4 +263,25 @@ export function trackGuideCtaClick(data: {
  */
 export function getAnalyticsSessionId(): string {
   return getSessionId();
+}
+
+/**
+ * Track a comparison export download (CSV or PDF).
+ */
+export function trackExportDownload(data: {
+  format: "csv" | "pdf";
+  yachtIds: number[];
+  page?: string;
+}): void {
+  queueEvent({
+    type: "export_download",
+    page: data.page || "",
+    source: "compare_export",
+    metadata: {
+      format: data.format,
+      yachtIds: data.yachtIds.join(","),
+      yachtCount: data.yachtIds.length,
+    },
+    timestamp: Date.now(),
+  });
 }
