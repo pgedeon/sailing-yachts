@@ -498,3 +498,50 @@ export const revenueEvents = pgTable(
 
 export const insertRevenueEventSchema = createInsertSchema(revenueEvents);
 export const selectRevenueEventSchema = createSelectSchema(revenueEvents);
+
+// --- Partner Offers (P8.8) ---
+
+export const partnerOffers = pgTable(
+  "partner_offers",
+  {
+    id: serial("id").primaryKey(),
+    manufacturerId: integer("manufacturer_id")
+      .notNull()
+      .references(() => manufacturers.id, { onDelete: "cascade" }),
+    dealerName: varchar("dealer_name", { length: 255 }).notNull(),
+    dealerType: varchar("dealer_type", { length: 50 }).notNull().default("dealer"),
+    contactName: varchar("contact_name", { length: 255 }),
+    email: varchar("email", { length: 255 }),
+    phone: varchar("phone", { length: 50 }),
+    websiteUrl: varchar("website_url", { length: 500 }),
+    locationCity: varchar("location_city", { length: 255 }),
+    locationCountry: varchar("location_country", { length: 255 }),
+    serviceArea: varchar("service_area", { length: 500 }),
+    specializations: jsonb("specializations").$type<string[]>().default([]),
+    offerType: varchar("offer_type", { length: 50 }).notNull().default("new_sales"),
+    offerTitle: varchar("offer_title", { length: 500 }).notNull(),
+    offerDescription: text("offer_description"),
+    priceRangeMin: numeric("price_range_min", { precision: 12, scale: 2 }),
+    priceRangeMax: numeric("price_range_max", { precision: 12, scale: 2 }),
+    currency: varchar("currency", { length: 3 }).notNull().default("EUR"),
+    validityStart: timestamp("validity_start", { withTimezone: true }),
+    validityEnd: timestamp("validity_end", { withTimezone: true }),
+    sourceConfidence: integer("source_confidence").notNull().default(3),
+    dataSource: varchar("data_source", { length: 255 }).notNull().default("manual"),
+    dataSourceUrl: varchar("data_source_url", { length: 500 }),
+    lastVerifiedAt: timestamp("last_verified_at", { withTimezone: true }),
+    isActive: boolean("is_active").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxManufacturer: index("idx_partner_offers_manufacturer").on(table.manufacturerId),
+    idxOfferType: index("idx_partner_offers_offer_type").on(table.offerType),
+    idxDealerType: index("idx_partner_offers_dealer_type").on(table.dealerType),
+    idxActive: index("idx_partner_offers_active").on(table.isActive),
+    idxLocationCountry: index("idx_partner_offers_country").on(table.locationCountry),
+  }),
+);
+
+export const insertPartnerOfferSchema = createInsertSchema(partnerOffers);
+export const selectPartnerOfferSchema = createSelectSchema(partnerOffers);
