@@ -1,5 +1,9 @@
 import { NextAuthOptions } from "next-auth"
 import { JWT } from "next-auth/jwt"
+import bcrypt from "bcryptjs"
+import { eq } from "drizzle-orm"
+import { db } from "./db"
+import { users } from "./db"
 
 // Extend NextAuth types to include our custom user fields
 declare module "next-auth" {
@@ -27,37 +31,53 @@ export const authOptions: NextAuthOptions = {
       name: "Credentials",
       type: "credentials",
       credentials: {
-        username: { label: "Username", type: "text" },
+        email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.username || !credentials.password) return null
+        if (!credentials?.email || !credentials.password) return null
 
-        // Hardcoded admin credentials - replace with DB later
-        const adminUser = {
-          id: "1",
-          name: "Admin",
-          email: "admin@sailing-yachts.com",
-          username: "admin",
-          password: "SailBoatAdmin!"
-        }
+        try {
+          // Query user from database
+          const result = await db
+            .select()
+            .from(users)
+            .where(eq(users.email, credentials.email))
+            .limit(1)
 
-        if (credentials.username === adminUser.username && credentials.password === adminUser.password) {
+          if (result.length === 0) return null
+
+          const user = result[0]
+
+          // Check if user is active
+          if (!user.isActive) return null
+
+          // Verify password
+          const isValid = await bcrypt.compare(credentials.password, user.passwordHash)
+          if (!isValid) return null
+
+          // Update last login timestamp (non-blocking)
+          db.update(users)
+            .set({ lastLoginAt: new Date() })
+            .where(eq(users.id, user.id))
+            .catch(() => {/* non-critical */})
+
           return {
-            id: adminUser.id,
-            name: adminUser.name,
-            email: adminUser.email,
-            username: adminUser.username,
-            role: "admin"
+            id: String(user.id),
+            name: user.name,
+            email: user.email,
+            role: user.role,
           }
+        } catch (error) {
+          console.error("[auth] Authorization error:", error)
+          return null
         }
-
-        return null
       }
     }
   ],
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
+    maxAge: 24 * 60 * 60, // 24 hours
   },
   pages: {
     signIn: "/admin",

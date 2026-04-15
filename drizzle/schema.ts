@@ -545,3 +545,26 @@ export const partnerOffers = pgTable(
 
 export const insertPartnerOfferSchema = createInsertSchema(partnerOffers);
 export const selectPartnerOfferSchema = createSelectSchema(partnerOffers);
+
+// Users table (P9.1 — Real auth foundation)
+export const users = pgTable(
+  "users",
+  {
+    id: serial("id").primaryKey(),
+    email: varchar("email", { length: 255 }).notNull().unique(),
+    name: varchar("name", { length: 255 }),
+    passwordHash: text("password_hash").notNull(),
+    role: varchar("role", { length: 50 }).notNull().default("user"),
+    isActive: boolean("is_active").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+    lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
+  },
+  (table) => ({
+    idxEmail: uniqueIndex("idx_users_email").on(table.email),
+    idxRole: index("idx_users_role").on(table.role),
+  }),
+);
+
+export const insertUserSchema = createInsertSchema(users);
+export const selectUserSchema = createSelectSchema(users);

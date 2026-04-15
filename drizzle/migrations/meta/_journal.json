@@ -29,6 +29,13 @@
       "when": 1776131841803,
       "tag": "0003_awesome_magus",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1776283882046,
+      "tag": "0004_add_users_table",
+      "breakpoints": true
     }
   ]
 }
