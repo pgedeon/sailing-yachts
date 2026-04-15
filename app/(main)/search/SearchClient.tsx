@@ -43,9 +43,21 @@ export function SearchClient() {
   const [selectedSuggestion, setSelectedSuggestion] = useState(-1);
   const [acLoading, setAcLoading] = useState(false);
 
+  // Save search state (P9.3)
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Check if user is authenticated for save search feature
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setIsAuthenticated(!!data?.user?.id))
+      .catch(() => {});
+  }, []);
 
   // Close suggestions on outside click
   useEffect(() => {
@@ -73,7 +85,7 @@ export function SearchClient() {
     setAcLoading(true);
     try {
       const res = await fetch(
-        `/api/search?q=${encodeURIComponent(q)}&mode=autocomplete&limit=8`
+        "/api/search?q=" + encodeURIComponent(q) + "&mode=autocomplete&limit=8"
       );
       if (!res.ok) throw new Error("Failed");
       const data = await res.json();
@@ -104,7 +116,7 @@ export function SearchClient() {
       setSearched(true);
       try {
         const res = await fetch(
-          `/api/search?q=${encodeURIComponent(q)}&limit=20`
+          "/api/search?q=" + encodeURIComponent(q) + "&limit=20"
         );
         if (!res.ok) throw new Error("Search failed");
         const data = await res.json();
@@ -119,6 +131,32 @@ export function SearchClient() {
     },
     [query]
   );
+
+  // Save search handler (P9.3)
+  const handleSaveSearch = async () => {
+    if (!query.trim() || !isAuthenticated) return;
+    try {
+      const res = await fetch("/api/user/searches", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: "Search: " + query,
+          searchParams: { query: query.trim() },
+          resultCount: total,
+        }),
+      });
+      if (res.ok) {
+        setSaveMessage("Saved!");
+        setTimeout(() => setSaveMessage(null), 2000);
+      } else {
+        setSaveMessage("Failed");
+        setTimeout(() => setSaveMessage(null), 2000);
+      }
+    } catch {
+      setSaveMessage("Failed");
+      setTimeout(() => setSaveMessage(null), 2000);
+    }
+  };
 
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -135,7 +173,7 @@ export function SearchClient() {
       if (selectedSuggestion >= 0 && suggestions[selectedSuggestion]) {
         const s = suggestions[selectedSuggestion];
         if (s.slug) {
-          window.location.href = `/yachts/${s.slug}`;
+          window.location.href = "/yachts/" + s.slug;
         } else {
           setQuery(s.display);
           handleSearch(s.display);
@@ -151,7 +189,7 @@ export function SearchClient() {
 
   const suggestionClick = (suggestion: AutocompleteSuggestion) => {
     if (suggestion.slug) {
-      window.location.href = `/yachts/${suggestion.slug}`;
+      window.location.href = "/yachts/" + suggestion.slug;
     } else {
       setQuery(suggestion.display);
       handleSearch(suggestion.display);
@@ -218,9 +256,7 @@ export function SearchClient() {
                   <button
                     key={s.id}
                     onClick={() => suggestionClick(s)}
-                    className={`w-full px-4 py-3 text-left flex items-center justify-between hover:bg-gray-50 transition-colors ${
-                      i === selectedSuggestion ? "bg-gray-50" : ""
-                    }`}
+                    className={"w-full px-4 py-3 text-left flex items-center justify-between hover:bg-gray-50 transition-colors " + (i === selectedSuggestion ? "bg-gray-50" : "")}
                   >
                     <div>
                       <span className="font-medium text-foreground">
@@ -262,14 +298,26 @@ export function SearchClient() {
             <p className="text-sm text-muted-foreground">
               {loading
                 ? "Searching..."
-                : `${total} yacht${total !== 1 ? "s" : ""} found`}
+                : total + " yacht" + (total !== 1 ? "s" : "") + " found"}
               {query && (
                 <span>
-                  {" "}
-                  for &ldquo;<span className="font-medium text-foreground">{query}</span>&rdquo;
+                  {" "}for &ldquo;<span className="font-medium text-foreground">{query}</span>&rdquo;
                 </span>
               )}
             </p>
+            {/* Save Search button — visible when logged in and results exist */}
+            {isAuthenticated && !loading && total > 0 && (
+              <button
+                onClick={handleSaveSearch}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
+                title="Save this search to your account"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
+                {saveMessage || "Save Search"}
+              </button>
+            )}
           </div>
 
           {loading && (
@@ -311,7 +359,7 @@ export function SearchClient() {
               {results.map((yacht) => (
                 <Link
                   key={yacht.id}
-                  href={yacht.slug ? `/yachts/${yacht.slug}` : `/yachts`}
+                  href={yacht.slug ? "/yachts/" + yacht.slug : "/yachts"}
                   className="block border border-border rounded-lg p-5 hover:border-primary/50 hover:shadow-sm transition-all bg-white"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
