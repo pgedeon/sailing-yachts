@@ -141,7 +141,7 @@ These are the first issue titles I would create for the cron agent, in order:
 - **P8.3 — Comparison-page monetization:** Add contextual affiliate and partner CTAs on compare pages such as gear recommendations, insurance, charter/demo leads, and broker inquiry forms. Tests: CTA visibility tests and click tracking event assertions.
 - **P8.4 — Dealer/broker lead routing:** Build forms like “ask a dealer”, “request market pricing”, and “find a similar used yacht,” routed via email/webhook/admin queue with source attribution. Tests: API validation tests and end-to-end form submission tests.
 - **P8.5 — Premium comparison exports:** Offer downloadable PDF/CSV comparison reports, buyer checklists, or shortlist packs for logged-in users. Tests: report generation tests and permission/entitlement checks.
-- **P8.6 — Revenue analytics instrumentation:** Track affiliate clicks, compare completion, lead submissions, and price-block engagement by page type and traffic source. Tests: analytics event unit tests and smoke tests around event dispatch.
+- ✅ **P8.6 — Revenue analytics instrumentation:** Track affiliate clicks, compare completion, lead submissions, and price-block engagement by page type and traffic source. Tests: analytics event unit tests and smoke tests around event dispatch.
 - **P8.7 — Best-value pages:** Use price + specs + reviews to create indexable pages such as “best value 40ft cruisers” or “cheaper alternatives to [model].” Tests: content generation and metadata coverage.
 - **P8.8 — Partner offer pages:** Create manufacturer/dealer landing pages for co-marketing and lead generation with clear disclosures and performance reporting. Tests: route and schema checks.
 
