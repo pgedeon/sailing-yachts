@@ -1,30 +1,32 @@
 # Sailing Yachts Project — Session Memory
 
-## Session: 2026-04-15 (Evening)
+## Session: 2026-04-15 21:50 UTC
 
-### Issue #141: P9.1 — Real Auth Foundation ✅
-- **PR**: #142 (squash-merged)
-- **What**: DB-backed users table, bcrypt hashing, next-auth credentials provider, admin middleware
+### Issue #144: P9.2 — DB-backed Favorites + Saved Comparisons ✅
+- **PR**: #145 (squash-merged)
+- **What**: user_favorites + saved_comparisons tables, API routes, useFavorites DB sync
 - **Key changes**:
-  - `lib/auth.ts`: DB-backed authorize() with bcrypt.compare
-  - `middleware.ts`: Protects /admin/* and /api/admin/* with JWT role check
-  - `app/(main)/admin/page.tsx`: getServerSession instead of cookie
-  - `app/(main)/admin/AdminLoginForm.tsx`: Email + next-auth signIn()
-  - `drizzle/schema.ts`: users table (email, password_hash, role, is_active)
+  - `drizzle/schema.ts`: user_favorites and saved_comparisons tables
+  - `app/api/user/favorites/route.ts`: GET/POST/DELETE with auth protection
+  - `app/api/user/comparisons/route.ts`: GET/POST/DELETE with auth protection
+  - `lib/useFavorites.ts`: Detects auth session, syncs to DB when logged in, localStorage fallback
+  - `drizzle/migrations/0005_add_user_favorites_comparisons.sql`: Migration
 - **Build**: typecheck ✅, lint ✅, local build ✅
 - **Deploy**: Vercel ✅
-- **Live verification**: All pages OK, admin form uses email, middleware blocks unauth access (307/401)
-- **Tests**: 10/10 auth tests + 11/11 compare-export tests passing
+- **Live verification**: All 5 pages OK, API 201 yachts, all 6 user endpoints return 401
+- **Tests**: 9/9 user-favorites + 10/10 auth + 11/11 compare-export = 30 total, 0 regressions
+
+### Issue #141: P9.1 — Real Auth Foundation ✅ (earlier today)
+- **PR**: #142 (squash-merged)
 
 ### Issue #138: P8.5 — Premium Comparison Exports ✅ (earlier today)
 - **PR**: #139 (squash-merged)
-- CSV + print-to-PDF exports for comparison page
 
 ## Phase Status
 - Phase 6: ALL COMPLETE (P6.1-P6.9)
 - Phase 7: ALL COMPLETE (P7.1-P7.8)
 - Phase 8: P8.1-P8.6, P8.8 ✅ | P8.7 blocked (needs price data)
-- Phase 9: P9.1 ✅ | P9.2-P9.8 pending
+- Phase 9: P9.1 ✅, P9.2 ✅ | P9.3-P9.8 pending
 
 ## Key Project Facts
 - Project: /root/.openclaw/workspace/sailing-yachts
@@ -33,14 +35,16 @@
 - Yacht count: 201
 - Auth: next-auth with credentials provider, DB-backed users table
 - Admin: admin@sailing-yachts.com (bcrypt hashed)
+- DB tables added: users (P9.1), user_favorites, saved_comparisons (P9.2)
 
 ## Known Issues
 - CI build fails on GitHub Actions (DATABASE_URL not set) — pre-existing
 - P8.7 (best-value pages) blocked by insufficient price data (only 2 records)
 - Drizzle migration journal has mismatched filenames — works but messy
+- useFavorites clearAll doesn't clear DB favorites (needs DELETE all endpoint)
 
-## Next Recommended Task
-- **P9.2** — DB-backed favorites + comparisons (persist to DB for logged-in users)
+## Next Recommended Tasks
 - **P9.3** — Saved search builder
-- **P9.5** — Account dashboard
+- **P9.4** — Comparison save UI (button in CompareClient to save to DB)
+- **P9.5** — Account dashboard (manage favorites, comparisons, profile)
 - P8.7 still blocked by price data
