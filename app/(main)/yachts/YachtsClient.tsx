@@ -450,6 +450,17 @@ export default function YachtsClient() {
                 <p className="text-gray-700 text-sm leading-relaxed">{selectedYacht.description}</p>
               </div>
             )}
+            {/* Link to full model page */}
+            {selectedYacht.slug && (
+              <div className="mt-4 pt-4 border-t">
+                <a
+                  href={`/yachts/${selectedYacht.slug}`}
+                  className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium text-sm"
+                >
+                  View Full Spec Sheet →
+                </a>
+              </div>
+            )}
           </div>
         </div>
       )}
