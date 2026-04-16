@@ -17,6 +17,7 @@ export async function buildSafeQuery<T>(fn: () => Promise<T>, fallback: T): Prom
   try {
     return await fn();
   } catch (err: any) {
+    // Check for the database access error during build
     if (err?.message?.includes(BUILD_DB_ERROR)) {
       console.warn(`[build-safe] Returning fallback data during build (no DATABASE_URL)`);
       return fallback;
