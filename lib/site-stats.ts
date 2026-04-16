@@ -1,4 +1,5 @@
 import { pool } from "./db";
+import { buildSafeQuery } from "./build-safe";
 
 export interface SiteStats {
   manufacturerCount: number;
@@ -20,7 +21,8 @@ const FALLBACK_STATS: SiteStats = {
 
 /**
  * Get live site statistics from the database.
- * Results are cached in-memory for 5 minutes to avoid hammering the DB on every page load.
+ * Results are cached in-memory for 5 minutes to avoid hammering DB on every page load.
+ * Uses buildSafeQuery to return fallback data during build time when DATABASE_URL is not set.
  */
 export async function getSiteStats(): Promise<SiteStats> {
   const now = Date.now();
@@ -28,13 +30,24 @@ export async function getSiteStats(): Promise<SiteStats> {
     return cachedStats;
   }
 
-  const stats = await pool.query(`
-    SELECT 
-      (SELECT COUNT(*) FROM manufacturers WHERE name IS NOT NULL) as manufacturer_count,
-      (SELECT COUNT(*) FROM yacht_models WHERE model_name IS NOT NULL) as yacht_model_count,
-      (SELECT COUNT(*) FROM yacht_models) as yacht_count,
-      (SELECT COUNT(*) FROM reviews) as review_count
-  `);
+  const stats = await buildSafeQuery(
+    async () => {
+      return await pool.query(`
+        SELECT 
+          (SELECT COUNT(*) FROM manufacturers WHERE name IS NOT NULL) as manufacturer_count,
+          (SELECT COUNT(*) FROM yacht_models WHERE model_name IS NOT NULL) as yacht_model_count,
+          (SELECT COUNT(*) FROM yacht_models) as yacht_count,
+          (SELECT COUNT(*) FROM reviews) as review_count
+      `);
+    },
+    {
+      rows: [{ manufacturer_count: "0", yacht_model_count: "0", yacht_count: "0", review_count: "0" }],
+      command: "",
+      rowCount: 1,
+      oid: 0,
+      fields: []
+    } as any
+  );
 
   const counts = stats.rows[0];
 
@@ -52,7 +65,7 @@ export async function getSiteStats(): Promise<SiteStats> {
 
 /**
  * Format a count for display, e.g. "200+" for 200, "300+" for 300.
- * Uses round numbers so the claim stays true as the count grows.
+ * Uses round numbers so the claim stays true as count grows.
  */
 export function formatCount(n: number): string {
   if (n >= 1000) {
@@ -68,10 +81,10 @@ export function formatCount(n: number): string {
 }
 
 /**
- * Build a human-readable phrase like "200+ sailing yachts" using the actual DB count.
+ * Build a human-readable phrase like "200+ sailing yachts" using actual DB count.
  */
 export function formatYachtPhrase(stats: SiteStats): string {
-  // Use yacht model count for the main claim
+  // Use yacht model count for main claim
   return `${formatCount(stats.yachtModelCount)} sailing yachts`;
 }
 
