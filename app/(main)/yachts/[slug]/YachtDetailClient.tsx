@@ -132,9 +132,9 @@ export default function YachtDetailClient() {
     );
   if (!yacht) return null;
 
-  const formatNumber = (num: number | null, decimals = 2) =>
+  const formatNumber = (num: number | string | null, decimals = 2) =>
     num !== null
-      ? num.toLocaleString(undefined, {
+      ? Number(num).toLocaleString(undefined, {
           minimumFractionDigits: decimals,
           maximumFractionDigits: decimals,
         })
@@ -142,7 +142,8 @@ export default function YachtDetailClient() {
 
   const formatSpecValue = (value: number | string, unit?: string) => {
     if (value === null || value === undefined) return "—";
-    if (typeof value === "number") {
+    const numVal = Number(value);
+    if (!isNaN(numVal) && value !== "") {
       return `${formatNumber(value)} ${unit || ""}`.trim();
     }
     return value;
@@ -309,7 +310,7 @@ export default function YachtDetailClient() {
                   Displacement
                 </div>
                 <div className="text-xl sm:text-2xl font-semibold">
-                  {(yacht.displacement / 1000).toFixed(1)} t
+                  {(Number(yacht.displacement) / 1000).toFixed(1)} t
                 </div>
               </div>
             )}
@@ -545,10 +546,10 @@ export default function YachtDetailClient() {
 function calculatePerformanceRatios(yacht: YachtData) {
   const ratios: { name: string; value: string; description: string }[] = [];
   
-  const loa = yacht.lengthOverall;
-  const disp = yacht.displacement;
-  const ballast = yacht.ballast;
-  const sailArea = yacht.sailAreaMain;
+  const loa = Number(yacht.lengthOverall) || null;
+  const disp = Number(yacht.displacement) || null;
+  const ballast = Number(yacht.ballast) || null;
+  const sailArea = Number(yacht.sailAreaMain) || null;
   
   // Displacement/Length ratio (D/L)
   if (loa && disp) {
@@ -584,10 +585,10 @@ function calculatePerformanceRatios(yacht: YachtData) {
 // "Who is this boat for?" logic
 function getBoatRecommendation(yacht: YachtData): string | null {
   const parts: string[] = [];
-  const loa = yacht.lengthOverall || 0;
+  const loa = Number(yacht.lengthOverall) || 0;
   const cabins = yacht.cabins || 0;
   const berths = yacht.berths || 0;
-  const disp = yacht.displacement || 0;
+  const disp = Number(yacht.displacement) || 0;
   const rig = yacht.rigType?.toLowerCase() || "";
   
   if (loa < 9) {
