@@ -605,3 +605,23 @@ export const insertUserFavoriteSchema = createInsertSchema(userFavorites);
 export const selectUserFavoriteSchema = createSelectSchema(userFavorites);
 export const insertSavedComparisonSchema = createInsertSchema(savedComparisons);
 export const selectSavedComparisonSchema = createSelectSchema(savedComparisons);
+
+// Saved searches table (P9.3)
+export const savedSearches = pgTable(
+  "saved_searches",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    name: varchar("name", { length: 255 }),
+    searchParams: jsonb("search_params").$type<Record<string, unknown>>().notNull(),
+    resultCount: integer("result_count"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxUser: index("idx_saved_searches_user").on(table.userId),
+  }),
+);
+
+export const insertSavedSearchSchema = createInsertSchema(savedSearches);
+export const selectSavedSearchSchema = createSelectSchema(savedSearches);
