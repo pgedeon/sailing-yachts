@@ -625,3 +625,52 @@ export const savedSearches = pgTable(
 
 export const insertSavedSearchSchema = createInsertSchema(savedSearches);
 export const selectSavedSearchSchema = createSelectSchema(savedSearches);
+
+// Alert preferences (P9.4 — Email alert system)
+export const alertPreferences = pgTable(
+  "alert_preferences",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    alertType: varchar("alert_type", { length: 30 }).notNull(), // 'new_yachts', 'price_changes', 'new_reviews'
+    enabled: boolean("enabled").notNull().default(true),
+    frequency: varchar("frequency", { length: 20 }).notNull().default("daily"), // 'instant', 'daily', 'weekly'
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxUser: index("idx_alert_preferences_user").on(table.userId),
+    idxType: index("idx_alert_preferences_type").on(table.alertType),
+    idxUnique: uniqueIndex("idx_alert_preferences_unique").on(table.userId, table.alertType),
+  }),
+);
+
+// Alert log — tracks sent alerts for dedup and history
+export const alertLog = pgTable(
+  "alert_log",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    alertType: varchar("alert_type", { length: 30 }).notNull(),
+    savedSearchId: integer("saved_search_id"),
+    yachtModelId: integer("yacht_model_id"),
+    title: varchar("title", { length: 500 }).notNull(),
+    body: text("body"),
+    emailSent: boolean("email_sent").notNull().default(false),
+    emailStatus: varchar("email_status", { length: 30 }), // 'sent', 'failed', 'bounced'
+    unsubscribeToken: varchar("unsubscribe_token", { length: 128 }),
+    sentAt: timestamp("sent_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxUser: index("idx_alert_log_user").on(table.userId),
+    idxType: index("idx_alert_log_type").on(table.alertType),
+    idxSent: index("idx_alert_log_sent").on(table.sentAt),
+    idxToken: uniqueIndex("idx_alert_log_token").on(table.unsubscribeToken),
+    idxDedup: index("idx_alert_log_dedup").on(table.userId, table.alertType, table.yachtModelId, table.sentAt),
+  }),
+);
+
+export const insertAlertPreferenceSchema = createInsertSchema(alertPreferences);
+export const selectAlertPreferenceSchema = createSelectSchema(alertPreferences);
+export const insertAlertLogSchema = createInsertSchema(alertLog);
+export const selectAlertLogSchema = createSelectSchema(alertLog);
