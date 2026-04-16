@@ -13,6 +13,14 @@ import {
 import { eq } from "drizzle-orm";
 import { getYachtDetailData } from "@/lib/yachts";
 
+// Drizzle's `numeric` type returns strings from PostgreSQL.
+// Convert to actual numbers for the JSON API so the client gets proper types.
+function toNum(v: string | number | null): number | null {
+  if (v === null || v === undefined) return null;
+  const n = typeof v === "number" ? v : Number(v);
+  return Number.isNaN(n) ? null : n;
+}
+
 // ISR: Revalidate public API responses every 5 minutes for stale-while-revalidate
 export const revalidate = 300;
 
@@ -31,6 +39,22 @@ export async function GET(
 
         const { yacht, manufacturer, specsByGroup, images, reviews } = result;
 
+        // Rebuild specsByGroup with numeric values properly parsed
+        const parsedSpecsByGroup: Record<
+          string,
+          Array<{ category: string; value: number | string; unit?: string | null }>
+        > = {};
+        for (const [group, specs] of Object.entries(specsByGroup)) {
+          parsedSpecsByGroup[group] = specs.map((s) => {
+            const parsed = typeof s.value === "string" ? toNum(s.value) : s.value;
+            return {
+              category: s.category,
+              value: parsed ?? s.value, // fall back to original string if NaN
+              unit: s.unit,
+            };
+          });
+        }
+
         const response = {
           id: yacht.id,
           manufacturerId: yacht.manufacturerId,
@@ -38,13 +62,13 @@ export async function GET(
           modelName: yacht.modelName,
           year: yacht.year,
           slug: yacht.slug,
-          // Core specs (nullable as per schema)
-          lengthOverall: yacht.lengthOverall,
-          beam: yacht.beam,
-          draft: yacht.draft,
-          displacement: yacht.displacement,
-          ballast: yacht.ballast,
-          sailAreaMain: yacht.sailAreaMain,
+          // Core specs — convert Drizzle numeric strings to numbers
+          lengthOverall: toNum(yacht.lengthOverall),
+          beam: toNum(yacht.beam),
+          draft: toNum(yacht.draft),
+          displacement: toNum(yacht.displacement),
+          ballast: toNum(yacht.ballast),
+          sailAreaMain: toNum(yacht.sailAreaMain),
           rigType: yacht.rigType,
           keelType: yacht.keelType,
           hullMaterial: yacht.hullMaterial,
@@ -52,16 +76,16 @@ export async function GET(
           berths: yacht.berths,
           heads: yacht.heads,
           maxOccupancy: yacht.maxOccupancy,
-          engineHp: yacht.engineHp,
+          engineHp: toNum(yacht.engineHp),
           engineType: yacht.engineType,
-          fuelCapacity: yacht.fuelCapacity,
-          waterCapacity: yacht.waterCapacity,
+          fuelCapacity: toNum(yacht.fuelCapacity),
+          waterCapacity: toNum(yacht.waterCapacity),
           designNotes: yacht.designNotes,
           description: yacht.description,
           adminLinks: yacht.adminLinks,
           sourceUrl: yacht.sourceUrl,
           sourceAttribution: yacht.sourceAttribution,
-          specsByGroup,
+          specsByGroup: parsedSpecsByGroup,
           images,
           reviews,
         };
