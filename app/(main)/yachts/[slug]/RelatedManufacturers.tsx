@@ -67,7 +67,7 @@ export function RelatedManufacturers({
   if (yachts.length === 0) return null;
 
   const formatLength = (val: number | null) =>
-    val !== null ? `${val.toFixed(1)}m` : null;
+    val !== null ? `${Number(val).toFixed(1)}m` : null;
 
   return (
     <section
