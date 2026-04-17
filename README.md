@@ -1,5 +1,9 @@
 # Sailing Yachts Database
 
+![Sailing Yachts Database](public/screenshot.png)
+
+
+
 A searchable, filterable database of sailing yacht specifications built with Next.js 14, PostgreSQL, and Drizzle ORM. Deployed on Vercel.
 
 ## Features
