@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { unstable_cache } from "next/cache";
 import NewsletterSignup from "@/components/NewsletterSignup";
+import { PersonalizedRecommendations } from "@/components/PersonalizedRecommendations";
 import { db, yachtModels, manufacturers } from "@/lib/db";
 import { desc, sql } from "drizzle-orm";
 import { generateWebsiteJsonLd, generateFaqJsonLd, getSiteUrl } from "@/lib/seo";
@@ -268,6 +269,8 @@ export default async function Home() {
           </div>
         </section>
 
+        {/* Personalized Recommendations (P9.6) */}
+        <PersonalizedRecommendations />
         {/* Features / Benefits */}
         <section className="py-16 px-4 bg-sky-50">
           <div className="max-w-5xl mx-auto">

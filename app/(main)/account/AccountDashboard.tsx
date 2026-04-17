@@ -120,6 +120,9 @@ export default function AccountDashboard() {
       {activeTab === "searches" && <SearchesTab />}
       {activeTab === "comparisons" && <ComparisonsTab />}
       {activeTab === "alerts" && <AlertsTab />}
+
+      {/* Personalized Recommendations (P9.6) */}
+      <DashboardRecommendations />
     </div>
   );
 }
@@ -381,6 +384,125 @@ function LoadingSkeleton() {
       {[1, 2, 3].map((i) => (
         <div key={i} className="h-20 bg-gray-100 rounded-lg" />
       ))}
+    </div>
+  );
+}
+
+// === Dashboard Recommendations (P9.6) ===
+interface RecommendationItem {
+  id: number;
+  manufacturer: string | null;
+  modelName: string;
+  slug: string | null;
+  year: number;
+  lengthOverall: string | null;
+  rigType: string | null;
+  score?: number;
+  primaryImage: string | null;
+  reason: string;
+}
+
+interface CompareAgainItem {
+  id: number;
+  name: string;
+  yachtIds: number[];
+  createdAt: string;
+}
+
+function DashboardRecommendations() {
+  const [similar, setSimilar] = useState<RecommendationItem[]>([]);
+  const [compareAgain, setCompareAgain] = useState<CompareAgainItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/user/recommendations")
+      .then((r) => {
+        if (r.status === 401) return null;
+        return r.json();
+      })
+      .then((data) => {
+        if (data) {
+          setSimilar(data.similarToFavorites || []);
+          setCompareAgain(data.compareAgain || []);
+        }
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  if (loading) return null;
+  if (similar.length === 0 && compareAgain.length === 0) return null;
+
+  return (
+    <div className="mt-10 border-t border-gray-200 pt-8" data-testid="dashboard-recommendations">
+      <h2 className="text-xl font-bold text-gray-900 mb-4">Recommended for You</h2>
+
+      {similar.length > 0 && (
+        <div className="mb-8">
+          <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-3">
+            Yachts You Might Like
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {similar.slice(0, 3).map((yacht) => (
+              <Link
+                key={yacht.id}
+                href={yacht.slug ? `/yachts/${yacht.slug}` : "#"}
+                className="block border border-gray-200 rounded-lg p-3 hover:border-blue-300 hover:shadow-sm transition"
+                data-testid="dashboard-rec-card"
+              >
+                <div className="font-medium text-sm text-gray-900">
+                  {yacht.manufacturer} {yacht.modelName}
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  {yacht.year} {yacht.lengthOverall ? `· LOA ${parseFloat(yacht.lengthOverall).toFixed(1)}m` : ""}
+                </div>
+                {yacht.reason && (
+                  <div className="text-xs text-blue-600 mt-1.5">{yacht.reason}</div>
+                )}
+                {yacht.score != null && (
+                  <div className="mt-2 flex items-center gap-2">
+                    <div className="flex-1 h-1 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-blue-600 rounded-full"
+                        style={{ width: `${Math.round(yacht.score * 100)}%` }}
+                      />
+                    </div>
+                    <span className="text-xs text-gray-400">{Math.round(yacht.score * 100)}%</span>
+                  </div>
+                )}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {compareAgain.length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-3">
+            Compare Again
+          </h3>
+          <div className="space-y-2">
+            {compareAgain.slice(0, 3).map((comp) => (
+              <Link
+                key={comp.id}
+                href={`/compare?ids=${comp.yachtIds.join(",")}`}
+                className="flex items-center justify-between border border-gray-200 rounded-lg p-3 hover:border-blue-300 hover:shadow-sm transition"
+                data-testid="dashboard-compare-again"
+              >
+                <div>
+                  <div className="font-medium text-sm text-gray-900">
+                    {comp.name || `Comparison #${comp.id}`}
+                  </div>
+                  <div className="text-xs text-gray-500 mt-0.5">
+                    {comp.yachtIds.length} yachts · Saved {new Date(comp.createdAt).toLocaleDateString()}
+                  </div>
+                </div>
+                <span className="text-sm text-blue-600 font-medium">View →</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
