@@ -1,10 +1,10 @@
 /**
  * SEO utilities for generating dynamic meta tags, Open Graph data,
- * and JSON-LD structured data across the Sailing Yachts app.
+ * and JSON-LD structured data across the Sailing Yacht Info app.
  */
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://info.sailboats.fr";
-const SITE_NAME = "Sailing Yachts Database";
+const SITE_NAME = "Sailing Yacht Info";
 
 export function getSiteUrl(path = ""): string {
   return `${SITE_URL}${path}`;
@@ -394,7 +394,7 @@ export function generateYachtPageMetadata(yacht: {
 }
 
 export function generateYachtsListMetadata(page = 1): Metadata {
-  const title = page > 1 ? `Browse Yachts (Page ${page})` : "Browse Sailing Yachts";
+  const title = page > 1 ? `Browse Yachts (Page ${page})` : "Browse Sailing Yacht Info";
   const desc =
     "Search and filter sailing yachts by manufacturer, length, year, and more. Compare specs side by side.";
 

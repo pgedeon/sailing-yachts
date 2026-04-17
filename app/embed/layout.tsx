@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Sailing Yachts Widget",
+  title: "Sailing Yacht Info Widget",
   robots: { index: false, follow: false },
 };
 

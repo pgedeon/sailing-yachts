@@ -66,7 +66,7 @@ export async function generateMetadata({
     };
   }
 
-  const title = `${spotlight.title} | Sailing Yachts Database`;
+  const title = `${spotlight.title} | Sailing Yacht Info`;
   const description =
     spotlight.metaDescription ||
     `Explore ${spotlight.manufacturer.name}'s history, brand positioning, notable yacht models, and key milestones.`;
@@ -87,7 +87,7 @@ export async function generateMetadata({
       description,
       url,
       type: "article",
-      siteName: "Sailing Yachts Database",
+      siteName: "Sailing Yacht Info",
       images: [{ url: getSiteUrl("/api/og"), width: 1200, height: 630, alt: title }],
     },
     twitter: {
@@ -206,7 +206,7 @@ export default async function ManufacturerSpotlightPage({
               </h1>
               <p className="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
                 {spotlight.metaDescription ||
-                  `Explore ${spotlight.manufacturer.name}'s history, positioning, and standout yachts in the Sailing Yachts Database.`}
+                  `Explore ${spotlight.manufacturer.name}'s history, positioning, and standout yachts in the Sailing Yacht Info.`}
               </p>
             </div>
 
@@ -262,7 +262,7 @@ export default async function ManufacturerSpotlightPage({
               <h2 className="text-2xl font-bold tracking-tight">Brand Positioning</h2>
               <div className="mt-4 space-y-4 text-muted-foreground leading-relaxed whitespace-pre-line">
                 {spotlight.brandPositioning ||
-                  `${spotlight.manufacturer.name} sits in the Sailing Yachts Database as a builder worth tracking for sailors comparing brand philosophy, fleet depth, and notable production models.`}
+                  `${spotlight.manufacturer.name} sits in the Sailing Yacht Info as a builder worth tracking for sailors comparing brand philosophy, fleet depth, and notable production models.`}
               </div>
             </section>
 

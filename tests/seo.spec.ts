@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test.describe("SEO — Homepage", () => {
   test("has correct title", async ({ page }) => {
     await page.goto("/");
-    await expect(page).toHaveTitle(/Sailing Yachts Database/);
+    await expect(page).toHaveTitle(/Sailing Yacht Info/);
   });
 
   test("has meta description", async ({ page }) => {
@@ -19,7 +19,7 @@ test.describe("SEO — Homepage", () => {
     const ogTitle = await page
       .locator('meta[property="og:title"]')
       .getAttribute("content");
-    expect(ogTitle).toContain("Sailing Yachts Database");
+    expect(ogTitle).toContain("Sailing Yacht Info");
 
     const ogType = await page
       .locator('meta[property="og:type"]')
@@ -44,7 +44,7 @@ test.describe("SEO — Homepage", () => {
     const content = await script.first().textContent();
     const json = JSON.parse(content!);
     expect(json["@type"]).toBe("WebSite");
-    expect(json.name).toContain("Sailing Yachts");
+    expect(json.name).toContain("Sailing Yacht Info");
     expect(json.potentialAction).toBeDefined();
   });
 });
@@ -59,7 +59,7 @@ test.describe("SEO — Yacht Detail Page", () => {
     await page.goto(href!);
 
     const title = await page.title();
-    expect(title).toMatch(/.*\| Sailing Yachts Database/);
+    expect(title).toMatch(/.*\| Sailing Yacht Info/);
   });
 
   test("has Product JSON-LD", async ({ page }) => {
@@ -115,7 +115,7 @@ test.describe("SEO — Browse Yachts", () => {
     await page.goto("/yachts");
     const title = await page.title();
     expect(title).toContain("Browse");
-    expect(title).toContain("Sailing Yachts Database");
+    expect(title).toContain("Sailing Yacht Info");
 
     const desc = await page
       .locator('meta[name="description"]')

@@ -70,7 +70,7 @@ test.describe("Mobile Responsive UX", () => {
     // Title should exist and be readable
     const title = page.locator("h1");
     await expect(title).toBeVisible();
-    await expect(title).toContainText("Sailing Yachts Database");
+    await expect(title).toContainText("Sailing Yacht Info");
     // Both CTA buttons should be visible
     await expect(page.locator('a:has-text("Browse Yachts")')).toBeVisible();
     await expect(page.locator('a:has-text("Compare")')).toBeVisible();

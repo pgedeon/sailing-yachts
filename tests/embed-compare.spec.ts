@@ -26,7 +26,7 @@ test.describe("Embeddable Comparison Widget", () => {
 
     // Should show branding header
     await expect(page.locator("text=Yacht Comparison")).toBeVisible();
-    await expect(page.locator("text=Powered by Sailing Yachts Database")).toBeVisible();
+    await expect(page.locator("text=Powered by Sailing Yacht Info")).toBeVisible();
     await expect(page.locator("text=Full comparison →")).toBeVisible();
 
     // Should show spec group headers
@@ -96,6 +96,6 @@ test.describe("Embeddable Comparison Widget", () => {
     // The main site has "All rights reserved" — embed should not
     await expect(page.locator("text=All rights reserved")).toHaveCount(0);
     // But should have the embed footer
-    await expect(page.locator("text=Powered by Sailing Yachts Database")).toBeVisible();
+    await expect(page.locator("text=Powered by Sailing Yacht Info")).toBeVisible();
   });
 });

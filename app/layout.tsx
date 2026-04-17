@@ -14,8 +14,8 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://info.sailboats.fr";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Sailing Yachts Database — Specs, Comparison & Reviews",
-    template: "%s | Sailing Yachts Database",
+    default: "Sailing Yacht Info — Specs, Comparison & Reviews",
+    template: "%s | Sailing Yacht Info",
   },
   description:
     "Search and compare sailing yacht specifications from top manufacturers worldwide. Browse detailed specs, dimensions, sail plans, and accommodation details.",
@@ -31,9 +31,9 @@ export const metadata: Metadata = {
     "sailboat reviews",
     "boat finder",
   ],
-  authors: [{ name: "Sailing Yachts Database" }],
-  creator: "Sailing Yachts Database",
-  publisher: "Sailing Yachts Database",
+  authors: [{ name: "Sailing Yacht Info" }],
+  creator: "Sailing Yacht Info",
+  publisher: "Sailing Yacht Info",
   robots: {
     index: true,
     follow: true,
@@ -49,14 +49,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    siteName: "Sailing Yachts Database",
-    title: "Sailing Yachts Database — Specs, Comparison & Reviews",
+    siteName: "Sailing Yacht Info",
+    title: "Sailing Yacht Info — Specs, Comparison & Reviews",
     description:
       "Comprehensive database of sailing yacht specifications with advanced search and comparison tools.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sailing Yachts Database — Specs, Comparison & Reviews",
+    title: "Sailing Yacht Info — Specs, Comparison & Reviews",
     description:
       "Comprehensive database of sailing yacht specifications with advanced search and comparison tools.",
   },

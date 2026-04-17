@@ -12,7 +12,7 @@ test.describe('Public Pages Smoke Tests', () => {
       await page.goto(BASE_URL);
       await expect(page).toHaveURL(BASE_URL);
       await expect(page.locator('h1')).toBeVisible();
-      await expect(page.locator('h1')).toHaveText('Sailing Yachts Database');
+      await expect(page.locator('h1')).toHaveText('Sailing Yacht Info');
     });
 
     test('should have no console errors on home page', async ({ page }) => {

@@ -34,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description: `Comprehensive sailing glossary with ${terms.length} nautical terms and yacht specifications.`,
       url: getSiteUrl("/glossary"),
       type: "website",
-      siteName: "Sailing Yachts Database",
+      siteName: "Sailing Yacht Info",
     },
     twitter: {
       card: "summary",

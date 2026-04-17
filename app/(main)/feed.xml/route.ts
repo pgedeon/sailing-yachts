@@ -12,12 +12,12 @@ const SITE_URL =
 const FALLBACK_FEED = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Sailing Yachts Database</title>
+    <title>Sailing Yacht Info</title>
     <description>Latest sailing yacht specifications and updates</description>
     <link>${SITE_URL}</link>
     <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml" />
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-    <generator>Sailing Yachts Database</generator>
+    <generator>Sailing Yacht Info</generator>
     <item>
       <title>Building Database</title>
       <link>${SITE_URL}</link>
@@ -80,12 +80,12 @@ export async function GET() {
     `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Sailing Yachts Database</title>
+    <title>Sailing Yacht Info</title>
     <description>Latest sailing yacht specifications and updates</description>
     <link>${SITE_URL}</link>
     <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml" />
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-    <generator>Sailing Yachts Database</generator>
+    <generator>Sailing Yacht Info</generator>
     ${items.length > 0 ? items : `
     <item>
       <title>Building Database</title>

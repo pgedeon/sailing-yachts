@@ -28,7 +28,7 @@ export default function MainLayout({
       <footer className="border-t border-border py-8 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-muted-foreground">
           <p>
-            © {new Date().getFullYear()} Sailing Yachts Database. All rights
+            © {new Date().getFullYear()} Sailing Yacht Info. All rights
             reserved.
           </p>
           <p className="mt-1">
@@ -53,7 +53,7 @@ function Header() {
             href="/"
             className="text-xl font-bold text-primary tracking-tight flex-shrink-0"
           >
-            Sailing Yachts
+            Sailing Yacht Info
           </a>
 
           {/* Desktop nav */}

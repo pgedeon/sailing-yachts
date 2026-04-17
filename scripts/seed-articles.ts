@@ -11,7 +11,7 @@ const articles = [
     excerpt:
       "A comprehensive guide for first-time boat buyers covering budget, size, keel type, rig, and intended use to help you find the perfect starter sailboat.",
     category: "buying-guide",
-    author: "Sailing Yachts Editorial",
+    author: "Sailing Yacht Info",
     author_title: "Marine Research Team",
     reading_time_minutes: 8,
     content_markdown: `## Introduction
@@ -97,7 +97,7 @@ The best first sailboat is one that matches your goals, fits your budget, and in
     excerpt:
       "Learn what LOA, beam, draft, displacement, ballast ratio, and other key specs mean — and why they matter when comparing sailing yachts.",
     category: "educational",
-    author: "Sailing Yachts Editorial",
+    author: "Sailing Yacht Info",
     author_title: "Marine Research Team",
     reading_time_minutes: 10,
     content_markdown: `## Why Specs Matter
@@ -197,7 +197,7 @@ Use our [yacht comparison tool](/compare) to see specs side by side.`,
     excerpt:
       "Our expert picks for the most capable bluewater cruising sailboats, from proven production boats to expedition-grade vessels built for ocean crossings.",
     category: "buying-guide",
-    author: "Sailing Yachts Editorial",
+    author: "Sailing Yacht Info",
     author_title: "Marine Research Team",
     reading_time_minutes: 9,
     content_markdown: `## What Makes a Bluewater Sailboat?
@@ -279,7 +279,7 @@ The best bluewater boat is one you trust completely. Choose a design with proven
     excerpt:
       "Keep your sailboat in top condition with this comprehensive maintenance guide covering hull care, rig inspection, engine service, and seasonal checklists.",
     category: "ownership",
-    author: "Sailing Yachts Editorial",
+    author: "Sailing Yacht Info",
     author_title: "Marine Research Team",
     reading_time_minutes: 7,
     content_markdown: `## Why Regular Maintenance Matters
@@ -383,7 +383,7 @@ Consistent, proactive maintenance is far cheaper than reactive repairs. Follow t
     excerpt:
       "An honest comparison of monohull and catamaran sailboats covering performance, comfort, cost, safety, and liveaboard suitability to help you choose.",
     category: "comparison",
-    author: "Sailing Yachts Editorial",
+    author: "Sailing Yacht Info",
     author_title: "Marine Research Team",
     reading_time_minutes: 8,
     content_markdown: `## The Great Debate

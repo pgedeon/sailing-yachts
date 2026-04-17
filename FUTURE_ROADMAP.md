@@ -172,7 +172,7 @@ These are the first issue titles I would create for the cron agent, in order:
 - [x] **P9.3 — Saved search builder:** Let users save filter combinations, compare intents, and keyword searches. Tests: form submission, persistence, and search replay tests.
 - [x] **P9.4 — Email alert system:** Add scheduled and instant alerts for new matching yachts, new reviews, and price changes. Tests: notification payload tests, unsubscribe tests, and end-to-end subscription flows.
 - [x] **P9.5 — Account dashboard:** Add a dashboard for favorites, saved searches, comparisons, alerts, and communication preferences. Tests: dashboard smoke tests and CRUD tests for each saved object type.
-- [ ] **P9.6 — Personalized recommendations:** Surface “similar to your favorites,” “new since your last visit,” and “compare again” modules. Tests: recommendation logic unit tests and render checks.
+- [x] **P9.6 — Personalized recommendations:*** Surface “similar to your favorites,” “new since your last visit,” and “compare again” modules. Tests: recommendation logic unit tests and render checks.
 - [ ] **P9.7 — Web push notifications:** Add optional browser notifications for saved search matches and price changes. Tests: subscription endpoint tests and permission UI coverage.
 - [ ] **P9.8 — Data portability/privacy controls:** Add export/delete account functionality and clear privacy settings. Tests: account deletion/export tests and admin access controls.
 

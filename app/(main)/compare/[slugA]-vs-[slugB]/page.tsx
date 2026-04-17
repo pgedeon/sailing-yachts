@@ -35,7 +35,7 @@ export async function generateMetadata({
       description: meta.description,
       url: getSiteUrl(`/compare/${slugA}-vs-${slugB}`),
       type: "website",
-      siteName: "Sailing Yachts Database",
+      siteName: "Sailing Yacht Info",
     },
     twitter: {
       card: "summary",

@@ -28,13 +28,13 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Sailing Yachts - Guides</title>
+    <title>Sailing Yacht Info - Guides</title>
     <description>Expert sailing guides, buying advice, and educational resources for yacht buyers and sailors.</description>
     <link>${siteUrl}/guides</link>
     <atom:link href="${siteUrl}/guides/feed.xml" rel="self" type="application/rss+xml" />
     <language>en</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-    <generator>Sailing Yachts Database</generator>
+    <generator>Sailing Yacht Info</generator>
 ${items}
   </channel>
 </rss>`;

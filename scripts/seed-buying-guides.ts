@@ -40,7 +40,7 @@ async function seedBuyingGuides() {
         content: generateMarkdownContent(template),
         contentMarkdown: generateMarkdownContent(template),
         category: "Buying Guide",
-        author: "Sailing Yachts Team",
+        author: "Sailing Yacht Info Team",
         authorTitle: "Editorial Team",
         readingTimeMinutes: Math.ceil(template.faqs.length * 1.5 + 3),
         buyingGuideTemplateId: template.id,

@@ -175,7 +175,7 @@ test.describe('Admin Review Management E2E Tests', () => {
     
     // Page should have rendered without error
     const hasNavigation = await page.locator('a:has-text("Admin")').count() > 0;
-    const hasFooter = await page.locator('text=© 2026 Sailing Yachts Database').count() > 0;
+    const hasFooter = await page.locator('text=© 2026 Sailing Yacht Info').count() > 0;
     const hasMainContent = await page.locator('main').count() > 0;
     
     expect(hasNavigation || hasFooter || hasMainContent).toBe(true);

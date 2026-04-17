@@ -98,10 +98,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const url = getSiteUrl(`/guides/${article.slug}`);
   return {
-    title: `${article.title} | Sailing Yachts Guides`,
+    title: `${article.title} | Sailing Yacht Info Guides`,
     description:
       article.excerpt ||
-      `Read "${article.title}" on Sailing Yachts Database.`,
+      `Read "${article.title}" on Sailing Yacht Info.`,
     openGraph: {
       title: article.title,
       description: article.excerpt || undefined,
@@ -110,7 +110,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       publishedTime: article.publishedAt?.toISOString(),
       modifiedTime: article.updatedAt?.toISOString(),
       authors: article.author ? [article.author] : undefined,
-      siteName: "Sailing Yachts Database",
+      siteName: "Sailing Yacht Info",
       ...(article.featuredImage ? { images: [article.featuredImage] } : {}),
     },
     twitter: {
@@ -174,7 +174,7 @@ export default async function GuideArticlePage({ params }: PageProps) {
       : undefined,
     publisher: {
       "@type": "Organization",
-      name: "Sailing Yachts Database",
+      name: "Sailing Yacht Info",
       url: getSiteUrl(),
       logo: {
         "@type": "ImageObject",

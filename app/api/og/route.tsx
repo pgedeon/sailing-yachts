@@ -104,7 +104,7 @@ export async function GET(request: Request) {
             >
               ⛵
             </div>
-            <div>Sailing Yachts Database</div>
+            <div>Sailing Yacht Info</div>
           </div>
 
           <div

@@ -17,7 +17,7 @@ export interface EmailResult {
 }
 
 const RESEND_API_URL = "https://api.resend.com/emails";
-const FROM_ADDRESS = process.env.EMAIL_FROM || "Sailing Yachts <alerts@sailboats.fr>";
+const FROM_ADDRESS = process.env.EMAIL_FROM || "Sailing Yacht Info <alerts@sailboats.fr>";
 
 /**
  * Send an email via Resend API.

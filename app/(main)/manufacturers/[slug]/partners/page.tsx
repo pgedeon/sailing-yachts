@@ -74,7 +74,7 @@ export async function generateMetadata({
       description,
       url: getSiteUrl(`/manufacturers/${slug}/partners`),
       type: "website",
-      siteName: "Sailing Yachts Database",
+      siteName: "Sailing Yacht Info",
       images: [{ url: getSiteUrl("/api/og"), width: 1200, height: 630, alt: title }],
     },
     twitter: {

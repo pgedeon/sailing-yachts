@@ -26,7 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
         "Expert sailing guides, buying advice, and educational resources for yacht buyers and sailors.",
       url: getSiteUrl("/guides"),
       type: "website",
-      siteName: "Sailing Yachts Database",
+      siteName: "Sailing Yacht Info",
     },
     twitter: {
       card: "summary",

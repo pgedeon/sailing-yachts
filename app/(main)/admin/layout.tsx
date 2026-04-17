@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Admin Dashboard - Sailing Yachts",
+  title: "Admin Dashboard - Sailing Yacht Info",
   description: "Administrative interface for managing sailing yacht data",
 };
 

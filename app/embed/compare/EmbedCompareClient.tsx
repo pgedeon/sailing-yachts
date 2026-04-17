@@ -236,7 +236,7 @@ export default function EmbedCompareClient({
           rel="noopener noreferrer"
           style={{ fontSize: 11, color: "#6b7280", textDecoration: "none" }}
         >
-          Powered by Sailing Yachts Database
+          Powered by Sailing Yacht Info
         </a>
       </div>
     </div>

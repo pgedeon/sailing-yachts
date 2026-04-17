@@ -83,7 +83,7 @@ export async function generateMetadata({
       description,
       url: getSiteUrl(`/manufacturers/${slug}`),
       type: "website",
-      siteName: "Sailing Yachts Database",
+      siteName: "Sailing Yacht Info",
       images: [{ url: getSiteUrl("/api/og"), width: 1200, height: 630, alt: title }],
     },
     twitter: {
@@ -187,7 +187,7 @@ export default async function ManufacturerPage({
               </h1>
               <p className="mt-4 max-w-3xl text-muted-foreground leading-relaxed">
                 {manufacturer.description ||
-                  `${manufacturer.name} is featured in the Sailing Yachts Database with ${manufacturer.yachtCount} yacht${manufacturer.yachtCount === 1 ? "" : "s"} currently indexed.`}
+                  `${manufacturer.name} is featured in the Sailing Yacht Info with ${manufacturer.yachtCount} yacht${manufacturer.yachtCount === 1 ? "" : "s"} currently indexed.`}
               </p>
             </div>
 

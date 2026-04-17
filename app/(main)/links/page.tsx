@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Links & Resources",
-  description: "Related projects and resources from the Sailing Yachts Database team.",
+  description: "Related projects and resources from the Sailing Yacht Info team.",
 };
 
 const PROJECTS = [
@@ -22,7 +22,7 @@ const PROJECTS = [
     description: "Handmade linocut prints and wall art.",
   },
   {
-    name: "Sailing Yachts on GitHub",
+    name: "Sailing Yacht Info on GitHub",
     url: "https://github.com/pgedeon/sailing-yachts",
     description: "Open source sailing yacht database. Contribute specs and improvements.",
   },
@@ -32,7 +32,7 @@ export default function LinksPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
       <h1 className="text-3xl font-bold mb-2">Links & Resources</h1>
-      <p className="text-gray-500 mb-8">Related projects from the Sailing Yachts Database team</p>
+      <p className="text-gray-500 mb-8">Related projects from the Sailing Yacht Info team</p>
       <div className="grid gap-6">
         {PROJECTS.map((p) => (
           <a

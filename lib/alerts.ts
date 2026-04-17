@@ -367,7 +367,7 @@ async function deliverAlert(alert: AlertItem): Promise<EmailResult> {
 <head><meta charset="utf-8"></head>
 <body style="font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #1a1a1a;">
   <div style="border-bottom: 3px solid #1e40af; padding-bottom: 16px; margin-bottom: 24px;">
-    <h1 style="margin: 0; font-size: 20px; color: #1e40af;">⛵ Sailing Yachts Alert</h1>
+    <h1 style="margin: 0; font-size: 20px; color: #1e40af;">⛵ Sailing Yacht Info Alert</h1>
   </div>
 
   <h2 style="font-size: 18px; margin-bottom: 16px;">${escapeHtml(alert.title)}</h2>
@@ -376,7 +376,7 @@ async function deliverAlert(alert: AlertItem): Promise<EmailResult> {
 
   <div style="margin-top: 32px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
     <p style="font-size: 13px; color: #6b7280;">
-      You're receiving this because you enabled alerts on Sailing Yachts.
+      You're receiving this because you enabled alerts on Sailing Yacht Info.
       <br/>
       <a href="${SITE_URL}/api/alerts/unsubscribe?token=${token}" style="color: #6b7280;">Unsubscribe from this alert type</a>
     </p>

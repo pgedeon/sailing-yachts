@@ -551,7 +551,7 @@ export function generateBuyingGuideJsonLd(
           : undefined,
         publisher: {
           "@type": "Organization",
-          name: "Sailing Yachts Database",
+          name: "Sailing Yacht Info",
           url: process.env.NEXT_PUBLIC_SITE_URL || "",
         },
         datePublished: publishedAt

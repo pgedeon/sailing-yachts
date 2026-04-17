@@ -11,11 +11,11 @@ import { shouldNoindexSearchPage } from "@/lib/thin-page-governance";
  * Search results pages should be noindexed (user-specific queries).
  */
 export const metadata: Metadata = {
-  title: "Search Yachts — Sailing Yachts Database",
+  title: "Search Yachts — Sailing Yacht Info",
   description:
     "Search sailing yachts by manufacturer, model name, rig type, keel type, and more. Find the perfect sailboat with our comprehensive database.",
   openGraph: {
-    title: "Search Sailing Yachts",
+    title: "Search Sailing Yacht Info",
     description:
       "Search and find sailing yachts by manufacturer, model, and specifications.",
   },

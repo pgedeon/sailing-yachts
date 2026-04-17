@@ -68,7 +68,7 @@ export default async function YachtsPage({ searchParams }: YachtsPageParams) {
   ]);
 
   const collectionJsonLd = generateCollectionPageJsonLd({
-    name: "Browse Sailing Yachts",
+    name: "Browse Sailing Yacht Info",
     description: "Search and filter sailing yachts by manufacturer, length, year, and more.",
     url: getSiteUrl("/yachts"),
   });

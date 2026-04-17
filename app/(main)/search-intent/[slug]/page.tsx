@@ -44,7 +44,7 @@ export async function generateMetadata({
       description: intent.metaDescription || intent.intro.substring(0, 160),
       url: getSiteUrl(`/search-intent/${slug}`),
       type: "website",
-      siteName: "Sailing Yachts Database",
+      siteName: "Sailing Yacht Info",
     },
     twitter: {
       card: "summary",

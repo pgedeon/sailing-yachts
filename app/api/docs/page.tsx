@@ -2,15 +2,15 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Sailing Yachts API Documentation',
-  description: 'Public API for accessing sailing yacht data from the Sailing Yachts Database',
+  title: 'Sailing Yacht Info API Documentation',
+  description: 'Public API for accessing sailing yacht data from the Sailing Yacht Info',
 };
 
 export default function ApiPage() {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Sailing Yachts API</h1>
+        <h1 className="text-3xl font-bold mb-2">Sailing Yacht Info API</h1>
         <p className="text-gray-600">Access sailing yacht data for your applications</p>
       </div>
 

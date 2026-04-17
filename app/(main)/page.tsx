@@ -75,7 +75,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const yachtPhrase = formatYachtPhrase(stats);
 
   return {
-    title: "Sailing Yachts Database — Specs, Dimensions & Comparison Tool",
+    title: "Sailing Yacht Info — Specs, Dimensions & Comparison Tool",
     description:
       `Comprehensive database of sailing yacht specifications. Search ${yachtPhrase} by length, year, manufacturer. Compare dimensions, sail plans, and accommodation. Free to use.`,
     keywords: [
@@ -91,17 +91,17 @@ export async function generateMetadata(): Promise<Metadata> {
       "boat specs",
     ],
     openGraph: {
-      title: "Sailing Yachts Database — Specs, Dimensions & Comparison Tool",
+      title: "Sailing Yacht Info — Specs, Dimensions & Comparison Tool",
       description:
         `Search ${yachtPhrase} by manufacturer, length, year. Compare specs side by side. Free database for sailors and buyers.`,
       url: getSiteUrl("/"),
       type: "website",
-      siteName: "Sailing Yachts Database",
+      siteName: "Sailing Yacht Info",
       images: [{ url: getSiteUrl("/api/og?title=Sailing%20Yachts%20Database&description=Specs%2C%20Dimensions%20%26%20Comparison"), width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
-      title: "Sailing Yachts Database — Specs & Comparison Tool",
+      title: "Sailing Yacht Info — Specs & Comparison Tool",
       description: `Search ${yachtPhrase}. Compare dimensions, sail plans, accommodation. Free.`,
     },
     alternates: {
@@ -122,7 +122,7 @@ export default async function Home() {
   const FAQ_ITEMS = [
     { q: "How many yachts are in the database?", a: formatYachtCountFAQ(stats) },
     { q: "Can I compare yachts side by side?", a: "Yes! Select up to 4 yachts from the browse page and click Compare to see specs side by side — length, displacement, sail area, cabins, and more." },
-    { q: "Is the database free to use?", a: "Yes, the Sailing Yachts Database is completely free for personal use and for organizations with annual revenue under $100,000." },
+    { q: "Is the database free to use?", a: "Yes, the Sailing Yacht Info is completely free for personal use and for organizations with annual revenue under $100,000." },
     { q: "Where does the data come from?", a: "Specifications are sourced from manufacturer brochures, official documentation, and verified owner contributions." },
   ];
 
@@ -274,7 +274,7 @@ export default async function Home() {
         {/* Features / Benefits */}
         <section className="py-16 px-4 bg-sky-50">
           <div className="max-w-5xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">Why Use Sailing Yachts Database?</h2>
+            <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">Why Use Sailing Yacht Info?</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
               <div className="text-center">
                 <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4 text-white text-2xl">🔍</div>

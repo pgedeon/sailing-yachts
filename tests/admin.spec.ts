@@ -120,7 +120,7 @@ test.describe('Admin Section E2E Tests', () => {
     // Page should have rendered SOME content (navigation, footer, loading message, etc.)
     // This means the page opened without crashing - which is what we're testing
     const hasNavigation = await page.locator('a:has-text("Admin")').count() > 0;
-    const hasFooter = await page.locator('text=© 2026 Sailing Yachts Database').count() > 0;
+    const hasFooter = await page.locator('text=© 2026 Sailing Yacht Info').count() > 0;
     const hasMainContent = await page.locator('main').count() > 0;
     
     // At minimum, the page should have rendered (navigation or footer present)
@@ -159,7 +159,7 @@ test.describe('Admin Section E2E Tests', () => {
     
     // Page should have rendered SOME content (navigation, footer, loading message, etc.)
     const hasNavigation = await page.locator('a:has-text("Admin")').count() > 0;
-    const hasFooter = await page.locator('text=© 2026 Sailing Yachts Database').count() > 0;
+    const hasFooter = await page.locator('text=© 2026 Sailing Yacht Info').count() > 0;
     const hasMainContent = await page.locator('main').count() > 0;
     
     expect(hasNavigation || hasFooter || hasMainContent).toBe(true);
@@ -197,7 +197,7 @@ test.describe('Admin Section E2E Tests', () => {
     
     // Page should have rendered SOME content
     const hasNavigation = await page.locator('a:has-text("Admin")').count() > 0;
-    const hasFooter = await page.locator('text=© 2026 Sailing Yachts Database').count() > 0;
+    const hasFooter = await page.locator('text=© 2026 Sailing Yacht Info').count() > 0;
     const hasMainContent = await page.locator('main').count() > 0;
     
     expect(hasNavigation || hasFooter || hasMainContent).toBe(true);
@@ -342,7 +342,7 @@ test.describe('Admin Section E2E Tests', () => {
     
     // Check if we're on an edit page (page rendered without error)
     const hasNavigation = await page.locator('a:has-text("Admin")').count() > 0;
-    const hasFooter = await page.locator('text=© 2026 Sailing Yachts Database').count() > 0;
+    const hasFooter = await page.locator('text=© 2026 Sailing Yacht Info').count() > 0;
     const hasMainContent = await page.locator('main').count() > 0;
     
     // Page should have rendered (no crash)

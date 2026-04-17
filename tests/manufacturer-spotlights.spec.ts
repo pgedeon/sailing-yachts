@@ -60,7 +60,7 @@ test.describe('Manufacturer Spotlight Pages', () => {
 
     const title = await page.title();
     expect(title).toContain('Beneteau');
-    expect(title).toContain('Sailing Yachts Database');
+    expect(title).toContain('Sailing Yacht Info');
 
     const metaDesc = await page.locator('meta[name="description"]').getAttribute('content');
     expect(metaDesc).toBeTruthy();

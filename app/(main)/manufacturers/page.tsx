@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     description,
     url: "/manufacturers",
     type: "website",
-    siteName: "Sailing Yachts Database",
+    siteName: "Sailing Yacht Info",
     images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
   },
   twitter: {

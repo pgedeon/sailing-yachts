@@ -42,7 +42,7 @@ test.describe("Print Spec Sheet Feature", () => {
     await expect(printFooter).toBeHidden();
 
     // Print header should contain branding text
-    expect(await printHeader.innerText()).toContain("Sailing Yachts Database");
+    expect(await printHeader.innerText()).toContain("Sailing Yacht Info");
 
     // Print footer should contain printed-from text
     expect(await printFooter.innerText()).toContain("Printed from");

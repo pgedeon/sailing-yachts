@@ -47,7 +47,7 @@ export async function generateMetadata({
       description: pageDefinition.metaDescription,
       url: getSiteUrl(`/best/${slug}`),
       type: "website",
-      siteName: "Sailing Yachts Database",
+      siteName: "Sailing Yacht Info",
     },
     twitter: {
       card: "summary",
