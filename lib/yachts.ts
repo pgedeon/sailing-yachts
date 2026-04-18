@@ -23,6 +23,17 @@ export interface YachtDetailData {
     reviewDate: string | null;
     authorName: string | null;
     sourceUrl: string | null;
+    reviewType: string | null;
+    verified: boolean | null;
+    ratingBreakdown: {
+      build_quality: number | null;
+      sailing_performance: number | null;
+      comfort: number | null;
+      value_for_money: number | null;
+    } | null;
+    pros: string[] | null;
+    cons: string[] | null;
+    helpfulCount: number | null;
   }>;
 }
 
@@ -119,6 +130,12 @@ export async function getYachtDetailData(slug: string): Promise<YachtDetailData 
       reviewDate: rev.reviewDate,
       authorName: rev.authorName,
       sourceUrl: rev.sourceUrl,
+      reviewType: (rev as any).reviewType ?? null,
+      verified: (rev as any).verified ?? null,
+      ratingBreakdown: (rev as any).ratingBreakdown ?? null,
+      pros: (rev as any).pros ?? null,
+      cons: (rev as any).cons ?? null,
+      helpfulCount: (rev as any).helpfulCount ?? null,
     })),
   };
 }
