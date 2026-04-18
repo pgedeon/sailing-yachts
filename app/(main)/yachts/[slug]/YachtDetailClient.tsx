@@ -19,6 +19,8 @@ import { RelatedArticles } from "./RelatedArticles";
 import AffiliateRecommendations from "@/app/components/AffiliateRecommendations";
 import YachtImage from "@/app/components/yacht/YachtImage";
 import { getAffiliateRecommendations } from "@/lib/affiliate-recommendations";
+import CompletenessBadge from "@/components/CompletenessBadge";
+import { calculateCompletenessScore } from "@/lib/completeness";
 
 interface SpecGroup {
   [group: string]: Array<{
@@ -266,6 +268,9 @@ export default function YachtDetailClient() {
             <div className="no-print">
               <FavoriteButton slug={yacht.slug} modelName={`${yacht.manufacturer} ${yacht.modelName}`} size="lg" showLabel />
             </div>
+          </div>
+          <div className="flex items-center gap-2 mb-2">
+            <CompletenessBadge score={calculateCompletenessScore(yacht)} size="md" showLabel />
           </div>
           <p className="text-base sm:text-lg text-muted-foreground mb-4">
             A sailing yacht built by {yacht.manufacturer}.
