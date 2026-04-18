@@ -15,7 +15,7 @@ interface ManufacturerSpotlightPageProps {
 
 async function getSpotlightData(slug: string) {
   return unstable_cache(
-    async () => getSpotlightBySlug(slug),
+    async () => getSpotlightBySlug(slug + "-spotlight"),
     [`manufacturer-spotlight:${slug}`],
     {
       tags: [
