@@ -174,7 +174,7 @@ These are the first issue titles I would create for the cron agent, in order:
 - [x] **P9.5 — Account dashboard:** Add a dashboard for favorites, saved searches, comparisons, alerts, and communication preferences. Tests: dashboard smoke tests and CRUD tests for each saved object type.
 - [x] **P9.6 — Personalized recommendations:*** Surface “similar to your favorites,” “new since your last visit,” and “compare again” modules. Tests: recommendation logic unit tests and render checks.
 - [ ] **P9.7 — Web push notifications:** Add optional browser notifications for saved search matches and price changes. Tests: subscription endpoint tests and permission UI coverage.
-- [ ] **P9.8 — Data portability/privacy controls:** Add export/delete account functionality and clear privacy settings. Tests: account deletion/export tests and admin access controls.
+- [x] **P9.8 — Data portability/privacy controls:** Add export/delete account functionality and clear privacy settings. Tests: account deletion/export tests and admin access controls. *(PR #160)*
 
 ### Notes
 
