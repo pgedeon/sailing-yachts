@@ -674,3 +674,30 @@ export const insertAlertPreferenceSchema = createInsertSchema(alertPreferences);
 export const selectAlertPreferenceSchema = createSelectSchema(alertPreferences);
 export const insertAlertLogSchema = createInsertSchema(alertLog);
 export const selectAlertLogSchema = createSelectSchema(alertLog);
+
+// Push notification subscriptions (P9.7 — Web push notifications)
+export const pushSubscriptions = pgTable(
+  "push_subscriptions",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    endpoint: varchar("endpoint", { length: 500 }).notNull(),
+    p256dh: varchar("p256dh", { length: 255 }).notNull(),
+    auth: varchar("auth", { length: 255 }).notNull(),
+    notifyNewMatches: boolean("notify_new_matches").notNull().default(true),
+    notifyPriceChanges: boolean("notify_price_changes").notNull().default(true),
+    frequency: varchar("frequency", { length: 20 }).notNull().default("immediate"), // 'immediate', 'daily', 'weekly'
+    quietHoursStart: integer("quiet_hours_start"), // hour 0-23
+    quietHoursEnd: integer("quiet_hours_end"), // hour 0-23
+    userAgent: varchar("user_agent", { length: 500 }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxUser: index("idx_push_subscriptions_user").on(table.userId),
+    idxEndpoint: uniqueIndex("idx_push_subscriptions_endpoint").on(table.endpoint),
+  }),
+);
+
+export const insertPushSubscriptionSchema = createInsertSchema(pushSubscriptions);
+export const selectPushSubscriptionSchema = createSelectSchema(pushSubscriptions);
