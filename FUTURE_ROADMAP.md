@@ -199,8 +199,8 @@ These are the first issue titles I would create for the cron agent, in order:
 ### Concrete PR-Sized Backlog
 
 - **P10.1 — Data expansion pipeline:** Extend import tooling to bring the database to a truly marketable scale before claiming “1,000+ yachts.” Add duplicate detection and source normalization. Tests: import validation tests and duplicate-resolution tests.
-- **P10.2 — Media asset model:** Add support for brochures, deck plans, interior layouts, videos, 360 tours, and 3D models. Tests: schema tests and render tests for mixed media galleries.
-- **P10.3 — Source provenance UI:** Show source URL, source type, last verified date, and completeness score on yacht pages. Tests: metadata/UI assertions and schema checks.
+- [x] **P10.2 — Media asset model:** Add support for brochures, deck plans, interior layouts, videos, 360 tours, and 3D models. Tests: schema tests and render tests for mixed media galleries.
+- [x] **P10.3 — Source provenance UI:** Show source URL, source type, last verified date, and completeness score on yacht pages. Tests: metadata/UI assertions and schema checks.
 - **P10.4 — Review depth:** Move beyond admin-seeded review snippets to verified user/owner reviews, expert reviews, and rating summaries. Tests: moderation tests, structured data tests, and review submission tests.
 - **P10.5 — Spec completeness scoring:** Calculate a visible completeness score per yacht and per manufacturer so thin records can be improved or deprioritized in SEO. Tests: score calculation tests and list-page display tests.
 - **P10.6 — Pricing coverage expansion:** Normalize regional prices, used listings, and source-specific price histories. Tests: price normalization tests and UI fallback tests for partial data.

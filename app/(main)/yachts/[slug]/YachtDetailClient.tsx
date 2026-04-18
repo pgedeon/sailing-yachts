@@ -23,6 +23,8 @@ import CompletenessBadge from "@/components/CompletenessBadge";
 import MediaGallery from "@/components/MediaGallery";
 import { calculateCompletenessScore } from "@/lib/completeness";
 import SourceProvenance from "@/components/SourceProvenance";
+import { ReviewSummary } from "@/components/ReviewSummary";
+import { ReviewSubmissionForm } from "@/components/ReviewSubmissionForm";
 
 interface SpecGroup {
   [group: string]: Array<{
@@ -80,6 +82,17 @@ interface YachtData {
     reviewDate: string | null;
     authorName: string | null;
     sourceUrl: string | null;
+    reviewType?: string | null;
+    verified?: boolean | null;
+    ratingBreakdown?: {
+      build_quality: number | null;
+      sailing_performance: number | null;
+      comfort: number | null;
+      value_for_money: number | null;
+    } | null;
+    pros?: string[] | null;
+    cons?: string[] | null;
+    helpfulCount?: number | null;
   }>;
   mediaAssets?: Array<{
     id: number;
@@ -473,15 +486,73 @@ export default function YachtDetailClient() {
           </section>
         );
       })()}
+      {/* Review Summary (P10.4) */}
+      {yacht.reviews && yacht.reviews.length > 0 && (() => {
+        const validRatings = yacht.reviews
+          .map(r => Number(r.rating))
+          .filter(n => !isNaN(n) && n > 0);
+        const overallRating = validRatings.length > 0
+          ? validRatings.reduce((a: number, b: number) => a + b, 0) / validRatings.length
+          : 0;
+        const breakdowns = yacht.reviews
+          .map(r => r.ratingBreakdown)
+          .filter(Boolean);
+        const avgBreakdown = {
+          build_quality: 0,
+          sailing_performance: 0,
+          comfort: 0,
+          value_for_money: 0,
+        };
+        if (breakdowns.length > 0) {
+          for (const b of breakdowns) {
+            avgBreakdown.build_quality += Number(b!.build_quality) || 0;
+            avgBreakdown.sailing_performance += Number(b!.sailing_performance) || 0;
+            avgBreakdown.comfort += Number(b!.comfort) || 0;
+            avgBreakdown.value_for_money += Number(b!.value_for_money) || 0;
+          }
+          const countB = (field: keyof typeof avgBreakdown) =>
+            breakdowns.filter(b => b![field] !== null).length;
+          const safeAvg = (sum: number, field: keyof typeof avgBreakdown) => {
+            const c = countB(field);
+            return c > 0 ? sum / c : 0;
+          };
+          avgBreakdown.build_quality = safeAvg(avgBreakdown.build_quality, 'build_quality');
+          avgBreakdown.sailing_performance = safeAvg(avgBreakdown.sailing_performance, 'sailing_performance');
+          avgBreakdown.comfort = safeAvg(avgBreakdown.comfort, 'comfort');
+          avgBreakdown.value_for_money = safeAvg(avgBreakdown.value_for_money, 'value_for_money');
+        }
+        return (
+          <div className="mt-10 sm:mt-12">
+            <ReviewSummary
+              reviews={yacht.reviews}
+              overallRating={overallRating}
+              ratingBreakdown={avgBreakdown}
+            />
+          </div>
+        );
+      })()}
+
       {/* Reviews Section */}
       {yacht.reviews && yacht.reviews.length > 0 && (
-        <section className="mt-10 sm:mt-12">
+        <section className="mt-6 sm:mt-8">
           <h2 className="text-lg sm:text-xl font-bold mb-4">Customer Reviews</h2>
           <div className="space-y-4">
             {yacht.reviews.map((review, idx) => (
               <div key={idx} className="border border-border rounded-lg p-4">
                 <div className="flex items-center justify-between">
-                  <div className="font-semibold">{review.source}</div>
+                  <div>
+                    <span className="font-semibold">{review.authorName || review.source}</span>
+                    {review.reviewType && review.reviewType !== 'expert' && (
+                      <span className="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                        {review.reviewType.replace('_', ' ')}
+                      </span>
+                    )}
+                    {review.verified && (
+                      <span className="ml-2 inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
+                        verified
+                      </span>
+                    )}
+                  </div>
                   {review.rating && (
                     <div className="flex items-center gap-1">
                       <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -497,6 +568,20 @@ export default function YachtDetailClient() {
                     {review.fullText}
                   </p>
                 )}
+                {(review.pros && review.pros.length > 0) && (
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {review.pros.map((pro, i) => (
+                      <span key={i} className="inline-flex items-center rounded-full bg-green-50 border border-green-200 px-2 py-0.5 text-xs text-green-700">+ {pro}</span>
+                    ))}
+                  </div>
+                )}
+                {(review.cons && review.cons.length > 0) && (
+                  <div className="mt-1.5 flex flex-wrap gap-1.5">
+                    {review.cons.map((con, i) => (
+                      <span key={i} className="inline-flex items-center rounded-full bg-red-50 border border-red-200 px-2 py-0.5 text-xs text-red-700">− {con}</span>
+                    ))}
+                  </div>
+                )}
                 {review.authorName && (
                   <p className="text-xs text-muted-foreground mt-2">
                     — {review.authorName}
@@ -507,6 +592,14 @@ export default function YachtDetailClient() {
           </div>
         </section>
       )}
+
+      {/* Review Submission Form (P10.4) */}
+      <div className="mt-8 sm:mt-10 no-print">
+        <ReviewSubmissionForm
+          yachtModelId={yacht.id}
+          yachtName={`${yacht.manufacturer} ${yacht.modelName}`}
+        />
+      </div>
 
       {/* INTERNAL LINKING MODULES (P6.7) */}
 

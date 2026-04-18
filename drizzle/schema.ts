@@ -180,10 +180,24 @@ export const reviews = pgTable(
     reviewDate: timestamp("review_date"),
     authorName: varchar("author_name", { length: 200 }),
     sourceUrl: varchar("source_url", { length: 500 }),
+    reviewType: text("review_type").notNull().default("expert"),
+    verified: boolean("verified").notNull().default(false),
+    ratingBreakdown: jsonb("rating_breakdown").$type<{
+      build_quality: number | null;
+      sailing_performance: number | null;
+      comfort: number | null;
+      value_for_money: number | null;
+    }>().default({ build_quality: null, sailing_performance: null, comfort: null, value_for_money: null }),
+    helpfulCount: integer("helpful_count").notNull().default(0),
+    reviewerProfile: jsonb("reviewer_profile").$type<Record<string, unknown>>().default({}),
+    pros: text("pros").array().default([]),
+    cons: text("cons").array().default([]),
     createdAt: timestamp("created_at").defaultNow(),
   },
   (table) => ({
     idxYacht: index("idx_reviews_yacht").on(table.yachtModelId),
+    idxVerified: index("idx_reviews_verified").on(table.verified),
+    idxReviewType: index("idx_reviews_type").on(table.reviewType),
   }),
 );
 

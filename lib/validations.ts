@@ -99,6 +99,28 @@ export const updateReviewSchema = z.object({
   sourceUrl: z.string().url("Invalid URL").max(500).optional().nullable().or(z.literal("")),
 });
 
+// ─── Public Review Submission (P10.4) ─────────────────────────────────────
+
+export const publicReviewSubmissionSchema = z.object({
+  yachtModelId: z.number().int().positive("Yacht model ID must be positive"),
+  reviewerType: z.enum(["owner", "previous_owner", "sailed_on", "broker", "considering"]).default("considering"),
+  rating: z.number().min(1).max(5).int("Rating must be a whole number"),
+  summary: z.string().min(5, "Please write at least 5 characters").max(500),
+  fullText: z.string().max(5000).optional().nullable(),
+  authorName: z.string().min(1, "Name is required").max(200),
+  ratingBreakdown: z.object({
+    build_quality: z.number().min(1).max(5).int().optional().nullable(),
+    sailing_performance: z.number().min(1).max(5).int().optional().nullable(),
+    comfort: z.number().min(1).max(5).int().optional().nullable(),
+    value_for_money: z.number().min(1).max(5).int().optional().nullable(),
+  }).optional().nullable(),
+  pros: z.array(z.string().max(200)).max(10).optional().default([]),
+  cons: z.array(z.string().max(200)).max(10).optional().default([]),
+  // Honeypot - must be empty
+  website: z.string().max(0).optional(),
+});
+
+
 // ─── Manufacturer Spotlight Validation ───────────────────────────────────
 
 const manufacturerSpotlightNotableModelSchema = z.object({
