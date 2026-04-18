@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import AlertPreferences from "@/components/AlertPreferences";
 import PushNotificationSettings from "@/components/PushNotificationSettings";
+import PrivacySettings from "@/components/PrivacySettings";
 
 // Types
 interface FavoriteItem {
@@ -33,7 +34,7 @@ interface SavedComparison {
   createdAt: string;
 }
 
-type Tab = "favorites" | "searches" | "comparisons" | "alerts" | "push";
+type Tab = "favorites" | "searches" | "comparisons" | "alerts" | "push" | "privacy";
 
 export default function AccountDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>("favorites");
@@ -101,6 +102,7 @@ export default function AccountDashboard() {
             { id: "comparisons" as Tab, label: "Comparisons", icon: "⚖️" },
             { id: "alerts" as Tab, label: "Alerts", icon: "🔔" },
             { id: "push" as Tab, label: "Push Notifications", icon: "📱" },
+            { id: "privacy" as Tab, label: "Privacy", icon: "🔒" },
           ]).map((tab) => (
             <button
               key={tab.id}
@@ -123,6 +125,7 @@ export default function AccountDashboard() {
       {activeTab === "comparisons" && <ComparisonsTab />}
       {activeTab === "alerts" && <AlertsTab />}
       {activeTab === "push" && <PushNotificationSettings />}
+      {activeTab === "privacy" && <PrivacySettings />}
 
       {/* Personalized Recommendations (P9.6) */}
       <DashboardRecommendations />
