@@ -1,23 +1,37 @@
 'use client'
 
 import { signIn } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
 export default function AdminLoginForm() {
+  const router = useRouter()
   const searchParams = useSearchParams()
-  const error = searchParams.get('error')
+  const initialError = searchParams.get('error')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(initialError)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
+    setError(null)
     const formData = new FormData(e.currentTarget)
-    await signIn('credentials', {
+    const result = await signIn('credentials', {
       email: formData.get('email'),
       password: formData.get('password'),
+      redirect: false,
       callbackUrl: '/admin',
     })
+
+    if (result?.error) {
+      setError('Invalid email or password')
+      setLoading(false)
+      return
+    }
+
+    router.push(result?.url || '/admin')
+    router.refresh()
   }
 
   return (
