@@ -72,12 +72,12 @@ export default function AccountDashboard() {
         <p className="text-muted-foreground mb-6 max-w-md mx-auto">
           Please sign in to access your account dashboard, manage favorites, saved searches, and alert preferences.
         </p>
-        <a
-          href="/api/auth/signin"
-          className="inline-flex items-center px-5 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
+        <Link
+          href="/auth/signin"
+          className="inline-flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
         >
-          Sign In
-        </a>
+          Sign In or Create Account
+        </Link>
       </div>
     );
   }

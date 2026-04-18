@@ -1,5 +1,6 @@
+import Link from "next/link";
+import HeaderAuthControls from "@/components/HeaderAuthControls";
 import { generateSiteNavigationJsonLd } from "@/lib/seo";
-import { cn } from "@/lib/utils";
 
 export default function MainLayout({
   children,
@@ -49,15 +50,16 @@ function Header() {
     <header className="border-b border-border bg-white/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <a
+          <Link
             href="/"
             className="text-xl font-bold text-primary tracking-tight flex-shrink-0"
           >
             Sailing Yacht Info
-          </a>
+          </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-6">
+            <nav className="flex items-center gap-6">
             <NavLink href="/yachts">Browse</NavLink>
             <NavLink href="/manufacturers">Manufacturers</NavLink>
             <NavLink href="/guides">Guides</NavLink>
@@ -65,8 +67,9 @@ function Header() {
             <NavLink href="/search">Search</NavLink>
             <NavLink href="/compare">Compare</NavLink>
             <NavLink href="/favorites">Favorites</NavLink>
-            <NavLink href="/account">Account</NavLink>
-          </nav>
+            </nav>
+            <HeaderAuthControls />
+          </div>
 
           {/* Mobile hamburger */}
           <MobileMenu />
@@ -78,12 +81,12 @@ function Header() {
 
 function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
-    <a
+    <Link
       href={href}
       className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
     >
       {children}
-    </a>
+    </Link>
   );
 }
 
@@ -131,10 +134,10 @@ function MobileMenu() {
           <a href="/favorites" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
             Favorites
           </a>
-          <a href="/account" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
-            Account
-          </a>
         </nav>
+        <div className="border-t border-gray-100 px-4 py-4">
+          <HeaderAuthControls mobile />
+        </div>
       </div>
 
       <script
