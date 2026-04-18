@@ -10,6 +10,7 @@ import {
   generateImageObjectJsonLd,
 } from "@/lib/seo";
 import { getYachtDetailData, getPrimaryImage } from "@/lib/yachts";
+import { transformYachtData, type YachtPageData } from "@/lib/yacht-transform";
 import { getPriceSummary } from "@/lib/price-data";
 import { calculateCompletenessScore, shouldNoindex } from "@/lib/completeness";
 import YachtDetailClient from "./YachtDetailClient";
@@ -241,6 +242,9 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
     // Price data unavailable — skip offer schema silently
   }
 
+  // Transform data for client component
+  const pageData = transformYachtData(data);
+
   return (
     <>
       <script
@@ -269,7 +273,7 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(offerJsonLd) }}
         />
       )}
-      <YachtDetailClient />
+      <YachtDetailClient initialData={pageData} />
     </>
   );
 }

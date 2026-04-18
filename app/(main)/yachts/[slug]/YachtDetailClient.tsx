@@ -67,7 +67,7 @@ interface YachtData {
     isPrimary: boolean;
   }>;
   reviews: Array<{
-    source: string;
+    source: string | null;
     rating: number | null;
     summary: string | null;
     fullText: string | null;
@@ -96,15 +96,21 @@ const GROUP_LABELS: Record<string, string> = {
   other: "Other Specs",
 };
 
-export default function YachtDetailClient() {
-  const params = useParams();
-  const slug = params.slug as string;
+interface YachtDetailClientProps {
+  initialData?: import("@/lib/yacht-transform").YachtPageData;
+}
 
-  const [yacht, setYacht] = useState<YachtData | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function YachtDetailClient({ initialData }: YachtDetailClientProps) {
+  const params = useParams();
+  const slug = (params?.slug as string) || "";
+
+  const [yacht, setYacht] = useState<YachtData | null>(initialData ?? null);
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // If we have server-provided data, skip the fetch
+    if (initialData) return;
     if (!slug) return;
     fetch(`/api/yachts/${slug}`, { cache: 'no-store' })
       .then((r) => {
@@ -114,7 +120,7 @@ export default function YachtDetailClient() {
       .then((data) => setYacht(data))
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [slug]);
+  }, [slug, initialData]);
 
   const handlePrint = () => {
     window.print();
