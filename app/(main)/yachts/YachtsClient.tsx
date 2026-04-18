@@ -4,6 +4,8 @@ import { FavoriteButton } from '@/app/components/FavoriteButton';
 import { PriceTierBadge } from '@/app/components/PriceTierBadge';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import { calculatePriceTier } from '@/lib/price-tier';
+import CompletenessBadge from '@/components/CompletenessBadge';
+import { calculateCompletenessScore } from '@/lib/completeness';
 import { FILTER_PRESETS, detectActivePreset, type FilterPreset } from '@/lib/filter-presets';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
@@ -380,6 +382,7 @@ export default function YachtsClient() {
                           keelType: yacht.keelType,
                           rigType: yacht.rigType,
                         })} />
+                        <CompletenessBadge score={calculateCompletenessScore(yacht)} />
                       </div>
                       <dl className="mt-3 text-sm">
                         <div className="flex justify-between py-0.5"><dt className="text-gray-500">Length:</dt><dd className="font-medium">{fmt(yacht.lengthOverall)} m</dd></div>

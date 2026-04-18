@@ -11,6 +11,7 @@ import {
 } from "@/lib/seo";
 import { getYachtDetailData, getPrimaryImage } from "@/lib/yachts";
 import { getPriceSummary } from "@/lib/price-data";
+import { calculateCompletenessScore, shouldNoindex } from "@/lib/completeness";
 import YachtDetailClient from "./YachtDetailClient";
 
 // ISR: Revalidate yacht detail pages every hour
@@ -122,9 +123,16 @@ export async function generateMetadata({
     primaryImage: primaryImage ?? undefined,
   });
 
+  // P10.5: Calculate completeness score
+  const completenessScore = calculateCompletenessScore(data.yacht);
+  const noindexThin = shouldNoindex(completenessScore);
+
   // Add hreflang alternates
   return {
     ...baseMeta,
+    ...(noindexThin && {
+      robots: { index: false, follow: true },
+    }),
     alternates: {
       canonical: getSiteUrl(`/yachts/${slug}`),
       languages: {
