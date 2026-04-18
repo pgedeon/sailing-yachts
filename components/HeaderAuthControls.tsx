@@ -67,45 +67,29 @@ export default function HeaderAuthControls({ mobile = false }: HeaderAuthControl
     return mobile ? (
       <div className="h-10 w-full animate-pulse rounded-xl bg-slate-100" />
     ) : (
-      <div className="h-10 w-44 animate-pulse rounded-full bg-slate-100" />
+      <div className="h-10 w-32 animate-pulse rounded-full bg-slate-100" />
     )
   }
 
   if (!session?.user?.id) {
     if (mobile) {
       return (
-        <div className="grid gap-3">
-          <Link
-            href="/auth/signin"
-            className="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
-          >
-            Create Account
-          </Link>
-          <Link
-            href="/auth/signin"
-            className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
-          >
-            Sign In
-          </Link>
-        </div>
+        <Link
+          href="/auth/signin"
+          className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+        >
+          Sign In
+        </Link>
       )
     }
 
     return (
-      <div className="flex items-center gap-3">
-        <Link
-          href="/auth/signin"
-          className="text-sm font-medium text-slate-600 transition hover:text-slate-900"
-        >
-          Create Account
-        </Link>
-        <Link
-          href="/auth/signin"
-          className="inline-flex items-center justify-center rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
-        >
-          Sign In
-        </Link>
-      </div>
+      <Link
+        href="/auth/signin"
+        className="inline-flex items-center justify-center rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+      >
+        Sign In
+      </Link>
     )
   }
 
