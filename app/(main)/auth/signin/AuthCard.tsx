@@ -80,6 +80,7 @@ export default function AuthCard({ errorCode, googleEnabled }: AuthCardProps) {
         return
       }
 
+      window.dispatchEvent(new Event("auth-change"))
       router.push(result?.url || "/account")
       router.refresh()
     } catch (error) {

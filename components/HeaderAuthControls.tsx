@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { signOut } from "next-auth/react"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 type HeaderAuthControlsProps = {
   mobile?: boolean
@@ -36,32 +36,30 @@ export default function HeaderAuthControls({ mobile = false }: HeaderAuthControl
   const [loading, setLoading] = useState(true)
   const [session, setSession] = useState<SessionState>(null)
 
-  useEffect(() => {
-    let active = true
-
+  const refreshSession = useCallback(() => {
     fetch("/api/auth/session", { cache: "no-store" })
       .then((response) => response.json())
       .then((data) => {
-        if (!active) {
-          return
-        }
-
         setSession(data?.user?.id ? data : null)
         setLoading(false)
       })
       .catch(() => {
-        if (!active) {
-          return
-        }
-
         setSession(null)
         setLoading(false)
       })
-
-    return () => {
-      active = false
-    }
   }, [])
+
+  useEffect(() => {
+    refreshSession()
+
+    // Listen for auth state changes from sign-in/sign-up pages
+    const handleAuthChange = () => {
+      setLoading(true)
+      refreshSession()
+    }
+    window.addEventListener("auth-change", handleAuthChange)
+    return () => window.removeEventListener("auth-change", handleAuthChange)
+  }, [refreshSession])
 
   if (loading) {
     return mobile ? (
@@ -108,7 +106,11 @@ export default function HeaderAuthControls({ mobile = false }: HeaderAuthControl
         </Link>
         <button
           type="button"
-          onClick={() => signOut({ callbackUrl: "/" })}
+          onClick={() => {
+            setSession(null)
+            setLoading(true)
+            signOut({ callbackUrl: "/" })
+          }}
           className="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
         >
           Sign Out
@@ -139,7 +141,11 @@ export default function HeaderAuthControls({ mobile = false }: HeaderAuthControl
         </Link>
         <button
           type="button"
-          onClick={() => signOut({ callbackUrl: "/" })}
+          onClick={() => {
+            setSession(null)
+            setLoading(true)
+            signOut({ callbackUrl: "/" })
+          }}
           className="flex w-full items-center rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
         >
           Sign Out
