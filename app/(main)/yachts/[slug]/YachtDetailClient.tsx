@@ -22,6 +22,7 @@ import { getAffiliateRecommendations } from "@/lib/affiliate-recommendations";
 import CompletenessBadge from "@/components/CompletenessBadge";
 import MediaGallery from "@/components/MediaGallery";
 import { calculateCompletenessScore } from "@/lib/completeness";
+import SourceProvenance from "@/components/SourceProvenance";
 
 interface SpecGroup {
   [group: string]: Array<{
@@ -60,6 +61,10 @@ interface YachtData {
   adminLinks: Array<{ label: string; url: string }> | null;
   sourceUrl: string | null;
   sourceAttribution: string | null;
+  dataSource: string | null;
+  sourceConfidence: number | null;
+  lastVerifiedAt: string | null;
+  completenessScore: number | null;
   specsByGroup: SpecGroup;
   images: Array<{
     url: string;
@@ -410,6 +415,16 @@ export default function YachtDetailClient() {
       </div>
 
 
+
+      {/* Source Provenance (P10.3) */}
+      <SourceProvenance
+        dataSource={yacht.dataSource}
+        sourceUrl={yacht.sourceUrl}
+        sourceAttribution={yacht.sourceAttribution}
+        sourceConfidence={yacht.sourceConfidence}
+        lastVerifiedAt={yacht.lastVerifiedAt}
+        completenessScore={yacht.completenessScore}
+      />
       {/* Performance Ratios Section */}
       {(() => {
         const ratios = calculatePerformanceRatios(yacht);
