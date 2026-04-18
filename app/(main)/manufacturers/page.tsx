@@ -133,7 +133,7 @@ export default async function ManufacturersPage() {
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                {manufacturers.map((manufacturer: any) => (
+                {manufacturers.filter((m: any) => m.yachtCount > 0).map((manufacturer: any) => (
                   <Link
                     key={manufacturer.name}
                     href={`/manufacturers/${manufacturer.name?.toLowerCase().replace(/\s+/g, "-")}`}

@@ -63,10 +63,13 @@ export async function generateMetadata({
   }
 
   const manufacturer = data.manufacturer;
-  const title = `${manufacturer.name} Yachts | Models & Specs`;
+  const brandTitle = manufacturer.name.endsWith(' Yachts') || manufacturer.name.endsWith(' Yachting') || manufacturer.name.endsWith(' Boats')
+    ? manufacturer.name
+    : `${manufacturer.name} Yachts`;
+  const title = `${brandTitle} | Models & Specs`;
   const description = manufacturer.description
     ? manufacturer.description
-    : `Browse ${manufacturer.name} sailing yachts, model specs, and builder information${manufacturer.country ? ` from ${manufacturer.country}` : ""}${manufacturer.foundedYear ? ` since ${manufacturer.foundedYear}` : ""}.`;
+    : `Browse ${manufacturer.name} models, specs, and builder information${manufacturer.country ? ` from ${manufacturer.country}` : ""}${manufacturer.foundedYear ? ` since ${manufacturer.foundedYear}` : ""}.`;
 
   return {
     title,
@@ -118,7 +121,7 @@ export default async function ManufacturerPage({
 
   const collectionJsonLd = generateCollectionPageJsonLd({
     name: `${manufacturer.name} Yachts`,
-    description: manufacturer.description || `Browse ${manufacturer.name} sailing yachts, model specs, and builder information.`,
+    description: manufacturer.description || `Browse ${manufacturer.name} models, specs, and builder information.`,
     url: getSiteUrl(`/manufacturers/${slug}`),
     itemCount: yachts.length,
   });

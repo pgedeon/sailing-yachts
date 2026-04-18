@@ -97,7 +97,7 @@ export async function generateMetadata(): Promise<Metadata> {
       url: getSiteUrl("/"),
       type: "website",
       siteName: "Sailing Yacht Info",
-      images: [{ url: getSiteUrl("/api/og?title=Sailing%20Yachts%20Database&description=Specs%2C%20Dimensions%20%26%20Comparison"), width: 1200, height: 630 }],
+      images: [{ url: getSiteUrl("/api/og?title=Sailing%20Yacht%20Info&description=Specs%2C%20Dimensions%20%26%20Comparison"), width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
