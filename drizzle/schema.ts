@@ -791,3 +791,33 @@ export const pushSubscriptions = pgTable(
 
 export const insertPushSubscriptionSchema = createInsertSchema(pushSubscriptions);
 export const selectPushSubscriptionSchema = createSelectSchema(pushSubscriptions);
+
+// User corrections (P10.7 — User-submitted corrections)
+export const userCorrections = pgTable(
+  "user_corrections",
+  {
+    id: serial("id").primaryKey(),
+    yachtModelId: integer("yacht_model_id")
+      .notNull()
+      .references(() => yachtModels.id, { onDelete: "cascade" }),
+    submitterName: text("submitter_name"),
+    submitterEmail: text("submitter_email"),
+    correctionType: text("correction_type").notNull().default("incorrect_value"),
+    fieldName: text("field_name").notNull(),
+    currentValue: text("current_value"),
+    suggestedValue: text("suggested_value").notNull(),
+    notes: text("notes"),
+    sourceUrl: text("source_url"),
+    status: text("status").notNull().default("pending"),
+    adminNotes: text("admin_notes"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+  },
+  (table) => ({
+    idxYacht: index("idx_corrections_yacht").on(table.yachtModelId),
+    idxStatus: index("idx_corrections_status").on(table.status),
+  }),
+);
+
+export const insertUserCorrectionSchema = createInsertSchema(userCorrections);
+export const selectUserCorrectionSchema = createSelectSchema(userCorrections);

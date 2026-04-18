@@ -25,6 +25,7 @@ import { calculateCompletenessScore } from "@/lib/completeness";
 import SourceProvenance from "@/components/SourceProvenance";
 import { ReviewSummary } from "@/components/ReviewSummary";
 import { ReviewSubmissionForm } from "@/components/ReviewSubmissionForm";
+import { CorrectionForm } from "@/components/CorrectionForm";
 
 interface SpecGroup {
   [group: string]: Array<{
@@ -438,6 +439,32 @@ export default function YachtDetailClient() {
         lastVerifiedAt={yacht.lastVerifiedAt}
         completenessScore={yacht.completenessScore}
       />
+
+      {/* User Correction (P10.7) */}
+      <CorrectionForm
+        yachtId={yacht.id}
+        yachtSlug={yacht.slug}
+        specFields={[
+          { name: "lengthOverall", label: "Length Overall", currentValue: yacht.lengthOverall },
+          { name: "beam", label: "Beam", currentValue: yacht.beam },
+          { name: "draft", label: "Draft", currentValue: yacht.draft },
+          { name: "displacement", label: "Displacement", currentValue: yacht.displacement },
+          { name: "ballast", label: "Ballast", currentValue: yacht.ballast },
+          { name: "sailAreaMain", label: "Sail Area (Main)", currentValue: yacht.sailAreaMain },
+          { name: "rigType", label: "Rig Type", currentValue: yacht.rigType },
+          { name: "keelType", label: "Keel Type", currentValue: yacht.keelType },
+          { name: "hullMaterial", label: "Hull Material", currentValue: yacht.hullMaterial },
+          { name: "cabins", label: "Cabins", currentValue: yacht.cabins },
+          { name: "berths", label: "Berths", currentValue: yacht.berths },
+          { name: "heads", label: "Heads", currentValue: yacht.heads },
+          { name: "maxOccupancy", label: "Max Occupancy", currentValue: yacht.maxOccupancy },
+          { name: "engineHp", label: "Engine HP", currentValue: yacht.engineHp },
+          { name: "engineType", label: "Engine Type", currentValue: yacht.engineType },
+          { name: "fuelCapacity", label: "Fuel Capacity", currentValue: yacht.fuelCapacity },
+          { name: "waterCapacity", label: "Water Capacity", currentValue: yacht.waterCapacity },
+        ].filter(f => f.currentValue !== null && f.currentValue !== undefined)}
+      />
+
       {/* Performance Ratios Section */}
       {(() => {
         const ratios = calculatePerformanceRatios(yacht);
