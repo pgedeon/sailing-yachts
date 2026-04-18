@@ -30,6 +30,10 @@ export function mapYachtToListDto(row: any): {
   sourceUrl?: string | null;
   sourceAttribution?: string | null;
   adminLinks?: any; // JSONB
+  dataSource?: string | null;
+  sourceConfidence?: number | null;
+  lastVerifiedAt?: Date | null;
+  completenessScore?: number | null;
   createdAt?: Date | null;
   updatedAt?: Date | null;
 } {
@@ -61,6 +65,10 @@ export function mapYachtToListDto(row: any): {
     sourceUrl: row.source_url ?? undefined,
     sourceAttribution: row.source_attribution ?? undefined,
     adminLinks: row.admin_links ?? undefined,
+    dataSource: row.data_source ?? undefined,
+    sourceConfidence: row.source_confidence ?? undefined,
+    lastVerifiedAt: row.last_verified_at ?? undefined,
+    completenessScore: row.completeness_score ?? undefined,
     createdAt: row.created_at ?? undefined,
     updatedAt: row.updated_at ?? undefined,
   };
