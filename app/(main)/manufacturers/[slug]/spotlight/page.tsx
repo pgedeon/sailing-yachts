@@ -33,12 +33,12 @@ function renderHistoryMarkdown(markdown: string) {
   return marked.parse(markdown) as string;
 }
 
-function formatDate(date: Date | null) {
+function formatDate(date: Date | string | null) {
   if (!date) {
     return "—";
   }
 
-  return date.toLocaleDateString("en-US", {
+  return new Date(date).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
