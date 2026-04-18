@@ -560,6 +560,11 @@ export const users = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
     lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
+    analyticsOptOut: boolean("analytics_opt_out").notNull().default(false),
+    communicationOptOut: boolean("communication_opt_out").notNull().default(false),
+    dataSharingConsent: boolean("data_sharing_consent").notNull().default(false),
+    deletionRequestedAt: timestamp("deletion_requested_at", { withTimezone: true }),
+    deletionScheduledAt: timestamp("deletion_scheduled_at", { withTimezone: true }),
   },
   (table) => ({
     idxEmail: uniqueIndex("idx_users_email").on(table.email),
