@@ -243,7 +243,8 @@ export async function ensureSchema() {
 
     const requiredColumns = [
       'slug', 'source_url', 'source_attribution', 'admin_links',
-      'created_at', 'updated_at'
+      'created_at', 'updated_at',
+      'data_source', 'source_confidence', 'last_verified_at', 'completeness_score'
     ];
 
     const missing = requiredColumns.filter(col => !existingColumns.has(col));
@@ -269,6 +270,18 @@ export async function ensureSchema() {
             break;
           case 'updated_at':
             sql = 'ALTER TABLE yacht_models ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW()';
+            break;
+          case 'data_source':
+            sql = 'ALTER TABLE yacht_models ADD COLUMN IF NOT EXISTS data_source VARCHAR(100) DEFAULT \'manual\'';
+            break;
+          case 'source_confidence':
+            sql = 'ALTER TABLE yacht_models ADD COLUMN IF NOT EXISTS source_confidence INTEGER DEFAULT 50';
+            break;
+          case 'last_verified_at':
+            sql = 'ALTER TABLE yacht_models ADD COLUMN IF NOT EXISTS last_verified_at TIMESTAMPTZ';
+            break;
+          case 'completeness_score':
+            sql = 'ALTER TABLE yacht_models ADD COLUMN IF NOT EXISTS completeness_score INTEGER';
             break;
         }
         if (sql) {

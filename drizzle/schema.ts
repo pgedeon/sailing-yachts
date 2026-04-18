@@ -76,6 +76,12 @@ export const yachtModels = pgTable(
     adminLinks:
       jsonb("admin_links").$type<Array<{ label: string; url: string }>>(),
 
+    // Source provenance (P10.1)
+    dataSource: varchar("data_source", { length: 100 }).default("manual"),
+    sourceConfidence: integer("source_confidence").default(50),
+    lastVerifiedAt: timestamp("last_verified_at", { withTimezone: true }),
+    completenessScore: integer("completeness_score"),
+
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
@@ -362,6 +368,31 @@ export const selectSearchIntentSchema = createSelectSchema(searchIntents);
 export const insertManufacturerSpotlightSchema = createInsertSchema(manufacturerSpotlights);
 export const selectManufacturerSpotlightSchema = createSelectSchema(manufacturerSpotlights);
 
+
+// Import jobs for data expansion pipeline (P10.1)
+export const importJobs = pgTable(
+  "import_jobs",
+  {
+    id: serial("id").primaryKey(),
+    source: varchar("source", { length: 100 }).notNull(),
+    status: varchar("status", { length: 30 }).notNull().default("pending"),
+    totalRecords: integer("total_records").default(0),
+    added: integer("added").default(0),
+    duplicates: integer("duplicates").default(0),
+    errors: integer("errors").default(0),
+    errorDetails: jsonb("error_details"),
+    startedAt: timestamp("started_at", { withTimezone: true }).defaultNow(),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => ({
+    idxStatus: index("idx_import_jobs_status").on(table.status),
+    idxSource: index("idx_import_jobs_source").on(table.source),
+  }),
+);
+
+export const insertImportJobSchema = createInsertSchema(importJobs);
+export const selectImportJobSchema = createSelectSchema(importJobs);
 // FAQ Proposals for P7.6: FAQ harvesting pipeline
 export const faqProposals = pgTable(
   "faq_proposals",
