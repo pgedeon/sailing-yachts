@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
-import { db, yachtModels, manufacturers } from "@/lib/db";
-import { isNotNull, sql } from "drizzle-orm";
+import { db, yachtModels } from "@/lib/db";
+import { sql } from "drizzle-orm";
 import {
   SITE_URL,
   buildSitemapIndexXml,
@@ -25,6 +25,7 @@ export async function GET() {
       { loc: `${SITE_URL}/sitemap-pages.xml`, lastmod },
       { loc: `${SITE_URL}/sitemap-yachts.xml`, lastmod },
       { loc: `${SITE_URL}/sitemap-manufacturers.xml`, lastmod },
+      { loc: `${SITE_URL}/sitemap-guides.xml`, lastmod },
       { loc: `${SITE_URL}/sitemap-compare.xml`, lastmod },
       { loc: `${SITE_URL}/sitemap-images.xml`, lastmod },
     ];
