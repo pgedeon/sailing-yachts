@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { unstable_cache } from 'next/cache'
 import { ensureSchema, pool } from '@/lib/db'
 
 // ISR: revalidate every 5 minutes
@@ -37,66 +36,56 @@ export async function GET(
     await ensureSchema()
     const { slug } = await params
 
-    const data = unstable_cache(
-      async () => {
-        // Resolve yacht id from slug
-        const yachtResult = await pool.query(
-          'SELECT id FROM yacht_models WHERE slug = $1',
-          [slug],
-        )
+    // Resolve yacht id from slug
+    const yachtResult = await pool.query(
+      'SELECT id FROM yacht_models WHERE slug = $1',
+      [slug],
+    )
 
-        if (yachtResult.rows.length === 0) return null
-
-        const yachtId = toNum(yachtResult.rows[0].id as string | number)!
-
-        const result = await pool.query(
-          `SELECT id, media_type, title, description, url, embed_url,
-                  thumbnail_url, source_url, file_format, file_size, caption,
-                  alt_text, is_primary, sort_order
-           FROM media_assets
-           WHERE yacht_model_id = $1
-           ORDER BY sort_order, created_at`,
-          [yachtId],
-        )
-
-        const assets: MediaAsset[] = result.rows.map(
-          (row: Record<string, unknown>) => ({
-            id: toNum(row.id as string | number | null)!,
-            mediaType: String(row.media_type ?? 'photo'),
-            title: (row.title as string) ?? null,
-            description: (row.description as string) ?? null,
-            url: (row.url as string) ?? null,
-            embedUrl: (row.embed_url as string) ?? null,
-            thumbnailUrl: (row.thumbnail_url as string) ?? null,
-            sourceUrl: (row.source_url as string) ?? null,
-            fileFormat: (row.file_format as string) ?? null,
-            fileSize: toNum(row.file_size as string | number | null),
-            caption: (row.caption as string) ?? null,
-            altText: (row.alt_text as string) ?? null,
-            isPrimary: row.is_primary === true || row.is_primary === 'true',
-            sortOrder: toNum(row.sort_order as string | number | null) ?? 0,
-          }),
-        )
-
-        // Group by media type for easier frontend consumption
-        const grouped: Record<string, MediaAsset[]> = {}
-        for (const asset of assets) {
-          const type = asset.mediaType
-          if (!grouped[type]) grouped[type] = []
-          grouped[type].push(asset)
-        }
-
-        return { mediaAssets: assets, grouped, total: assets.length }
-      },
-      [`api:yacht-media:${slug}`],
-      { tags: [`yacht:${slug}`, 'yachts'], revalidate: 300 },
-    )()
-
-    if (!data) {
+    if (yachtResult.rows.length === 0) {
       return NextResponse.json({ error: 'Yacht not found' }, { status: 404 })
     }
 
-    return NextResponse.json(data)
+    const yachtId = toNum(yachtResult.rows[0].id as string | number)!
+
+    const result = await pool.query(
+      `SELECT id, media_type, title, description, url, embed_url,
+              thumbnail_url, source_url, file_format, file_size, caption,
+              alt_text, is_primary, sort_order
+       FROM media_assets
+       WHERE yacht_model_id = $1
+       ORDER BY sort_order, created_at`,
+      [yachtId],
+    )
+
+    const assets: MediaAsset[] = result.rows.map(
+      (row: Record<string, unknown>) => ({
+        id: toNum(row.id as string | number | null)!,
+        mediaType: String(row.media_type ?? 'photo'),
+        title: (row.title as string) ?? null,
+        description: (row.description as string) ?? null,
+        url: (row.url as string) ?? null,
+        embedUrl: (row.embed_url as string) ?? null,
+        thumbnailUrl: (row.thumbnail_url as string) ?? null,
+        sourceUrl: (row.source_url as string) ?? null,
+        fileFormat: (row.file_format as string) ?? null,
+        fileSize: toNum(row.file_size as string | number | null),
+        caption: (row.caption as string) ?? null,
+        altText: (row.alt_text as string) ?? null,
+        isPrimary: row.is_primary === true || row.is_primary === 'true',
+        sortOrder: toNum(row.sort_order as string | number | null) ?? 0,
+      }),
+    )
+
+    // Group by media type for easier frontend consumption
+    const grouped: Record<string, MediaAsset[]> = {}
+    for (const asset of assets) {
+      const type = asset.mediaType
+      if (!grouped[type]) grouped[type] = []
+      grouped[type].push(asset)
+    }
+
+    return NextResponse.json({ mediaAssets: assets, grouped, total: assets.length })
   } catch (error) {
     console.error('Error fetching yacht media:', error)
     return NextResponse.json(
