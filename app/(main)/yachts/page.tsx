@@ -3,9 +3,10 @@ import { generateYachtsListMetadata, generateBreadcrumbJsonLd, generateCollectio
 import { Suspense } from "react";
 import YachtsClient from "./YachtsClient";
 import { shouldNoindexYachtsPage, generateYachtsPageCanonical } from "@/lib/thin-page-governance";
+import { getYachtsListing, getFilterOptions, type YachtsListingResult, type FilterOptions } from "@/lib/yachts";
 
-// Removed force-dynamic - this page is a client component shell
-// No need for ISR since it's entirely client-rendered
+// Revalidate every 60 minutes — yacht list doesn't change frequently
+export const revalidate = 3600;
 
 interface YachtsPageParams {
   searchParams: Promise<{
@@ -62,6 +63,27 @@ export async function generateMetadata({ searchParams }: YachtsPageParams): Prom
 }
 
 export default async function YachtsPage({ searchParams }: YachtsPageParams) {
+  // Fetch default listing data server-side for SEO
+  // Only pre-fetch for the default (no-filter) view — filtered views use client-side fetching
+  const params = await searchParams;
+  const hasFilters = Object.keys(params).some(k => k.startsWith('filters['));
+  const page = parseInt(params.page || '1', 10);
+
+  let initialData: YachtsListingResult | null = null;
+  let filterOptions: FilterOptions | null = null;
+
+  if (!hasFilters) {
+    try {
+      [initialData, filterOptions] = await Promise.all([
+        getYachtsListing(page, 20),
+        getFilterOptions(),
+      ]);
+    } catch (e) {
+      // Graceful degradation — client will fetch via API
+      console.error('SSR data fetch failed for /yachts:', e);
+    }
+  }
+
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Home", path: "/" },
     { name: "Browse Yachts" },
@@ -84,7 +106,10 @@ export default async function YachtsPage({ searchParams }: YachtsPageParams) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
       />
       <Suspense fallback={<div className="max-w-7xl mx-auto px-4 py-10">Loading...</div>}>
-        <YachtsClient />
+        <YachtsClient
+          initialData={initialData}
+          filterOptions={filterOptions}
+        />
       </Suspense>
     </>
   );

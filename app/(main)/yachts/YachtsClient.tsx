@@ -7,40 +7,12 @@ import { calculatePriceTier } from '@/lib/price-tier';
 import CompletenessBadge from '@/components/CompletenessBadge';
 import { calculateCompletenessScore } from '@/lib/completeness';
 import { FILTER_PRESETS, detectActivePreset, type FilterPreset } from '@/lib/filter-presets';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import type { YachtsListingResult, FilterOptions, YachtListItem } from '@/lib/yachts';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-interface Manufacturer { id: number; name: string; }
-
-function fmt(value: number | null): string {
-  return value?.toLocaleString() || "—";
-}
-interface SpecCategory { id: number; name: string; group?: string; }
-interface Yacht {
-  id: number;
-  manufacturer: string;
-  modelName: string;
-  year: number | null;
-  slug: string | null;
-  lengthOverall: number | null;
-  beam: number | null;
-  draft: number | null;
-  displacement: number | null;
-  ballast: number | null;
-  sailAreaMain: number | null;
-  rigType: string | null;
-  keelType: string | null;
-  hullMaterial: string | null;
-  cabins: number | null;
-  berths: number | null;
-  heads: number | null;
-  maxOccupancy: number | null;
-  engineHp: number | null;
-  engineType: string | null;
-  fuelCapacity: number | null;
-  waterCapacity: number | null;
-  description: string | null;
-}
+// Use the shared type from lib/yachts
+type Yacht = YachtListItem;
 
 // Serialize filters to a string key for stable comparison
 function filterKey(searchParams: URLSearchParams): string {
@@ -48,16 +20,28 @@ function filterKey(searchParams: URLSearchParams): string {
   return keys.map(k => `${k}=${searchParams.get(k)}`).join('&');
 }
 
-export default function YachtsClient() {
+interface YachtsClientProps {
+  initialData?: YachtsListingResult | null;
+  filterOptions?: FilterOptions | null;
+}
+
+export default function YachtsClient({ initialData, filterOptions: initialFilterOptions }: YachtsClientProps) {
   const searchParams = useSearchParams();
-  const [manufacturers, setManufacturers] = useState<Manufacturer[]>([]);
-  const [categories, setCategories] = useState<SpecCategory[]>([]);
-  const [distinct, setDistinct] = useState<{ rigTypes: string[]; keelTypes: string[]; hullMaterials: string[] }>({ rigTypes: [], keelTypes: [], hullMaterials: [] });
-  const [yachts, setYachts] = useState<Yacht[]>([]);
-  const [total, setTotal] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+
+  // Initialize from SSR data if available
+  const [manufacturers, setManufacturers] = useState<Array<{ id: number; name: string }>>(
+    initialFilterOptions?.manufacturers ?? []
+  );
+  const [distinct, setDistinct] = useState<{ rigTypes: string[]; keelTypes: string[]; hullMaterials: string[] }>({
+    rigTypes: initialFilterOptions?.rigTypes ?? [],
+    keelTypes: initialFilterOptions?.keelTypes ?? [],
+    hullMaterials: initialFilterOptions?.hullMaterials ?? [],
+  });
+  const [yachts, setYachts] = useState<Yacht[]>(initialData?.yachts ?? []);
+  const [total, setTotal] = useState(initialData?.total ?? 0);
+  const [totalPages, setTotalPages] = useState(initialData?.totalPages ?? 1);
+  const [page, setPage] = useState(initialData?.page ?? 1);
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedYacht, setSelectedYacht] = useState<Yacht | null>(null);
@@ -83,31 +67,28 @@ export default function YachtsClient() {
 
   // Stable filter key to prevent re-fetching on same params
   const currentKey = filterKey(searchParams);
-  const lastFetchedKey = useRef<string>('');
+  const lastFetchedKey = useRef<string>(initialData ? 'initial' : '');
   const abortRef = useRef<AbortController | null>(null);
 
-  // Fetch reference data (once)
+  // Fetch manufacturers list (once, only if not provided via SSR)
   useEffect(() => {
+    if (initialFilterOptions) return; // Already have filter options from SSR
     let cancelled = false;
-    async function loadRefs() {
+    async function loadManufacturers() {
       try {
-        const [m, c] = await Promise.all([
-          fetch('/api/manufacturers').then(r => r.json()),
-          fetch('/api/spec-categories').then(r => r.json()),
-        ]);
+        const m = await fetch('/api/manufacturers').then(r => r.json());
         if (!cancelled) {
           setManufacturers(Array.isArray(m.manufacturers) ? m.manufacturers : []);
-          setCategories(Array.isArray(c.categories) ? c.categories : []);
         }
       } catch (e) {
         console.error(e);
       }
     }
-    loadRefs();
+    loadManufacturers();
     return () => { cancelled = true; };
-  }, []);
+  }, [initialFilterOptions]);
 
-  // Fetch yachts - only when key actually changes
+  // Fetch yachts - only when key actually changes (skip if SSR data matches)
   useEffect(() => {
     const fetchKey = `${currentKey}:p${page}`;
     if (fetchKey === lastFetchedKey.current) return;
@@ -209,7 +190,6 @@ export default function YachtsClient() {
 
   const closeModal = () => { setModalOpen(false); setSelectedYacht(null); };
 
-  if (loading && yachts.length === 0) return <div className="p-8 text-center">Loading yachts...</div>;
   if (error) return <div className="p-8 text-center text-red-600">{error}</div>;
 
   const format = (v: number | null | undefined) => (v != null ? v.toLocaleString() : '—');
@@ -357,7 +337,7 @@ export default function YachtsClient() {
 
           {/* Main */}
           <main className="flex-1 min-w-0">
-            {loading && yachts.length === 0 ? (<p>Loading yachts...</p>) : error ? (<p className="text-red-600">{error}</p>) : yachts.length === 0 ? (
+            {loading && yachts.length === 0 ? (<p className="p-8 text-center text-gray-500">Loading yachts...</p>) : yachts.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-gray-500 mb-2">No yachts match your filters.</p>
                 <button onClick={clearFilters} className="text-blue-600 hover:underline text-sm">Clear all filters</button>
@@ -368,7 +348,15 @@ export default function YachtsClient() {
                   {yachts.map(yacht => (
                     <div key={yacht.id} className="border rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow relative">
                       <div className="flex items-start justify-between gap-2">
-                        <h3 className="font-bold text-lg leading-tight">{yacht.manufacturer} {yacht.modelName}</h3>
+                        <h3 className="font-bold text-lg leading-tight">
+                          {yacht.slug ? (
+                            <a href={`/yachts/${yacht.slug}`} className="hover:text-blue-600 transition-colors">
+                              {yacht.manufacturer} {yacht.modelName}
+                            </a>
+                          ) : (
+                            <>{yacht.manufacturer} {yacht.modelName}</>
+                          )}
+                        </h3>
                         {yacht.slug && <FavoriteButton slug={yacht.slug} modelName={`${yacht.manufacturer} ${yacht.modelName}`} size="sm" />}
                       </div>
                       <div className="flex items-center gap-2 mt-0.5">
@@ -385,18 +373,18 @@ export default function YachtsClient() {
                         <CompletenessBadge score={calculateCompletenessScore(yacht)} />
                       </div>
                       <dl className="mt-3 text-sm">
-                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">Length:</dt><dd className="font-medium">{fmt(yacht.lengthOverall)} m</dd></div>
-                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">Beam:</dt><dd className="font-medium">{fmt(yacht.beam)} m</dd></div>
-                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">Draft:</dt><dd className="font-medium">{fmt(yacht.draft)} m</dd></div>
-                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">Displacement:</dt><dd className="font-medium">{fmt(yacht.displacement)} kg</dd></div>
+                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">Length:</dt><dd className="font-medium">{format(yacht.lengthOverall)} m</dd></div>
+                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">Beam:</dt><dd className="font-medium">{format(yacht.beam)} m</dd></div>
+                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">Draft:</dt><dd className="font-medium">{format(yacht.draft)} m</dd></div>
+                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">Displacement:</dt><dd className="font-medium">{format(yacht.displacement)} kg</dd></div>
                         <div className="flex justify-between py-0.5"><dt className="text-gray-500">Rig:</dt><dd className="font-medium">{yacht.rigType ?? '—'}</dd></div>
                         <div className="flex justify-between py-0.5"><dt className="text-gray-500">Keel:</dt><dd className="font-medium">{yacht.keelType ?? '—'}</dd></div>
                         <div className="flex justify-between py-0.5"><dt className="text-gray-500">Hull:</dt><dd className="font-medium">{yacht.hullMaterial ?? '—'}</dd></div>
                       </dl>
                       {yacht.slug && (
-                        <button onClick={() => openYacht(yacht.slug!)} className="mt-3 text-blue-600 hover:underline text-sm font-medium">
+                        <a href={`/yachts/${yacht.slug}`} className="mt-3 text-blue-600 hover:underline text-sm font-medium inline-block">
                           View Details →
-                        </button>
+                        </a>
                       )}
                     </div>
                   ))}

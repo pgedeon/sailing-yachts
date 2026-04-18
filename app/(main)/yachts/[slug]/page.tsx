@@ -8,6 +8,8 @@ import {
   generateFaqJsonLd,
   getSiteUrl,
   generateImageObjectJsonLd,
+  generateVideoObjectJsonLd,
+  generateDigitalDocumentJsonLd,
 } from "@/lib/seo";
 import { getYachtDetailData, getPrimaryImage } from "@/lib/yachts";
 import { getPriceSummary } from "@/lib/price-data";
@@ -210,6 +212,29 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
       })
     : null;
 
+  // P10.8: Rich media structured data (VideoObject + brochures)
+  const mediaJsonLdItems: Array<Record<string, unknown>> = [];
+  if (data.mediaAssets && data.mediaAssets.length > 0) {
+    for (const asset of data.mediaAssets) {
+      if (asset.mediaType === "video") {
+        mediaJsonLdItems.push(generateVideoObjectJsonLd({
+          name: asset.title || `${manufacturerName} ${yachtData.modelName} Video`,
+          description: asset.description || undefined,
+          thumbnailUrl: asset.thumbnailUrl || undefined,
+          contentUrl: asset.url || undefined,
+          embedUrl: asset.embedUrl || undefined,
+        }) as unknown as Record<string, unknown>);
+      } else if (asset.mediaType === "brochure" || asset.mediaType === "deck_plan" || asset.mediaType === "interior_layout") {
+        mediaJsonLdItems.push(generateDigitalDocumentJsonLd({
+          name: asset.title || `${manufacturerName} ${yachtData.modelName} ${asset.mediaType.replace("_", " ")}`,
+          description: asset.description || undefined,
+          url: asset.url || undefined,
+          encodingFormat: asset.fileFormat || undefined,
+        }) as unknown as Record<string, unknown>);
+      }
+    }
+  }
+
   // FAQ structured data
   const faqJsonLd = generateFaqJsonLd({
     manufacturer: manufacturerName,
@@ -269,6 +294,13 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(offerJsonLd) }}
         />
       )}
+      {mediaJsonLdItems.length > 0 && mediaJsonLdItems.map((item, idx) => (
+        <script
+          key={`media-jsonld-${idx}`}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }}
+        />
+      ))}
       <YachtDetailClient />
     </>
   );

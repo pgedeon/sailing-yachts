@@ -632,3 +632,70 @@ export function generateItemListJsonLd(params: {
     })),
   };
 }
+
+/* ------------------------------------------------------------------ */
+/*  VideoObject for video media assets (P10.8)                       */
+/* ------------------------------------------------------------------ */
+
+export interface JsonLdVideoObject {
+  "@context": "https://schema.org";
+  "@type": "VideoObject";
+  name: string;
+  description?: string;
+  thumbnailUrl?: string;
+  contentUrl?: string;
+  embedUrl?: string;
+  uploadDate?: string;
+  duration?: string;
+}
+
+export function generateVideoObjectJsonLd(params: {
+  name: string;
+  description?: string;
+  thumbnailUrl?: string;
+  contentUrl?: string;
+  embedUrl?: string;
+  uploadDate?: string;
+  duration?: string;
+}): JsonLdVideoObject {
+  return {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    name: params.name,
+    ...(params.description ? { description: params.description } : {}),
+    ...(params.thumbnailUrl ? { thumbnailUrl: params.thumbnailUrl } : {}),
+    ...(params.contentUrl ? { contentUrl: params.contentUrl } : {}),
+    ...(params.embedUrl ? { embedUrl: params.embedUrl } : {}),
+    ...(params.uploadDate ? { uploadDate: params.uploadDate } : {}),
+    ...(params.duration ? { duration: params.duration } : {}),
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/*  DigitalDocument for brochures/deck plans (P10.8)                 */
+/* ------------------------------------------------------------------ */
+
+export interface JsonLdDigitalDocument {
+  "@context": "https://schema.org";
+  "@type": "DigitalDocument";
+  name: string;
+  description?: string;
+  url?: string;
+  encodingFormat?: string;
+}
+
+export function generateDigitalDocumentJsonLd(params: {
+  name: string;
+  description?: string;
+  url?: string;
+  encodingFormat?: string;
+}): JsonLdDigitalDocument {
+  return {
+    "@context": "https://schema.org",
+    "@type": "DigitalDocument",
+    name: params.name,
+    ...(params.description ? { description: params.description } : {}),
+    ...(params.url ? { url: params.url } : {}),
+    ...(params.encodingFormat ? { encodingFormat: params.encodingFormat } : {}),
+  };
+}
