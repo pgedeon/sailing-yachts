@@ -1,0 +1,747 @@
+[
+  {
+    "mfg": "Allures Yachting",
+    "model": "Allures 40.9",
+    "status": "error",
+    "error": "page.goto: net::ERR_NAME_NOT_RESOLVED at https://www.allures-yachting.com/en/allures-40-9/\nCall log:\n  - navigating to \"https://www.allures-yachting.com/en/allures-40-9/\", waiting until \"networkidle\"\n"
+  },
+  {
+    "mfg": "Allures Yachting",
+    "model": "Allures 45.9",
+    "status": "error",
+    "error": "page.goto: net::ERR_NAME_NOT_RESOLVED at https://www.allures-yachting.com/en/allures-45-9/\nCall log:\n  - navigating to \"https://www.allures-yachting.com/en/allures-45-9/\", waiting until \"networkidle\"\n"
+  },
+  {
+    "mfg": "Amel",
+    "model": "Amel 50",
+    "status": "ok",
+    "url": "https://amel.fr/wp-content/uploads/2025/07/Schema-coque-Amel-50.jpg"
+  },
+  {
+    "mfg": "Amel",
+    "model": "Amel 60",
+    "status": "ok",
+    "url": "https://amel.fr/wp-content/uploads/2019/09/CANNES-2019-LANCEMENT-AMEL-60-DSC_3007-scaled.jpg"
+  },
+  {
+    "mfg": "Amel",
+    "model": "Amel 60",
+    "status": "ok",
+    "url": "https://amel.fr/wp-content/uploads/2019/09/CANNES-2019-LANCEMENT-AMEL-60-DSC_3007-scaled.jpg"
+  },
+  {
+    "mfg": "Arcona Yachts",
+    "model": "Arcona 345",
+    "status": "error",
+    "error": "page.goto: net::ERR_CERT_DATE_INVALID at https://www.arconayachts.com/arcona-345/\nCall log:\n  - navigating to \"https://www.arconayachts.com/arcona-345/\", waiting until \"networkidle\"\n"
+  },
+  {
+    "mfg": "Arcona Yachts",
+    "model": "Arcona 435",
+    "status": "error",
+    "error": "page.goto: net::ERR_CERT_DATE_INVALID at https://www.arconayachts.com/arcona-435/\nCall log:\n  - navigating to \"https://www.arconayachts.com/arcona-435/\", waiting until \"networkidle\"\n"
+  },
+  {
+    "mfg": "Bavaria Yachts",
+    "model": "C42",
+    "status": "ok",
+    "url": "https://www.bavariayachts.com/fileadmin/_processed_/a/5/csm_r55-auslieferung-frankreich-news-preview_602d744264.jpg"
+  },
+  {
+    "mfg": "Bavaria Yachts",
+    "model": "Cruiser 34",
+    "status": "ok",
+    "url": "https://www.bavariayachts.com/fileadmin/_processed_/a/5/csm_r55-auslieferung-frankreich-news-preview_602d744264.jpg"
+  },
+  {
+    "mfg": "Bavaria Yachts",
+    "model": "Cruiser 34",
+    "status": "ok",
+    "url": "https://www.bavariayachts.com/fileadmin/_processed_/a/5/csm_r55-auslieferung-frankreich-news-preview_602d744264.jpg"
+  },
+  {
+    "mfg": "Bavaria Yachts",
+    "model": "Cruiser 37",
+    "status": "ok",
+    "url": "https://www.bavariayachts.com/fileadmin/_processed_/a/5/csm_r55-auslieferung-frankreich-news-preview_602d744264.jpg"
+  },
+  {
+    "mfg": "Bavaria Yachts",
+    "model": "Cruiser 40",
+    "status": "ok",
+    "url": "https://www.bavariayachts.com/fileadmin/_processed_/a/5/csm_r55-auslieferung-frankreich-news-preview_602d744264.jpg"
+  },
+  {
+    "mfg": "Bavaria Yachts",
+    "model": "Cruiser 46",
+    "status": "ok",
+    "url": "https://www.bavariayachts.com/fileadmin/_processed_/a/5/csm_r55-auslieferung-frankreich-news-preview_602d744264.jpg"
+  },
+  {
+    "mfg": "Bavaria Yachts",
+    "model": "Cruiser 51",
+    "status": "ok",
+    "url": "https://www.bavariayachts.com/fileadmin/_processed_/a/5/csm_r55-auslieferung-frankreich-news-preview_602d744264.jpg"
+  },
+  {
+    "mfg": "Bavaria Yachts",
+    "model": "R40",
+    "status": "ok",
+    "url": "https://www.bavariayachts.com/fileadmin/_processed_/a/5/csm_r55-auslieferung-frankreich-news-preview_602d744264.jpg"
+  },
+  {
+    "mfg": "Bavaria Yachts",
+    "model": "Vision 42",
+    "status": "ok",
+    "url": "https://www.bavariayachts.com/fileadmin/_processed_/a/5/csm_r55-auslieferung-frankreich-news-preview_602d744264.jpg"
+  },
+  {
+    "mfg": "Beneteau",
+    "model": "First 27 SE",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Bowman Yachts",
+    "model": "Bowman 36",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Bowman Yachts",
+    "model": "Bowman 40",
+    "status": "no_image"
+  },
+  {
+    "mfg": "CNB",
+    "model": "CNB 76",
+    "status": "error",
+    "error": "page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://www.cnb-yachts.com/en/cnb-76/\nCall log:\n  - navigating to \"https://www.cnb-yachts.com/en/cnb-76/\", waiting until \"networkidle\"\n"
+  },
+  {
+    "mfg": "Catalina Yachts",
+    "model": "Catalina 14.2",
+    "status": "ok",
+    "url": "https://www.catalinayachts.com/wp-content/uploads/2022/01/C142WSpecP.jpg"
+  },
+  {
+    "mfg": "Catalina Yachts",
+    "model": "Catalina 22 Sport",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Catalina Yachts",
+    "model": "Catalina 275 Sport",
+    "status": "ok",
+    "url": "https://www.catalinayachts.com/wp-content/uploads/2021/12/111113BTSF-8513-scaled.jpg"
+  },
+  {
+    "mfg": "Catalina Yachts",
+    "model": "Catalina 315",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Catalina Yachts",
+    "model": "Catalina 355",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Catalina Yachts",
+    "model": "Catalina 375",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Catalina Yachts",
+    "model": "Catalina 425",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Catalina Yachts",
+    "model": "Catalina 445",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Catalina Yachts",
+    "model": "Catalina 545",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Contest Yachts",
+    "model": "Contest 42CS",
+    "status": "ok",
+    "url": "https://www.contestyachts.com/images/logo.svg"
+  },
+  {
+    "mfg": "Contest Yachts",
+    "model": "Contest 50CS",
+    "status": "ok",
+    "url": "https://www.contestyachts.com/images/logo.svg"
+  },
+  {
+    "mfg": "Contest Yachts",
+    "model": "Contest 67CS",
+    "status": "ok",
+    "url": "https://www.contestyachts.com/images/logo.svg"
+  },
+  {
+    "mfg": "Dehler",
+    "model": "Dehler 30 OD",
+    "status": "ok",
+    "url": "https://dehler.com/_next/image/?url=https%3A%2F%2Fa.storyblok.com%2Ff%2F236654%2F1304x1140%2Fe6f4bae946%2Fservices.png&w=2048&q=95"
+  },
+  {
+    "mfg": "Dehler",
+    "model": "Dehler 32",
+    "status": "ok",
+    "url": "https://dehler.com/_next/image/?url=https%3A%2F%2Fa.storyblok.com%2Ff%2F236654%2F1304x1140%2Fe6f4bae946%2Fservices.png&w=2048&q=95"
+  },
+  {
+    "mfg": "Dehler",
+    "model": "Dehler 34",
+    "status": "ok",
+    "url": "https://dehler.com/_next/image/?url=https%3A%2F%2Fa.storyblok.com%2Ff%2F236654%2F1304x1140%2Fe6f4bae946%2Fservices.png&w=2048&q=95"
+  },
+  {
+    "mfg": "Dehler",
+    "model": "Dehler 38",
+    "status": "ok",
+    "url": "https://dehler.com/_next/image/?url=https%3A%2F%2Fa.storyblok.com%2Ff%2F236654%2F1304x1140%2Fe6f4bae946%2Fservices.png&w=2048&q=95"
+  },
+  {
+    "mfg": "Dehler",
+    "model": "Dehler 38 SQ",
+    "status": "ok",
+    "url": "https://dehler.com/_next/image/?url=https%3A%2F%2Fa.storyblok.com%2Ff%2F236654%2F1304x1140%2Fe6f4bae946%2Fservices.png&w=2048&q=95"
+  },
+  {
+    "mfg": "Dehler",
+    "model": "Dehler 42",
+    "status": "ok",
+    "url": "https://dehler.com/_next/image/?url=https%3A%2F%2Fa.storyblok.com%2Ff%2F236654%2F1304x1140%2Fe6f4bae946%2Fservices.png&w=2048&q=95"
+  },
+  {
+    "mfg": "Dehler",
+    "model": "Dehler 46",
+    "status": "ok",
+    "url": "https://dehler.com/_next/image/?url=https%3A%2F%2Fa.storyblok.com%2Ff%2F236654%2F1304x1140%2Fe6f4bae946%2Fservices.png&w=2048&q=95"
+  },
+  {
+    "mfg": "Delphia Yachts",
+    "model": "Delphia 31",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Delphia Yachts",
+    "model": "Delphia 47",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Dragonfly Trimarans",
+    "model": "Dragonfly 25",
+    "status": "error",
+    "error": "page.goto: net::ERR_CONNECTION_REFUSED at https://www.trimarans.com/dragonfly-25/\nCall log:\n  - navigating to \"https://www.trimarans.com/dragonfly-25/\", waiting until \"networkidle\"\n"
+  },
+  {
+    "mfg": "Dragonfly Trimarans",
+    "model": "Dragonfly 28",
+    "status": "error",
+    "error": "page.goto: net::ERR_CONNECTION_REFUSED at https://www.trimarans.com/dragonfly-28/\nCall log:\n  - navigating to \"https://www.trimarans.com/dragonfly-28/\", waiting until \"networkidle\"\n"
+  },
+  {
+    "mfg": "Dragonfly Trimarans",
+    "model": "Dragonfly 40",
+    "status": "error",
+    "error": "page.goto: net::ERR_CONNECTION_REFUSED at https://www.trimarans.com/dragonfly-40/\nCall log:\n  - navigating to \"https://www.trimarans.com/dragonfly-40/\", waiting until \"networkidle\"\n"
+  },
+  {
+    "mfg": "Elan Yachts",
+    "model": "Elan E1",
+    "status": "ok",
+    "url": "https://media.elan-yachts.com/img/I45-YACHTS-Sideview.png"
+  },
+  {
+    "mfg": "Elan Yachts",
+    "model": "Elan E3",
+    "status": "ok",
+    "url": "https://media.elan-yachts.com/img/I45-YACHTS-Sideview.png"
+  },
+  {
+    "mfg": "Elan Yachts",
+    "model": "Elan E4",
+    "status": "ok",
+    "url": "https://media.elan-yachts.com/img/I45-YACHTS-Sideview.png"
+  },
+  {
+    "mfg": "Elan Yachts",
+    "model": "Elan E5",
+    "status": "ok",
+    "url": "https://media.elan-yachts.com/img/I45-YACHTS-Sideview.png"
+  },
+  {
+    "mfg": "Elan Yachts",
+    "model": "Elan E6",
+    "status": "ok",
+    "url": "https://media.elan-yachts.com/img/I45-YACHTS-Sideview.png"
+  },
+  {
+    "mfg": "Elan Yachts",
+    "model": "Elan GT5",
+    "status": "ok",
+    "url": "https://media.elan-yachts.com/img/I45-YACHTS-Sideview.png"
+  },
+  {
+    "mfg": "Elan Yachts",
+    "model": "Elan Impression 45.1",
+    "status": "ok",
+    "url": "https://media.elan-yachts.com/img/I45-YACHTS-Sideview.png"
+  },
+  {
+    "mfg": "Elan Yachts",
+    "model": "Elan Impression 50.1",
+    "status": "ok",
+    "url": "https://media.elan-yachts.com/img/I45-YACHTS-Sideview.png"
+  },
+  {
+    "mfg": "Feeling",
+    "model": "Feeling 32",
+    "status": "error",
+    "error": "page.goto: net::ERR_NAME_NOT_RESOLVED at https://www.feeling-yachts.com/en/feeling-32/\nCall log:\n  - navigating to \"https://www.feeling-yachts.com/en/feeling-32/\", waiting until \"networkidle\"\n"
+  },
+  {
+    "mfg": "Feeling",
+    "model": "Feeling 39",
+    "status": "error",
+    "error": "page.goto: net::ERR_NAME_NOT_RESOLVED at https://www.feeling-yachts.com/en/feeling-39/\nCall log:\n  - navigating to \"https://www.feeling-yachts.com/en/feeling-39/\", waiting until \"networkidle\"\n"
+  },
+  {
+    "mfg": "Garcia Yachting",
+    "model": "Garcia Exploration 45",
+    "status": "ok",
+    "url": "https://cdn.prod.website-files.com/668c3e2e8b244f969650542e/67dc8dc22455a5b8a0eddca1_OPEN-GRAPH-IMAGES----GARCIA_YACHTS.jpg"
+  },
+  {
+    "mfg": "Grand Soleil",
+    "model": "Grand Soleil 34",
+    "status": "ok",
+    "url": "https://www.grandsoleil.net/app/uploads/2024/02/Grand-Soleil-34.1-e1708598559396.jpeg"
+  },
+  {
+    "mfg": "Grand Soleil",
+    "model": "Grand Soleil 40",
+    "status": "ok",
+    "url": "https://www.grandsoleil.net/app/uploads/2023/09/MENU-MOBILE_GS52P.jpg"
+  },
+  {
+    "mfg": "Grand Soleil",
+    "model": "Grand Soleil 44",
+    "status": "ok",
+    "url": "https://www.grandsoleil.net/app/uploads/2021/09/Grand-Soleil-Press-gs44.jpeg"
+  },
+  {
+    "mfg": "Grand Soleil",
+    "model": "Grand Soleil 48",
+    "status": "ok",
+    "url": "https://www.grandsoleil.net/app/uploads/2021/09/Grand-Soleil-Race-News-GS48-ergo.jpeg"
+  },
+  {
+    "mfg": "Grand Soleil",
+    "model": "Grand Soleil 58",
+    "status": "ok",
+    "url": "https://www.grandsoleil.net/app/uploads/2023/09/MENU-MOBILE_GS52P.jpg"
+  },
+  {
+    "mfg": "Hallberg-Rassy",
+    "model": "Hallberg-Rassy 340",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Hallberg-Rassy",
+    "model": "Hallberg-Rassy 340",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Hallberg-Rassy",
+    "model": "Hallberg-Rassy 40C",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Hallberg-Rassy",
+    "model": "Hallberg-Rassy 44",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Hallberg-Rassy",
+    "model": "Hallberg-Rassy 48",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Hallberg-Rassy",
+    "model": "Hallberg-Rassy 57",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Hanse Yachts",
+    "model": "Hanse 315",
+    "status": "ok",
+    "url": "https://hanseyachts.com/_next/image/?url=https%3A%2F%2Fmis.hanseyachtsag.com%2Fwebsite%2Fdocument%2FimageVersion%2Fmodel-image-2024-hanse-590-bilder-web-exterior-0160_8373177268398135882.jpg%3Ft%3D16686dd&w=1200&q=75"
+  },
+  {
+    "mfg": "Hanse Yachts",
+    "model": "Hanse 348",
+    "status": "ok",
+    "url": "https://hanseyachts.com/_next/image/?url=https%3A%2F%2Fmis.hanseyachtsag.com%2Fwebsite%2Fdocument%2FimageVersion%2Fmodel-image-2024-hanse-590-bilder-web-exterior-0160_8373177268398135882.jpg%3Ft%3D16686dd&w=1200&q=75"
+  },
+  {
+    "mfg": "Hanse Yachts",
+    "model": "Hanse 388",
+    "status": "ok",
+    "url": "https://hanseyachts.com/_next/image/?url=https%3A%2F%2Fmis.hanseyachtsag.com%2Fwebsite%2Fdocument%2FimageVersion%2Fmodel-image-2024-hanse-590-bilder-web-exterior-0160_8373177268398135882.jpg%3Ft%3D16686dd&w=1200&q=75"
+  },
+  {
+    "mfg": "Hanse Yachts",
+    "model": "Hanse 415",
+    "status": "ok",
+    "url": "https://hanseyachts.com/_next/image/?url=https%3A%2F%2Fmis.hanseyachtsag.com%2Fwebsite%2Fdocument%2FimageVersion%2Fmodel-image-2024-hanse-590-bilder-web-exterior-0160_8373177268398135882.jpg%3Ft%3D16686dd&w=1200&q=75"
+  },
+  {
+    "mfg": "Hanse Yachts",
+    "model": "Hanse 458",
+    "status": "ok",
+    "url": "https://hanseyachts.com/_next/image/?url=https%3A%2F%2Fmis.hanseyachtsag.com%2Fwebsite%2Fdocument%2FimageVersion%2Fmodel-image-2024-hanse-590-bilder-web-exterior-0160_8373177268398135882.jpg%3Ft%3D16686dd&w=1200&q=75"
+  },
+  {
+    "mfg": "Hanse Yachts",
+    "model": "Hanse 460",
+    "status": "ok",
+    "url": "https://hanseyachts.com/_next/image/?url=https%3A%2F%2Fmis.hanseyachtsag.com%2Fwebsite%2Fdocument%2FimageVersion%2Fmodel-image-2024-hanse-590-bilder-web-exterior-0160_8373177268398135882.jpg%3Ft%3D16686dd&w=1200&q=75"
+  },
+  {
+    "mfg": "Hanse Yachts",
+    "model": "Hanse 548",
+    "status": "ok",
+    "url": "https://hanseyachts.com/_next/image/?url=https%3A%2F%2Fmis.hanseyachtsag.com%2Fwebsite%2Fdocument%2FimageVersion%2Fmodel-image-2024-hanse-590-bilder-web-exterior-0160_8373177268398135882.jpg%3Ft%3D16686dd&w=1200&q=75"
+  },
+  {
+    "mfg": "Hanse Yachts",
+    "model": "Hanse 588",
+    "status": "ok",
+    "url": "https://hanseyachts.com/_next/image/?url=https%3A%2F%2Fmis.hanseyachtsag.com%2Fwebsite%2Fdocument%2FimageVersion%2Fmodel-image-2024-hanse-590-bilder-web-exterior-0160_8373177268398135882.jpg%3Ft%3D16686dd&w=1200&q=75"
+  },
+  {
+    "mfg": "Hanse Yachts",
+    "model": "Hanse 675",
+    "status": "ok",
+    "url": "https://hanseyachts.com/_next/image/?url=https%3A%2F%2Fmis.hanseyachtsag.com%2Fwebsite%2Fdocument%2FimageVersion%2Fmodel-image-2024-hanse-590-bilder-web-exterior-0160_8373177268398135882.jpg%3Ft%3D16686dd&w=1200&q=75"
+  },
+  {
+    "mfg": "Hunter Yachts",
+    "model": "Hunter 33",
+    "status": "ok",
+    "url": "https://static.hugedomains.com/images/hdv3-img/og_hugedomains.png"
+  },
+  {
+    "mfg": "Hunter Yachts",
+    "model": "Hunter 37",
+    "status": "ok",
+    "url": "https://static.hugedomains.com/images/hdv3-img/og_hugedomains.png"
+  },
+  {
+    "mfg": "J/Boats",
+    "model": "J/112E",
+    "status": "ok",
+    "url": "https://jboats.com/images/slides/j112E/700x350/J112E-Rig-700.png"
+  },
+  {
+    "mfg": "J/Boats",
+    "model": "J/121",
+    "status": "ok",
+    "url": "https://jboats.com/images/slides/j121/700x350/J121-Rig-700.png"
+  },
+  {
+    "mfg": "J/Boats",
+    "model": "J/70",
+    "status": "ok",
+    "url": "https://jboats.com/images/stories/404.png"
+  },
+  {
+    "mfg": "J/Boats",
+    "model": "J/99",
+    "status": "ok",
+    "url": "https://jboats.com/images/stories/404.png"
+  },
+  {
+    "mfg": "Jeanneau",
+    "model": "Jeanneau 53",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Jeanneau",
+    "model": "Sun Fast 3300",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Jeanneau",
+    "model": "Sun Odyssey 320",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Jeanneau",
+    "model": "Sun Odyssey 349",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Jeanneau",
+    "model": "Sun Odyssey 350",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Jeanneau",
+    "model": "Sun Odyssey 380",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Jeanneau",
+    "model": "Sun Odyssey 440",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Lagoon",
+    "model": "Lagoon 38",
+    "status": "error",
+    "error": "page.goto: net::ERR_CONNECTION_REFUSED at https://www.lagoon-catamarans.com/en/catamarans-lagoon/sailing-catamaran/lagoon-38\nCall log:\n  - navigating to \"https://www.lagoon-catamarans.com/en/catamarans-lagoon/sailing-catamaran/lagoon-38\", waiting until \"networkidle\"\n"
+  },
+  {
+    "mfg": "Lagoon",
+    "model": "Lagoon 40",
+    "status": "error",
+    "error": "page.goto: net::ERR_CONNECTION_REFUSED at https://www.lagoon-catamarans.com/en/catamarans-lagoon/sailing-catamaran/lagoon-40\nCall log:\n  - navigating to \"https://www.lagoon-catamarans.com/en/catamarans-lagoon/sailing-catamaran/lagoon-40\", waiting until \"networkidle\"\n"
+  },
+  {
+    "mfg": "Lagoon",
+    "model": "Lagoon 42",
+    "status": "error",
+    "error": "page.goto: net::ERR_CONNECTION_REFUSED at https://www.lagoon-catamarans.com/en/catamarans-lagoon/sailing-catamaran/lagoon-42\nCall log:\n  - navigating to \"https://www.lagoon-catamarans.com/en/catamarans-lagoon/sailing-catamaran/lagoon-42\", waiting until \"networkidle\"\n"
+  },
+  {
+    "mfg": "Lagoon",
+    "model": "Lagoon 450 F",
+    "status": "error",
+    "error": "page.goto: net::ERR_CONNECTION_REFUSED at https://www.lagoon-catamarans.com/en/catamarans-lagoon/sailing-catamaran/lagoon-450\nCall log:\n  - navigating to \"https://www.lagoon-catamarans.com/en/catamarans-lagoon/sailing-catamaran/lagoon-450\", waiting until \"networkidle\"\n"
+  },
+  {
+    "mfg": "Lagoon",
+    "model": "Lagoon 46",
+    "status": "error",
+    "error": "page.goto: net::ERR_CONNECTION_REFUSED at https://www.lagoon-catamarans.com/en/catamarans-lagoon/sailing-catamaran/lagoon-46\nCall log:\n  - navigating to \"https://www.lagoon-catamarans.com/en/catamarans-lagoon/sailing-catamaran/lagoon-46\", waiting until \"networkidle\"\n"
+  },
+  {
+    "mfg": "Lagoon",
+    "model": "Lagoon 51",
+    "status": "error",
+    "error": "page.goto: net::ERR_CONNECTION_REFUSED at https://www.lagoon-catamarans.com/en/catamarans-lagoon/sailing-catamaran/lagoon-51\nCall log:\n  - navigating to \"https://www.lagoon-catamarans.com/en/catamarans-lagoon/sailing-catamaran/lagoon-51\", waiting until \"networkidle\"\n"
+  },
+  {
+    "mfg": "Lagoon",
+    "model": "Lagoon 55",
+    "status": "error",
+    "error": "page.goto: net::ERR_CONNECTION_REFUSED at https://www.lagoon-catamarans.com/en/catamarans-lagoon/sailing-catamaran/lagoon-55\nCall log:\n  - navigating to \"https://www.lagoon-catamarans.com/en/catamarans-lagoon/sailing-catamaran/lagoon-55\", waiting until \"networkidle\"\n"
+  },
+  {
+    "mfg": "Lagoon",
+    "model": "Lagoon Sixty 5",
+    "status": "error",
+    "error": "page.goto: net::ERR_CONNECTION_REFUSED at https://www.lagoon-catamarans.com/en/catamarans-lagoon/sailing-catamaran/lagoon-sixty-5\nCall log:\n  - navigating to \"https://www.lagoon-catamarans.com/en/catamarans-lagoon/sailing-catamaran/lagoon-sixty-5\", waiting until \"networkidle\"\n"
+  },
+  {
+    "mfg": "Moody Yachts",
+    "model": "Moody 41",
+    "status": "ok",
+    "url": "https://moody-yachts.com/_next/image/?url=https%3A%2F%2Fa.storyblok.com%2Ff%2F236654%2F1908x1632%2Fac7d4f17b8%2F404-moody.png&w=2048&q=80"
+  },
+  {
+    "mfg": "Moody Yachts",
+    "model": "Moody 41 AC",
+    "status": "ok",
+    "url": "https://moody-yachts.com/_next/image/?url=https%3A%2F%2Fa.storyblok.com%2Ff%2F236654%2F1908x1632%2Fac7d4f17b8%2F404-moody.png&w=2048&q=80"
+  },
+  {
+    "mfg": "Moody Yachts",
+    "model": "Moody 45",
+    "status": "ok",
+    "url": "https://moody-yachts.com/_next/image/?url=https%3A%2F%2Fa.storyblok.com%2Ff%2F236654%2F1908x1632%2Fac7d4f17b8%2F404-moody.png&w=2048&q=80"
+  },
+  {
+    "mfg": "Moody Yachts",
+    "model": "Moody DS45",
+    "status": "ok",
+    "url": "https://moody-yachts.com/_next/image/?url=https%3A%2F%2Fa.storyblok.com%2Ff%2F236654%2F1908x1632%2Fac7d4f17b8%2F404-moody.png&w=2048&q=80"
+  },
+  {
+    "mfg": "Moody Yachts",
+    "model": "Moody DS54",
+    "status": "ok",
+    "url": "https://moody-yachts.com/_next/image/?url=https%3A%2F%2Fa.storyblok.com%2Ff%2F236654%2F1908x1632%2Fac7d4f17b8%2F404-moody.png&w=2048&q=80"
+  },
+  {
+    "mfg": "Mylius",
+    "model": "Mylius 50",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Mylius",
+    "model": "Mylius 60",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Najad",
+    "model": "Najad 570",
+    "status": "error",
+    "error": "page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://www.najad.com/najad-570/\nCall log:\n  - navigating to \"https://www.najad.com/najad-570/\", waiting until \"networkidle\"\n"
+  },
+  {
+    "mfg": "Neel Trimarans",
+    "model": "Neel 43",
+    "status": "error",
+    "error": "page.evaluate: TypeError: Cannot read properties of null (reading 'scrollHeight')\n    at eval (eval at evaluate (:290:30), <anonymous>:1:40)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+    "mfg": "Neel Trimarans",
+    "model": "Neel 51",
+    "status": "error",
+    "error": "page.evaluate: TypeError: Cannot read properties of null (reading 'scrollHeight')\n    at eval (eval at evaluate (:290:30), <anonymous>:1:40)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+    "mfg": "RM Yachts",
+    "model": "RM 1200",
+    "status": "ok",
+    "url": "https://www.rm-yachts.com/wp-content/uploads/2022/03/Acr59443584138241288810fghbn-1024x570.png"
+  },
+  {
+    "mfg": "RM Yachts",
+    "model": "RM 890",
+    "status": "ok",
+    "url": "https://www.rm-yachts.com/wp-content/uploads/2021/06/image0.jpeg"
+  },
+  {
+    "mfg": "Saffier Yachts",
+    "model": "Saffier SE 33",
+    "status": "ok",
+    "url": "https://saffieryachts.com/wp-content/uploads/2025/05/Saffier-Se-33-Life_0233.jpg"
+  },
+  {
+    "mfg": "Sirius Yachts",
+    "model": "Sirius 310",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Sirius Yachts",
+    "model": "Sirius 40DS",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Solaris Yachts",
+    "model": "Solaris 40",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Solaris Yachts",
+    "model": "Solaris 50",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Sunbeam Yachts",
+    "model": "Sunbeam 32.1",
+    "status": "ok",
+    "url": "https://www.sunbeam-yachts.com/wp-content/uploads/DSC02823-Edit-Edit.jpg"
+  },
+  {
+    "mfg": "Sunbeam Yachts",
+    "model": "Sunbeam 36.1",
+    "status": "ok",
+    "url": "https://www.sunbeam-yachts.com/wp-content/uploads/DSC02823-Edit-Edit.jpg"
+  },
+  {
+    "mfg": "Swan (Nautor)",
+    "model": "Swan 38",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Swan (Nautor)",
+    "model": "Swan 43",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Swan (Nautor)",
+    "model": "Swan 48",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Swan (Nautor)",
+    "model": "Swan 55",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Swan (Nautor)",
+    "model": "Swan 65",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Swan (Nautor)",
+    "model": "Swan 78",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Tartan Yachts",
+    "model": "Tartan 365",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Tartan Yachts",
+    "model": "Tartan 4000",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Tartan Yachts",
+    "model": "Tartan 4700",
+    "status": "no_image"
+  },
+  {
+    "mfg": "Wally",
+    "model": "Wally 55",
+    "status": "no_image"
+  },
+  {
+    "mfg": "X-Yachts",
+    "model": "X35",
+    "status": "ok",
+    "url": "https://www.x-yachts.com/wp-content/uploads/2026/01/xr41_sailplan_pin_keel_sport-bowsprit-01.png"
+  },
+  {
+    "mfg": "X-Yachts",
+    "model": "X41",
+    "status": "ok",
+    "url": "https://www.x-yachts.com/wp-content/uploads/2026/01/xr41_sailplan_pin_keel_sport-bowsprit-01.png"
+  },
+  {
+    "mfg": "X-Yachts",
+    "model": "X4³",
+    "status": "ok",
+    "url": "https://www.x-yachts.com/wp-content/uploads/2026/01/xr41_sailplan_pin_keel_sport-bowsprit-01.png"
+  },
+  {
+    "mfg": "X-Yachts",
+    "model": "X5⁶",
+    "status": "ok",
+    "url": "https://www.x-yachts.com/wp-content/uploads/2026/01/xr41_sailplan_pin_keel_sport-bowsprit-01.png"
+  },
+  {
+    "mfg": "X-Yachts",
+    "model": "Xc 45",
+    "status": "ok",
+    "url": "https://www.x-yachts.com/wp-content/uploads/2026/01/xr41_sailplan_pin_keel_sport-bowsprit-01.png"
+  },
+  {
+    "mfg": "X-Yachts",
+    "model": "Xc 50",
+    "status": "ok",
+    "url": "https://www.x-yachts.com/wp-content/uploads/2026/01/xr41_sailplan_pin_keel_sport-bowsprit-01.png"
+  }
+]

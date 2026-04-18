@@ -6,6 +6,7 @@ import { PersonalizedRecommendations } from "@/components/PersonalizedRecommenda
 import { db, yachtModels, manufacturers } from "@/lib/db";
 import { desc, sql } from "drizzle-orm";
 import { generateWebsiteJsonLd, generateFaqJsonLd, getSiteUrl } from "@/lib/seo";
+import { slugify } from "@/lib/utils/slugify";
 import { getSiteStats, formatYachtPhrase, formatYachtCountFAQ } from "@/lib/site-stats";
 import { buildSafeQuery } from "@/lib/build-safe";
 
@@ -250,7 +251,7 @@ export default async function Home() {
                 topManufacturers.map((mfr: any) => (
                   <Link
                     key={mfr.name}
-                    href={`/manufacturers/${mfr.name?.toLowerCase().replace(/\s+/g, "-")}`}
+                    href={`/manufacturers/${slugify(mfr.name)}`}
                     className="block bg-gray-50 rounded-lg p-4 hover:bg-blue-50 transition border border-gray-100"
                   >
                     <div className="font-semibold text-gray-900">{mfr.name}</div>

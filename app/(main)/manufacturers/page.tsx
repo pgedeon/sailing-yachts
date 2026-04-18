@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { unstable_cache } from "next/cache";
 import { getManufacturersWithCounts } from "@/lib/manufacturers";
+import { slugify } from "@/lib/utils/slugify";
 import { buildSafeQuery } from "@/lib/build-safe";
 import {
   generateBreadcrumbJsonLd,
@@ -77,7 +78,7 @@ export default async function ManufacturersPage() {
     description: "All sailing yacht manufacturers indexed in the database",
     items: manufacturers.map((m: any) => ({
       name: `${m.name} (${m.yachtCount} models)`,
-      url: `/manufacturers/${m.name?.toLowerCase().replace(/\s+/g, "-")}`,
+      url: `/manufacturers/${slugify(m.name)}`,
     })),
   });
 
@@ -136,7 +137,7 @@ export default async function ManufacturersPage() {
                 {manufacturers.map((manufacturer: any) => (
                   <Link
                     key={manufacturer.name}
-                    href={`/manufacturers/${manufacturer.name?.toLowerCase().replace(/\s+/g, "-")}`}
+                    href={`/manufacturers/${slugify(manufacturer.name)}`}
                     className="block bg-white rounded-lg p-4 hover:bg-blue-50 transition border border-gray-100"
                   >
                     <div className="font-semibold text-gray-900">{manufacturer.name}</div>
