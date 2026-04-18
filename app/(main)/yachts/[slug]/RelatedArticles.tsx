@@ -18,21 +18,22 @@ interface RelatedArticlesProps {
   hullMaterial: string | null;
   cabins: number | null;
   displacement: number | null;
+  initialData?: SailboatArticle[];
 }
 
-export function RelatedArticles(yacht: RelatedArticlesProps) {
-  const [articles, setArticles] = useState<SailboatArticle[]>([]);
-  const [loading, setLoading] = useState(true);
+export function RelatedArticles({ manufacturer, lengthOverall, rigType, keelType, hullMaterial, cabins, displacement, initialData }: RelatedArticlesProps) {
+  const [articles, setArticles] = useState<SailboatArticle[]>(initialData ?? []);
+  const [loading, setLoading] = useState(!initialData);
 
   useEffect(() => {
     const params = new URLSearchParams({
-      manufacturer: yacht.manufacturer || "",
-      loa: String(yacht.lengthOverall ?? ""),
-      rig: yacht.rigType || "",
-      keel: yacht.keelType || "",
-      hull: yacht.hullMaterial || "",
-      cabins: String(yacht.cabins ?? ""),
-      displacement: String(yacht.displacement ?? ""),
+      manufacturer: manufacturer || "",
+      loa: String(lengthOverall ?? ""),
+      rig: rigType || "",
+      keel: keelType || "",
+      hull: hullMaterial || "",
+      cabins: String(cabins ?? ""),
+      displacement: String(displacement ?? ""),
     });
 
     fetch(`/api/sailboat-articles?${params}`)
@@ -43,13 +44,13 @@ export function RelatedArticles(yacht: RelatedArticlesProps) {
       .catch(() => setArticles([]))
       .finally(() => setLoading(false));
   }, [
-    yacht.manufacturer,
-    yacht.lengthOverall,
-    yacht.rigType,
-    yacht.keelType,
-    yacht.hullMaterial,
-    yacht.cabins,
-    yacht.displacement,
+    manufacturer,
+    lengthOverall,
+    rigType,
+    keelType,
+    hullMaterial,
+    cabins,
+    displacement,
   ]);
 
   if (loading) {

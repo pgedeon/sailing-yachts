@@ -15,10 +15,11 @@ interface RelatedYacht {
 }
 
 interface RelatedManufacturersProps {
-  manufacturerId: number;
-  manufacturerSlug: string;
+  manufacturerId: number | null;
+  manufacturerSlug?: string;
   currentYachtId: number;
   limit?: number;
+  initialData?: any[];
 }
 
 export function RelatedManufacturers({
@@ -26,11 +27,13 @@ export function RelatedManufacturers({
   manufacturerSlug,
   currentYachtId,
   limit = 3,
+  initialData,
 }: RelatedManufacturersProps) {
-  const [yachts, setYachts] = useState<RelatedYacht[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [yachts, setYachts] = useState<RelatedYacht[]>(initialData ?? []);
+  const [loading, setLoading] = useState(!initialData);
 
   useEffect(() => {
+    if (initialData) return;
     const fetchYachts = async () => {
       try {
         const res = await fetch(

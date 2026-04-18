@@ -20,17 +20,20 @@ interface SameSizeAlternativesProps {
   targetLength: number;
   currentYachtId: number;
   limit?: number;
+  initialData?: any[];
 }
 
 export function SameSizeAlternatives({
   targetLength,
   currentYachtId,
   limit = 3,
+  initialData,
 }: SameSizeAlternativesProps) {
-  const [yachts, setYachts] = useState<SameSizeYacht[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [yachts, setYachts] = useState<SameSizeYacht[]>(initialData ?? []);
+  const [loading, setLoading] = useState(!initialData);
 
   useEffect(() => {
+    if (initialData) return;
     const fetchYachts = async () => {
       try {
         const marginMeters = 1.0; // ±1 meter window

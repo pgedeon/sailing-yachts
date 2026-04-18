@@ -96,11 +96,21 @@ const GROUP_LABELS: Record<string, string> = {
   other: "Other Specs",
 };
 
-interface YachtDetailClientProps {
-  initialData?: import("@/lib/yacht-transform").YachtPageData;
+import { type RelatedYachtCard, type RelatedArticle } from "@/lib/related-data";
+
+interface RelatedData {
+  similarYachts: RelatedYachtCard[];
+  sameSizeYachts: RelatedYachtCard[];
+  manufacturerYachts: RelatedYachtCard[];
+  relatedArticles: RelatedArticle[];
 }
 
-export default function YachtDetailClient({ initialData }: YachtDetailClientProps) {
+interface YachtDetailClientProps {
+  initialData?: import("@/lib/yacht-transform").YachtPageData;
+  relatedData?: RelatedData;
+}
+
+export default function YachtDetailClient({ initialData, relatedData }: YachtDetailClientProps) {
   const params = useParams();
   const slug = (params?.slug as string) || "";
 
@@ -490,6 +500,7 @@ export default function YachtDetailClient({ initialData }: YachtDetailClientProp
           <SameSizeAlternatives
             targetLength={yacht.lengthOverall}
             currentYachtId={yacht.id}
+            initialData={relatedData?.sameSizeYachts}
           />
         </div>
       )}
@@ -501,6 +512,7 @@ export default function YachtDetailClient({ initialData }: YachtDetailClientProp
             manufacturerId={yacht.manufacturerId}
             manufacturerSlug={slugify(yacht.manufacturer)}
             currentYachtId={yacht.id}
+            initialData={relatedData?.manufacturerYachts}
           />
         </div>
       )}
@@ -517,6 +529,7 @@ export default function YachtDetailClient({ initialData }: YachtDetailClientProp
       {/* Related Sailing Articles from sailboats.fr */}
       <div className="related-articles-wrapper no-print">
         <RelatedArticles
+          initialData={relatedData?.relatedArticles}
           manufacturer={yacht.manufacturer}
           lengthOverall={yacht.lengthOverall}
           rigType={yacht.rigType}
@@ -557,35 +570,46 @@ export default function YachtDetailClient({ initialData }: YachtDetailClientProp
 function calculatePerformanceRatios(yacht: YachtData) {
   const ratios: { name: string; value: string; description: string }[] = [];
   
-  const loa = Number(yacht.lengthOverall) || null;
-  const disp = Number(yacht.displacement) || null;
-  const ballast = Number(yacht.ballast) || null;
-  const sailArea = Number(yacht.sailAreaMain) || null;
+  // Data is in metric: LOA in meters, displacement in kg, sail area in m², beam in meters
+  // Convert to imperial for standard ratios
+  const loaM = Number(yacht.lengthOverall) || null;
+  const dispKg = Number(yacht.displacement) || null;
+  const ballastKg = Number(yacht.ballast) || null;
+  const sailAreaM2 = Number(yacht.sailAreaMain) || null;
+
+  // Convert: 1m = 3.28084 ft, 1 kg = 2.20462 lbs, 1 m² = 10.7639 ft²
+  const loaFt = loaM ? loaM * 3.28084 : null;
+  const dispLbs = dispKg ? dispKg * 2.20462 : null;
+  const ballastLbs = ballastKg ? ballastKg * 2.20462 : null;
+  const sailAreaFt2 = sailAreaM2 ? sailAreaM2 * 10.7639 : null;
   
-  // Displacement/Length ratio (D/L)
-  if (loa && disp) {
-    const dl = (disp / 2240) / Math.pow(loa / 100, 3);
+  // Displacement/Length ratio (D/L) = (Disp in long tons) / (0.01 × LWL in ft)³
+  // Using LOA as approximation for LWL where LWL not available
+  if (loaFt && dispLbs) {
+    const dl = (dispLbs / 2240) / Math.pow(loaFt / 100, 3);
     let dlDesc = dl < 100 ? "Ultra light (racing)" : dl < 200 ? "Light (performance cruiser)" : dl < 300 ? "Moderate (cruiser)" : "Heavy (bluewater cruiser)";
     ratios.push({ name: "Displacement/Length", value: dl.toFixed(1), description: dlDesc });
   }
   
-  // Sail Area/Displacement ratio (SA/D)
-  if (sailArea && disp) {
-    const sad = (sailArea * 64) / Math.pow(disp / 64, 2/3);
-    let sadDesc = sad < 16 ? "Under-canvased (easy handling)" : sad < 18 ? "Moderate (cruising)" : sad < 22 ? "Performance cruiser" : "High performance (racing)";
+  // Sail Area/Displacement ratio (SA/D) = Sail Area (ft²) / (Disp/64)^(2/3)
+  if (sailAreaFt2 && dispLbs) {
+    const sad = sailAreaFt2 / Math.pow(dispLbs / 64, 2/3);
+    let sadDesc = sad < 14 ? "Under-canvased (easy handling)" : sad < 18 ? "Moderate (cruising)" : sad < 22 ? "Performance cruiser" : "High performance (racing)";
     ratios.push({ name: "Sail Area/Displacement", value: sad.toFixed(1), description: sadDesc });
   }
   
-  // Ballast Ratio
-  if (ballast && disp) {
-    const br = (ballast / disp) * 100;
+  // Ballast Ratio (unit-independent)
+  if (ballastKg && dispKg) {
+    const br = (ballastKg / dispKg) * 100;
     let brDesc = br < 30 ? "Low (more heel, less stability)" : br < 40 ? "Moderate (good balance)" : "High (stiff, stable)";
     ratios.push({ name: "Ballast Ratio", value: `${br.toFixed(0)}%`, description: brDesc });
   }
   
-  // Capsize Screening Formula (CSF)
-  if (loa && disp) {
-    const csf = loa / Math.pow(disp / 64, 1/3);
+  // Capsize Screening Formula (CSF) = Beam / (Disp/64)^(1/3) [imperial units]
+  const beamM = Number(yacht.beam) || null;
+  if (beamM && dispLbs) {
+    const beamFt = beamM * 3.28084;
+    const csf = beamFt / Math.pow(dispLbs / 64, 1/3);
     let csfDesc = csf < 2 ? "Excellent offshore stability" : csf < 2.5 ? "Good coastal/offshore" : csf < 3 ? "Moderate (coastal)" : "High (light displacement, care needed offshore)";
     ratios.push({ name: "Capsize Screening", value: csf.toFixed(2), description: csfDesc });
   }

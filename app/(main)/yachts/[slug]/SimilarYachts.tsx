@@ -21,14 +21,16 @@ interface SimilarYacht {
 
 interface SimilarYachtsProps {
   slug: string;
+  initialData?: SimilarYacht[];
 }
 
-export function SimilarYachts({ slug }: SimilarYachtsProps) {
-  const [yachts, setYachts] = useState<SimilarYacht[]>([]);
-  const [loading, setLoading] = useState(true);
+export function SimilarYachts({ slug, initialData }: SimilarYachtsProps) {
+  const [yachts, setYachts] = useState<SimilarYacht[]>(initialData ?? []);
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    if (initialData) return;
     if (!slug) return;
     setLoading(true);
     fetch(`/api/yachts/${slug}/similar`)
@@ -44,7 +46,7 @@ export function SimilarYachts({ slug }: SimilarYachtsProps) {
         setError(true);
         setLoading(false);
       });
-  }, [slug]);
+  }, [slug, initialData]);
 
   if (loading) {
     return (

@@ -11,6 +11,7 @@ import {
 } from "@/lib/seo";
 import { getYachtDetailData, getPrimaryImage } from "@/lib/yachts";
 import { transformYachtData, type YachtPageData } from "@/lib/yacht-transform";
+import { getSimilarYachts, getSameSizeYachts, getManufacturerYachts, getRelatedArticlesForYacht, type RelatedYachtCard, type RelatedArticle } from "@/lib/related-data";
 import { getPriceSummary } from "@/lib/price-data";
 import { calculateCompletenessScore, shouldNoindex } from "@/lib/completeness";
 import YachtDetailClient from "./YachtDetailClient";
@@ -245,6 +246,35 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
   // Transform data for client component
   const pageData = transformYachtData(data);
 
+  // Fetch related data server-side for SSR
+  const loaNum = yachtData.lengthOverall ? parseFloat(yachtData.lengthOverall) : null;
+  let similarYachts: RelatedYachtCard[] = [];
+  let sameSizeYachts: RelatedYachtCard[] = [];
+  let manufacturerYachts: RelatedYachtCard[] = [];
+  let relatedArticles: RelatedArticle[] = [];
+  try {
+    [similarYachts, sameSizeYachts, manufacturerYachts] = await Promise.all([
+      getSimilarYachts(slug, 3),
+      getSameSizeYachts(yachtData.id, loaNum, 3),
+      getManufacturerYachts(yachtData.manufacturerId, yachtData.id, 3),
+    ]);
+  } catch (e) {
+    console.error("Failed to fetch related yachts:", e);
+  }
+  try {
+    relatedArticles = getRelatedArticlesForYacht({
+      manufacturer: manufacturerName,
+      loa: loaNum,
+      rig: yachtData.rigType,
+      keel: yachtData.keelType,
+      hull: yachtData.hullMaterial,
+      cabins: yachtData.cabins,
+      displacement: yachtData.displacement ? parseFloat(yachtData.displacement) : null,
+    });
+  } catch (e) {
+    console.error("Failed to fetch related articles:", e);
+  }
+
   return (
     <>
       <script
@@ -273,7 +303,7 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(offerJsonLd) }}
         />
       )}
-      <YachtDetailClient initialData={pageData} />
+      <YachtDetailClient initialData={pageData} relatedData={{ similarYachts, sameSizeYachts, manufacturerYachts, relatedArticles }} />
     </>
   );
 }
