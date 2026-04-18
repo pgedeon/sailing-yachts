@@ -394,7 +394,7 @@ export function generateYachtPageMetadata(yacht: {
 }
 
 export function generateYachtsListMetadata(page = 1): Metadata {
-  const title = page > 1 ? `Browse Yachts (Page ${page})` : "Browse Sailing Yacht Info";
+  const title = page > 1 ? `Browse Yachts (Page ${page})` : "Browse Sailing Yachts — Specs, Dimensions & Comparison";
   const desc =
     "Search and filter sailing yachts by manufacturer, length, year, and more. Compare specs side by side.";
 

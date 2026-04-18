@@ -144,8 +144,8 @@ export function generateYachtsPageCanonical(searchParams: {
  * compare pages exist at /compare/slugA-vs-slugB
  */
 export function shouldNoindexComparePage(ids?: (string | number)[]): boolean {
-  // Always noindex the ?ids= version of compare
-  return true;
+  // Only noindex the ?ids= version; base /compare page should be indexed
+  return (ids?.length ?? 0) > 0;
 }
 
 /**

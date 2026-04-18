@@ -3,17 +3,18 @@ import { generateBreadcrumbJsonLd, getSiteUrl } from "@/lib/seo";
 import { SearchClient } from "./SearchClient";
 import { shouldNoindexSearchPage } from "@/lib/thin-page-governance";
 
-// Removed force-dynamic - this page is a client component shell
-// No need for ISR since it's entirely client-rendered
-
 /**
  * Search page metadata.
- * Search results pages should be noindexed (user-specific queries).
+ * Search results pages should be noindexed for user-specific queries,
+ * but the base /search page itself can be indexed.
  */
 export const metadata: Metadata = {
   title: "Search Yachts — Sailing Yacht Info",
   description:
     "Search sailing yachts by manufacturer, model name, rig type, keel type, and more. Find the perfect sailboat with our comprehensive database.",
+  alternates: {
+    canonical: "/search",
+  },
   openGraph: {
     title: "Search Sailing Yacht Info",
     description:

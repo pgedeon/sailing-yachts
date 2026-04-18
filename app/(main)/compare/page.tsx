@@ -3,9 +3,6 @@ import { generateCompareMetadata, generateBreadcrumbJsonLd, getSiteUrl } from "@
 import { CompareClient } from "./CompareClient";
 import { shouldNoindexComparePage } from "@/lib/thin-page-governance";
 
-// Removed force-dynamic - this page is a client component shell
-// No need for ISR since it's entirely client-rendered
-
 interface ComparePageParams {
   searchParams: Promise<{ ids?: string }>;
 }
@@ -13,6 +10,7 @@ interface ComparePageParams {
 /**
  * Generate dynamic metadata for compare page.
  * The ?ids= version should be noindexed since canonical compare pages exist at /compare/slugA-vs-slugB.
+ * The base /compare page should be indexed as the comparison tool landing page.
  */
 export async function generateMetadata({ searchParams }: ComparePageParams): Promise<Metadata> {
   const { ids } = await searchParams;
@@ -25,9 +23,11 @@ export async function generateMetadata({ searchParams }: ComparePageParams): Pro
 
   const baseMetadata = generateCompareMetadata(initialIds);
 
-  // Always noindex the ?ids= version since canonical compare pages exist
   return {
     ...baseMetadata,
+    alternates: {
+      canonical: "/compare",
+    },
     robots: shouldNoindexComparePage(initialIds)
       ? { index: false, follow: false }
       : { index: true, follow: true },

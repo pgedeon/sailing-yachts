@@ -3,6 +3,9 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "My Favorites",
   description: "Your saved favorite sailing yachts for quick access and comparison.",
+  alternates: {
+    canonical: "/favorites",
+  },
   robots: { index: false, follow: false },
 };
 
