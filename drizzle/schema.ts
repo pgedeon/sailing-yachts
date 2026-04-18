@@ -81,6 +81,7 @@ export const yachtModels = pgTable(
     sourceConfidence: integer("source_confidence").default(50),
     lastVerifiedAt: timestamp("last_verified_at", { withTimezone: true }),
     completenessScore: integer("completeness_score"),
+    mediaCount: integer("media_count").default(0),
 
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
@@ -336,6 +337,44 @@ export const leads = pgTable(
   }),
 );
 
+
+
+// Media assets (P10.2 — Rich media support)
+export const mediaAssets = pgTable(
+  "media_assets",
+  {
+    id: serial("id").primaryKey(),
+    yachtModelId: integer("yacht_model_id")
+      .notNull()
+      .references(() => yachtModels.id, { onDelete: "cascade" }),
+    mediaType: text("media_type").$type<"photo" | "brochure" | "deck_plan" | "interior_layout" | "video" | "360_tour" | "3d_model">().notNull().default("photo"),
+    title: varchar("title", { length: 500 }),
+    description: text("description"),
+    url: varchar("url", { length: 1000 }),
+    embedUrl: varchar("embed_url", { length: 1000 }),
+    thumbnailUrl: varchar("thumbnail_url", { length: 1000 }),
+    sourceUrl: varchar("source_url", { length: 1000 }),
+    fileFormat: varchar("file_format", { length: 50 }),
+    fileSize: integer("file_size"),
+    caption: text("caption"),
+    altText: varchar("alt_text", { length: 500 }),
+    isPrimary: boolean("is_primary").default(false),
+    sortOrder: integer("sort_order").default(0),
+    dataSource: varchar("data_source", { length: 100 }).default("manual"),
+    sourceConfidence: integer("source_confidence").default(50),
+    lastVerifiedAt: timestamp("last_verified_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => ({
+    idxYacht: index("idx_media_assets_yacht").on(table.yachtModelId),
+    idxType: index("idx_media_assets_type").on(table.mediaType),
+    idxPrimary: index("idx_media_assets_primary").on(table.yachtModelId),
+  }),
+);
+
+export const insertMediaAssetSchema = createInsertSchema(mediaAssets);
+export const selectMediaAssetSchema = createSelectSchema(mediaAssets);
 // ---------- Zod Schemas for validation ----------
 
 export const insertManufacturerSchema = createInsertSchema(manufacturers);

@@ -9,6 +9,7 @@ import {
   specCategories,
   images,
   reviews,
+  pool,
 } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { getYachtDetailData } from "@/lib/yachts";
@@ -55,6 +56,33 @@ export async function GET(
           });
         }
 
+        // Fetch media assets (P10.2)
+        const mediaResult = await pool.query(
+          `SELECT id, media_type, title, description, url, embed_url, thumbnail_url,
+                  source_url, file_format, file_size, caption, alt_text, is_primary, sort_order
+           FROM media_assets
+           WHERE yacht_model_id = $1
+           ORDER BY sort_order, created_at`,
+          [yacht.id],
+        );
+
+        const mediaAssets = mediaResult.rows.map((row: Record<string, unknown>) => ({
+          id: toNum(row.id as string | number | null),
+          mediaType: String(row.media_type ?? "photo"),
+          title: (row.title as string) ?? null,
+          description: (row.description as string) ?? null,
+          url: (row.url as string) ?? null,
+          embedUrl: (row.embed_url as string) ?? null,
+          thumbnailUrl: (row.thumbnail_url as string) ?? null,
+          sourceUrl: (row.source_url as string) ?? null,
+          fileFormat: (row.file_format as string) ?? null,
+          fileSize: toNum(row.file_size as string | number | null),
+          caption: (row.caption as string) ?? null,
+          altText: (row.alt_text as string) ?? null,
+          isPrimary: row.is_primary === true || row.is_primary === "true",
+          sortOrder: toNum(row.sort_order as string | number | null) ?? 0,
+        }));
+
         const response = {
           id: yacht.id,
           manufacturerId: yacht.manufacturerId,
@@ -88,6 +116,7 @@ export async function GET(
           specsByGroup: parsedSpecsByGroup,
           images,
           reviews,
+          mediaAssets,
         };
 
         return response;

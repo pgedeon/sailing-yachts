@@ -70,6 +70,24 @@ export function calculateCompletenessScore(yacht: object): number {
 }
 
 /**
+ * Calculate media richness bonus points (P10.2).
+ * Returns up to 15 bonus points for having media assets of different types.
+ */
+export function calculateMediaRichnessBonus(mediaTypes: string[]): number {
+  const uniqueTypes = new Set(mediaTypes);
+  let bonus = 0;
+
+  if (uniqueTypes.has("photo")) bonus += 5;
+  if (uniqueTypes.has("brochure")) bonus += 3;
+  if (uniqueTypes.has("video")) bonus += 3;
+  if (uniqueTypes.has("deck_plan")) bonus += 2;
+  if (uniqueTypes.has("interior_layout")) bonus += 2;
+
+  // Cap at 15
+  return Math.min(bonus, 15);
+}
+
+/**
  * Get completeness level for display purposes.
  */
 export function getCompletenessLevel(score: number): {

@@ -20,6 +20,7 @@ import AffiliateRecommendations from "@/app/components/AffiliateRecommendations"
 import YachtImage from "@/app/components/yacht/YachtImage";
 import { getAffiliateRecommendations } from "@/lib/affiliate-recommendations";
 import CompletenessBadge from "@/components/CompletenessBadge";
+import MediaGallery from "@/components/MediaGallery";
 import { calculateCompletenessScore } from "@/lib/completeness";
 
 interface SpecGroup {
@@ -74,6 +75,22 @@ interface YachtData {
     reviewDate: string | null;
     authorName: string | null;
     sourceUrl: string | null;
+  }>;
+  mediaAssets?: Array<{
+    id: number;
+    mediaType: string;
+    title: string | null;
+    description: string | null;
+    url: string | null;
+    embedUrl: string | null;
+    thumbnailUrl: string | null;
+    sourceUrl: string | null;
+    fileFormat: string | null;
+    fileSize: number | null;
+    caption: string | null;
+    altText: string | null;
+    isPrimary: boolean;
+    sortOrder: number;
   }>;
 }
 
@@ -355,6 +372,11 @@ export default function YachtDetailClient() {
           )}
         </div>
       </div>
+
+      {/* Media Gallery (P10.2) */}
+      {yacht.mediaAssets && yacht.mediaAssets.length > 0 && (
+        <MediaGallery mediaAssets={yacht.mediaAssets} />
+      )}
 
       {/* Specs by Group */}
       <div className="space-y-6 sm:space-y-8">
