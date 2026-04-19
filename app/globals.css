@@ -325,3 +325,40 @@
     }
   }
 }
+
+/* Buyer Checklist print styles */
+@media print {
+  body.printing-checklist {
+    /* Hide everything except the checklist */
+    header,
+    footer,
+    nav,
+    .compare-picker,
+    .compare-actions,
+    .CompareMonetization,
+    .LeadForm,
+    .CompareExport,
+    .compare-table-wrapper,
+    .no-print,
+    button:not(.print-keep) {
+      display: none !important;
+    }
+
+    [data-testid="buyer-checklist"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px;
+    }
+
+    [data-testid="buyer-checklist"] .print\:hidden {
+      display: none !important;
+    }
+
+    /* Show notes in print */
+    [data-testid="buyer-checklist"] .print\:block {
+      display: block !important;
+    }
+  }
+}

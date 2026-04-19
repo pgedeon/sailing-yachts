@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useSession, signIn } from "next-auth/react";
 import { trackExportDownload } from "@/lib/revenue-analytics";
 
 interface CompareExportProps {
@@ -9,16 +10,28 @@ interface CompareExportProps {
 }
 
 export function CompareExport({ yachtIds, yachtNames }: CompareExportProps) {
+  const { data: session, status } = useSession();
   const [exporting, setExporting] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [authPromptOpen, setAuthPromptOpen] = useState(false);
 
   const handleCsvExport = async () => {
     setDropdownOpen(false);
+
+    if (status !== "authenticated") {
+      setAuthPromptOpen(true);
+      return;
+    }
+
     setExporting(true);
     try {
       const response = await fetch(
         `/api/compare/export?ids=${yachtIds.join(",")}&format=csv`
       );
+      if (response.status === 401) {
+        setAuthPromptOpen(true);
+        return;
+      }
       if (!response.ok) throw new Error("Export failed");
 
       const blob = await response.blob();
@@ -48,6 +61,11 @@ export function CompareExport({ yachtIds, yachtNames }: CompareExportProps) {
 
   const handlePdfExport = () => {
     setDropdownOpen(false);
+
+    if (status !== "authenticated") {
+      setAuthPromptOpen(true);
+      return;
+    }
 
     // Add print-specific class to body
     document.body.classList.add("printing-compare");
@@ -140,6 +158,13 @@ export function CompareExport({ yachtIds, yachtNames }: CompareExportProps) {
           />
           {/* Dropdown */}
           <div className="absolute right-0 mt-2 w-52 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50">
+            <div className="px-4 py-2 bg-gray-50 border-b border-gray-100">
+              <p className="text-xs text-gray-500">
+                {status === "authenticated"
+                  ? `Signed in as ${session?.user?.email ?? "user"}`
+                  : "Sign in to export"}
+              </p>
+            </div>
             <button
               onClick={handleCsvExport}
               className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left"
@@ -187,6 +212,54 @@ export function CompareExport({ yachtIds, yachtNames }: CompareExportProps) {
             </button>
           </div>
         </>
+      )}
+
+      {/* Auth prompt modal */}
+      {authPromptOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full mx-4 p-6">
+            <div className="text-center">
+              <div className="mx-auto w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                <svg
+                  className="w-6 h-6 text-blue-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Sign in to export
+              </h3>
+              <p className="text-sm text-gray-500 mb-6">
+                Create a free account to download comparison reports, buyer checklists, and shortlist packs.
+              </p>
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={() => {
+                    setAuthPromptOpen(false);
+                    signIn();
+                  }}
+                  className="w-full px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Sign in to export
+                </button>
+                <button
+                  onClick={() => setAuthPromptOpen(false)}
+                  className="w-full px-4 py-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
