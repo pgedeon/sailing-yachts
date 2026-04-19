@@ -821,3 +821,22 @@ export const userCorrections = pgTable(
 
 export const insertUserCorrectionSchema = createInsertSchema(userCorrections);
 export const selectUserCorrectionSchema = createSelectSchema(userCorrections);
+
+// Exchange rates (P10.6 — Regional price normalization)
+export const exchangeRates = pgTable(
+  "exchange_rates",
+  {
+    id: serial("id").primaryKey(),
+    baseCurrency: varchar("base_currency", { length: 3 }).notNull(),
+    targetCurrency: varchar("target_currency", { length: 3 }).notNull(),
+    rate: numeric("rate", { precision: 12, scale: 6 }).notNull(),
+    source: varchar("source", { length: 100 }).notNull().default("fallback"),
+    fetchedAt: timestamp("fetched_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxPair: uniqueIndex("idx_exchange_rates_pair").on(table.baseCurrency, table.targetCurrency),
+  }),
+);
+
+export const insertExchangeRateSchema = createInsertSchema(exchangeRates);
+export const selectExchangeRateSchema = createSelectSchema(exchangeRates);
