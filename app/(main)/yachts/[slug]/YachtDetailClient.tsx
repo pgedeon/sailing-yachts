@@ -656,6 +656,29 @@ export default function YachtDetailClient() {
         </div>
       )}
 
+      {/* Best value cross-link */}
+      {yacht.lengthOverall && (() => {
+        const loa = yacht.lengthOverall;
+        let bestValueSlug = "";
+        let bestValueLabel = "";
+        if (loa >= 11.5 && loa <= 12.8) { bestValueSlug = "40ft-cruisers"; bestValueLabel = "Best Value 40ft Cruisers"; }
+        else if (loa >= 10.0 && loa < 11.5) { bestValueSlug = "35ft-sailboats"; bestValueLabel = "Best Value 35ft Sailboats"; }
+        else if (loa >= 10.5 && loa <= 13.7) { bestValueSlug = "family-cruisers-under-45ft"; bestValueLabel = "Best Value Family Cruisers Under 45ft"; }
+        else if (loa >= 10.0 && loa <= 15.0) { bestValueSlug = "bluewater-value"; bestValueLabel = "Best Value Bluewater Sailboats"; }
+        return bestValueSlug ? (
+          <div className="best-value-cross-link no-print max-w-7xl mx-auto px-4 mb-8" data-testid="best-value-cross-link">
+            <a
+              href={`/best-value/${bestValueSlug}`}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-medium hover:bg-emerald-100 transition"
+            >
+              <span>🏆</span>
+              See {bestValueLabel} ranked by value score
+              <span>→</span>
+            </a>
+          </div>
+        ) : null;
+      })()}
+
       {/* 4. Related guides - NEW (Phase 7 placeholder) */}
       <div className="related-guides-section no-print">
         <RelatedGuides
