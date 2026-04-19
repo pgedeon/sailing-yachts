@@ -110,8 +110,8 @@ These are the first issue titles I would create for the cron agent, in order:
 - **P7.3 — Manufacturer spotlights:** ✅ DONE — Create long-form builder pages with history, brand positioning, notable models, and links into current manufacturer/yacht records. Tests: render and internal-link coverage.
 - **P7.4 — Sailing glossary:** ✅ DONE — Add glossary pages for LOA, beam, ballast ratio, fin keel, cutter rig, shoal draft, displacement, and other spec-related terms. Auto-link glossary terms from yacht detail pages and guides. Tests: glossary route tests and inline link insertion assertions.
 - **P7.5 — Content cluster linking engine:** ✅ DONE — Add reusable “related guides” blocks to yacht pages and reusable “related yachts” blocks to guide pages. Tests: Playwright verification that guides and yacht pages cross-link properly.
-- **P7.6 — FAQ harvesting pipeline:** Use site search data, newsletter replies, and popular compare pairs to propose new FAQ entries and guide topics. Tests: unit tests for topic-prioritization logic.
-- **P7.7 — Content freshness system:** Add “last reviewed” dates, editorial review reminders, and automated issue creation for stale guides. Tests: scheduler logic tests and stale-content query tests.
+- [x] **P7.6 — FAQ harvesting pipeline:** Use site search data, newsletter replies, and popular compare pairs to propose new FAQ entries and guide topics. Tests: unit tests for topic-prioritization logic.
+  - [x] **P7.7 — Content freshness system:** Add “last reviewed” dates, editorial review reminders, and automated issue creation for stale guides. Tests: scheduler logic tests and stale-content query tests.
 - **P7.8 — Best-of editorial series:** ✅ DONE — Launch curated collections like “best 30-35 ft cruisers,” “best liveaboard sailboats,” “best bluewater cruisers under 45 ft,” and “best beginner sailboats.” Tests: content template tests plus comparison/yacht page linking assertions.
 
 ### Notes
@@ -198,14 +198,14 @@ These are the first issue titles I would create for the cron agent, in order:
 
 ### Concrete PR-Sized Backlog
 
-- **P10.1 — Data expansion pipeline:** Extend import tooling to bring the database to a truly marketable scale before claiming “1,000+ yachts.” Add duplicate detection and source normalization. Tests: import validation tests and duplicate-resolution tests.
+- [x] **P10.1 — Data expansion pipeline:** Extend import tooling to bring the database to a truly marketable scale before claiming “1,000+ yachts.” Add duplicate detection and source normalization. Tests: import validation tests and duplicate-resolution tests.
 - [x] **P10.2 — Media asset model:** Add support for brochures, deck plans, interior layouts, videos, 360 tours, and 3D models. Tests: schema tests and render tests for mixed media galleries.
 - [x] **P10.3 — Source provenance UI:** Show source URL, source type, last verified date, and completeness score on yacht pages. Tests: metadata/UI assertions and schema checks.
 - [x] **P10.4 — Review depth:** Move beyond admin-seeded review snippets to verified user/owner reviews, expert reviews, and rating summaries. Tests: moderation tests, structured data tests, and review submission tests.
 - [x] **P10.5 — Spec completeness scoring:** Calculate a visible completeness score per yacht and per manufacturer so thin records can be improved or deprioritized in SEO. Tests: score calculation tests and list-page display tests.
-- **P10.6 — Pricing coverage expansion:** Normalize regional prices, used listings, and source-specific price histories. Tests: price normalization tests and UI fallback tests for partial data.
-- **P10.7 — User-submitted corrections:** Add correction/report forms for missing specs, bad numbers, and outdated details, routed into moderation/admin review. Tests: API validation and admin moderation flow tests.
-- **P10.8 — Rich media schema:** Add `VideoObject`, `ImageObject`, and downloadable brochure metadata to improve search appearance. Tests: JSON-LD validation tests.
+- [x] **P10.6 — Pricing coverage expansion:** Normalize regional prices, used listings, and source-specific price histories. Tests: price normalization tests and UI fallback tests for partial data. (#178, #179)
+- [x] **P10.7 — User-submitted corrections:** Add correction/report forms for missing specs, bad numbers, and outdated details, routed into moderation/admin review. Tests: API validation and admin moderation flow tests. (#174)
+- [x] **P10.8 — Rich media schema:** Add `VideoObject`, `ImageObject`, and downloadable brochure metadata to improve search appearance. Tests: JSON-LD validation tests. (#176)
 
 ### Notes
 

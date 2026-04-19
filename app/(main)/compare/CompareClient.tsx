@@ -7,6 +7,7 @@ import Link from "next/link";
 import { CompareMonetization } from "@/app/components/CompareMonetization";
 import { LeadForm } from "@/app/components/LeadForm";
 import { CompareExport } from "@/app/components/CompareExport";
+import { BuyerChecklist } from "@/app/components/BuyerChecklist";
 import {
   getSavedComparisons,
   saveComparison,
@@ -846,6 +847,13 @@ export function CompareClient({ initialIds }: CompareClientProps) {
               });
             })();
           `}} />
+        </div>
+      )}
+
+      {/* Buyer Checklist */}
+      {yachts.length >= 2 && !loading && (
+        <div className="mt-8">
+          <BuyerChecklist yachtIds={selectedIds} yachtNames={yachts.map(y => `${y.manufacturer} ${y.modelName}`)} />
         </div>
       )}
 

@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import WebVitals from "@/components/WebVitals";
+import AuthProvider from "./providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -80,8 +81,10 @@ export default function RootLayout({
       <body
         className={cn(inter.variable, "antialiased min-h-screen bg-background")}
       >
-        <WebVitals />
-        {children}
+        <AuthProvider>
+          <WebVitals />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
