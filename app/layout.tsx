@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import WebVitals from "@/components/WebVitals";
 import AuthProvider from "./providers";
+import { getAllFlags } from "@/lib/feature-flags";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -76,12 +77,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Evaluate all flags server-side (no user context at layout level;
+  // pages with user sessions can pass overrides through page props)
+  const featureFlags = getAllFlags();
+
   return (
     <html lang="en">
       <body
         className={cn(inter.variable, "antialiased min-h-screen bg-background")}
       >
-        <AuthProvider>
+        <AuthProvider featureFlags={featureFlags}>
           <WebVitals />
           {children}
         </AuthProvider>

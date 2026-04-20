@@ -1,11 +1,22 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
+import { FeatureFlagProvider, type FeatureFlagProviderProps } from "@/lib/feature-flags/context";
+
+interface AuthProviderProps {
+  children: React.ReactNode;
+  featureFlags?: FeatureFlagProviderProps["flags"];
+}
 
 export default function AuthProvider({
   children,
-}: {
-  children: React.ReactNode;
-}) {
-  return <SessionProvider>{children}</SessionProvider>;
+  featureFlags = {},
+}: AuthProviderProps) {
+  return (
+    <SessionProvider>
+      <FeatureFlagProvider flags={featureFlags}>
+        {children}
+      </FeatureFlagProvider>
+    </SessionProvider>
+  );
 }
