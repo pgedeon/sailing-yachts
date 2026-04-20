@@ -12,6 +12,7 @@ import {
   serial,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { sql } from "drizzle-orm";
 
 // Manufacturers table
 export const manufacturers = pgTable(
@@ -28,6 +29,11 @@ export const manufacturers = pgTable(
   },
   (table) => ({
     idxName: uniqueIndex("idx_manufacturers_name").on(table.name),
+    // P11.2: GIN trigram for search ILIKE
+    idxNameTrgm: index("idx_manufacturers_name_trgm").using(
+      "gin",
+      sql`name gin_trgm_ops`,
+    ),
   }),
 );
 
@@ -97,6 +103,41 @@ export const yachtModels = pgTable(
     ),
     idxRig: index("idx_yacht_models_rig").on(table.rigType),
     idxKeel: index("idx_yacht_models_keel").on(table.keelType),
+    // P11.2: Additional indexes for query performance audit
+    idxHull: index("idx_yacht_models_hull").on(table.hullMaterial),
+    idxManufacturerLength: index("idx_yacht_models_manufacturer_length").on(
+      table.manufacturerId,
+      table.lengthOverall,
+    ),
+    idxManufacturerCreated: index("idx_yacht_models_manufacturer_created").on(
+      table.manufacturerId,
+      table.createdAt,
+    ),
+    // GIN trigram indexes for ILIKE search performance
+    idxModelNameTrgm: index("idx_yacht_models_model_name_trgm").using(
+      "gin",
+      sql`model_name gin_trgm_ops`,
+    ),
+    idxRigTypeTrgm: index("idx_yacht_models_rig_type_trgm").using(
+      "gin",
+      sql`rig_type gin_trgm_ops`,
+    ),
+    idxKeelTypeTrgm: index("idx_yacht_models_keel_type_trgm").using(
+      "gin",
+      sql`keel_type gin_trgm_ops`,
+    ),
+    idxHullMaterialTrgm: index("idx_yacht_models_hull_material_trgm").using(
+      "gin",
+      sql`hull_material gin_trgm_ops`,
+    ),
+    idxDescriptionTrgm: index("idx_yacht_models_description_trgm").using(
+      "gin",
+      sql`description gin_trgm_ops`,
+    ),
+    idxDesignNotesTrgm: index("idx_yacht_models_design_notes_trgm").using(
+      "gin",
+      sql`design_notes gin_trgm_ops`,
+    ),
   }),
 );
 
@@ -142,6 +183,11 @@ export const specValues = pgTable(
       table.yachtModelId,
       table.specCategoryId,
     ),
+    // P11.2: Covering composite index for spec retrieval with values included
+    idxYachtCategoryCovering: index("idx_spec_values_yacht_category_covering").on(
+      table.yachtModelId,
+      table.specCategoryId,
+    ),
   }),
 );
 
@@ -162,6 +208,8 @@ export const images = pgTable(
   },
   (table) => ({
     idxYacht: index("idx_images_yacht").on(table.yachtModelId),
+    // P11.2: Composite index for sorted image retrieval
+    idxYachtSort: index("idx_images_yacht_sort").on(table.yachtModelId, table.sortOrder),
   }),
 );
 
@@ -384,6 +432,8 @@ export const mediaAssets = pgTable(
     idxYacht: index("idx_media_assets_yacht").on(table.yachtModelId),
     idxType: index("idx_media_assets_type").on(table.mediaType),
     idxPrimary: index("idx_media_assets_primary").on(table.yachtModelId),
+    // P11.2: Composite index for ordered media gallery retrieval
+    idxYachtSort: index("idx_media_assets_yacht_sort").on(table.yachtModelId, table.sortOrder, table.createdAt),
   }),
 );
 
