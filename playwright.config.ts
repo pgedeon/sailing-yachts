@@ -7,6 +7,14 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: 1, // Use single worker to avoid overloading production
   reporter: 'list',
+  snapshotPathTemplate: '{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
+  snapshotDir: './tests',
+  expect: {
+    toHaveScreenshot: {
+      maxDiffPixelRatio: 0.01,
+      threshold: 0.2,
+    },
+  },
   projects: [
     {
       name: 'chromium',
