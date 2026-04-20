@@ -229,8 +229,8 @@ These are the first issue titles I would create for the cron agent, in order:
 
 ### Concrete PR-Sized Backlog
 
-- **P11.1 — Error monitoring + tracing:** Add Sentry or equivalent for server/client errors, release tagging, and performance traces. Tests: instrumentation smoke tests and environment guard tests.
-- **P11.2 — Query/index audit:** Review hot browse/search/detail queries, add missing DB indexes, and consider materialized search tables for faster list pages. Tests: query regression benchmarks and API response tests.
+- ~~**P11.1 — Error monitoring + tracing:** Add Sentry or equivalent for server/client errors, release tagging, and performance traces. Tests: instrumentation smoke tests and environment guard tests.~~ *(completed 2026-04-19)* 
+- ~~**P11.2 — Query/index audit:** Review hot browse/search/detail queries, add missing DB indexes, and consider materialized search tables for faster list pages. Tests: query regression benchmarks and API response tests.~~ *(completed 2026-04-20)* 
 - **P11.3 — Lighthouse/performance budgets:** Add CI checks for LCP, CLS, JS bundle size, and image weight on the home page, yacht detail page, compare page, and key landing pages. Tests: automated performance budget pipeline.
 - **P11.4 — Feature flags + experiments:** Add a lightweight feature flag system and experiment assignment logic for CTA placement, copy, and monetization modules. Tests: assignment determinism tests and flag fallback tests.
 - **P11.5 — Visual regression testing:** Add screenshot-based coverage for critical pages like yacht detail, compare, long-tail landing pages, and forms. Tests: visual baseline pipeline.
