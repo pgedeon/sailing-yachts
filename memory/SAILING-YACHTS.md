@@ -1,43 +1,51 @@
 # Sailing Yachts Builder Session Summary
 
-**Date:** 2026-04-17  
-**Issue worked on:** #153 - P9.6: Personalized recommendations
+**Date:** 2026-04-20  
+**Issue worked on:** #192 / PR #193 - P11.4: Feature flags + experiments system
 
 ## What was implemented
-- **Personalized recommendations API** (`/api/user/recommendations`):
-  - "Similar to favorites" using weighted Euclidean distance on yacht specs (LOA, displacement, beam, draft, sail area)
-  - "New since last visit" showing recently added yachts user hasn't favorited
-  - "Compare again" suggestions from saved comparison history
-- **PersonalizedRecommendations component**: Homepage section for logged-in users (guest-safe fallback)
-- **DashboardRecommendations**: Compare-again and similar yacht suggestions in Account Dashboard
-- **Playwright tests**: Basic guest user and API authentication tests
-- **Reused existing similarity engine**: Leveraged `/api/yachts/[slug]/similar` algorithm
+- **Feature flag definitions** (`lib/feature-flags/flags.ts`): 8 initial flags with typed boolean and variant types
+  - `compare.cta_placement` (variant: sidebar/bottom/modal)
+  - `compare.premium_export` (boolean)
+  - `yachts.monetization_badge` (boolean)
+  - `search.ai_summary` (boolean)
+  - `newsletter.popup_timing` (variant: exit_intent/timed/scroll)
+  - `favorites.enabled` (boolean)
+  - `alerts.push_notifications` (boolean)
+  - `guides.show_spotlight` (boolean)
+- **Evaluation engine** (`evaluate.ts`): FNV-1a deterministic hash bucketing with 4-tier priority chain
+- **React integration** (`context.tsx`): `FeatureFlagProvider` + `useFeatureFlag` hook, wired into root layout via `getAllFlags()`
+- **Admin API** (`/api/admin/flags`): GET to list flags with metadata, POST to set runtime overrides (auth-gated)
+- **Vitest config** (`vitest.config.ts`): Added test runner setup for unit tests
+- **19 unit tests**: Determinism, fallbacks, env overrides, query param overrides, variant distribution, extractFlagOverrides
 
 ## Build/Test Results
-- **Typecheck**: ✅ Pass (fixed implicit any type errors)
-- **Build**: ✅ Pass  
-- **Playwright tests**: ✅ Pass (7 pre-existing failures unrelated to changes)
-- **API testing**: ✅ Recommendations API returns 401 for unauthenticated requests
+- **Typecheck**: ✅ Pass
+- **Build**: ✅ Pass (locally with DATABASE_URL)
+- **Vitest tests**: ✅ 19/19 pass
+- **CI**: TypeScript ✅ Lint ✅ Build ❌ (pre-existing: DATABASE_URL not set in CI secrets — same failure on main branch pushes)
 
 ## Deploy Status
-- **GitHub PR**: ✅ #154 merged (all CI checks passed: TypeScript, Build, Lint)
-- **Vercel**: ✅ Auto-deploy completed
-- **Git history**: ✅ Clean commits on feature branch, no regressions
+- **GitHub PR**: ✅ #193 merged (squash)
+- **Vercel**: ✅ Auto-deploy completed (sailing-yachts project)
+- **Git**: main branch at 720e344
 
 ## Live Verification Results
-- **Critical pages**: ✅ All pass (/, /yachts, /search, /compare, /account, /favorites)
-- **API endpoints**: ✅ Yacht API returns 201 yachts, recommendations API returns 401 for guests
-- **Client-side errors**: ✅ None found in console during verification
-- **Feature functionality**: ✅ Personalized recommendations API correctly returns 401 for unauthenticated users
+- **/**: ✅ OK
+- **/yachts**: ✅ OK
+- **/search**: ✅ OK
+- **/compare**: ✅ OK
+- **API /api/yachts**: ✅ 201 yachts
+- **/api/admin/flags**: ✅ 401 (correct auth gate)
 
 ## Issues Found and Fixed
-- **TypeScript errors**: Fixed 6 "implicitly has any type" errors by adding explicit type annotations in API route
-- **No runtime issues**: All features work as expected with no client-side crashes
+- **None**: Clean deployment with no regressions
+- Note: Also closed issue #188 (P11.3) which was completed but left open
 
 ## Next Recommended Task
-**P9.7 - Web push notifications** (Issue #155): Browser push notifications for saved search matches and price changes. Next logical Phase 9 item since P9.6 complete.
+**P11.5 - Visual regression testing** (next unchecked item on roadmap): Add screenshot-based coverage for critical pages using Playwright visual comparisons or similar.
 
 ## Notes
-- Personalized recommendations use the existing similarity algorithm from P9.5 (similar yachts API)
-- All features are guest-safe - no errors when logged out users view pages with personalized sections
-- Implementation reuses existing database schema and authentication system
+- CI Build failure is pre-existing infrastructure issue (DATABASE_URL secret not configured in GitHub Actions) — affects all PRs equally, not specific to this change
+- Feature flags are immediately available for use in any component via `useFeatureFlag("flag.key")`
+- Admin API supports runtime flag overrides that persist until next deployment
