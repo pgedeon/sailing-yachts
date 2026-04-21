@@ -1,7 +1,11 @@
 /**
  * Simple in-memory rate limiter for API routes.
  * Uses a sliding window counter per IP/key.
+ *
+ * Also includes admin login brute-force protection.
  */
+
+// ── General API rate limiting ──
 
 interface RateLimitEntry {
   count: number;
@@ -73,4 +77,133 @@ export function rateLimitHeaders(result: { remaining: number; resetAt: number; l
     'X-RateLimit-Reset': String(Math.ceil(result.resetAt / 1000)),
     'Cache-Control': 'no-cache', // No caching for rate limit responses
   };
+}
+
+// ── Admin login brute-force protection ──
+// Uses a separate tracking map with individual attempt timestamps for sliding window.
+
+interface LoginRateLimitEntry {
+  attempts: number[];
+  lockedUntil: number | null;
+}
+
+const loginAttempts = new Map<string, LoginRateLimitEntry>();
+
+/** Max login attempts before lockout */
+const MAX_LOGIN_ATTEMPTS = 10;
+/** Window for counting attempts (ms) */
+const LOGIN_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+/** Lockout duration after max attempts (ms) */
+const LOCKOUT_MS = 30 * 60 * 1000; // 30 minutes
+/** Attempts before showing warnings */
+const RATE_LIMIT_THRESHOLD = 5;
+
+/**
+ * Check if an IP is rate-limited for login attempts.
+ * Returns { allowed, remainingAttempts, retryAfterMs }
+ */
+export function checkLoginRateLimit(ip: string): {
+  allowed: boolean;
+  remainingAttempts: number;
+  retryAfterMs: number;
+} {
+  const now = Date.now();
+  const entry = loginAttempts.get(ip);
+
+  if (!entry) {
+    return { allowed: true, remainingAttempts: MAX_LOGIN_ATTEMPTS, retryAfterMs: 0 };
+  }
+
+  // Check if locked out
+  if (entry.lockedUntil && entry.lockedUntil > now) {
+    return {
+      allowed: false,
+      remainingAttempts: 0,
+      retryAfterMs: entry.lockedUntil - now,
+    };
+  }
+
+  // Clear expired lockout
+  if (entry.lockedUntil && entry.lockedUntil <= now) {
+    entry.lockedUntil = null;
+    entry.attempts = [];
+  }
+
+  // Filter attempts within the window
+  entry.attempts = entry.attempts.filter((t) => now - t < LOGIN_WINDOW_MS);
+
+  if (entry.attempts.length >= MAX_LOGIN_ATTEMPTS) {
+    // Lock the IP
+    entry.lockedUntil = now + LOCKOUT_MS;
+    return {
+      allowed: false,
+      remainingAttempts: 0,
+      retryAfterMs: LOCKOUT_MS,
+    };
+  }
+
+  return {
+    allowed: true,
+    remainingAttempts: MAX_LOGIN_ATTEMPTS - entry.attempts.length,
+    retryAfterMs: 0,
+  };
+}
+
+/**
+ * Record a failed login attempt for an IP.
+ */
+export function recordFailedLogin(ip: string): void {
+  const now = Date.now();
+  let entry = loginAttempts.get(ip);
+
+  if (!entry) {
+    entry = { attempts: [], lockedUntil: null };
+    loginAttempts.set(ip, entry);
+  }
+
+  entry.attempts.push(now);
+
+  // Auto-lockout if threshold reached
+  if (entry.attempts.length >= MAX_LOGIN_ATTEMPTS) {
+    entry.lockedUntil = now + LOCKOUT_MS;
+  }
+}
+
+/**
+ * Record a successful login (clears the attempt counter for that IP).
+ */
+export function recordSuccessfulLogin(ip: string): void {
+  loginAttempts.delete(ip);
+}
+
+/**
+ * Get a delay in ms for exponential backoff based on attempt count.
+ */
+export function getLoginBackoffDelay(ip: string): number {
+  const entry = loginAttempts.get(ip);
+  if (!entry) return 0;
+  const now = Date.now();
+  const recentAttempts = entry.attempts.filter((t) => now - t < LOGIN_WINDOW_MS);
+  if (recentAttempts.length < RATE_LIMIT_THRESHOLD) return 0;
+  // Exponential backoff: 500ms, 1s, 2s, 4s, etc.
+  const excess = recentAttempts.length - RATE_LIMIT_THRESHOLD;
+  return Math.min(500 * Math.pow(2, excess), 8000);
+}
+
+// Periodic cleanup of stale login rate limit entries (every 10 minutes)
+if (typeof setInterval !== "undefined") {
+  setInterval(
+    () => {
+      const now = Date.now();
+      for (const [ip, entry] of loginAttempts.entries()) {
+        // Remove old attempts
+        entry.attempts = entry.attempts.filter((t) => now - t < LOGIN_WINDOW_MS);
+        // Remove entries with no recent activity
+        if (entry.attempts.length === 0 && (!entry.lockedUntil || entry.lockedUntil <= now)) {
+          loginAttempts.delete(ip);
+        }
+      }
+    },
+    10 * 60 * 1000,
+  );
 }

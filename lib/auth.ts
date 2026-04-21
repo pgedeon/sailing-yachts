@@ -7,6 +7,25 @@ import GoogleProvider from "next-auth/providers/google"
 import { db } from "./db"
 import { users } from "./db"
 
+// Enforce NEXTAUTH_SECRET at startup — no fallback
+function getRequiredSecret(): string {
+  const secret = process.env.NEXTAUTH_SECRET
+  if (!secret) {
+    throw new Error(
+      "FATAL: NEXTAUTH_SECRET environment variable is not set. " +
+      "Refusing to start without a proper secret. " +
+      "Generate one with: openssl rand -base64 32"
+    )
+  }
+  if (secret.length < 32) {
+    console.warn(
+      "[auth] WARNING: NEXTAUTH_SECRET is less than 32 characters. " +
+      "Consider using a longer secret for better security."
+    )
+  }
+  return secret
+}
+
 // Extend NextAuth types to include our custom user fields
 declare module "next-auth" {
   interface Session {
@@ -152,7 +171,7 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
-    maxAge: 24 * 60 * 60, // 24 hours
+    maxAge: 8 * 60 * 60, // 8 hours (reduced from 24h for admin security)
   },
   pages: {
     signIn: "/auth/signin",
@@ -241,5 +260,5 @@ export const authOptions: NextAuthOptions = {
       return session
     }
   },
-  secret: process.env.NEXTAUTH_SECRET || "fallback-secret-change-in-production"
+  secret: getRequiredSecret(),
 }
