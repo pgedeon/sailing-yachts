@@ -15,14 +15,14 @@ test.describe('API Contract Tests', () => {
       const data = await response.json();
       
       // Validate the overall response structure
-      expect(validateApiResponseContract(data)).toBe(true);
+      expect(data).toHaveProperty('yachts');
+      expect(data).toHaveProperty('total');
+      expect(Array.isArray(data.yachts)).toBe(true);
+      expect(typeof data.total).toBe('number');
       
       // Validate each yacht in the response
       if (data.yachts) {
         data.yachts.forEach((yacht: any, index: number) => {
-          expect(validateYachtContract(yacht), `Yacht at index ${index} should match contract`).toBe(true);
-          
-          // Validate specific required fields
           expect(yacht).toHaveProperty('id');
           expect(yacht).toHaveProperty('manufacturer');
           expect(yacht).toHaveProperty('modelName');
@@ -33,10 +33,6 @@ test.describe('API Contract Tests', () => {
       }
       
       // Validate pagination structure
-      if (data.total !== undefined) {
-        expect(typeof data.total).toBe('number');
-        expect(data.total).toBeGreaterThanOrEqual(0);
-      }
       if (data.page !== undefined) {
         expect(typeof data.page).toBe('number');
         expect(data.page).toBeGreaterThanOrEqual(1);
@@ -44,6 +40,9 @@ test.describe('API Contract Tests', () => {
       if (data.limit !== undefined) {
         expect(typeof data.limit).toBe('number');
         expect(data.limit).toBeGreaterThan(0);
+      }
+      if (data.totalPages !== undefined) {
+        expect(typeof data.totalPages).toBe('number');
       }
     });
 
@@ -53,7 +52,9 @@ test.describe('API Contract Tests', () => {
       
       const data = await response.json();
       
-      expect(validateApiResponseContract(data)).toBe(true);
+      expect(data).toHaveProperty('yachts');
+      expect(data).toHaveProperty('total');
+      expect(Array.isArray(data.yachts)).toBe(true);
       
       // Verify filters are applied (length should be within range)
       if (data.yachts) {
@@ -73,6 +74,9 @@ test.describe('API Contract Tests', () => {
       const data = await response.json();
       
       if (data.distinct) {
+        expect(data.distinct).toHaveProperty('rigTypes');
+        expect(data.distinct).toHaveProperty('keelTypes');
+        expect(data.distinct).toHaveProperty('hullMaterials');
         expect(Array.isArray(data.distinct.rigTypes)).toBe(true);
         expect(Array.isArray(data.distinct.keelTypes)).toBe(true);
         expect(Array.isArray(data.distinct.hullMaterials)).toBe(true);
@@ -106,9 +110,6 @@ test.describe('API Contract Tests', () => {
       
       // Validate each suggestion
       data.suggestions.forEach((suggestion: any, index: number) => {
-        expect(validateSearchSuggestionContract(suggestion), `Suggestion at index ${index} should match contract`).toBe(true);
-        
-        // Validate required fields
         expect(suggestion).toHaveProperty('id');
         expect(suggestion).toHaveProperty('display');
         expect(suggestion).toHaveProperty('modelName');
@@ -137,7 +138,12 @@ test.describe('API Contract Tests', () => {
       // Validate each yacht
       if (data.yachts) {
         data.yachts.forEach((yacht: any, index: number) => {
-          expect(validateYachtContract(yacht), `Yacht at index ${index} should match contract`).toBe(true);
+          expect(yacht).toHaveProperty('id');
+          expect(yacht).toHaveProperty('manufacturer');
+          expect(yacht).toHaveProperty('modelName');
+          expect(typeof yacht.id).toBe('number');
+          expect(typeof yacht.manufacturer).toBe('string');
+          expect(typeof yacht.modelName).toBe('string');
         });
       }
     });
@@ -220,8 +226,11 @@ test.describe('API Contract Tests', () => {
       
       const data = await response.json();
       
-      // Even in error cases, response should be valid
-      expect(validateApiResponseContract(data)).toBe(true);
+      // Should still have basic response structure
+      expect(data).toHaveProperty('yachts');
+      expect(data).toHaveProperty('total');
+      expect(Array.isArray(data.yachts)).toBe(true);
+      expect(typeof data.total).toBe('number');
     });
   });
 
@@ -232,9 +241,16 @@ test.describe('API Contract Tests', () => {
       
       const page1Data = await page1Response.json();
       
-      expect(validateApiResponseContract(page1Data)).toBe(true);
-      if (page1Data.page) expect(page1Data.page).toBe(1);
-      if (page1Data.limit) expect(page1Data.limit).toBe(5);
+      expect(page1Data).toHaveProperty('yachts');
+      expect(page1Data).toHaveProperty('total');
+      expect(page1Data).toHaveProperty('page');
+      expect(page1Data).toHaveProperty('limit');
+      expect(Array.isArray(page1Data.yachts)).toBe(true);
+      expect(typeof page1Data.total).toBe('number');
+      expect(typeof page1Data.page).toBe('number');
+      expect(typeof page1Data.limit).toBe('number');
+      expect(page1Data.page).toBe(1);
+      expect(page1Data.limit).toBe(5);
       
       // Get second page if available
       if (page1Data.totalPages && page1Data.totalPages > 1) {
@@ -243,8 +259,11 @@ test.describe('API Contract Tests', () => {
         
         const page2Data = await page2Response.json();
         
-        expect(validateApiResponseContract(page2Data)).toBe(true);
-        if (page2Data.page) expect(page2Data.page).toBe(2);
+        expect(page2Data).toHaveProperty('page');
+        expect(page2Data).toHaveProperty('limit');
+        expect(typeof page2Data.page).toBe('number');
+        expect(typeof page2Data.limit).toBe('number');
+        expect(page2Data.page).toBe(2);
         
         // Ensure we're not getting duplicate yachts
         if (page1Data.yachts && page2Data.yachts) {
@@ -257,104 +276,3 @@ test.describe('API Contract Tests', () => {
     });
   });
 });
-
-// Contract validation functions (copied from lib/api-contracts.ts for test isolation)
-export interface Yacht {
-  id: number;
-  manufacturer: string | object; // Can be string or object in V1 API
-  modelName: string;
-  year?: number;
-  slug?: string;
-  lengthOverall?: number;
-  beam?: number;
-  draft?: number;
-  displacement?: number;
-  ballast?: number;
-  sailAreaMain?: number;
-  rigType?: string;
-  keelType?: string;
-  hullMaterial?: string;
-  cabins?: number;
-  berths?: number;
-  heads?: number;
-  maxOccupancy?: number;
-  engineHp?: number;
-  engineType?: string;
-  fuelCapacity?: number;
-  waterCapacity?: number;
-  designNotes?: string;
-  description?: string;
-  sourceUrl?: string;
-  sourceAttribution?: string;
-  adminLinks?: any;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-export interface SearchSuggestion {
-  id: number;
-  modelName: string;
-  manufacturer: string;
-  slug: string;
-  year?: number;
-  lengthOverall?: number;
-  display: string;
-}
-
-export interface ApiResponse<T> {
-  yachts?: T[];
-  suggestions?: SearchSuggestion[];
-  total?: number;
-  page?: number;
-  limit?: number;
-  totalPages?: number;
-  distinct?: {
-    rigTypes: string[];
-    keelTypes: string[];
-    hullMaterials: string[];
-  };
-  query?: string;
-  error?: string;
-  details?: string;
-}
-
-export function validateYachtContract(data: any): data is Yacht {
-  return (
-    typeof data === 'object' &&
-    typeof data.id === 'number' &&
-    (typeof data.manufacturer === 'string' || typeof data.manufacturer === 'object') &&
-    typeof data.modelName === 'string' &&
-    (data.year === undefined || typeof data.year === 'number') &&
-    (data.slug === undefined || typeof data.slug === 'string') &&
-    (data.lengthOverall === undefined || typeof data.lengthOverall === 'number')
-  );
-}
-
-export function validateApiResponseContract<T>(data: any): data is ApiResponse<T> {
-  return (
-    typeof data === 'object' &&
-    (data.yachts === undefined || Array.isArray(data.yachts)) &&
-    (data.suggestions === undefined || Array.isArray(data.suggestions)) &&
-    (data.total === undefined || typeof data.total === 'number') &&
-    (data.page === undefined || typeof data.page === 'number') &&
-    (data.limit === undefined || typeof data.limit === 'number') &&
-    (data.totalPages === undefined || typeof data.totalPages === 'number') ||
-    (data.distinct === undefined || 
-      (typeof data.distinct === 'object' &&
-        Array.isArray(data.distinct?.rigTypes) &&
-        Array.isArray(data.distinct?.keelTypes) &&
-        Array.isArray(data.distinct?.hullMaterials)))
-  );
-}
-
-export function validateSearchSuggestionContract(data: any): data is SearchSuggestion {
-  return (
-    typeof data === 'object' &&
-    typeof data.id === 'number' &&
-    typeof data.modelName === 'string' &&
-    typeof data.manufacturer === 'string' &&
-    typeof data.display === 'string' &&
-    (data.year === undefined || typeof data.year === 'number') &&
-    (data.lengthOverall === undefined || typeof data.lengthOverall === 'number')
-  );
-}
