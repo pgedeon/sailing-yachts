@@ -27,6 +27,15 @@ const nextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      // OpenAPI spec: serve /api/v1/openapi.json via the route at /api/v1/openapi
+      {
+        source: '/api/v1/openapi.json',
+        destination: '/api/v1/openapi',
+      },
+    ];
+  },
 };
 
 // Sentry wrapper — only applies when Sentry env vars are set

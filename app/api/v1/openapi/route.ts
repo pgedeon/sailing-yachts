@@ -4,7 +4,7 @@ import { openApiSpec } from '@/lib/openapi-schema';
 export const dynamic = 'force-static';
 
 /**
- * GET /api/v1/openapi.json — OpenAPI 3.0.3 specification for the public API.
+ * GET /api/v1/openapi — OpenAPI 3.0.3 specification for the public API.
  */
 export async function GET() {
   return NextResponse.json(openApiSpec, {
