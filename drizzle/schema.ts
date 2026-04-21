@@ -890,3 +890,30 @@ export const exchangeRates = pgTable(
 
 export const insertExchangeRateSchema = createInsertSchema(exchangeRates);
 export const selectExchangeRateSchema = createSelectSchema(exchangeRates);
+
+// Admin audit log (P11.8 — Admin hardening)
+export const auditLogs = pgTable(
+  "audit_logs",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id"),
+    userEmail: varchar("user_email", { length: 255 }),
+    action: varchar("action", { length: 100 }).notNull(), // e.g. 'create', 'update', 'delete', 'login', 'logout'
+    resourceType: varchar("resource_type", { length: 100 }), // e.g. 'yacht', 'manufacturer', 'review'
+    resourceId: varchar("resource_id", { length: 100 }),
+    details: jsonb("details").$type<Record<string, unknown>>(),
+    ipAddress: varchar("ip_address", { length: 45 }),
+    userAgent: varchar("user_agent", { length: 500 }),
+    statusCode: integer("status_code"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxUser: index("idx_audit_logs_user").on(table.userId),
+    idxAction: index("idx_audit_logs_action").on(table.action),
+    idxResource: index("idx_audit_logs_resource").on(table.resourceType, table.resourceId),
+    idxCreated: index("idx_audit_logs_created").on(table.createdAt),
+  }),
+);
+
+export const insertAuditLogSchema = createInsertSchema(auditLogs);
+export const selectAuditLogSchema = createSelectSchema(auditLogs);
