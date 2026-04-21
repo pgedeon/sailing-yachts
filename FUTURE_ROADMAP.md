@@ -7,7 +7,7 @@
 - ~~**P11.5 — Visual regression testing:** Add screenshot-based coverage for critical pages like yacht detail, compare, long-tail landing pages, and forms. Tests: visual baseline pipeline.~~ *(completed 2026-04-20)*
 - **P11.6 — API contract testing:** Generate typed response contracts from route schemas and add CI coverage for public API stability. Tests: contract tests and negative-path coverage.
 - **P11.7 — Docs generation:** Replace the current placeholder docs rendering with generated API docs/OpenAPI-backed examples. Tests: route availability tests and docs snapshot coverage.
-- **P11.8 — Admin hardening:** Improve admin auth, secrets handling, audit logging, and access controls before broader team or partner use. Tests: auth/authorization tests and session expiry coverage.
+- ~~**P11.8 — Admin hardening:**~~ *(completed 2026-04-21)* ~~ Improve admin auth, secrets handling, audit logging, and access controls before broader team or partner use. Tests: auth/authorization tests and session expiry coverage.
 
 ### Notes
 
