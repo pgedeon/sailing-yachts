@@ -182,6 +182,11 @@ export function calculateValueScore(yacht: {
 export async function getBestValueYachts(
   pageDef: BestValuePageDef
 ): Promise<BestValueYacht[]> {
+  if (!process.env.DATABASE_URL) {
+    console.warn(`[build-safe] Returning fallback data during build (no DATABASE_URL)`);
+    return [];
+  }
+
   const query = `
     SELECT
       y.id,
