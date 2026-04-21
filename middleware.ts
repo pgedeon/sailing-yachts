@@ -54,20 +54,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // ── Apply security headers to admin responses ──
-  const response = NextResponse.next()
-
-  if (pathname.startsWith('/admin') || pathname.startsWith('/api/admin/')) {
-    response.headers.set('X-Content-Type-Options', 'nosniff')
-    response.headers.set('X-Frame-Options', 'DENY')
-    response.headers.set('X-XSS-Protection', '1; mode=block')
-    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
-    response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
-    // Cache-Control: no-store for admin pages
-    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
-  }
-
-  return response
+  return NextResponse.next()
 }
 
 export const config = {
