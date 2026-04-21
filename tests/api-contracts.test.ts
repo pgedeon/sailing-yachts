@@ -1,12 +1,12 @@
 // API Contract Tests
-// These tests verify that API responses match their expected contracts
+// These tests verify that API responses match their expected contracts against the production environment
 
 import { test, expect } from '@playwright/test';
-import { validateYachtContract, validateApiResponseContract, validateSearchSuggestionContract } from '../lib/api-contracts';
+
+// Use production environment
+const BASE_URL = 'https://info.sailboats.fr';
 
 test.describe('API Contract Tests', () => {
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-
   test.describe('/api/yachts endpoint', () => {
     test('should return valid yacht contract response', async () => {
       const response = await fetch(`${BASE_URL}/api/yachts?limit=5`);
@@ -246,3 +246,104 @@ test.describe('API Contract Tests', () => {
     });
   });
 });
+
+// Contract validation functions (copied from lib/api-contracts.ts for test isolation)
+export interface Yacht {
+  id: number;
+  manufacturer: string;
+  modelName: string;
+  year?: number;
+  slug?: string;
+  lengthOverall?: number;
+  beam?: number;
+  draft?: number;
+  displacement?: number;
+  ballast?: number;
+  sailAreaMain?: number;
+  rigType?: string;
+  keelType?: string;
+  hullMaterial?: string;
+  cabins?: number;
+  berths?: number;
+  heads?: number;
+  maxOccupancy?: number;
+  engineHp?: number;
+  engineType?: string;
+  fuelCapacity?: number;
+  waterCapacity?: number;
+  designNotes?: string;
+  description?: string;
+  sourceUrl?: string;
+  sourceAttribution?: string;
+  adminLinks?: any;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface SearchSuggestion {
+  id: number;
+  modelName: string;
+  manufacturer: string;
+  slug: string;
+  year?: number;
+  lengthOverall?: number;
+  display: string;
+}
+
+export interface ApiResponse<T> {
+  yachts?: T[];
+  suggestions?: SearchSuggestion[];
+  total?: number;
+  page?: number;
+  limit?: number;
+  totalPages?: number;
+  distinct?: {
+    rigTypes: string[];
+    keelTypes: string[];
+    hullMaterials: string[];
+  };
+  query?: string;
+  error?: string;
+  details?: string;
+}
+
+export function validateYachtContract(data: any): data is Yacht {
+  return (
+    typeof data === 'object' &&
+    typeof data.id === 'number' &&
+    typeof data.manufacturer === 'string' &&
+    typeof data.modelName === 'string' &&
+    (data.year === undefined || typeof data.year === 'number') &&
+    (data.slug === undefined || typeof data.slug === 'string') &&
+    (data.lengthOverall === undefined || typeof data.lengthOverall === 'number')
+  );
+}
+
+export function validateApiResponseContract<T>(data: any): data is ApiResponse<T> {
+  return (
+    typeof data === 'object' &&
+    (data.yachts === undefined || Array.isArray(data.yachts)) &&
+    (data.suggestions === undefined || Array.isArray(data.suggestions)) &&
+    (data.total === undefined || typeof data.total === 'number') &&
+    (data.page === undefined || typeof data.page === 'number') &&
+    (data.limit === undefined || typeof data.limit === 'number') &&
+    (data.totalPages === undefined || typeof data.totalPages === 'number') ||
+    (data.distinct === undefined || 
+      (typeof data.distinct === 'object' &&
+        Array.isArray(data.distinct?.rigTypes) &&
+        Array.isArray(data.distinct?.keelTypes) &&
+        Array.isArray(data.distinct?.hullMaterials)))
+  );
+}
+
+export function validateSearchSuggestionContract(data: any): data is SearchSuggestion {
+  return (
+    typeof data === 'object' &&
+    typeof data.id === 'number' &&
+    typeof data.modelName === 'string' &&
+    typeof data.manufacturer === 'string' &&
+    typeof data.display === 'string' &&
+    (data.year === undefined || typeof data.year === 'number') &&
+    (data.lengthOverall === undefined || typeof data.lengthOverall === 'number')
+  );
+}
