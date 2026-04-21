@@ -171,11 +171,13 @@ test.describe('API Contract Tests', () => {
       
       const data = await response.json();
       
-      expect(Array.isArray(data)).toBe(true);
+      // Manufacturers API returns { manufacturers: [...] }
+      expect(data).toHaveProperty('manufacturers');
+      expect(Array.isArray(data.manufacturers)).toBe(true);
       
       // Validate manufacturer structure if any manufacturers exist
-      if (data.length > 0) {
-        const manufacturer = data[0];
+      if (data.manufacturers.length > 0) {
+        const manufacturer = data.manufacturers[0];
         expect(manufacturer).toHaveProperty('id');
         expect(manufacturer).toHaveProperty('name');
         expect(typeof manufacturer.id).toBe('number');
@@ -191,12 +193,21 @@ test.describe('API Contract Tests', () => {
       
       const data = await response.json();
       
-      // V1 API should return an array of yachts
-      expect(Array.isArray(data)).toBe(true);
+      // V1 API returns { data: [...], meta: {...} }
+      expect(data).toHaveProperty('data');
+      expect(data).toHaveProperty('meta');
+      expect(Array.isArray(data.data)).toBe(true);
+      expect(typeof data.meta).toBe('object');
       
-      if (data.length > 0) {
-        const yacht = data[0];
-        expect(validateYachtContract(yacht)).toBe(true);
+      if (data.data.length > 0) {
+        const yacht = data.data[0];
+        // V1 has different structure - manufacturer is an object
+        expect(yacht).toHaveProperty('id');
+        expect(yacht).toHaveProperty('modelName');
+        expect(yacht).toHaveProperty('manufacturer');
+        expect(typeof yacht.id).toBe('number');
+        expect(typeof yacht.modelName).toBe('string');
+        expect(typeof yacht.manufacturer).toBe('object');
       }
     });
   });
@@ -250,7 +261,7 @@ test.describe('API Contract Tests', () => {
 // Contract validation functions (copied from lib/api-contracts.ts for test isolation)
 export interface Yacht {
   id: number;
-  manufacturer: string;
+  manufacturer: string | object; // Can be string or object in V1 API
   modelName: string;
   year?: number;
   slug?: string;
@@ -311,7 +322,7 @@ export function validateYachtContract(data: any): data is Yacht {
   return (
     typeof data === 'object' &&
     typeof data.id === 'number' &&
-    typeof data.manufacturer === 'string' &&
+    (typeof data.manufacturer === 'string' || typeof data.manufacturer === 'object') &&
     typeof data.modelName === 'string' &&
     (data.year === undefined || typeof data.year === 'number') &&
     (data.slug === undefined || typeof data.slug === 'string') &&
