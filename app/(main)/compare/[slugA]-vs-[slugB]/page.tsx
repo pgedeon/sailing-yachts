@@ -196,7 +196,7 @@ export default async function CanonicalComparePage({
                     <th className="px-6 py-4 text-left min-w-[200px]">
                       <Link
                         href={`/yachts/${yachtB.slug}`}
-                        className="font-semibold text-emerald-600 hover:underline"
+                        className="font-semibold text-emerald-700 hover:underline"
                       >
                         {fullNameB}
                       </Link>
@@ -505,7 +505,7 @@ export default async function CanonicalComparePage({
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-4 bg-gray-50 border-t text-xs text-gray-400">
+            <div className="px-6 py-4 bg-gray-50 border-t text-xs text-gray-600">
               Compare more yachts with our{" "}
               <Link href="/compare" className="text-blue-600 hover:underline font-medium">
                 comparison tool
@@ -554,7 +554,7 @@ export default async function CanonicalComparePage({
                 </p>
                 <Link
                   href={`/yachts/${yachtB.slug}`}
-                  className="inline-flex items-center gap-2 text-emerald-600 hover:underline font-medium"
+                  className="inline-flex items-center gap-2 text-emerald-700 hover:underline font-medium"
                 >
                   View Full Details
                   <svg

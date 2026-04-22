@@ -297,7 +297,7 @@ export default async function CheaperAlternativesPage({
                         />
                       </div>
                     ) : (
-                      <div className="ml-4 w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-2xl flex-shrink-0">
+                      <div className="ml-4 w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500 text-2xl flex-shrink-0">
                         ⛵
                       </div>
                     )}

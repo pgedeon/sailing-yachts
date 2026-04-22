@@ -133,7 +133,7 @@ export function CompareExport({ yachtIds, yachtNames }: CompareExportProps) {
             </svg>
             <span>Export</span>
             <svg
-              className="w-3 h-3 text-gray-400"
+              className="w-3 h-3 text-gray-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -184,7 +184,7 @@ export function CompareExport({ yachtIds, yachtNames }: CompareExportProps) {
               </svg>
               <div>
                 <div className="font-medium">Download CSV</div>
-                <div className="text-xs text-gray-400">Spreadsheet-friendly</div>
+                <div className="text-xs text-gray-500">Spreadsheet-friendly</div>
               </div>
             </button>
             <div className="border-t border-gray-100" />
@@ -207,7 +207,7 @@ export function CompareExport({ yachtIds, yachtNames }: CompareExportProps) {
               </svg>
               <div>
                 <div className="font-medium">Save as PDF</div>
-                <div className="text-xs text-gray-400">Print-optimized report</div>
+                <div className="text-xs text-gray-500">Print-optimized report</div>
               </div>
             </button>
           </div>

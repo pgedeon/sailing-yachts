@@ -473,7 +473,7 @@ function DashboardRecommendations() {
                         style={{ width: `${Math.round(yacht.score * 100)}%` }}
                       />
                     </div>
-                    <span className="text-xs text-gray-400">{Math.round(yacht.score * 100)}%</span>
+                    <span className="text-xs text-gray-500">{Math.round(yacht.score * 100)}%</span>
                   </div>
                 )}
               </Link>

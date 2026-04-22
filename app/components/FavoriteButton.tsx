@@ -44,7 +44,7 @@ export function FavoriteButton({
       className={`inline-flex items-center justify-center rounded-full transition-all duration-200 ${
         active
           ? "bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600"
-          : "bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-500"
+          : "bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-600"
       } ${sizeClasses[size]} ${className}`}
       aria-label={active ? `Remove ${modelName || slug} from favorites` : `Add ${modelName || slug} to favorites`}
       title={active ? "Remove from favorites" : "Add to favorites"}

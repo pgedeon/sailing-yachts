@@ -57,7 +57,7 @@ export default async function AdminLeadsPage() {
           </thead>
           <tbody className="divide-y">
             {allLeads.length === 0 && (
-              <tr><td colSpan={8} className="px-4 py-8 text-center text-gray-400">No leads yet</td></tr>
+              <tr><td colSpan={8} className="px-4 py-8 text-center text-gray-500">No leads yet</td></tr>
             )}
             {allLeads.map((lead: any) => (
               <tr key={lead.id} className="hover:bg-gray-50">
@@ -73,7 +73,7 @@ export default async function AdminLeadsPage() {
                   {(lead.metadata as any)?.yachtNames?.join(", ") || "—"}
                 </td>
                 <td className="px-4 py-3 text-xs text-gray-500">{lead.source || "—"}</td>
-                <td className="px-4 py-3 text-xs text-gray-400">
+                <td className="px-4 py-3 text-xs text-gray-500">
                   {lead.utmSource ? `${lead.utmSource}${lead.utmMedium ? ` / ${lead.utmMedium}` : ""}` : "—"}
                 </td>
                 <td className="px-4 py-3">

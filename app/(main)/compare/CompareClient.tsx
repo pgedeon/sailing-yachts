@@ -470,7 +470,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
             <h3 className="text-sm font-semibold text-gray-700">Saved Comparisons</h3>
             <button
               onClick={() => setSavedPanelOpen(false)}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-gray-500 hover:text-gray-700 transition-colors"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -478,7 +478,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
             </button>
           </div>
           {savedList.length === 0 ? (
-            <div className="px-4 py-6 text-center text-gray-400 text-sm">
+            <div className="px-4 py-6 text-center text-gray-500 text-sm">
               No saved comparisons yet. Select 2+ yachts and click Save.
             </div>
           ) : (
@@ -552,7 +552,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                     </div>
                     <button
                       onClick={() => removeYacht(id)}
-                      className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                      className="text-gray-500 hover:text-red-600 transition-colors p-1"
                       title="Remove"
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -596,7 +596,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
           {/* Search */}
           <div className="p-3 border-b border-gray-100 bg-gray-50">
             <div className="relative">
-              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
               </svg>
               <input
