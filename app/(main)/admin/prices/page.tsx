@@ -131,7 +131,7 @@ export default async function AdminPricesPage() {
                 </td>
                 <td className="px-4 py-3 text-sm">
                   <div className="text-gray-900">{p.source}</div>
-                  <div className="text-gray-400 text-xs">{p.source_type}</div>
+                  <div className="text-gray-500 text-xs">{p.source_type}</div>
                 </td>
                 <td className="px-4 py-3 text-sm"><ConfidenceBadge score={p.confidence_score} /></td>
                 <td className="px-4 py-3 text-sm"><StatusBadge active={p.is_active} /></td>

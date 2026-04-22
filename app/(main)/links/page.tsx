@@ -44,7 +44,7 @@ export default function LinksPage() {
           >
             <h2 className="text-xl font-semibold text-blue-600 hover:underline">{p.name}</h2>
             <p className="text-gray-600 mt-2">{p.description}</p>
-            <span className="text-sm text-gray-400 mt-2 block">{p.url}</span>
+            <span className="text-sm text-gray-500 mt-2 block">{p.url}</span>
           </a>
         ))}
       </div>

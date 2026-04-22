@@ -76,7 +76,7 @@ export default function AffiliateRecommendations({ categories }: AffiliateRecomm
                       <h4 className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors text-sm sm:text-base">
                         {product.name}
                       </h4>
-                      <ExternalLink className="h-4 w-4 text-gray-400 group-hover:text-blue-600 flex-shrink-0 ml-2" />
+                      <ExternalLink className="h-4 w-4 text-gray-500 group-hover:text-blue-600 flex-shrink-0 ml-2" />
                     </div>
 
                     <p className="text-xs sm:text-sm text-gray-600 mb-2">

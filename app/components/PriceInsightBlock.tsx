@@ -91,7 +91,7 @@ function PriceUnavailableFallback({ status }: { status: "contact" | "unavailable
           <PhoneIcon />
           <span className="font-medium">Contact for price</span>
         </div>
-        <p className="mt-1 text-xs text-gray-400">Pricing available upon request from dealers</p>
+        <p className="mt-1 text-xs text-gray-500">Pricing available upon request from dealers</p>
       </div>
     );
   }
@@ -102,7 +102,7 @@ function PriceUnavailableFallback({ status }: { status: "contact" | "unavailable
         <DashIcon />
         <span className="font-medium">Price not available</span>
       </div>
-      <p className="mt-1 text-xs text-gray-400">No pricing data found for this model</p>
+      <p className="mt-1 text-xs text-gray-500">No pricing data found for this model</p>
     </div>
   );
 }
@@ -169,7 +169,7 @@ function PriceTrendSparkline({ data }: { data: PriceTrendPoint[] }) {
     <div className="mt-3" data-testid="price-trend-chart">
       <div className="flex items-center justify-between mb-1">
         <span className="text-xs text-gray-500">Price History</span>
-        <span className="text-xs text-gray-400">{data.length} data points</span>
+        <span className="text-xs text-gray-500">{data.length} data points</span>
       </div>
       <svg
         viewBox={`0 0 ${width} ${height}`}
@@ -182,7 +182,7 @@ function PriceTrendSparkline({ data }: { data: PriceTrendPoint[] }) {
         <polyline points={lineMin} fill="none" stroke="currentColor" className="text-primary" strokeWidth="1.5" />
         <polyline points={lineMax} fill="none" stroke="currentColor" className="text-primary/50" strokeWidth="1" strokeDasharray="2,2" />
       </svg>
-      <div className="flex justify-between text-xs text-gray-400 mt-0.5">
+      <div className="flex justify-between text-xs text-gray-500 mt-0.5">
         <span>{data[0]?.date}</span>
         <span>{data[data.length - 1]?.date}</span>
       </div>
@@ -211,7 +211,7 @@ function PriceRow({
         <span className="text-sm font-bold text-gray-900">
           {formatPriceRange(priceRange.min, priceRange.max, priceRange.currency)}
         </span>
-        <div className="text-xs text-gray-400">
+        <div className="text-xs text-gray-500">
           {priceRange.sources} source{priceRange.sources !== 1 ? "s" : ""}
         </div>
       </div>
@@ -420,10 +420,10 @@ export function PriceInsightBlock({
 
       {/* Footer */}
       <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-100">
-        <span className="text-xs text-gray-400">
+        <span className="text-xs text-gray-500">
           Prices normalized to {currency}
         </span>
-        <span className="text-xs text-gray-400">
+        <span className="text-xs text-gray-500">
           {displayInfo.confidenceLabel}
         </span>
       </div>

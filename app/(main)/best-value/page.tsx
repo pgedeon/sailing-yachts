@@ -84,7 +84,7 @@ export default function BestValueIndexPage() {
                 <p className="text-sm text-gray-600 mb-3">
                   {cat.description}
                 </p>
-                <span className="text-xs text-emerald-600 font-medium">
+                <span className="text-xs text-emerald-700 font-medium">
                   View {cat.yachtCount} yachts →
                 </span>
               </Link>

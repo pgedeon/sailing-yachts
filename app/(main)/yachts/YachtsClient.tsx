@@ -413,7 +413,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
           <div className="bg-white rounded-lg p-5 sm:p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-start">
               <h2 className="text-xl sm:text-2xl font-bold pr-4">{selectedYacht.manufacturer} {selectedYacht.modelName}</h2>
-              <button onClick={closeModal} className="text-gray-400 hover:text-gray-700 text-2xl leading-none flex-shrink-0">&times;</button>
+              <button onClick={closeModal} className="text-gray-500 hover:text-gray-700 text-2xl leading-none flex-shrink-0">&times;</button>
             </div>
             <p className="text-gray-600 mb-4">{selectedYacht.year ?? ''}</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">

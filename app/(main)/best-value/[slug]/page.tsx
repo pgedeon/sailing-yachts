@@ -397,7 +397,7 @@ export default async function BestValuePage({
                               ? "bg-gray-100 text-gray-600"
                               : index === 2
                                 ? "bg-amber-100 text-amber-700"
-                                : "bg-gray-50 text-gray-400"
+                                : "bg-gray-50 text-gray-600"
                         }`}
                       >
                         {index + 1}
@@ -413,7 +413,7 @@ export default async function BestValuePage({
                           />
                         </div>
                       ) : (
-                        <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-2xl flex-shrink-0">
+                        <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500 text-2xl flex-shrink-0">
                           ⛵
                         </div>
                       )}
@@ -526,7 +526,7 @@ export default async function BestValuePage({
                             )}
                           </span>
                           {yacht.lengthOverall && yacht.priceMin && (
-                            <span className="text-gray-400 ml-2">
+                            <span className="text-gray-500 ml-2">
                               (~
                               {new Intl.NumberFormat("en-US", {
                                 style: "currency",

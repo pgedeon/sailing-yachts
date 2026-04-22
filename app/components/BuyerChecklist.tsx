@@ -115,7 +115,7 @@ export function BuyerChecklist({ yachtIds, yachtNames }: BuyerChecklistProps) {
             </button>
             <button
               onClick={() => setShowAuthHint(false)}
-              className="text-sm text-gray-400 hover:text-gray-600"
+              className="text-sm text-gray-500 hover:text-gray-700"
             >
               Dismiss
             </button>
@@ -170,7 +170,7 @@ export function BuyerChecklist({ yachtIds, yachtNames }: BuyerChecklistProps) {
                       <span
                         className={`text-sm ${
                           item.checked
-                            ? "text-gray-400 line-through"
+                            ? "text-gray-500 line-through"
                             : "text-gray-700"
                         }`}
                       >

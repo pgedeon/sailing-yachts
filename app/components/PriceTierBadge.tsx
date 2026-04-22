@@ -41,12 +41,12 @@ export function PriceTierDetail({ info }: PriceTierDetailProps) {
       <ul className="space-y-1">
         {info.reasons.map((reason, i) => (
           <li key={i} className="text-sm text-gray-600 flex items-start gap-1.5">
-            <span className="text-gray-400 mt-0.5">•</span>
+            <span className="text-gray-500 mt-0.5">•</span>
             {reason}
           </li>
         ))}
       </ul>
-      <p className="text-xs text-gray-400 mt-3 italic">
+      <p className="text-xs text-gray-500 mt-3 italic">
         Estimate based on yacht specifications. Actual prices vary by market, condition, and equipment.
       </p>
     </div>
