@@ -146,7 +146,7 @@ export default async function GlossaryPage() {
                             {term.term}
                           </h3>
                           {term.aliases && term.aliases.length > 0 && (
-                            <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">
+                            <span className="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded">
                               {term.aliases.length} alt
                             </span>
                           )}

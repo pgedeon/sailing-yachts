@@ -147,7 +147,7 @@ export default async function GlossaryTermPage({ params }: GlossaryTermPageProps
                   <p className="mt-2 text-sm text-gray-600 line-clamp-2">
                     {related.definition}
                   </p>
-                  <p className="mt-2 text-xs text-gray-400">{related.category}</p>
+                  <p className="mt-2 text-xs text-gray-500">{related.category}</p>
                 </Link>
               ))}
             </div>

@@ -38,6 +38,7 @@
     "web-vitals": "^5.2.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.2",
     "@lhci/cli": "^0.12.x",
     "@playwright/test": "^1.58.2",
     "@types/bcryptjs": "^2.4.6",

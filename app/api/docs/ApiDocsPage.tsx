@@ -33,7 +33,7 @@ function methodBadge(method: string) {
     DELETE: 'bg-red-100 text-red-800',
   };
   return (
-    <span className={`px-2 py-0.5 rounded text-xs font-bold tracking-wide ${colors[method] || 'bg-gray-100 text-gray-800'}`}>
+    <span className={`px-2 py-0.5 rounded text-xs font-bold tracking-wide ${colors[method] || 'bg-gray-200 text-gray-800'}`}>
       {method}
     </span>
   );
@@ -89,15 +89,15 @@ function SchemaTable({ schema, depth = 0 }: { schema: any; depth?: number }) {
                   <span dangerouslySetInnerHTML={{ __html: typeLabel }} />
                 </td>
                 <td className="py-1 pr-4">
-                  {required ? <span className="text-red-500 text-xs font-bold">✓</span> : <span className="text-gray-400 text-xs">—</span>}
+                  {required ? <span className="text-red-500 text-xs font-bold">✓</span> : <span className="text-gray-500 text-xs">—</span>}
                 </td>
                 <td className="py-1 text-gray-500 text-xs">
                   {prop.description || ''}
-                  {prop.example && <span className="ml-1 text-gray-400">(e.g. {JSON.stringify(prop.example)})</span>}
-                  {prop.default !== undefined && <span className="ml-1 text-gray-400">(default: {JSON.stringify(prop.default)})</span>}
-                  {prop.minimum !== undefined && <span className="ml-1 text-gray-400">(min: {prop.minimum})</span>}
-                  {prop.maximum !== undefined && <span className="ml-1 text-gray-400">(max: {prop.maximum})</span>}
-                  {prop.minLength !== undefined && <span className="ml-1 text-gray-400">(min length: {prop.minLength})</span>}
+                  {prop.example && <span className="ml-1 text-gray-500">(e.g. {JSON.stringify(prop.example)})</span>}
+                  {prop.default !== undefined && <span className="ml-1 text-gray-500">(default: {JSON.stringify(prop.default)})</span>}
+                  {prop.minimum !== undefined && <span className="ml-1 text-gray-500">(min: {prop.minimum})</span>}
+                  {prop.maximum !== undefined && <span className="ml-1 text-gray-500">(max: {prop.maximum})</span>}
+                  {prop.minLength !== undefined && <span className="ml-1 text-gray-500">(min length: {prop.minLength})</span>}
                 </td>
               </tr>
             );
@@ -221,7 +221,7 @@ function TryIt({ path, method }: { path: string; method: string }) {
                     className="flex-1 border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
                   />
                   {p.schema?.default !== undefined && (
-                    <span className="text-xs text-gray-400">default: {JSON.stringify(p.schema.default)}</span>
+                    <span className="text-xs text-gray-500">default: {JSON.stringify(p.schema.default)}</span>
                   )}
                 </div>
               ))}
@@ -277,7 +277,7 @@ function EndpointCard({
         {methodBadge(method)}
         <code className="text-sm font-mono text-gray-800 flex-1">{path}</code>
         <span className="text-sm text-gray-500">{spec.summary}</span>
-        <span className="text-gray-400">{expanded ? '▲' : '▼'}</span>
+        <span className="text-gray-500">{expanded ? '▲' : '▼'}</span>
       </button>
 
       {expanded && (
@@ -311,11 +311,11 @@ function EndpointCard({
                       <tr key={p.name + p.in} className="border-b border-gray-100">
                         <td className="py-1 pr-3 font-mono text-xs text-blue-700">{p.name}</td>
                         <td className="py-1 pr-3 text-xs text-gray-500">{p.in}</td>
-                        <td className="py-1 pr-3">{p.required ? <span className="text-red-500 text-xs font-bold">yes</span> : <span className="text-gray-400 text-xs">no</span>}</td>
+                        <td className="py-1 pr-3">{p.required ? <span className="text-red-500 text-xs font-bold">yes</span> : <span className="text-gray-500 text-xs">no</span>}</td>
                         <td className="py-1 pr-3 text-xs text-gray-600">{p.schema?.type || 'string'}</td>
                         <td className="py-1 text-xs text-gray-500">
                           {p.description}
-                          {p.example && <span className="ml-1 text-gray-400">(e.g. {JSON.stringify(p.example)})</span>}
+                          {p.example && <span className="ml-1 text-gray-500">(e.g. {JSON.stringify(p.example)})</span>}
                         </td>
                       </tr>
                     ))}
@@ -459,7 +459,7 @@ export default function ApiDocsPage() {
         <p className="text-gray-600">{openApiSpec.info.description}</p>
         <div className="mt-3 flex items-center gap-4 text-sm">
           <span className="text-gray-500">
-            Base URL: <code className="bg-gray-100 px-2 py-0.5 rounded text-xs">{BASE_URL}</code>
+            Base URL: <code className="bg-gray-200 px-2 py-0.5 rounded text-xs text-gray-800">{BASE_URL}</code>
           </span>
           <a
             href="/api/v1/openapi.json"
@@ -484,7 +484,7 @@ export default function ApiDocsPage() {
         <div className="border border-green-200 bg-green-50 rounded-lg p-4">
           <h3 className="font-semibold text-green-800 mb-1">Response Format</h3>
           <p className="text-sm text-green-700">JSON with CORS headers</p>
-          <p className="text-xs text-green-600 mt-1">
+          <p className="text-xs text-green-800 mt-1">
             Envelope: <code>{'{ "data": [...], "meta": {...} }'}</code>
           </p>
         </div>
@@ -592,7 +592,7 @@ export default function ApiDocsPage() {
       </div>
 
       {/* Footer */}
-      <div className="mt-12 pt-6 border-t border-gray-200 text-center text-xs text-gray-400">
+      <div className="mt-12 pt-6 border-t border-gray-200 text-center text-xs text-gray-500">
         <p>
           Generated from{' '}
           <a href="/api/v1/openapi.json" className="text-blue-500 hover:underline">

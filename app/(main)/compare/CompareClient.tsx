@@ -490,7 +490,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                     className="flex-1 text-left min-w-0"
                   >
                     <div className="text-sm font-medium text-gray-800 truncate">{sc.name}</div>
-                    <div className="text-xs text-gray-400 mt-0.5">
+                    <div className="text-xs text-gray-500 mt-0.5">
                       {sc.yachtIds.length} yachts · {new Date(sc.createdAt).toLocaleDateString()}
                     </div>
                   </button>
@@ -563,7 +563,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                 ) : (
                   <button
                     onClick={() => setPickerOpen(true)}
-                    className="w-full text-center py-3 text-gray-400 hover:text-blue-600 transition-colors"
+                    className="w-full text-center py-3 text-gray-500 hover:text-blue-600 transition-colors"
                   >
                     <svg className="w-6 h-6 mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -613,9 +613,9 @@ export function CompareClient({ initialIds }: CompareClientProps) {
           {/* Scrollable List */}
           <div className="max-h-64 overflow-y-auto overscroll-contain">
             {loadingOptions ? (
-              <div className="p-6 text-center text-gray-400 text-sm">Loading yachts...</div>
+              <div className="p-6 text-center text-gray-500 text-sm">Loading yachts...</div>
             ) : groupedYachts.length === 0 ? (
-              <div className="p-6 text-center text-gray-400 text-sm">No yachts match your search.</div>
+              <div className="p-6 text-center text-gray-500 text-sm">No yachts match your search.</div>
             ) : (
               groupedYachts.map(([manufacturer, yachtsList]) => (
                 <div key={manufacturer}>
@@ -649,7 +649,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                         </div>
                         <div className="flex-1 min-w-0">
                           <span className="font-medium">{y.modelName}</span>
-                          <span className="text-gray-400 ml-2">
+                          <span className="text-gray-500 ml-2">
                             {y.year ?? '—'} · {y.lengthOverall ? `${y.lengthOverall}m` : '—'}
                           </span>
                         </div>
@@ -668,7 +668,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
 
           {/* Footer */}
           <div className="p-3 border-t border-gray-100 bg-gray-50 flex items-center justify-between">
-            <span className="text-xs text-gray-400">{selectedIds.length}/{MAX_COMPARE} selected</span>
+            <span className="text-xs text-gray-500">{selectedIds.length}/{MAX_COMPARE} selected</span>
             <button
               onClick={() => setPickerOpen(false)}
               className="text-sm text-blue-600 hover:text-blue-800 font-medium"
@@ -681,7 +681,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
 
       {/* Prompt when nothing selected */}
       {selectedIds.length === 0 && !pickerOpen && (
-        <div className="text-center py-16 text-gray-400">
+        <div className="text-center py-16 text-gray-500">
           <svg className="w-16 h-16 mx-auto mb-4 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
           </svg>
@@ -763,7 +763,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                         <tr key={field.key} className="hover:bg-gray-50/50 transition-colors">
                           <td className="px-5 py-3 text-gray-600 font-medium whitespace-nowrap sticky left-0 bg-white z-10">
                             {field.label}
-                            {field.unit && <span className="text-gray-400 ml-1 text-xs">({field.unit})</span>}
+                            {field.unit && <span className="text-gray-500 ml-1 text-xs">({field.unit})</span>}
                           </td>
                           {yachts.map((yacht) => {
                             const value = yacht[field.key] as any;
@@ -786,7 +786,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                         <tr key={`extra-${dg.group}-${row.name}`} className="hover:bg-gray-50/50 transition-colors">
                           <td className="px-5 py-3 text-gray-600 font-medium whitespace-nowrap sticky left-0 bg-white z-10">
                             {row.name}
-                            {row.unit && <span className="text-gray-400 ml-1 text-xs">({row.unit})</span>}
+                            {row.unit && <span className="text-gray-500 ml-1 text-xs">({row.unit})</span>}
                           </td>
                           {yachts.map((yacht, yi) => (
                             <td key={yacht.id} className="px-5 py-3 whitespace-nowrap text-gray-700">
@@ -832,9 +832,9 @@ export function CompareClient({ initialIds }: CompareClientProps) {
               </tbody>
             </table>
           </div>
-          <div className="px-5 py-2.5 bg-gray-50 border-t text-xs text-gray-400 flex items-center justify-between">
+          <div className="px-5 py-2.5 bg-gray-50 border-t text-xs text-gray-500 flex items-center justify-between">
             <span><span className="font-semibold text-green-600">Green</span> = best value in row</span>
-            <span className="md:hidden text-gray-400">← Swipe to see more →</span>
+            <span className="md:hidden text-gray-500">← Swipe to see more →</span>
           </div>
           <script dangerouslySetInnerHTML={{ __html: `
             (function() {

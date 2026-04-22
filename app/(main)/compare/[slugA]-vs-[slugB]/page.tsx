@@ -190,7 +190,7 @@ export default async function CanonicalComparePage({
                         {fullNameA}
                       </Link>
                       {yachtA.year && (
-                        <div className="text-xs text-gray-400 mt-1">{yachtA.year}</div>
+                        <div className="text-xs text-gray-500 mt-1">{yachtA.year}</div>
                       )}
                     </th>
                     <th className="px-6 py-4 text-left min-w-[200px]">
@@ -201,7 +201,7 @@ export default async function CanonicalComparePage({
                         {fullNameB}
                       </Link>
                       {yachtB.year && (
-                        <div className="text-xs text-gray-400 mt-1">{yachtB.year}</div>
+                        <div className="text-xs text-gray-500 mt-1">{yachtB.year}</div>
                       )}
                     </th>
                   </tr>

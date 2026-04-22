@@ -393,7 +393,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
                 {totalPages > 1 && (
                   <div className="mt-6 flex items-center justify-between text-sm">
                     <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="px-4 py-2 border rounded-lg disabled:opacity-50 hover:bg-gray-50 transition-colors">Previous</button>
-                    <span className="text-gray-600">Page {page} of {totalPages} <span className="text-gray-400">({total} total)</span></span>
+                    <span className="text-gray-600">Page {page} of {totalPages} <span className="text-gray-500">({total} total)</span></span>
                     <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="px-4 py-2 border rounded-lg disabled:opacity-50 hover:bg-gray-50 transition-colors">Next</button>
                   </div>
                 )}
