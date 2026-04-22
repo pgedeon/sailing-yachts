@@ -281,7 +281,7 @@ export default async function GuidesPage() {
                               <span className="text-sm text-gray-600">
                                 {article.author}
                                 {article.authorTitle && (
-                                  <span className="text-gray-400">
+                                  <span className="text-gray-500">
                                     {" "}
                                     · {article.authorTitle}
                                   </span>

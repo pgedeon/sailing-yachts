@@ -423,7 +423,7 @@ export default async function BestValuePage({
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                         <div>
-                          <div className="text-sm text-emerald-600 font-medium">
+                          <div className="text-sm text-emerald-700 font-medium">
                             {yacht.manufacturer}
                           </div>
                           <h3 className="font-semibold text-gray-900 text-lg group-hover:text-emerald-600 transition">
@@ -442,7 +442,7 @@ export default async function BestValuePage({
                             <div className="text-xs text-gray-500 uppercase tracking-wide">
                               Value Score
                             </div>
-                            <div className="text-2xl font-bold text-emerald-600">
+                            <div className="text-2xl font-bold text-emerald-700">
                               {yacht.valueScore}
                             </div>
                           </div>

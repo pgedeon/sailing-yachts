@@ -227,7 +227,7 @@ export default async function Home() {
               ) : (
                 <div className="col-span-full text-center py-8">
                   <div className="text-gray-500">Building yacht database...</div>
-                  <div className="text-sm text-gray-400 mt-1">Featured yachts will appear here once deployment completes.</div>
+                  <div className="text-sm text-gray-500 mt-1">Featured yachts will appear here once deployment completes.</div>
                 </div>
               )}
             </div>
@@ -263,7 +263,7 @@ export default async function Home() {
               ) : (
                 <div className="col-span-full text-center py-8">
                   <div className="text-gray-500">Building manufacturer database...</div>
-                  <div className="text-sm text-gray-400 mt-1">Popular manufacturers will appear here once deployment completes.</div>
+                  <div className="text-sm text-gray-500 mt-1">Popular manufacturers will appear here once deployment completes.</div>
                 </div>
               )}
             </div>
@@ -325,7 +325,7 @@ export default async function Home() {
             <p className="text-gray-300 mb-8">Search the database or compare boats side by side.</p>
             <Link
               href="/yachts"
-              className="inline-block px-8 py-4 bg-blue-500 text-white rounded-lg font-semibold text-lg hover:bg-blue-400 transition"
+              className="inline-block px-8 py-4 bg-blue-700 text-white rounded-lg font-semibold text-lg hover:bg-blue-600 transition"
             >
               Browse All Yachts
             </Link>
