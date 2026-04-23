@@ -211,7 +211,8 @@ export const authOptions: NextAuthOptions = {
         return false
       }
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
+      // On sign-in, populate from DB
       if (user?.email) {
         const normalizedEmail = user.email.trim().toLowerCase()
         try {
@@ -229,22 +230,23 @@ export const authOptions: NextAuthOptions = {
         }
       }
 
-      if ((!token.role || !token.sub) && token.email) {
+      // Always refresh role from DB on session access to catch role changes
+      if (token.email) {
         try {
-          const dbUser = await findUserByEmail(token.email)
+          const dbUser = await findUserByEmail(token.email as string)
           if (dbUser) {
             token.sub = String(dbUser.id)
             token.role = dbUser.role
             token.name = dbUser.name ?? token.name
             token.picture = dbUser.image ?? token.picture ?? null
+            // Deactivate sessions for disabled users
+            if (!dbUser.isActive) {
+              return { ...token, role: "disabled" }
+            }
           }
         } catch (error) {
           console.error("[auth] JWT refresh error:", error)
         }
-      }
-
-      if (user?.role) {
-        token.role = user.role
       }
 
       return token
