@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { generateYachtsListMetadata, generateBreadcrumbJsonLd, generateCollectionPageJsonLd, getSiteUrl } from "@/lib/seo";
 import { Suspense } from "react";
-import YachtsClient from "./YachtsClient";
+import dynamic from "next/dynamic";
+const YachtsClient = dynamic(() => import("./YachtsClient"), { ssr: false, loading: () => null });
 import { shouldNoindexYachtsPage, generateYachtsPageCanonical } from "@/lib/thin-page-governance";
 import { getYachtsListing, getFilterOptions, type YachtsListingResult, type FilterOptions } from "@/lib/yachts";
 
