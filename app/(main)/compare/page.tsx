@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { generateCompareMetadata, generateBreadcrumbJsonLd, getSiteUrl } from "@/lib/seo";
-import { CompareClient } from "./CompareClient";
+import dynamic from "next/dynamic";
+const CompareClient = dynamic(() => import("./CompareClient").then(m => ({ default: m.CompareClient })), { ssr: false, loading: () => null });
 import { shouldNoindexComparePage } from "@/lib/thin-page-governance";
 
 interface ComparePageParams {

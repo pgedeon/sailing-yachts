@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { generateBreadcrumbJsonLd, getSiteUrl } from "@/lib/seo";
-import { SearchClient } from "./SearchClient";
+import dynamic from "next/dynamic";
+const SearchClient = dynamic(() => import("./SearchClient").then(m => ({ default: m.SearchClient })), { ssr: false, loading: () => null });
 import { shouldNoindexSearchPage } from "@/lib/thin-page-governance";
 
 /**
