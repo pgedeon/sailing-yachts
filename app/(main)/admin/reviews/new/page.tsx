@@ -1,4 +1,5 @@
-import { cookies, headers } from 'next/headers'
+import { requireAdmin } from '@/lib/admin-auth'
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import NewReviewForm from './NewReviewForm'
@@ -6,10 +7,7 @@ import NewReviewForm from './NewReviewForm'
 export const dynamic = 'force-dynamic'
 
 export default async function AdminNewReviewPage() {
-  const authCookie = cookies().get('auth')?.value
-  if (!authCookie) {
-    redirect('/admin')
-  }
+  await requireAdmin()
 
   let yachts: any[] = []
   let fetchError: string | null = null

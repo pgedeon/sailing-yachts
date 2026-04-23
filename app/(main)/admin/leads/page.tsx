@@ -1,3 +1,4 @@
+import { requireAdmin } from '@/lib/admin-auth'
 export const dynamic = 'force-dynamic';
 
 import { db, leads } from "@/lib/db";
@@ -14,6 +15,7 @@ async function getLeads() {
 }
 
 export default async function AdminLeadsPage() {
+  await requireAdmin()
   const allLeads = await getLeads();
 
   const statusColors: Record<string, string> = {

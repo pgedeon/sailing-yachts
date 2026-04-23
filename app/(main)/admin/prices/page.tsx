@@ -1,3 +1,4 @@
+import { requireAdmin } from '@/lib/admin-auth'
 export const dynamic = 'force-dynamic';
 
 import { pool } from "@/lib/db";
@@ -49,6 +50,7 @@ function formatPrice(amount: number | string, currency: string) {
 }
 
 export default async function AdminPricesPage() {
+  await requireAdmin()
   const [prices, stats] = await Promise.all([getPrices(), getStats()]);
 
   return (

@@ -1,14 +1,12 @@
-import { cookies, headers } from 'next/headers'
+import { requireAdmin } from '@/lib/admin-auth'
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic' // Disable static generation
 
 export default async function AdminManufacturersPage() {
-  const authCookie = cookies().get('auth')?.value
-  if (!authCookie) {
-    redirect('/admin')
-  }
+  await requireAdmin()
 
   let manufacturers: any[] = []
   let errorMsg: string | null = null

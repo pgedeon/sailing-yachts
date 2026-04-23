@@ -1,4 +1,5 @@
-import { cookies, headers } from 'next/headers'
+import { requireAdmin } from '@/lib/admin-auth'
+import { headers } from 'next/headers'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import EditReviewForm from './EditReviewForm'
@@ -10,10 +11,7 @@ export default async function AdminEditReviewPage({
 }: {
   params: Promise<{ id: string }>
 }) {
-  const authCookie = cookies().get('auth')?.value
-  if (!authCookie) {
-    redirect('/admin')
-  }
+  await requireAdmin()
 
   const { id } = await params
   let review: any = null
