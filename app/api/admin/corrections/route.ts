@@ -16,14 +16,7 @@ function toNum(v: string | number | null | undefined): number | null {
  */
 export async function GET(request: NextRequest) {
   const cookieStore = cookies();
-  const authCookie = cookieStore.get("auth")?.value;
 
-  if (!authCookie) {
-    return NextResponse.json(
-      { error: "Unauthorized - Admin access required" },
-      { status: 401 },
-    );
-  }
 
   try {
     const { searchParams } = new URL(request.url);

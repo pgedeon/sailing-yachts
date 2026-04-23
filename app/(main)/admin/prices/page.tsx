@@ -72,10 +72,7 @@ export default async function AdminPricesPage() {
           <button
             id="add-price-btn"
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-            onClick={() => {
-              const modal = document.getElementById('add-price-modal');
-              if (modal) modal.classList.remove('hidden');
-            }}
+data-action="add-price"
           >
             ➕ Add Price
           </button>
@@ -241,7 +238,7 @@ export default async function AdminPricesPage() {
               <button
                 type="button"
                 className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-                onClick={() => document.getElementById('add-price-modal')?.classList.add('hidden')}
+data-action="cancel-price"
               >
                 Cancel
               </button>
@@ -256,6 +253,18 @@ export default async function AdminPricesPage() {
       {/* Client-side interactivity */}
       <script dangerouslySetInnerHTML={{ __html: `
         document.addEventListener('DOMContentLoaded', function() {
+          // Add price button
+          var addBtn = document.getElementById('add-price-btn');
+          if (addBtn) addBtn.addEventListener('click', function() {
+            var modal = document.getElementById('add-price-modal');
+            if (modal) modal.classList.remove('hidden');
+          });
+          // Cancel button
+          var cancelBtn = document.querySelector('[data-action="cancel-price"]');
+          if (cancelBtn) cancelBtn.addEventListener('click', function() {
+            var modal = document.getElementById('add-price-modal');
+            if (modal) modal.classList.add('hidden');
+          });
           // Toggle active status
           document.querySelectorAll('[data-action="toggle"]').forEach(function(btn) {
             btn.addEventListener('click', function() {

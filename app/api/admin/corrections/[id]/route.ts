@@ -46,14 +46,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const cookieStore = cookies();
-  const authCookie = cookieStore.get("auth")?.value;
 
-  if (!authCookie) {
-    return NextResponse.json(
-      { error: "Unauthorized - Admin access required" },
-      { status: 401 },
-    );
-  }
 
   try {
     const { id } = await params;
@@ -91,14 +84,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const cookieStore = cookies();
-  const authCookie = cookieStore.get("auth")?.value;
 
-  if (!authCookie) {
-    return NextResponse.json(
-      { error: "Unauthorized - Admin access required" },
-      { status: 401 },
-    );
-  }
 
   try {
     const { id } = await params;
@@ -228,14 +214,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const cookieStore = cookies();
-  const authCookie = cookieStore.get("auth")?.value;
 
-  if (!authCookie) {
-    return NextResponse.json(
-      { error: "Unauthorized - Admin access required" },
-      { status: 401 },
-    );
-  }
 
   try {
     const { id } = await params;

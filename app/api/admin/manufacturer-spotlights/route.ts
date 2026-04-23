@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
 import { ensureSchema } from '@/lib/db'
 import { revalidateTag } from 'next/cache'
 import {
@@ -17,15 +16,6 @@ function revalidateSpotlightTags(spotlight: Pick<ManufacturerSpotlight, 'slug' |
 }
 
 export async function GET(request: Request) {
-  const cookieStore = cookies()
-  const authCookie = cookieStore.get('auth')?.value
-
-  if (!authCookie) {
-    return NextResponse.json(
-      { error: "Unauthorized - Admin access required" },
-      { status: 401 }
-    )
-  }
 
   try {
     await ensureSchema()
@@ -41,15 +31,6 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const cookieStore = cookies()
-  const authCookie = cookieStore.get('auth')?.value
-
-  if (!authCookie) {
-    return NextResponse.json(
-      { error: "Unauthorized - Admin access required" },
-      { status: 401 }
-    )
-  }
 
   try {
     await ensureSchema()

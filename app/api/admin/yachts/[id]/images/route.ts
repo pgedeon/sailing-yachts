@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
 import { ensureSchema, pool } from '@/lib/db'
 import { revalidateTag } from 'next/cache'
 import { writeFile } from 'fs/promises'
@@ -19,15 +18,6 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const cookieStore = cookies()
-  const authCookie = cookieStore.get('auth')?.value
-
-  if (!authCookie) {
-    return NextResponse.json(
-      { error: "Unauthorized - Admin access required" },
-      { status: 401 }
-    )
-  }
 
   try {
     await ensureSchema()
@@ -81,15 +71,6 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const cookieStore = cookies()
-  const authCookie = cookieStore.get('auth')?.value
-
-  if (!authCookie) {
-    return NextResponse.json(
-      { error: "Unauthorized - Admin access required" },
-      { status: 401 }
-    )
-  }
 
   try {
     await ensureSchema()
@@ -216,15 +197,6 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const cookieStore = cookies()
-  const authCookie = cookieStore.get('auth')?.value
-
-  if (!authCookie) {
-    return NextResponse.json(
-      { error: "Unauthorized - Admin access required" },
-      { status: 401 }
-    )
-  }
 
   try {
     await ensureSchema()

@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
 import { ensureSchema, pool } from '@/lib/db'
 
 function parseId(id: string) {
@@ -11,15 +10,6 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const cookieStore = cookies()
-  const authCookie = cookieStore.get('auth')?.value
-
-  if (!authCookie) {
-    return NextResponse.json(
-      { error: "Unauthorized - Admin access required" },
-      { status: 401 }
-    )
-  }
 
   const { id } = await params
   const manufacturerId = parseId(id)

@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
 import { ensureSchema, pool } from '@/lib/db'
 import { revalidateTag } from 'next/cache'
 import { mapYachtToListDto } from '@/lib/mappers/yacht'
@@ -89,15 +88,6 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const cookieStore = cookies()
-  const authCookie = cookieStore.get('auth')?.value
-
-  if (!authCookie) {
-    return NextResponse.json(
-      { error: "Unauthorized - Admin access required" },
-      { status: 401 }
-    )
-  }
 
   const { id } = await params
   const yachtId = parseId(id)
@@ -126,15 +116,6 @@ export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const cookieStore = cookies()
-  const authCookie = cookieStore.get('auth')?.value
-
-  if (!authCookie) {
-    return NextResponse.json(
-      { error: "Unauthorized - Admin access required" },
-      { status: 401 }
-    )
-  }
 
   const { id } = await params
   const yachtId = parseId(id)
@@ -253,15 +234,6 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const cookieStore = cookies()
-  const authCookie = cookieStore.get('auth')?.value
-
-  if (!authCookie) {
-    return NextResponse.json(
-      { error: "Unauthorized - Admin access required" },
-      { status: 401 }
-    )
-  }
 
   const { id } = await params
   const yachtId = parseId(id)
