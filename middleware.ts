@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { getToken } from 'next-auth/jwt'
 import { checkLoginRateLimit, getClientIp } from '@/lib/rate-limit'
 
 export async function middleware(request: NextRequest) {
@@ -18,35 +17,9 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // ── Protect admin API routes (except auth and login/logout) ──
-  if (pathname.startsWith('/api/admin/') && 
-      !pathname.startsWith('/api/auth/') &&
-      pathname !== '/api/admin/login' && 
-      pathname !== '/api/admin/logout' &&
-      pathname !== '/api/admin/audit-logs') {
-    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
-    
-    if (!token || token.role !== 'admin') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-  }
+  // Admin API routes are protected by requireAdmin() in page components
 
-  // ── Protect audit-logs endpoint (admin only) ──
-  if (pathname === '/api/admin/audit-logs') {
-    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
-    if (!token || token.role !== 'admin') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-  }
-
-  // ── Protect admin page routes ──
-  if (pathname.startsWith('/admin') && pathname !== '/admin') {
-    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
-    
-    if (!token || token.role !== 'admin') {
-      return NextResponse.redirect(new URL('/admin', request.url))
-    }
-  }
+  // Admin page routes are protected by requireAdmin() in each page component
 
   return NextResponse.next()
 }
