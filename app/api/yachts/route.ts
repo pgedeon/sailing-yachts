@@ -25,44 +25,6 @@ const getCachedFilterOptions = cached(
   CACHE_TTL.FILTER_OPTIONS,
 );
 
-// ─── Cached: yacht list query ────────────────────────────────────────
-function getCachedYachts(
-  whereClause: string,
-  params: any[],
-  safeSort: string,
-  sortOrder: string,
-  limit: number,
-  offset: number,
-  fields: string,
-  cacheKey: string,
-) {
-  return cached(
-    async (
-      _where: string,
-      _params: any[],
-      _sort: string,
-      _order: string,
-      _limit: number,
-      _offset: number,
-      _fields: string,
-    ) => {
-      const [countResult, dataResult] = await Promise.all([
-        pool.query(`SELECT COUNT(*)::int as count FROM yacht_models y ${_where}`, _params),
-        pool.query(
-          `SELECT ${_fields} FROM yacht_models y LEFT JOIN manufacturers m ON y.manufacturer_id = m.id ${_where} ORDER BY y.${_sort} ${_order} LIMIT $${_params.length + 1} OFFSET $${_params.length + 2}`,
-          [..._params, _limit, _offset],
-        ),
-      ]);
-
-      const total = countResult.rows[0]?.count || 0;
-      return { rows: dataResult.rows, total };
-    },
-    [cacheKey],
-    [CACHE_TAGS.YACHTS],
-    CACHE_TTL.YACHT_LIST,
-  )(whereClause, params, safeSort, sortOrder, limit, offset, fields);
-}
-
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -132,19 +94,20 @@ export async function GET(request: Request) {
     const offset = (page - 1) * limit;
     const fields = view === 'list' ? LIST_FIELDS : ALL_FIELDS;
 
-    // Generate deterministic cache key from all inputs
-    const cacheKey = `yachts-${whereClause}-${params.join(',')}-${safeSort}-${sortOrder}-${limit}-${offset}-${view}`;
-
-    // Run data query + filter options in parallel (both cached)
-    const [dataResult, distinct] = await Promise.all([
-      getCachedYachts(whereClause, params, safeSort, sortOrder, limit, offset, fields, cacheKey),
+    // Run count + data + filter options in parallel
+    const [countResult, dataResult, distinct] = await Promise.all([
+      pool.query(`SELECT COUNT(*)::int as count FROM yacht_models y ${whereClause}`, params),
+      pool.query(
+        `SELECT ${fields} FROM yacht_models y LEFT JOIN manufacturers m ON y.manufacturer_id = m.id ${whereClause} ORDER BY y.${safeSort} ${sortOrder} LIMIT $${paramIdx++} OFFSET $${paramIdx++}`,
+        [...params, limit, offset],
+      ),
       getCachedFilterOptions(),
     ]);
 
-    const { rows, total } = dataResult;
+    const total = countResult.rows[0]?.count || 0;
 
     // Map results — use lighter mapping for list view
-    const yachts = rows.map((row: any) => view === 'list' ? {
+    const yachts = dataResult.rows.map((row: any) => view === 'list' ? {
       id: row.id,
       manufacturer: row.manufacturer_name ?? '',
       modelName: row.model_name,
@@ -190,7 +153,6 @@ export async function GET(request: Request) {
       updatedAt: row.updated_at ?? undefined,
     });
 
-    // Set cache headers for CDN/Vercel edge
     const response = NextResponse.json({
       yachts,
       total,

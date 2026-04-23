@@ -12,7 +12,6 @@ vi.mock('@/lib/db', () => ({
   pool: { query: (...args: any[]) => mockQuery(...args) },
 }));
 
-// Import after mocks
 import { GET as yachtsGET } from '../app/api/yachts/route';
 import { GET as searchGET } from '../app/api/search/route';
 
@@ -27,27 +26,27 @@ describe('Yachts API - Performance optimizations', () => {
 
   it('should return list view with fewer fields', async () => {
     mockQuery
-      .mockResolvedValueOnce({ rows: [{ count: 1 }] })
-      .mockResolvedValueOnce({
+      .mockResolvedValueOnce({ rows: [{ count: 1 }] })       // count
+      .mockResolvedValueOnce({                                 // data (list fields only)
         rows: [{
-          id: 1,
-          model_name: 'Test',
-          slug: 'test',
-          manufacturer_name: 'Mfg',
-          length_overall: 10,
+          id: 1, model_name: 'Test', slug: 'test', manufacturer_name: 'Mfg',
+          length_overall: 10, beam: 3, draft: 1.5, displacement: 5000,
+          rig_type: 'Sloop', keel_type: 'Fin', hull_material: 'FG', cabins: 2,
+          year: 2024,
         }],
       })
-      .mockResolvedValueOnce({ rows: [{ rig_type: 'Sloop', keel_type: null, hull_material: 'FG' }] });
+      .mockResolvedValueOnce({ rows: [{ rig_type: 'Sloop', keel_type: null, hull_material: 'FG' }] }); // distinct
 
     const res = await yachtsGET(createRequest('/api/yachts?view=list'));
     const data = await res.json();
 
     expect(data.yachts).toHaveLength(1);
-    expect(data.yachts[0]).toHaveProperty('modelName');
-    // list view should not include description, designNotes, etc.
-    expect(data.yachts[0]).not.toHaveProperty('description');
-    expect(data.yachts[0]).not.toHaveProperty('designNotes');
-    expect(data.yachts[0]).not.toHaveProperty('fuelCapacity');
+    const yacht = data.yachts[0];
+    expect(yacht).toHaveProperty('modelName');
+    expect(yacht).not.toHaveProperty('description');
+    expect(yacht).not.toHaveProperty('designNotes');
+    expect(yacht).not.toHaveProperty('fuelCapacity');
+    expect(yacht).not.toHaveProperty('adminLinks');
   });
 
   it('should include Cache-Control header', async () => {
@@ -60,7 +59,7 @@ describe('Yachts API - Performance optimizations', () => {
     expect(res.headers.get('Cache-Control')).toContain('s-maxage');
   });
 
-  it('should run count and data queries in parallel with filter options', async () => {
+  it('should run count, data, and distinct queries in parallel', async () => {
     mockQuery
       .mockResolvedValueOnce({ rows: [{ count: 5 }] })
       .mockResolvedValueOnce({ rows: [{ id: 1, model_name: 'A', slug: 'a', manufacturer_name: 'M' }] })
@@ -72,6 +71,7 @@ describe('Yachts API - Performance optimizations', () => {
     expect(data.total).toBe(5);
     expect(data.distinct.rigTypes).toEqual(['Sloop']);
     expect(data.distinct.keelTypes).toEqual(['Fin']);
+    expect(mockQuery).toHaveBeenCalledTimes(3);
   });
 });
 
@@ -85,6 +85,7 @@ describe('Search API - Performance optimizations', () => {
     const data = await res.json();
     expect(data.yachts).toEqual([]);
     expect(data.total).toBe(0);
+    expect(mockQuery).not.toHaveBeenCalled();
   });
 
   it('should include Cache-Control header', async () => {
@@ -96,7 +97,7 @@ describe('Search API - Performance optimizations', () => {
     expect(res.headers.get('Cache-Control')).toContain('s-maxage');
   });
 
-  it('autocomplete mode returns suggestions', async () => {
+  it('autocomplete mode returns suggestions with single query', async () => {
     mockQuery.mockResolvedValueOnce({
       rows: [{ id: 1, model_name: 'TestYacht', slug: 'testyacht', manufacturer_name: 'Acme', year: 2024, length_overall: 12 }],
     });
@@ -105,5 +106,22 @@ describe('Search API - Performance optimizations', () => {
     const data = await res.json();
     expect(data.suggestions).toHaveLength(1);
     expect(data.suggestions[0].display).toBe('Acme TestYacht');
+    // autocomplete should only make 1 query, not 2
+    expect(mockQuery).toHaveBeenCalledTimes(1);
+  });
+
+  it('full search runs count and data queries in parallel', async () => {
+    mockQuery
+      .mockResolvedValueOnce({ rows: [{ total: '2' }] })
+      .mockResolvedValueOnce({ rows: [
+        { id: 1, model_name: 'A', slug: 'a', manufacturer_name: 'M' },
+        { id: 2, model_name: 'B', slug: 'b', manufacturer_name: 'N' },
+      ]});
+
+    const res = await searchGET(createRequest('/api/search?q=test'));
+    const data = await res.json();
+    expect(data.total).toBe(2);
+    expect(data.yachts).toHaveLength(2);
+    expect(mockQuery).toHaveBeenCalledTimes(2);
   });
 });
