@@ -463,7 +463,7 @@ export default function ApiDocsPage() {
           </span>
           <a
             href="/api/v1/openapi.json"
-            className="text-blue-600 hover:underline text-xs"
+            className="text-blue-700 underline hover:text-blue-800 text-xs"
             target="_blank"
             rel="noreferrer"
           >
@@ -595,11 +595,11 @@ export default function ApiDocsPage() {
       <div className="mt-12 pt-6 border-t border-gray-200 text-center text-xs text-gray-500">
         <p>
           Generated from{' '}
-          <a href="/api/v1/openapi.json" className="text-blue-600 hover:underline">
+          <a href="/api/v1/openapi.json" className="text-blue-700 underline hover:text-blue-800">
             OpenAPI 3.0.3 spec
           </a>
           . Licensed under{' '}
-          <a href="https://creativecommons.org/licenses/by-sa/4.0/" className="text-blue-600 hover:underline" target="_blank" rel="noreferrer">
+          <a href="https://creativecommons.org/licenses/by-sa/4.0/" className="text-blue-700 underline hover:text-blue-800" target="_blank" rel="noreferrer">
             CC BY-SA 4.0
           </a>
           .
