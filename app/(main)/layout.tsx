@@ -24,9 +24,16 @@ export default function MainLayout({
           ),
         }}
       />
+      {/* Skip to content link for keyboard users */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-white focus:text-gray-900 focus:px-4 focus:py-2 focus:rounded-md focus:shadow-lg focus:border focus:border-blue-500 focus:outline-none"
+      >
+        Skip to content
+      </a>
       <Header />
-      <main className="min-h-screen">{children}</main>
-      <footer className="border-t border-border py-8 mt-16">
+      <main id="main-content" role="main" className="min-h-screen">{children}</main>
+      <footer role="contentinfo" className="border-t border-border py-8 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-muted-foreground">
           <p>
             © {new Date().getFullYear()} Sailing Yacht Info. All rights
@@ -47,7 +54,7 @@ export default function MainLayout({
 
 function Header() {
   return (
-    <header className="border-b border-border bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+    <header role="banner" className="border-b border-border bg-white/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link
@@ -59,7 +66,7 @@ function Header() {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-6">
-            <nav className="flex items-center gap-6">
+            <nav aria-label="Main navigation" className="flex items-center gap-6">
             <NavLink href="/yachts">Browse</NavLink>
             <NavLink href="/manufacturers">Manufacturers</NavLink>
             <NavLink href="/guides">Guides</NavLink>
@@ -99,6 +106,7 @@ function MobileMenu() {
         className="inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-gray-100 transition-colors"
         aria-label="Open menu"
         aria-expanded="false"
+        aria-controls="mobile-menu-panel"
       >
         <svg id="menu-icon-open" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -111,6 +119,8 @@ function MobileMenu() {
       <div
         id="mobile-menu-panel"
         className="hidden absolute left-0 right-0 top-16 bg-white border-b border-border shadow-lg z-50"
+        role="navigation"
+        aria-label="Mobile navigation"
       >
         <nav className="flex flex-col py-2">
           <a href="/yachts" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
