@@ -22,6 +22,8 @@
 - Phase 12 focuses on making the site faster for end users.
 - P12.1 delivers measurable payload reduction (50% for list views) and parallel DB queries.
 
+- ~~**P13.1 — Accessibility audit P12.1 delivers measurable payload reduction (50% for list views) and parallel DB queries. fixes:** Fix WCAG 2.1 AA violations across public pages. Run axe-core via Playwright, fix color contrast, link distinction, keyboard nav issues. Tests: 25 accessibility tests (23 pass, 2 skip).~~ *(completed 2026-04-24)*
+
 ### Phase 13 — Accessibility & Usability (Priority: High)
 - **P13.1 — Accessibility audit & fixes:** Run automated accessibility checks (axe-core via Playwright), fix critical WCAG 2.1 AA violations across all public pages (contrast, missing labels, keyboard nav, focus management). Tests: accessibility test suite with axe-core.
 - **P13.2 — Skip navigation & landmark structure:** Add skip-to-content link, proper ARIA landmarks (nav, main, aside, footer), and consistent heading hierarchy across all pages. Tests: landmark and heading structure tests.

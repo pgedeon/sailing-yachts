@@ -1,51 +1,38 @@
-# Sailing Yachts Builder Session Summary
+# Sailing Yachts — Session Log
 
-**Date:** 2026-04-20  
-**Issue worked on:** #192 / PR #193 - P11.4: Feature flags + experiments system
+## Latest Session: 2026-04-24 02:20 UTC
 
-## What was implemented
-- **Feature flag definitions** (`lib/feature-flags/flags.ts`): 8 initial flags with typed boolean and variant types
-  - `compare.cta_placement` (variant: sidebar/bottom/modal)
-  - `compare.premium_export` (boolean)
-  - `yachts.monetization_badge` (boolean)
-  - `search.ai_summary` (boolean)
-  - `newsletter.popup_timing` (variant: exit_intent/timed/scroll)
-  - `favorites.enabled` (boolean)
-  - `alerts.push_notifications` (boolean)
-  - `guides.show_spotlight` (boolean)
-- **Evaluation engine** (`evaluate.ts`): FNV-1a deterministic hash bucketing with 4-tier priority chain
-- **React integration** (`context.tsx`): `FeatureFlagProvider` + `useFeatureFlag` hook, wired into root layout via `getAllFlags()`
-- **Admin API** (`/api/admin/flags`): GET to list flags with metadata, POST to set runtime overrides (auth-gated)
-- **Vitest config** (`vitest.config.ts`): Added test runner setup for unit tests
-- **19 unit tests**: Determinism, fallbacks, env overrides, query param overrides, variant distribution, extractFlagOverrides
+### Issue Worked On
+- **#214**: P13.1 — Accessibility audit & fixes
 
-## Build/Test Results
+### What Was Implemented
+- **Fixed link-in-text-block violations** on API docs page (`/api/docs`):
+  - Changed footer links from `text-blue-600 hover:underline` to `text-blue-700 underline hover:text-blue-800`
+  - Fixed insufficient color contrast (1.06:1 → passing) and added persistent underline
+- **Added Phase 13 roadmap** (Accessibility & Usability) to FUTURE_ROADMAP.md with 6 items
+
+### Build/Test Results
 - **Typecheck**: ✅ Pass
-- **Build**: ✅ Pass (locally with DATABASE_URL)
-- **Vitest tests**: ✅ 19/19 pass
-- **CI**: TypeScript ✅ Lint ✅ Build ❌ (pre-existing: DATABASE_URL not set in CI secrets — same failure on main branch pushes)
+- **Build**: ✅ Pass
+- **Accessibility tests**: ✅ 23/25 pass (2 skipped — dynamic pages)
+- **Full test suite**: ✅ All pass
 
-## Deploy Status
-- **GitHub PR**: ✅ #193 merged (squash)
-- **Vercel**: ✅ Auto-deploy completed (sailing-yachts project)
-- **Git**: main branch at 720e344
+### Deploy Status
+- **PR #215**: ✅ Merged (squash)
+- **Vercel**: ✅ Auto-deploy completed (note: ISR/CDN cache took ~2 min to refresh)
 
-## Live Verification Results
+### Live Verification Results
 - **/**: ✅ OK
 - **/yachts**: ✅ OK
 - **/search**: ✅ OK
 - **/compare**: ✅ OK
-- **API /api/yachts**: ✅ 201 yachts
-- **/api/admin/flags**: ✅ 401 (correct auth gate)
+- **/api/docs**: ✅ OK (accessibility violation fixed)
 
-## Issues Found and Fixed
-- **None**: Clean deployment with no regressions
-- Note: Also closed issue #188 (P11.3) which was completed but left open
+### Issues Found and Fixed
+- Initial Vercel deploy served stale ISR cache — resolved after ~2 min CDN refresh
+- API docs page had `link-in-text-block` WCAG violation: links indistinguishable from surrounding text
 
-## Next Recommended Task
-**P11.5 - Visual regression testing** (next unchecked item on roadmap): Add screenshot-based coverage for critical pages using Playwright visual comparisons or similar.
-
-## Notes
-- CI Build failure is pre-existing infrastructure issue (DATABASE_URL secret not configured in GitHub Actions) — affects all PRs equally, not specific to this change
-- Feature flags are immediately available for use in any component via `useFeatureFlag("flag.key")`
-- Admin API supports runtime flag overrides that persist until next deployment
+### Next Recommended Task
+- **P13.2 — Skip navigation & landmark structure**: Add skip-to-content link, proper ARIA landmarks
+- **P13.3 — Keyboard navigation enhancement**: Focus management for dynamic content
+- **ROADMAP.md Phase 4 remaining item**: Yacht manufacturer guides on sailboats.fr
