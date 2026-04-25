@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 
 interface NewsletterSignupProps {
   source?: string;
@@ -18,6 +18,8 @@ export default function NewsletterSignup({
     "idle" | "loading" | "success" | "error"
   >("idle");
   const [message, setMessage] = useState("");
+  const inputId = useId();
+  const errorId = useId();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +58,8 @@ export default function NewsletterSignup({
     return (
       <div
         className={`text-center ${compact ? "py-3" : "py-6"} ${className}`}
+        role="status"
+        aria-live="polite"
       >
         <div className="text-2xl mb-2">⚓</div>
         <p className="text-green-700 font-medium">{message}</p>
@@ -67,7 +71,7 @@ export default function NewsletterSignup({
     <div className={`${className}`}>
       {!compact && (
         <>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">
+          <h3 className="text-xl font-bold text-gray-900 mb-2" id={`${inputId}-title`}>
             Stay Updated
           </h3>
           <p className="text-gray-600 text-sm mb-4">
@@ -75,8 +79,13 @@ export default function NewsletterSignup({
           </p>
         </>
       )}
-      <form onSubmit={handleSubmit} className="flex gap-2">
+      <form onSubmit={handleSubmit} className="flex gap-2" aria-label="Newsletter signup">
+        {/* Screen-reader-only label */}
+        <label htmlFor={inputId} className="sr-only">
+          Email address
+        </label>
         <input
+          id={inputId}
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -84,6 +93,8 @@ export default function NewsletterSignup({
             compact ? "Your email for updates" : "Enter your email address"
           }
           required
+          aria-describedby={status === "error" ? errorId : undefined}
+          aria-invalid={status === "error"}
           className={`flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition ${
             compact ? "text-sm" : ""
           }`}
@@ -100,7 +111,9 @@ export default function NewsletterSignup({
         </button>
       </form>
       {status === "error" && (
-        <p className="text-red-600 text-sm mt-2">{message}</p>
+        <p id={errorId} className="text-red-600 text-sm mt-2" role="alert" aria-live="assertive">
+          {message}
+        </p>
       )}
     </div>
   );

@@ -237,6 +237,7 @@ export function SearchClient() {
                 if (suggestions.length > 0) setShowSuggestions(true);
               }}
               placeholder="Search by manufacturer, model name, rig type..."
+              aria-label="Search yachts"
               className="w-full pl-12 pr-4 py-3 border border-border rounded-lg bg-white text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-base"
               autoComplete="off"
             />
@@ -251,6 +252,8 @@ export function SearchClient() {
               <div
                 ref={suggestionsRef}
                 className="absolute top-full left-0 right-0 mt-1 bg-white border border-border rounded-lg shadow-lg z-50 overflow-hidden"
+                role="listbox"
+                aria-label="Search suggestions"
               >
                 {suggestions.map((s, i) => (
                   <button
@@ -293,7 +296,7 @@ export function SearchClient() {
 
       {/* Search Results */}
       {searched && (
-        <div>
+        <div role="region" aria-live="polite" aria-label="Search results">
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm text-muted-foreground">
               {loading
@@ -327,7 +330,7 @@ export function SearchClient() {
           )}
 
           {!loading && results.length === 0 && (
-            <div className="text-center py-12">
+            <div className="text-center py-12" role="status">
               <div className="text-4xl mb-4">⛵</div>
               <h2 className="text-xl font-semibold text-foreground mb-2">
                 No yachts found

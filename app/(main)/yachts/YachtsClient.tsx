@@ -419,14 +419,14 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
 
           {/* Main */}
           <main className="flex-1 min-w-0">
-            {loading && yachts.length === 0 ? (<p className="p-8 text-center text-gray-500">Loading yachts...</p>) : yachts.length === 0 ? (
+            {loading && yachts.length === 0 ? (<p className="p-8 text-center text-gray-500" role="status" aria-live="polite">Loading yachts...</p>) : yachts.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-gray-500 mb-2">No yachts match your filters.</p>
                 <button onClick={clearFilters} className="text-blue-600 hover:underline text-sm">Clear all filters</button>
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" role="region" aria-label="Yacht listings" aria-live="polite">
                   {yachts.map(yacht => (
                     <div key={yacht.id} className="border rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow relative">
                       <div className="flex items-start justify-between gap-2">
