@@ -8,7 +8,7 @@ import CompletenessBadge from '@/components/CompletenessBadge';
 import { calculateCompletenessScore } from '@/lib/completeness';
 import { FILTER_PRESETS, detectActivePreset, type FilterPreset } from '@/lib/filter-presets';
 import type { YachtsListingResult, FilterOptions, YachtListItem } from '@/lib/yachts';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 // Use the shared type from lib/yachts
@@ -46,6 +46,11 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedYacht, setSelectedYacht] = useState<Yacht | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
+
+  // Focus management refs
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const filterToggleRef = useRef<HTMLButtonElement>(null);
 
   // Parse filters from URL
   const mfgIds = searchParams.getAll('filters[manufacturers]').map(Number).filter(Boolean);
@@ -136,6 +141,58 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
     return () => controller.abort();
   }, [currentKey, page]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Modal focus trap
+  useEffect(() => {
+    if (!modalOpen) return;
+
+    previousFocusRef.current = document.activeElement as HTMLElement;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeModal();
+        return;
+      }
+
+      if (e.key !== "Tab" || !modalRef.current) return;
+
+      const focusable = Array.from(
+        modalRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((el) => el.tabIndex >= 0);
+
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    // Focus the modal close button
+    requestAnimationFrame(() => {
+      const closeBtn = modalRef.current?.querySelector<HTMLButtonElement>('button[aria-label="Close modal"]');
+      closeBtn?.focus();
+    });
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      // Restore focus to previous element
+      previousFocusRef.current?.focus();
+    };
+  }, [modalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Handlers
   const toggleManufacturer = (id: number) => {
     const url = new URLSearchParams(searchParams.toString());
@@ -188,27 +245,44 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
     }
   };
 
-  const closeModal = () => { setModalOpen(false); setSelectedYacht(null); };
+  const closeModal = useCallback(() => {
+    setModalOpen(false);
+    setSelectedYacht(null);
+  }, []);
+
+  // Escape to close mobile filters
+  useEffect(() => {
+    if (!filtersOpen) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setFiltersOpen(false);
+        filterToggleRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [filtersOpen]);
 
   if (error) return <div className="p-8 text-center text-red-600">{error}</div>;
 
   const format = (v: number | null | undefined) => (v != null ? v.toLocaleString() : '—');
 
   const FilterSidebar = () => (
-    <div className="bg-white rounded-lg shadow p-4">
+    <div className="bg-white rounded-lg shadow p-4" role="group" aria-label="Filter yachts">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-semibold">Filters</h2>
+        <h2 className="font-semibold" id="filters-heading">Filters</h2>
         {activeFilterCount > 0 && (
-          <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full font-medium">
+          <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full font-medium" aria-live="polite">
             {activeFilterCount} active
           </span>
         )}
       </div>
 
       <div className="mb-6">
-        <h3 className="text-sm font-medium mb-2">Manufacturer</h3>
+        <h3 className="text-sm font-medium mb-2" id="filter-manufacturer-heading">Manufacturer</h3>
         {manufacturers.length === 0 ? <p className="text-sm text-gray-500">Loading...</p> : (
-          <ul className="space-y-1 max-h-48 overflow-y-auto">
+          <ul className="space-y-1 max-h-48 overflow-y-auto" role="group" aria-labelledby="filter-manufacturer-heading">
             {manufacturers.map(m => (
               <li key={m.id}>
                 <label className="inline-flex items-center cursor-pointer">
@@ -222,9 +296,9 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
       </div>
 
       <div className="mb-6">
-        <h3 className="text-sm font-medium mb-2">Rig Type</h3>
+        <h3 className="text-sm font-medium mb-2" id="filter-rigtype-heading">Rig Type</h3>
         {distinct.rigTypes.length === 0 ? <p className="text-sm text-gray-500">No options</p> : (
-          <ul className="space-y-1 max-h-48 overflow-y-auto">
+          <ul className="space-y-1 max-h-48 overflow-y-auto" role="radiogroup" aria-labelledby="filter-rigtype-heading">
             {distinct.rigTypes.map(v => (
               <li key={v}>
                 <label className="inline-flex items-center cursor-pointer">
@@ -238,9 +312,9 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
       </div>
 
       <div className="mb-6">
-        <h3 className="text-sm font-medium mb-2">Keel Type</h3>
+        <h3 className="text-sm font-medium mb-2" id="filter-keeltype-heading">Keel Type</h3>
         {distinct.keelTypes.length === 0 ? <p className="text-sm text-gray-500">No options</p> : (
-          <ul className="space-y-1 max-h-48 overflow-y-auto">
+          <ul className="space-y-1 max-h-48 overflow-y-auto" role="radiogroup" aria-labelledby="filter-keeltype-heading">
             {distinct.keelTypes.map(v => (
               <li key={v}>
                 <label className="inline-flex items-center cursor-pointer">
@@ -254,9 +328,9 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
       </div>
 
       <div className="mb-6">
-        <h3 className="text-sm font-medium mb-2">Hull Material</h3>
+        <h3 className="text-sm font-medium mb-2" id="filter-hull-heading">Hull Material</h3>
         {distinct.hullMaterials.length === 0 ? <p className="text-sm text-gray-500">No options</p> : (
-          <ul className="space-y-1 max-h-48 overflow-y-auto">
+          <ul className="space-y-1 max-h-48 overflow-y-auto" role="radiogroup" aria-labelledby="filter-hull-heading">
             {distinct.hullMaterials.map(v => (
               <li key={v}>
                 <label className="inline-flex items-center cursor-pointer">
@@ -282,8 +356,11 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold">Sail Yachts</h1>
           <button
+            ref={filterToggleRef}
             onClick={() => setFiltersOpen(!filtersOpen)}
             className="md:hidden inline-flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+            aria-expanded={filtersOpen}
+            aria-controls="filter-sidebar"
           >
             <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
@@ -298,13 +375,14 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
         </div>
 
         {/* Filter Presets */}
-        <div className="mb-4 sm:mb-6">
+        <div className="mb-4 sm:mb-6" role="group" aria-label="Quick filter presets">
           <div className="flex flex-wrap gap-2">
             {FILTER_PRESETS.map(preset => (
               <button
                 key={preset.id}
                 onClick={() => applyPreset(preset)}
                 title={preset.description}
+                aria-pressed={activePresetId === preset.id}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
                   activePresetId === preset.id
                     ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
@@ -331,7 +409,11 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
 
         <div className="flex flex-col md:flex-row gap-6">
           {/* Sidebar — always visible on md+, toggleable on mobile */}
-          <aside className={`${filtersOpen ? 'block' : 'hidden'} md:block w-full md:w-64 flex-shrink-0`}>
+          <aside
+            id="filter-sidebar"
+            className={`${filtersOpen ? 'block' : 'hidden'} md:block w-full md:w-64 flex-shrink-0`}
+            aria-hidden={!filtersOpen && true}
+          >
             <FilterSidebar />
           </aside>
 
@@ -391,11 +473,11 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
                 </div>
 
                 {totalPages > 1 && (
-                  <div className="mt-6 flex items-center justify-between text-sm">
+                  <nav className="mt-6 flex items-center justify-between text-sm" aria-label="Pagination">
                     <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="px-4 py-2 border rounded-lg disabled:opacity-50 hover:bg-gray-50 transition-colors">Previous</button>
-                    <span className="text-gray-600">Page {page} of {totalPages} <span className="text-gray-500">({total} total)</span></span>
+                    <span className="text-gray-600" aria-live="polite">Page {page} of {totalPages} <span className="text-gray-500">({total} total)</span></span>
                     <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="px-4 py-2 border rounded-lg disabled:opacity-50 hover:bg-gray-50 transition-colors">Next</button>
-                  </div>
+                  </nav>
                 )}
               </>
             )}
@@ -407,13 +489,29 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Modal with focus trap */}
       {modalOpen && selectedYacht && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={closeModal}>
-          <div className="bg-white rounded-lg p-5 sm:p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={closeModal}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${selectedYacht.manufacturer} ${selectedYacht.modelName} details`}
+        >
+          <div
+            ref={modalRef}
+            className="bg-white rounded-lg p-5 sm:p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={e => e.stopPropagation()}
+          >
             <div className="flex justify-between items-start">
               <h2 className="text-xl sm:text-2xl font-bold pr-4">{selectedYacht.manufacturer} {selectedYacht.modelName}</h2>
-              <button onClick={closeModal} className="text-gray-500 hover:text-gray-700 text-2xl leading-none flex-shrink-0">&times;</button>
+              <button
+                onClick={closeModal}
+                className="text-gray-500 hover:text-gray-700 text-2xl leading-none flex-shrink-0"
+                aria-label="Close modal"
+              >
+                &times;
+              </button>
             </div>
             <p className="text-gray-600 mb-4">{selectedYacht.year ?? ''}</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">

@@ -2,7 +2,7 @@
 
 import YachtImage from "@/app/components/yacht/YachtImage";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 interface SpecGroup {
   [group: string]: Array<{
@@ -83,14 +83,59 @@ export default function YachtDetailModal({
   open,
   onOpenChange,
 }: YachtDetailModalProps) {
-  // Close on Escape key
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  // Focus trap + Escape key (P13.3 keyboard navigation)
   useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onOpenChange(false);
+    if (!open) return;
+
+    previousFocusRef.current = document.activeElement as HTMLElement;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onOpenChange(false);
+        return;
+      }
+
+      if (e.key !== "Tab" || !modalRef.current) return;
+
+      const focusable = Array.from(
+        modalRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((el) => el.tabIndex >= 0);
+
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
-    document.addEventListener("keydown", handleEsc);
-    return () => document.removeEventListener("keydown", handleEsc);
-  }, [onOpenChange]);
+
+    // Focus close button on open
+    requestAnimationFrame(() => {
+      const closeBtn = modalRef.current?.querySelector<HTMLButtonElement>('button[aria-label="Close"]');
+      closeBtn?.focus();
+    });
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      previousFocusRef.current?.focus();
+    };
+  }, [open, onOpenChange]);
 
   // Prevent body scroll when open
   useEffect(() => {
@@ -125,7 +170,7 @@ export default function YachtDetailModal({
         if (e.target === e.currentTarget) close();
       }}
     >
-      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-200">
+      <div ref={modalRef} className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-200" role="dialog" aria-modal="true" aria-label={`${yacht.manufacturer} ${yacht.modelName} details`}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <div>

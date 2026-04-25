@@ -241,6 +241,19 @@ export function CompareClient({ initialIds }: CompareClientProps) {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
+  // Close picker on Escape key (P13.3 keyboard navigation)
+  useEffect(() => {
+    if (!pickerOpen) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setPickerOpen(false);
+      }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [pickerOpen]);
+
   const toggleYacht = (id: number) => {
     setSelectedIds(prev => {
       if (prev.includes(id)) {

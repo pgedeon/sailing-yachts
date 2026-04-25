@@ -1,6 +1,7 @@
 import Link from "next/link";
 import HeaderAuthControls from "@/components/HeaderAuthControls";
 import { generateSiteNavigationJsonLd } from "@/lib/seo";
+import { MobileMenuKeyboard } from "./MobileMenuKeyboard";
 
 export default function MainLayout({
   children,
@@ -79,7 +80,7 @@ function Header() {
           </div>
 
           {/* Mobile hamburger */}
-          <MobileMenu />
+          <MobileMenuKeyboard />
         </div>
       </div>
     </header>
@@ -94,97 +95,5 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
     >
       {children}
     </Link>
-  );
-}
-
-function MobileMenu() {
-  return (
-    <div className="md:hidden">
-      <button
-        id="mobile-menu-btn"
-        type="button"
-        className="inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-gray-100 transition-colors"
-        aria-label="Open menu"
-        aria-expanded="false"
-        aria-controls="mobile-menu-panel"
-      >
-        <svg id="menu-icon-open" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-        <svg id="menu-icon-close" className="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-
-      <div
-        id="mobile-menu-panel"
-        className="hidden absolute left-0 right-0 top-16 bg-white border-b border-border shadow-lg z-50"
-        role="navigation"
-        aria-label="Mobile navigation"
-      >
-        <nav className="flex flex-col py-2">
-          <a href="/yachts" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
-            Browse Yachts
-          </a>
-          <a href="/manufacturers" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
-            Manufacturers
-          </a>
-          <a href="/guides" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
-            Guides
-          </a>
-          <a href="/glossary" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
-            Glossary
-          </a>
-          <a href="/search" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
-            Search
-          </a>
-          <a href="/compare" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
-            Compare
-          </a>
-          <a href="/favorites" className="px-6 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-gray-50 transition-colors">
-            Favorites
-          </a>
-        </nav>
-        <div className="border-t border-gray-100 px-4 py-4">
-          <HeaderAuthControls mobile />
-        </div>
-      </div>
-
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            (function() {
-              var btn = document.getElementById('mobile-menu-btn');
-              var panel = document.getElementById('mobile-menu-panel');
-              var iconOpen = document.getElementById('menu-icon-open');
-              var iconClose = document.getElementById('menu-icon-close');
-              if (!btn || !panel) return;
-              btn.addEventListener('click', function() {
-                var isOpen = !panel.classList.contains('hidden');
-                if (isOpen) {
-                  panel.classList.add('hidden');
-                  iconOpen.classList.remove('hidden');
-                  iconClose.classList.add('hidden');
-                  btn.setAttribute('aria-expanded', 'false');
-                } else {
-                  panel.classList.remove('hidden');
-                  iconOpen.classList.add('hidden');
-                  iconClose.classList.remove('hidden');
-                  btn.setAttribute('aria-expanded', 'true');
-                }
-              });
-              document.addEventListener('click', function(e) {
-                if (!panel.contains(e.target) && !btn.contains(e.target)) {
-                  panel.classList.add('hidden');
-                  iconOpen.classList.remove('hidden');
-                  iconClose.classList.add('hidden');
-                  btn.setAttribute('aria-expanded', 'false');
-                }
-              });
-            })();
-          `,
-        }}
-      />
-    </div>
   );
 }
