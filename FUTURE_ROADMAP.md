@@ -26,8 +26,8 @@
 ### Phase 13 — Accessibility & Usability (Priority: High)
 - ~~**P13.1 — Accessibility audit & fixes:** Run automated accessibility checks (axe-core via Playwright), fix critical WCAG 2.1 AA violations across all public pages (contrast, missing labels, keyboard nav, focus management). Tests: 25 accessibility tests (23 pass, 2 skip).~~ *(completed 2026-04-24)*
 - ~~**P13.2 — Skip navigation & landmark structure:** Add skip-to-content link, proper ARIA landmarks (banner, main, contentinfo, navigation), and consistent heading hierarchy across all pages. Tests: 27 landmark and heading structure tests.~~ *(completed 2026-04-24)*
-- **P13.3 — Keyboard navigation enhancement:** Ensure all interactive elements (filters, compare selector, search, tabs) are fully keyboard-accessible with visible focus indicators. Tests: keyboard navigation E2E tests.
-- **P13.4 — Form accessibility & error handling:** Add proper labels, aria-describedby for errors, live regions for dynamic content updates, and accessible form validation across search, compare, and newsletter forms. Tests: form accessibility tests.
+- ~~**P13.3 — Keyboard navigation enhancement:** Ensure all interactive elements (filters, compare selector, search, tabs) are fully keyboard-accessible with visible focus indicators. Tests: keyboard navigation E2E tests.~~ *(completed 2026-04-25)*
+- ~~**P13.4 — Form accessibility & error handling:** Add proper labels, aria-describedby for errors, live regions for dynamic content updates, and accessible form validation across search, compare, and newsletter forms. Tests: form accessibility tests.~~ *(completed 2026-04-25)*
 - **P13.5 — Image alt text & media accessibility:** Audit all images for meaningful alt text, add aria-labels to icon-only buttons, ensure SVG icons have accessible names. Tests: media accessibility audit tests.
 - **P13.6 — Reduced motion & responsive accessibility:** Respect prefers-reduced-motion, ensure touch targets are 44px minimum, test with screen reader patterns. Tests: reduced-motion and responsive a11y tests.
 

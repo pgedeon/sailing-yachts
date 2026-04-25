@@ -99,7 +99,7 @@ export function CompareExport({ yachtIds, yachtNames }: CompareExportProps) {
               className="w-4 h-4 animate-spin"
               fill="none"
               viewBox="0 0 24 24"
-            >
+             aria-hidden="true">
               <circle
                 className="opacity-25"
                 cx="12"
@@ -124,7 +124,7 @@ export function CompareExport({ yachtIds, yachtNames }: CompareExportProps) {
               viewBox="0 0 24 24"
               stroke="currentColor"
               strokeWidth={2}
-            >
+             aria-hidden="true">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -138,7 +138,7 @@ export function CompareExport({ yachtIds, yachtNames }: CompareExportProps) {
               viewBox="0 0 24 24"
               stroke="currentColor"
               strokeWidth={2}
-            >
+             aria-hidden="true">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -175,7 +175,7 @@ export function CompareExport({ yachtIds, yachtNames }: CompareExportProps) {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 strokeWidth={1.5}
-              >
+               aria-hidden="true">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -198,7 +198,7 @@ export function CompareExport({ yachtIds, yachtNames }: CompareExportProps) {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 strokeWidth={1.5}
-              >
+               aria-hidden="true">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -226,7 +226,7 @@ export function CompareExport({ yachtIds, yachtNames }: CompareExportProps) {
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                   strokeWidth={2}
-                >
+                 aria-hidden="true">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"

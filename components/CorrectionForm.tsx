@@ -106,7 +106,7 @@ export function CorrectionForm({ yachtId, yachtSlug, specFields }: CorrectionFor
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
         data-testid="suggest-correction-btn"
       >
-        <AlertTriangle className="h-3.5 w-3.5" />
+        <AlertTriangle className="h-3.5 w-3.5"  aria-hidden="true" />
         Suggest a Correction
       </button>
 
@@ -125,7 +125,7 @@ export function CorrectionForm({ yachtId, yachtSlug, specFields }: CorrectionFor
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-border">
               <h3 className="text-lg font-semibold flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-amber-500" />
+                <AlertTriangle className="h-5 w-5 text-amber-500"  aria-hidden="true" />
                 Suggest a Correction
               </h3>
               <button
@@ -134,7 +134,7 @@ export function CorrectionForm({ yachtId, yachtSlug, specFields }: CorrectionFor
                 className="p-1 rounded-md hover:bg-muted transition-colors"
                 aria-label="Close"
               >
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5"  aria-hidden="true" />
               </button>
             </div>
 
@@ -326,7 +326,7 @@ export function CorrectionForm({ yachtId, yachtSlug, specFields }: CorrectionFor
                     className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm hover:bg-primary/90 disabled:opacity-50 transition-colors"
                     data-testid="correction-submit-btn"
                   >
-                    <Send className="h-3.5 w-3.5" />
+                    <Send className="h-3.5 w-3.5"  aria-hidden="true" />
                     {status === "submitting" ? "Submitting…" : "Submit Correction"}
                   </button>
                 </div>

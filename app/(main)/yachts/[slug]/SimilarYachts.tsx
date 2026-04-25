@@ -92,7 +92,7 @@ export function SimilarYachts({ slug }: SimilarYachtsProps) {
                   fill
                   className="w-full h-full group-hover:scale-105 transition-transform duration-200"
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                />
+                 aria-hidden="true" />
               </div>
             ) : (
               <div className="h-36 sm:h-40 bg-muted flex items-center justify-center text-muted-foreground text-sm">
@@ -140,7 +140,7 @@ export function SimilarYachts({ slug }: SimilarYachtsProps) {
 
               <div className="mt-2 flex items-center text-xs text-primary font-medium">
                 View details
-                <ArrowRight className="h-3 w-3 ml-1 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="h-3 w-3 ml-1 group-hover:translate-x-1 transition-transform"  aria-hidden="true" />
               </div>
             </div>
           </Link>

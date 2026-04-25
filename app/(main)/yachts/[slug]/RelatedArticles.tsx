@@ -56,7 +56,7 @@ export function RelatedArticles(yacht: RelatedArticlesProps) {
     return (
       <div className="mt-10 sm:mt-12">
         <h2 className="text-lg sm:text-xl font-bold mb-4 flex items-center gap-2">
-          <ExternalLink className="h-5 w-5" />
+          <ExternalLink className="h-5 w-5"  aria-hidden="true" />
           Related Sailing Articles
         </h2>
         <div className="animate-pulse grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -79,7 +79,7 @@ export function RelatedArticles(yacht: RelatedArticlesProps) {
       data-testid="related-articles-section"
     >
       <h2 className="text-lg sm:text-xl font-bold mb-4 flex items-center gap-2">
-        <ExternalLink className="h-5 w-5" />
+        <ExternalLink className="h-5 w-5"  aria-hidden="true" />
         Related Sailing Articles
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -101,7 +101,7 @@ export function RelatedArticles(yacht: RelatedArticlesProps) {
                   {article.description}
                 </p>
               </div>
-              <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-blue-600 shrink-0 mt-0.5" />
+              <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-blue-600 shrink-0 mt-0.5"  aria-hidden="true" />
             </div>
             <div className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
               <span className="inline-block px-1.5 py-0.5 bg-muted rounded text-[10px] font-medium">

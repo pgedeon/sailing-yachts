@@ -41,14 +41,14 @@ interface MediaGalleryProps {
 type TabKey = "photos" | "videos" | "brochures" | "more";
 
 const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
-  { key: "photos", label: "Photos", icon: <ImageIcon className="h-4 w-4" /> },
-  { key: "videos", label: "Videos", icon: <PlayCircle className="h-4 w-4" /> },
+  { key: "photos", label: "Photos", icon: <ImageIcon className="h-4 w-4"  aria-hidden="true" /> },
+  { key: "videos", label: "Videos", icon: <PlayCircle className="h-4 w-4"  aria-hidden="true" /> },
   {
     key: "brochures",
     label: "Brochures & Plans",
-    icon: <FileText className="h-4 w-4" />,
+    icon: <FileText className="h-4 w-4"  aria-hidden="true" />,
   },
-  { key: "more", label: "More", icon: <Box className="h-4 w-4" /> },
+  { key: "more", label: "More", icon: <Box className="h-4 w-4"  aria-hidden="true" /> },
 ];
 
 function groupByType(assets: MediaAsset[]) {
@@ -214,9 +214,9 @@ export default function MediaGallery({ mediaAssets }: MediaGalleryProps) {
             onPhotoClick={(idx) => setLightboxIndex(idx)}
           />
         )}
-        {activeTab === "videos" && <VideoList videos={videos} />}
-        {activeTab === "brochures" && <BrochureList items={brochures} />}
-        {activeTab === "more" && <MoreList items={more} />}
+        {activeTab === "videos" && <VideoList videos={videos}  aria-hidden="true" />}
+        {activeTab === "brochures" && <BrochureList items={brochures}  aria-hidden="true" />}
+        {activeTab === "more" && <MoreList items={more}  aria-hidden="true" />}
       </div>
 
       {/* Lightbox */}
@@ -234,7 +234,7 @@ export default function MediaGallery({ mediaAssets }: MediaGalleryProps) {
             onClick={closeLightbox}
             aria-label="Close lightbox"
           >
-            <X className="h-8 w-8" />
+            <X className="h-8 w-8"  aria-hidden="true" />
           </button>
           {lightboxIndex != null && lightboxIndex > 0 && (
             <button
@@ -245,7 +245,7 @@ export default function MediaGallery({ mediaAssets }: MediaGalleryProps) {
               }}
               aria-label="Previous photo"
             >
-              <ChevronLeft className="h-10 w-10" />
+              <ChevronLeft className="h-10 w-10"  aria-hidden="true" />
             </button>
           )}
           {lightboxIndex != null && lightboxIndex < currentLightboxPhotos.length - 1 && (
@@ -257,7 +257,7 @@ export default function MediaGallery({ mediaAssets }: MediaGalleryProps) {
               }}
               aria-label="Next photo"
             >
-              <ChevronRight className="h-10 w-10" />
+              <ChevronRight className="h-10 w-10"  aria-hidden="true" />
             </button>
           )}
           <div
@@ -384,16 +384,16 @@ function VideoList({ videos }: { videos: MediaAsset[] }) {
                     rel="noopener noreferrer"
                     className="bg-black/50 rounded-full p-3 hover:bg-black/70 transition-colors"
                   >
-                    <PlayCircle className="h-10 w-10 text-white" />
+                    <PlayCircle className="h-10 w-10 text-white"  aria-hidden="true" />
                   </a>
                 ) : (
-                  <Video className="h-10 w-10 text-white/50" />
+                  <Video className="h-10 w-10 text-white/50"  aria-hidden="true" />
                 )}
               </div>
             </div>
           ) : (
             <div className="aspect-video bg-muted flex items-center justify-center">
-              <Video className="h-10 w-10 text-muted-foreground" />
+              <Video className="h-10 w-10 text-muted-foreground"  aria-hidden="true" />
             </div>
           )}
           <div className="p-3">
@@ -425,9 +425,9 @@ function BrochureList({ items }: { items: MediaAsset[] }) {
   }
 
   const typeIcons: Record<string, React.ReactNode> = {
-    brochure: <FileText className="h-6 w-6" />,
-    deck_plan: <Map className="h-6 w-6" />,
-    interior_layout: <Layout className="h-6 w-6" />,
+    brochure: <FileText className="h-6 w-6"  aria-hidden="true" />,
+    deck_plan: <Map className="h-6 w-6"  aria-hidden="true" />,
+    interior_layout: <Layout className="h-6 w-6"  aria-hidden="true" />,
   };
 
   const typeLabels: Record<string, string> = {
@@ -445,7 +445,7 @@ function BrochureList({ items }: { items: MediaAsset[] }) {
           data-testid="media-brochure-card"
         >
           <div className="shrink-0 text-primary">
-            {typeIcons[item.mediaType] || <FileText className="h-6 w-6" />}
+            {typeIcons[item.mediaType] || <FileText className="h-6 w-6"  aria-hidden="true" />}
           </div>
           <div className="min-w-0 flex-1">
             <h4 className="font-medium text-sm truncate">
@@ -469,7 +469,7 @@ function BrochureList({ items }: { items: MediaAsset[] }) {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-2"
               >
-                <Download className="h-3 w-3" />
+                <Download className="h-3 w-3"  aria-hidden="true" />
                 Download
               </a>
             )}
@@ -480,7 +480,7 @@ function BrochureList({ items }: { items: MediaAsset[] }) {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-2"
               >
-                <ExternalLink className="h-3 w-3" />
+                <ExternalLink className="h-3 w-3"  aria-hidden="true" />
                 View Source
               </a>
             )}
@@ -521,9 +521,9 @@ function MoreList({ items }: { items: MediaAsset[] }) {
           ) : (
             <div className="aspect-video bg-muted flex flex-col items-center justify-center gap-2">
               {item.mediaType === "360_tour" ? (
-                <RotateCcw className="h-8 w-8 text-muted-foreground" />
+                <RotateCcw className="h-8 w-8 text-muted-foreground"  aria-hidden="true" />
               ) : (
-                <Box className="h-8 w-8 text-muted-foreground" />
+                <Box className="h-8 w-8 text-muted-foreground"  aria-hidden="true" />
               )}
               <span className="text-sm text-muted-foreground">
                 {item.mediaType === "360_tour"
@@ -551,7 +551,7 @@ function MoreList({ items }: { items: MediaAsset[] }) {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-2"
               >
-                <ExternalLink className="h-3 w-3" />
+                <ExternalLink className="h-3 w-3"  aria-hidden="true" />
                 Open
               </a>
             )}

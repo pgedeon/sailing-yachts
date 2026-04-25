@@ -114,11 +114,11 @@ interface YachtData {
 }
 
 const GROUP_ICONS: Record<string, React.ReactNode> = {
-  dimensions: <Ruler className="h-5 w-5" />,
-  sailplan: <Wind className="h-5 w-5" />,
-  accommodation: <Home className="h-5 w-5" />,
-  technical: <Wrench className="h-5 w-5" />,
-  performance: <Star className="h-5 w-5" />,
+  dimensions: <Ruler className="h-5 w-5"  aria-hidden="true" />,
+  sailplan: <Wind className="h-5 w-5"  aria-hidden="true" />,
+  accommodation: <Home className="h-5 w-5"  aria-hidden="true" />,
+  technical: <Wrench className="h-5 w-5"  aria-hidden="true" />,
+  performance: <Star className="h-5 w-5"  aria-hidden="true" />,
   other: null,
 };
 
@@ -229,7 +229,7 @@ export default function YachtDetailClient() {
             </Link>
           </li>
           <li aria-hidden="true">
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4"  aria-hidden="true" />
           </li>
           <li>
             <Link href="/yachts" className="hover:text-foreground transition-colors">
@@ -237,7 +237,7 @@ export default function YachtDetailClient() {
             </Link>
           </li>
           <li aria-hidden="true">
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4"  aria-hidden="true" />
           </li>
           <li>
             <Link
@@ -248,7 +248,7 @@ export default function YachtDetailClient() {
             </Link>
           </li>
           <li aria-hidden="true">
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4"  aria-hidden="true" />
           </li>
           <li aria-current="page" className="text-foreground font-medium">
             {yacht.modelName}
@@ -260,7 +260,7 @@ export default function YachtDetailClient() {
       <div className="mb-4 sm:mb-6 flex items-center justify-between">
         <Button asChild variant="ghost" size="sm" className="no-print">
           <Link href="/yachts">
-            <ChevronLeft className="h-4 w-4 mr-1" />
+            <ChevronLeft className="h-4 w-4 mr-1"  aria-hidden="true" />
             Back to Browse
           </Link>
         </Button>
@@ -270,7 +270,7 @@ export default function YachtDetailClient() {
           data-testid="print-spec-sheet-btn"
           type="button"
         >
-          <Printer className="h-4 w-4" />
+          <Printer className="h-4 w-4"  aria-hidden="true" />
           Print Spec Sheet
         </button>
       </div>
@@ -289,7 +289,7 @@ export default function YachtDetailClient() {
               className="w-full h-56 sm:h-72 md:h-80 rounded-lg"
               priority
               sizes="(max-width: 768px) 100vw, 50vw"
-            />
+             aria-hidden="true" />
           ) : (
             <div className="w-full h-56 sm:h-72 md:h-80 bg-muted rounded-lg flex items-center justify-center text-muted-foreground">
               No image available
@@ -302,11 +302,11 @@ export default function YachtDetailClient() {
               {yacht.manufacturer} {yacht.modelName} ({yacht.year})
             </h1>
             <div className="no-print">
-              <FavoriteButton slug={yacht.slug} modelName={`${yacht.manufacturer} ${yacht.modelName}`} size="lg" showLabel />
+              <FavoriteButton slug={yacht.slug} modelName={`${yacht.manufacturer} ${yacht.modelName}`} size="lg" showLabel  aria-hidden="true" />
             </div>
           </div>
           <div className="flex items-center gap-2 mb-2">
-            <CompletenessBadge score={calculateCompletenessScore(yacht)} size="md" showLabel />
+            <CompletenessBadge score={calculateCompletenessScore(yacht)} size="md" showLabel  aria-hidden="true" />
           </div>
           <p className="text-base sm:text-lg text-muted-foreground mb-4">
             A sailing yacht built by {yacht.manufacturer}.
@@ -358,10 +358,10 @@ export default function YachtDetailClient() {
           </div>
 
           {/* Price Range Estimate */}
-          <PriceTierDetail info={priceTierInfo} />
+          <PriceTierDetail info={priceTierInfo}  aria-hidden="true" />
 
           {/* Real price data from DB (P8.2) */}
-          <PriceInsightBlock yachtId={yacht.id} modelName={yacht.modelName} />
+          <PriceInsightBlock yachtId={yacht.id} modelName={yacht.modelName}  aria-hidden="true" />
 
           {/* Admin links */}
           {yacht.adminLinks && yacht.adminLinks.length > 0 && (
@@ -394,7 +394,7 @@ export default function YachtDetailClient() {
 
       {/* Media Gallery (P10.2) */}
       {yacht.mediaAssets && yacht.mediaAssets.length > 0 && (
-        <MediaGallery mediaAssets={yacht.mediaAssets} />
+        <MediaGallery mediaAssets={yacht.mediaAssets}  aria-hidden="true" />
       )}
 
       {/* Specs by Group */}
@@ -438,7 +438,7 @@ export default function YachtDetailClient() {
         sourceConfidence={yacht.sourceConfidence}
         lastVerifiedAt={yacht.lastVerifiedAt}
         completenessScore={yacht.completenessScore}
-      />
+       aria-hidden="true" />
 
       {/* User Correction (P10.7) */}
       <CorrectionForm
@@ -554,7 +554,7 @@ export default function YachtDetailClient() {
               reviews={yacht.reviews}
               overallRating={overallRating}
               ratingBreakdown={avgBreakdown}
-            />
+             aria-hidden="true" />
           </div>
         );
       })()}
@@ -582,7 +582,7 @@ export default function YachtDetailClient() {
                   </div>
                   {review.rating && (
                     <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400"  aria-hidden="true" />
                       <span>{parseFloat(String(review.rating)).toFixed(1)}</span>
                     </div>
                   )}
@@ -625,14 +625,14 @@ export default function YachtDetailClient() {
         <ReviewSubmissionForm
           yachtModelId={yacht.id}
           yachtName={`${yacht.manufacturer} ${yacht.modelName}`}
-        />
+         aria-hidden="true" />
       </div>
 
       {/* INTERNAL LINKING MODULES (P6.7) */}
 
       {/* 1. Compare with similar boats - already implemented as SimilarYachts */}
       <div className="similar-yachts-section no-print">
-        <SimilarYachts slug={slug} />
+        <SimilarYachts slug={slug}  aria-hidden="true" />
       </div>
 
       {/* 2. Same size alternatives - NEW */}
@@ -641,7 +641,7 @@ export default function YachtDetailClient() {
           <SameSizeAlternatives
             targetLength={yacht.lengthOverall}
             currentYachtId={yacht.id}
-          />
+           aria-hidden="true" />
         </div>
       )}
 
@@ -652,7 +652,7 @@ export default function YachtDetailClient() {
             manufacturerId={yacht.manufacturerId}
             manufacturerSlug={slugify(yacht.manufacturer)}
             currentYachtId={yacht.id}
-          />
+           aria-hidden="true" />
         </div>
       )}
 
@@ -685,7 +685,7 @@ export default function YachtDetailClient() {
           manufacturer={yacht.manufacturer}
           lengthOverall={yacht.lengthOverall}
           rigType={yacht.rigType}
-        />
+         aria-hidden="true" />
       </div>
 
       {/* Related Sailing Articles from sailboats.fr */}
@@ -698,18 +698,18 @@ export default function YachtDetailClient() {
           hullMaterial={yacht.hullMaterial}
           cabins={yacht.cabins}
           displacement={yacht.displacement}
-        />
+         aria-hidden="true" />
       </div>
 
       {/* Lead Forms */}
       <div className="lead-forms-section mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 no-print">
-        <LeadForm yachtIds={[yacht.id]} leadType="dealer_inquiry" yachtName={`${yacht.manufacturer} ${yacht.modelName}`} />
-        <LeadForm yachtIds={[yacht.id]} leadType="price_request" yachtName={`${yacht.manufacturer} ${yacht.modelName}`} />
+        <LeadForm yachtIds={[yacht.id]} leadType="dealer_inquiry" yachtName={`${yacht.manufacturer} ${yacht.modelName}`}  aria-hidden="true" />
+        <LeadForm yachtIds={[yacht.id]} leadType="price_request" yachtName={`${yacht.manufacturer} ${yacht.modelName}`}  aria-hidden="true" />
       </div>
 
       {/* Affiliate Recommendations */}
       <div className="affiliate-recommendations-section no-print">
-        <AffiliateRecommendations categories={affiliateRecommendations} />
+        <AffiliateRecommendations categories={affiliateRecommendations}  aria-hidden="true" />
       </div>
 
       {/* Compare Button */}
