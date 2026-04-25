@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Image as ImageIcon,
   PlayCircle,
@@ -101,44 +101,113 @@ export default function MediaGallery({ mediaAssets }: MediaGalleryProps) {
   const currentPhoto =
     lightboxIndex !== null ? currentLightboxPhotos[lightboxIndex] : null;
 
+  // Available tabs (those with content or currently active)
+  const availableTabs = TABS.filter(
+    (tab) => tabCounts[tab.key] > 0 || tab.key === activeTab,
+  );
+
+  // Tab keyboard navigation handler
+  const handleTabKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      const currentIndex = availableTabs.findIndex((t) => t.key === activeTab);
+      if (currentIndex === -1) return;
+
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        const nextIndex = (currentIndex + 1) % availableTabs.length;
+        setActiveTab(availableTabs[nextIndex].key);
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        const prevIndex =
+          (currentIndex - 1 + availableTabs.length) % availableTabs.length;
+        setActiveTab(availableTabs[prevIndex].key);
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        setActiveTab(availableTabs[0].key);
+      } else if (e.key === "End") {
+        e.preventDefault();
+        setActiveTab(availableTabs[availableTabs.length - 1].key);
+      }
+    },
+    [availableTabs, activeTab],
+  );
+
+  // Lightbox keyboard handler (Escape, ArrowLeft, ArrowRight)
+  const closeLightbox = useCallback(() => setLightboxIndex(null), []);
+
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeLightbox();
+        return;
+      }
+      if (e.key === "ArrowLeft" && lightboxIndex > 0) {
+        e.preventDefault();
+        setLightboxIndex(lightboxIndex - 1);
+        return;
+      }
+      if (
+        e.key === "ArrowRight" &&
+        lightboxIndex < currentLightboxPhotos.length - 1
+      ) {
+        e.preventDefault();
+        setLightboxIndex(lightboxIndex + 1);
+        return;
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [lightboxIndex, currentLightboxPhotos.length, closeLightbox]);
+
   return (
     <section className="mt-10 sm:mt-12" data-testid="media-gallery">
       <h2 className="text-lg sm:text-xl font-bold mb-4">Media Gallery</h2>
 
-      {/* Tabs */}
+      {/* Tabs with keyboard navigation */}
       <div
         className="flex gap-1 border-b border-border mb-6 overflow-x-auto"
         role="tablist"
         data-testid="media-gallery-tabs"
+        onKeyDown={handleTabKeyDown}
       >
-        {TABS.filter((tab) => tabCounts[tab.key] > 0 || tab.key === activeTab).map(
-          (tab) => (
-            <button
-              key={tab.key}
-              role="tab"
-              aria-selected={activeTab === tab.key}
-              data-testid={`tab-${tab.key}`}
-              onClick={() => setActiveTab(tab.key)}
-              className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === tab.key
-                  ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
-              }`}
-            >
-              {tab.icon}
-              {tab.label}
-              {tabCounts[tab.key] > 0 && (
-                <span className="ml-1 text-xs bg-muted rounded-full px-2 py-0.5">
-                  {tabCounts[tab.key]}
-                </span>
-              )}
-            </button>
-          ),
-        )}
+        {availableTabs.map((tab) => (
+          <button
+            key={tab.key}
+            role="tab"
+            id={`media-tab-${tab.key}`}
+            aria-selected={activeTab === tab.key}
+            aria-controls={`media-tabpanel-${tab.key}`}
+            tabIndex={activeTab === tab.key ? 0 : -1}
+            data-testid={`tab-${tab.key}`}
+            onClick={() => setActiveTab(tab.key)}
+            className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+              activeTab === tab.key
+                ? "border-primary text-primary"
+                : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+            }`}
+          >
+            {tab.icon}
+            {tab.label}
+            {tabCounts[tab.key] > 0 && (
+              <span className="ml-1 text-xs bg-muted rounded-full px-2 py-0.5">
+                {tabCounts[tab.key]}
+              </span>
+            )}
+          </button>
+        ))}
       </div>
 
       {/* Tab Content */}
-      <div data-testid={`tab-content-${activeTab}`}>
+      <div
+        role="tabpanel"
+        id={`media-tabpanel-${activeTab}`}
+        aria-labelledby={`media-tab-${activeTab}`}
+        data-testid={`tab-content-${activeTab}`}
+      >
         {activeTab === "photos" && (
           <PhotoGrid
             photos={photos}
@@ -154,12 +223,15 @@ export default function MediaGallery({ mediaAssets }: MediaGalleryProps) {
       {currentPhoto && (
         <div
           className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
-          onClick={() => setLightboxIndex(null)}
+          onClick={closeLightbox}
           data-testid="lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Photo lightbox"
         >
           <button
             className="absolute top-4 right-4 text-white hover:text-gray-300"
-            onClick={() => setLightboxIndex(null)}
+            onClick={closeLightbox}
             aria-label="Close lightbox"
           >
             <X className="h-8 w-8" />

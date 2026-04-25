@@ -2,6 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── P13.3: Global keyboard focus indicators ── */
+
+/* Remove default outline only for mouse users; keyboard users get a visible ring */
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Override for elements where outline-offset looks weird */
+a:focus-visible,
+button:focus-visible,
+[role="tab"]:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Skip link gets its own prominent focus style (defined inline too, this is backup) */
+a[href="#main-content"]:focus-visible {
+  outline: 3px solid #1d4ed8;
+  outline-offset: 4px;
+}
+
+/* Checkbox / radio focus ring */
+input[type="checkbox"]:focus-visible,
+input[type="radio"]:focus-visible,
+input[type="text"]:focus-visible,
+input[type="email"]:focus-visible,
+input[type="search"]:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
 /* ── Guide pages: luxury typography & table styling ── */
 .article-content {
   font-family: Georgia, 'Times New Roman', serif;
