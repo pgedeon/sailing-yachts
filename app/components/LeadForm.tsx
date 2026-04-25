@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import { Button } from "@/components/ui/button";
 
 interface LeadFormProps {
@@ -47,6 +47,11 @@ export function LeadForm({ yachtIds, leadType, yachtName, className = "" }: Lead
   const [showForm, setShowForm] = useState(false);
 
   const config = FORM_CONFIG[leadType];
+  const nameId = useId();
+  const emailId = useId();
+  const phoneId = useId();
+  const messageId = useId();
+  const errorId = useId();
 
   useEffect(() => {
     // Capture UTM params from URL
@@ -105,7 +110,7 @@ export function LeadForm({ yachtIds, leadType, yachtName, className = "" }: Lead
 
   if (result?.success) {
     return (
-      <div className={`rounded-lg border border-green-200 bg-green-50 p-4 ${className}`}>
+      <div className={`rounded-lg border border-green-200 bg-green-50 p-4 ${className}`} role="status" aria-live="polite">
         <p className="text-green-800 font-medium">✓ {result.message}</p>
       </div>
     );
@@ -118,50 +123,71 @@ export function LeadForm({ yachtIds, leadType, yachtName, className = "" }: Lead
           variant="outline"
           onClick={() => setShowForm(true)}
           className="w-full"
+          aria-expanded={showForm}
         >
           <span className="mr-2">{config.icon}</span>
           {config.title}
         </Button>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-3 rounded-lg border p-4 bg-gray-50">
+        <form onSubmit={handleSubmit} className="space-y-3 rounded-lg border p-4 bg-gray-50" aria-label={`${config.title} form`}>
           <h4 className="font-semibold text-sm">
             {config.icon} {config.title}
             {yachtName && <span className="font-normal text-gray-500 ml-1">— {yachtName}</span>}
           </h4>
 
-          <input
-            type="text"
-            placeholder="Your name *"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            className="w-full rounded border px-3 py-2 text-sm"
-          />
-          <input
-            type="email"
-            placeholder="Email *"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full rounded border px-3 py-2 text-sm"
-          />
-          <input
-            type="tel"
-            placeholder="Phone (optional)"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="w-full rounded border px-3 py-2 text-sm"
-          />
-          <textarea
-            placeholder={config.placeholder}
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            rows={3}
-            className="w-full rounded border px-3 py-2 text-sm"
-          />
+          <div>
+            <label htmlFor={nameId} className="sr-only">Your name (required)</label>
+            <input
+              id={nameId}
+              type="text"
+              placeholder="Your name *"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              aria-describedby={result && !result.success ? errorId : undefined}
+              className="w-full rounded border px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <label htmlFor={emailId} className="sr-only">Email address (required)</label>
+            <input
+              id={emailId}
+              type="email"
+              placeholder="Email *"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              aria-describedby={result && !result.success ? errorId : undefined}
+              className="w-full rounded border px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <label htmlFor={phoneId} className="sr-only">Phone number (optional)</label>
+            <input
+              id={phoneId}
+              type="tel"
+              placeholder="Phone (optional)"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full rounded border px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <label htmlFor={messageId} className="sr-only">Your message</label>
+            <textarea
+              id={messageId}
+              placeholder={config.placeholder}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              rows={3}
+              className="w-full rounded border px-3 py-2 text-sm"
+            />
+          </div>
 
           {result && !result.success && (
-            <p className="text-red-600 text-sm">{result.message}</p>
+            <p id={errorId} className="text-red-600 text-sm" role="alert" aria-live="assertive">
+              {result.message}
+            </p>
           )}
 
           <div className="flex gap-2">

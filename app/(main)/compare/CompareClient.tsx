@@ -615,6 +615,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
               <input
                 type="text"
                 placeholder="Search by manufacturer or model..."
+                aria-label="Search yachts to add to comparison"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="w-full pl-9 pr-4 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400"
