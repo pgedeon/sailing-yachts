@@ -46,7 +46,7 @@ function StarSelector({
                 ? "fill-yellow-400 text-yellow-400"
                 : "fill-muted text-muted-foreground/30"
             } hover:scale-110`}
-          />
+           aria-hidden="true" />
         </button>
       ))}
     </div>
@@ -172,7 +172,7 @@ export function ReviewSubmissionForm({ yachtModelId, yachtName }: ReviewSubmissi
   if (submitted) {
     return (
       <div className="bg-card border border-border rounded-xl p-6 sm:p-8 text-center" data-testid="review-submitted">
-        <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
+        <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4"  aria-hidden="true" />
         <h3 className="text-lg font-bold mb-2">Thank you for your review!</h3>
         <p className="text-muted-foreground">
           Your review of the {yachtName} has been submitted and will be visible after moderation.
@@ -248,7 +248,7 @@ export function ReviewSubmissionForm({ yachtModelId, yachtName }: ReviewSubmissi
           <label className="block text-sm font-medium mb-1.5">
             Overall Rating <span className="text-red-500">*</span>
           </label>
-          <StarSelector value={rating} onChange={setRating} />
+          <StarSelector value={rating} onChange={setRating}  aria-hidden="true" />
         </div>
 
         {/* Summary */}
@@ -337,7 +337,7 @@ export function ReviewSubmissionForm({ yachtModelId, yachtName }: ReviewSubmissi
               onClick={addPro}
               className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium border border-border rounded-lg hover:bg-muted transition-colors"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4"  aria-hidden="true" />
               Add
             </button>
           </div>
@@ -353,7 +353,7 @@ export function ReviewSubmissionForm({ yachtModelId, yachtName }: ReviewSubmissi
                   onClick={() => removePro(idx)}
                   className="ml-1 hover:text-green-900"
                 >
-                  <X className="h-3 w-3" />
+                  <X className="h-3 w-3"  aria-hidden="true" />
                 </button>
               </span>
             ))}
@@ -383,7 +383,7 @@ export function ReviewSubmissionForm({ yachtModelId, yachtName }: ReviewSubmissi
               onClick={addCon}
               className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium border border-border rounded-lg hover:bg-muted transition-colors"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4"  aria-hidden="true" />
               Add
             </button>
           </div>
@@ -399,7 +399,7 @@ export function ReviewSubmissionForm({ yachtModelId, yachtName }: ReviewSubmissi
                   onClick={() => removeCon(idx)}
                   className="ml-1 hover:text-red-900"
                 >
-                  <X className="h-3 w-3" />
+                  <X className="h-3 w-3"  aria-hidden="true" />
                 </button>
               </span>
             ))}
@@ -420,7 +420,7 @@ export function ReviewSubmissionForm({ yachtModelId, yachtName }: ReviewSubmissi
           className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           data-testid="submit-review-btn"
         >
-          <Send className="h-4 w-4" />
+          <Send className="h-4 w-4"  aria-hidden="true" />
           {submitting ? "Submitting..." : "Submit Review"}
         </button>
       </div>

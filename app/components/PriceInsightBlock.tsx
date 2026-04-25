@@ -88,7 +88,7 @@ function PriceUnavailableFallback({ status }: { status: "contact" | "unavailable
     return (
       <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center" data-testid="price-contact">
         <div className="flex items-center justify-center gap-2 text-gray-600">
-          <PhoneIcon />
+          <PhoneIcon  aria-hidden="true" />
           <span className="font-medium">Contact for price</span>
         </div>
         <p className="mt-1 text-xs text-gray-500">Pricing available upon request from dealers</p>
@@ -99,7 +99,7 @@ function PriceUnavailableFallback({ status }: { status: "contact" | "unavailable
   return (
     <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center" data-testid="price-unavailable">
       <div className="flex items-center justify-center gap-2 text-gray-500">
-        <DashIcon />
+        <DashIcon  aria-hidden="true" />
         <span className="font-medium">Price not available</span>
       </div>
       <p className="mt-1 text-xs text-gray-500">No pricing data found for this model</p>
@@ -204,7 +204,7 @@ function PriceRow({
       <div>
         <span className="text-sm font-medium text-gray-600">{label}</span>
         {showConfidence && (
-          <ConfidenceBadge score={priceRange.confidence} />
+          <ConfidenceBadge score={priceRange.confidence}  aria-hidden="true" />
         )}
       </div>
       <div className="text-right">
@@ -223,7 +223,7 @@ function PriceRow({
 
 function CheckIcon() {
   return (
-    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
     </svg>
   );
@@ -231,7 +231,7 @@ function CheckIcon() {
 
 function InfoIcon() {
   return (
-    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
     </svg>
   );
@@ -239,7 +239,7 @@ function InfoIcon() {
 
 function AlertIcon() {
   return (
-    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
       <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
     </svg>
   );
@@ -247,7 +247,7 @@ function AlertIcon() {
 
 function PhoneIcon() {
   return (
-    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
     </svg>
   );
@@ -255,7 +255,7 @@ function PhoneIcon() {
 
 function DashIcon() {
   return (
-    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
     </svg>
   );
@@ -343,12 +343,12 @@ export function PriceInsightBlock({
         data-testid="price-insight-block"
       >
         <h3 className="font-semibold text-gray-900 flex items-center gap-2 mb-3">
-          <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           Pricing
         </h3>
-        <PriceUnavailableFallback status={displayInfo.status} />
+        <PriceUnavailableFallback status={displayInfo.status}  aria-hidden="true" />
       </div>
     );
   }
@@ -364,12 +364,12 @@ export function PriceInsightBlock({
         data-testid="price-insight-block"
       >
         <h3 className="font-semibold text-gray-900 flex items-center gap-2 mb-3">
-          <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           Pricing
         </h3>
-        <PriceUnavailableFallback status="unavailable" />
+        <PriceUnavailableFallback status="unavailable"  aria-hidden="true" />
       </div>
     );
   }
@@ -388,34 +388,34 @@ export function PriceInsightBlock({
       {/* Header with currency selector */}
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-          <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           Price Range
         </h3>
         <div className="flex items-center gap-2">
-          <ConfidenceBadge score={bestConfidence} />
+          <ConfidenceBadge score={bestConfidence}  aria-hidden="true" />
         </div>
       </div>
 
       {/* Currency selector */}
       <div className="mb-3">
-        <CurrencySelector selected={currency} onChange={setCurrency} />
+        <CurrencySelector selected={currency} onChange={setCurrency}  aria-hidden="true" />
       </div>
 
       {/* Price Rows */}
       <div className="space-y-0">
         {hasNewPrice && displayInfo.priceRange && (
-          <PriceRow label="New Boat Price" priceRange={displayInfo.priceRange} />
+          <PriceRow label="New Boat Price" priceRange={displayInfo.priceRange}  aria-hidden="true" />
         )}
         {hasUsedPrice && displayInfo.usedPriceRange && (
-          <PriceRow label="Used / Brokerage" priceRange={displayInfo.usedPriceRange} />
+          <PriceRow label="Used / Brokerage" priceRange={displayInfo.usedPriceRange}  aria-hidden="true" />
         )}
       </div>
 
       {/* Price trend chart */}
       {history.length >= 2 && (
-        <PriceTrendSparkline data={history} />
+        <PriceTrendSparkline data={history}  aria-hidden="true" />
       )}
 
       {/* Footer */}

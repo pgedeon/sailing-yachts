@@ -33,7 +33,7 @@ export function ManufacturerComparisons({
   return (
     <section className="mt-10 sm:mt-12 bg-gradient-to-r from-amber-50 via-white to-orange-50 border border-amber-200 rounded-xl p-6">
       <div className="flex items-center gap-2 mb-4">
-        <Scale className="h-5 w-5 text-amber-700" />
+        <Scale className="h-5 w-5 text-amber-700"  aria-hidden="true" />
         <h2 className="text-lg sm:text-xl font-bold text-amber-900">
           Compare {manufacturerName} Yachts
         </h2>

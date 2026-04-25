@@ -49,7 +49,7 @@ export function RelatedGuides({
         data-testid="related-guides-section"
       >
         <div className="flex items-center gap-2 mb-4">
-          <BookOpen className="h-5 w-5 text-sky-700" />
+          <BookOpen className="h-5 w-5 text-sky-700"  aria-hidden="true" />
           <h2 className="text-lg sm:text-xl font-bold text-sky-900">
             Buying Guides & Resources
           </h2>
@@ -74,7 +74,7 @@ export function RelatedGuides({
         data-testid="related-guides-section"
       >
         <div className="flex items-center gap-2 mb-4">
-          <BookOpen className="h-5 w-5 text-sky-700" />
+          <BookOpen className="h-5 w-5 text-sky-700"  aria-hidden="true" />
           <h2 className="text-lg sm:text-xl font-bold text-sky-900">
             Buying Guides & Resources
           </h2>
@@ -87,7 +87,7 @@ export function RelatedGuides({
           className="inline-flex items-center gap-2 text-sm font-medium text-sky-700 hover:text-sky-900 transition"
         >
           Browse all guides
-          <ExternalLink className="h-4 w-4" />
+          <ExternalLink className="h-4 w-4"  aria-hidden="true" />
         </a>
       </section>
     );
@@ -99,7 +99,7 @@ export function RelatedGuides({
       data-testid="related-guides-section"
     >
       <div className="flex items-center gap-2 mb-4">
-        <BookOpen className="h-5 w-5 text-sky-700" />
+        <BookOpen className="h-5 w-5 text-sky-700"  aria-hidden="true" />
         <h2 className="text-lg sm:text-xl font-bold text-sky-900">
           Buying Guides & Resources
         </h2>
@@ -137,7 +137,7 @@ export function RelatedGuides({
                   )}
                 </div>
               </div>
-              <ExternalLink className="h-4 w-4 text-sky-600 flex-shrink-0" />
+              <ExternalLink className="h-4 w-4 text-sky-600 flex-shrink-0"  aria-hidden="true" />
             </div>
           </a>
         ))}

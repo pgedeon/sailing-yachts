@@ -48,7 +48,7 @@ function StarRating({ rating, size = "md" }: { rating: number; size?: "sm" | "md
               ? "fill-yellow-400 text-yellow-400"
               : "fill-muted text-muted-foreground/30"
           }`}
-        />
+         aria-hidden="true" />
       ))}
     </div>
   );
@@ -93,7 +93,7 @@ export function ReviewSummary({ reviews, overallRating, ratingBreakdown }: Revie
           <div className="text-5xl font-bold mb-2">
             {overallRating > 0 ? overallRating.toFixed(1) : "—"}
           </div>
-          <StarRating rating={overallRating} size="lg" />
+          <StarRating rating={overallRating} size="lg"  aria-hidden="true" />
           <p className="text-sm text-muted-foreground mt-2">
             Based on {reviews.length} review{reviews.length !== 1 ? "s" : ""}
           </p>
@@ -116,10 +116,10 @@ export function ReviewSummary({ reviews, overallRating, ratingBreakdown }: Revie
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
             Rating Breakdown
           </h3>
-          <RatingBar label="Build Quality" value={ratingBreakdown.build_quality} />
-          <RatingBar label="Sailing Performance" value={ratingBreakdown.sailing_performance} />
-          <RatingBar label="Comfort" value={ratingBreakdown.comfort} />
-          <RatingBar label="Value for Money" value={ratingBreakdown.value_for_money} />
+          <RatingBar label="Build Quality" value={ratingBreakdown.build_quality}  aria-hidden="true" />
+          <RatingBar label="Sailing Performance" value={ratingBreakdown.sailing_performance}  aria-hidden="true" />
+          <RatingBar label="Comfort" value={ratingBreakdown.comfort}  aria-hidden="true" />
+          <RatingBar label="Value for Money" value={ratingBreakdown.value_for_money}  aria-hidden="true" />
         </div>
       </div>
     </section>

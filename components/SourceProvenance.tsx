@@ -74,16 +74,16 @@ export default function SourceProvenance({
         data-testid="source-provenance-toggle"
       >
         <div className="flex items-center gap-2 text-sm sm:text-base font-semibold">
-          <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+          <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground"  aria-hidden="true" />
           <span>Data Source &amp; Quality</span>
           {completenessScore !== null && (
-            <CompletenessBadge score={completenessScore} size="sm" />
+            <CompletenessBadge score={completenessScore} size="sm"  aria-hidden="true" />
           )}
         </div>
         {expanded ? (
-          <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+          <ChevronUp className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground"  aria-hidden="true" />
         ) : (
-          <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+          <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground"  aria-hidden="true" />
         )}
       </button>
 
@@ -92,9 +92,9 @@ export default function SourceProvenance({
           {/* Completeness Score */}
           {completenessScore !== null && (
             <div className="flex items-center gap-3">
-              <Database className="h-4 w-4 text-muted-foreground shrink-0" />
+              <Database className="h-4 w-4 text-muted-foreground shrink-0"  aria-hidden="true" />
               <div className="flex items-center gap-2 flex-wrap">
-                <CompletenessBadge score={completenessScore} size="md" showLabel />
+                <CompletenessBadge score={completenessScore} size="md" showLabel  aria-hidden="true" />
                 <span className="text-sm text-muted-foreground">
                   Data completeness: {completenessScore}%
                 </span>
@@ -104,7 +104,7 @@ export default function SourceProvenance({
 
           {/* Source */}
           <div className="flex items-start gap-3">
-            <ExternalLink className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+            <ExternalLink className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0"  aria-hidden="true" />
             <div>
               <span className="text-sm text-muted-foreground">Source:</span>{" "}
               {sourceUrl ? (
@@ -126,7 +126,7 @@ export default function SourceProvenance({
 
           {/* Confidence */}
           <div className="flex items-center gap-3">
-            <Shield className="h-4 w-4 text-muted-foreground shrink-0" />
+            <Shield className="h-4 w-4 text-muted-foreground shrink-0"  aria-hidden="true" />
             <div className="flex items-center gap-2 flex-1">
               <span className="text-sm text-muted-foreground whitespace-nowrap">
                 Source confidence: {confidence.label}
@@ -144,7 +144,7 @@ export default function SourceProvenance({
 
           {/* Last Verified */}
           <div className="flex items-center gap-3">
-            <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
+            <Calendar className="h-4 w-4 text-muted-foreground shrink-0"  aria-hidden="true" />
             <span className="text-sm text-muted-foreground">
               Last verified:{" "}
               <span className={lastVerifiedAt ? "text-foreground" : "italic"}>
@@ -155,7 +155,7 @@ export default function SourceProvenance({
 
           {/* Data Source Type */}
           <div className="flex items-center gap-3">
-            <Database className="h-4 w-4 text-muted-foreground shrink-0" />
+            <Database className="h-4 w-4 text-muted-foreground shrink-0"  aria-hidden="true" />
             <span className="text-sm text-muted-foreground">
               Data source: <span className="text-foreground">{sourceLabel}</span>
             </span>

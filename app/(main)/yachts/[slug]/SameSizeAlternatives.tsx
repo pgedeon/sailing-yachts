@@ -139,7 +139,7 @@ export function SameSizeAlternatives({
 
               <div className="mt-3 flex items-center text-xs text-primary font-medium">
                 View details
-                <ArrowRight className="h-3 w-3 ml-1 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="h-3 w-3 ml-1 group-hover:translate-x-1 transition-transform"  aria-hidden="true" />
               </div>
             </div>
           </Link>
