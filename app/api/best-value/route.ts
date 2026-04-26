@@ -4,7 +4,7 @@ import {
   BEST_VALUE_PAGES,
   calculateValueScore,
   type BestValuePageDef,
-} from "@/app/(main)/best-value/[slug]/page";
+} from "@/app/[locale]/best-value/[slug]/page";
 
 export const dynamic = "force-dynamic";
 

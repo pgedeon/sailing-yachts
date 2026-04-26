@@ -1,0 +1,113 @@
+{
+  "locale": "fr",
+  "Layout": {
+    "skipToContent": "Aller au contenu",
+    "siteName": "Sailing Yacht Info",
+    "nav": {
+      "browse": "Parcourir",
+      "manufacturers": "Constructeurs",
+      "guides": "Guides",
+      "glossary": "Glossaire",
+      "search": "Recherche",
+      "compare": "Comparer",
+      "favorites": "Favoris"
+    },
+    "mobileNav": {
+      "browseYachts": "Parcourir les yachts",
+      "manufacturers": "Constructeurs",
+      "guides": "Guides",
+      "glossary": "Glossaire",
+      "search": "Recherche",
+      "compare": "Comparer",
+      "favorites": "Favoris",
+      "openMenu": "Ouvrir le menu",
+      "closeMenu": "Fermer le menu"
+    },
+    "footer": {
+      "copyright": "© {year} Sailing Yacht Info. Tous droits réservés.",
+      "dataSource": "Données issues des spécifications des constructeurs.",
+      "builtBy": "Créé avec ❤️ par {link3dput} · {linkSailboats}"
+    },
+    "auth": {
+      "signIn": "Connexion",
+      "signOut": "Déconnexion",
+      "account": "Compte",
+      "accountDashboard": "Tableau de bord"
+    }
+  },
+  "Home": {
+    "meta": {
+      "title": "Sailing Yacht Info — Spécifications, Dimensions & Comparaison",
+      "description": "Base de données complète de spécifications de yachts à voile. Recherchez {yachtPhrase} par longueur, année, constructeur. Comparez dimensions, plans de voilure et aménagements. Gratuit.",
+      "ogTitle": "Sailing Yacht Info — Spécifications, Dimensions & Comparaison",
+      "ogDescription": "Recherchez {yachtPhrase} par constructeur, longueur, année. Comparez les spécifications côte à côte. Base de données gratuite pour marins et acheteurs.",
+      "twitterTitle": "Sailing Yacht Info — Spécifications & Comparaison",
+      "twitterDescription": "Recherchez {yachtPhrase}. Comparez dimensions, plans de voilure, aménagements. Gratuit."
+    },
+    "hero": {
+      "title": "Spécifications & Comparaison de Yachts",
+      "description": "Recherchez <strong>{yachtPhrase}</strong> par constructeur, longueur, année. Comparez dimensions, plans de voilure et aménagements. Base de données gratuite pour marins, acheteurs et courtiers.",
+      "browseYachts": "Parcourir les yachts",
+      "compareSideBySide": "Comparer côte à côte"
+    },
+    "browseBySize": {
+      "title": "Parcourir par taille",
+      "under25": "Moins de 25 pi",
+      "range2530": "25–30 pi",
+      "range3035": "30–35 pi",
+      "range3540": "35–40 pi",
+      "range4050": "40–50 pi",
+      "over50": "50 pi+"
+    },
+    "featuredYachts": {
+      "title": "Derniers yachts ajoutés",
+      "subtitle": "Modèles récents avec spécifications complètes",
+      "viewAll": "Voir tout →",
+      "building": "Construction de la base de données...",
+      "buildingSubtitle": "Les yachts en vedette apparaîtront ici une fois le déploiement terminé.",
+      "loa": "{length}m LOA",
+      "models": "{count, plural, one {# modèle} other {# modèles}}",
+      "unknown": "Inconnu"
+    },
+    "popularManufacturers": {
+      "title": "Constructeurs populaires",
+      "subtitle": "Parcourez les yachts par constructeur",
+      "viewAll": "Tous les constructeurs →"
+    },
+    "whyUse": {
+      "title": "Pourquoi utiliser Sailing Yacht Info ?",
+      "detailedSpecs": {
+        "title": "Spécifications détaillées",
+        "description": "LOA, bau, tirant d'eau, déplacement, surface de voilure, type de gréement, cabines, couchettes et plus encore."
+      },
+      "sideBySide": {
+        "title": "Comparaison côte à côte",
+        "description": "Sélectionnez jusqu'à 4 yachts et comparez toutes les spécifications en un seul coup d'œil."
+      },
+      "performanceRatios": {
+        "title": "Ratios de performance",
+        "description": "D/L, SA/D, ratio de quille, screening de chavirage — calculés automatiquement."
+      }
+    },
+    "faq": {
+      "title": "Questions fréquentes",
+      "q1": "Combien de yachts sont dans la base de données ?",
+      "q2": "Puis-je comparer des yachts côte à côte ?",
+      "a2": "Oui ! Sélectionnez jusqu'à 4 yachts depuis la page de navigation et cliquez sur Comparer pour voir les spécifications côte à côte — longueur, déplacement, surface de voilure, cabines et plus encore.",
+      "q3": "La base de données est-elle gratuite ?",
+      "a3": "Oui, Sailing Yacht Info est entièrement gratuit pour un usage personnel et pour les organisations dont le revenu annuel est inférieur à 100 000 $.",
+      "q4": "D'où proviennent les données ?",
+      "a4": "Les spécifications proviennent des brochures des constructeurs, de la documentation officielle et de contributions vérifiées de propriétaires."
+    },
+    "cta": {
+      "title": "Prêt à trouver votre prochain yacht ?",
+      "subtitle": "Recherchez dans la base de données ou comparez les bateaux côte à côte.",
+      "browseAll": "Parcourir tous les yachts"
+    }
+  },
+  "LanguageSwitcher": {
+    "en": "English",
+    "fr": "Français",
+    "switchTo": "Passer en {language}"
+  }
+}
