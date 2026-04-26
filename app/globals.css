@@ -403,3 +403,92 @@ textarea:focus-visible {
     }
   }
 }
+
+/* ── P13.6: Reduced motion & responsive accessibility ── */
+
+/* Respect prefers-reduced-motion: disable all animations and transitions */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Disable Tailwind animate-spin, animate-pulse, animate-bounce */
+  .animate-spin {
+    animation: none !important;
+  }
+
+  .animate-pulse {
+    animation: none !important;
+  }
+
+  .animate-bounce {
+    animation: none !important;
+  }
+
+  /* Disable Radix/tailwind-animate classes */
+  .animate-in,
+  .animate-out {
+    animation: none !important;
+  }
+
+  /* Keep focus-visible outlines (they are not motion) */
+  *:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+  }
+}
+
+/* Touch target minimum 44×44px for interactive elements (WCAG 2.5.5) */
+@media (pointer: coarse) {
+  /* Ensure small buttons and links have adequate touch targets */
+  button:not([class*="h-"]),
+  a.inline-block:not([class*="h-"]),
+  [role="button"]:not([class*="h-"]) {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Ensure form inputs have adequate touch height */
+  input[type="text"],
+  input[type="email"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  select,
+  textarea {
+    min-height: 44px;
+  }
+
+  /* Ensure checkbox/radio have 44px tap area */
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Footer links need adequate spacing */
+  footer a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Nav links in mobile menu */
+  [role="navigation"] a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Pagination buttons */
+  button[aria-label],
+  a[aria-label] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
