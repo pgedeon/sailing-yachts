@@ -82,7 +82,9 @@ export default function RootLayout({
   const featureFlags = getAllFlags();
 
   return (
-    <html lang="en">
+    // Note: lang is set dynamically in [locale]/layout.tsx via html tag override
+    // but since this is the root layout, we set a default that the locale layout overrides
+    <html lang="en" suppressHydrationWarning>
       <body
         className={cn(inter.variable, "antialiased min-h-screen bg-background")}
       >

@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { signOut } from "next-auth/react"
 import { useCallback, useEffect, useState } from "react"
+import { useLocale, useTranslations } from "next-intl"
 
 type HeaderAuthControlsProps = {
   mobile?: boolean
@@ -35,6 +36,8 @@ function getInitials(session: SessionState) {
 export default function HeaderAuthControls({ mobile = false }: HeaderAuthControlsProps) {
   const [loading, setLoading] = useState(true)
   const [session, setSession] = useState<SessionState>(null)
+  const locale = useLocale()
+  const t = useTranslations("Layout.auth")
 
   const refreshSession = useCallback(() => {
     fetch("/api/auth/session", { cache: "no-store" })
@@ -76,7 +79,7 @@ export default function HeaderAuthControls({ mobile = false }: HeaderAuthControl
           href="/auth/signin"
           className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
         >
-          Sign In
+          {t("signIn")}
         </Link>
       )
     }
@@ -86,7 +89,7 @@ export default function HeaderAuthControls({ mobile = false }: HeaderAuthControl
         href="/auth/signin"
         className="inline-flex items-center justify-center rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
       >
-        Sign In
+        {t("signIn")}
       </Link>
     )
   }
@@ -95,13 +98,13 @@ export default function HeaderAuthControls({ mobile = false }: HeaderAuthControl
     return (
       <div className="grid gap-3">
         <Link
-          href="/account"
+          href={`/${locale}/account`}
           className="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 text-left transition hover:border-slate-300 hover:bg-slate-50"
         >
           <Avatar session={session} />
           <div>
             <div className="text-sm font-semibold text-slate-900">{getDisplayName(session)}</div>
-            <div className="text-xs text-slate-500">Account dashboard</div>
+            <div className="text-xs text-slate-500">{t("accountDashboard")}</div>
           </div>
         </Link>
         <button
@@ -109,11 +112,11 @@ export default function HeaderAuthControls({ mobile = false }: HeaderAuthControl
           onClick={() => {
             setSession(null)
             setLoading(true)
-            signOut({ callbackUrl: "/" })
+            signOut({ callbackUrl: `/${locale}` })
           }}
           className="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
         >
-          Sign Out
+          {t("signOut")}
         </button>
       </div>
     )
@@ -134,21 +137,21 @@ export default function HeaderAuthControls({ mobile = false }: HeaderAuthControl
 
       <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-200/70">
         <Link
-          href="/account"
+          href={`/${locale}/account`}
           className="flex items-center rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
         >
-          Account
+          {t("account")}
         </Link>
         <button
           type="button"
           onClick={() => {
             setSession(null)
             setLoading(true)
-            signOut({ callbackUrl: "/" })
+            signOut({ callbackUrl: `/${locale}` })
           }}
           className="flex w-full items-center rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
         >
-          Sign Out
+          {t("signOut")}
         </button>
       </div>
     </details>

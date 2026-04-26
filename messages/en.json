@@ -1,0 +1,113 @@
+{
+  "locale": "en",
+  "Layout": {
+    "skipToContent": "Skip to content",
+    "siteName": "Sailing Yacht Info",
+    "nav": {
+      "browse": "Browse",
+      "manufacturers": "Manufacturers",
+      "guides": "Guides",
+      "glossary": "Glossary",
+      "search": "Search",
+      "compare": "Compare",
+      "favorites": "Favorites"
+    },
+    "mobileNav": {
+      "browseYachts": "Browse Yachts",
+      "manufacturers": "Manufacturers",
+      "guides": "Guides",
+      "glossary": "Glossary",
+      "search": "Search",
+      "compare": "Compare",
+      "favorites": "Favorites",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu"
+    },
+    "footer": {
+      "copyright": "© {year} Sailing Yacht Info. All rights reserved.",
+      "dataSource": "Data sourced from manufacturer specifications.",
+      "builtBy": "Built with ❤️ by {link3dput} · {linkSailboats}"
+    },
+    "auth": {
+      "signIn": "Sign In",
+      "signOut": "Sign Out",
+      "account": "Account",
+      "accountDashboard": "Account dashboard"
+    }
+  },
+  "Home": {
+    "meta": {
+      "title": "Sailing Yacht Info — Specs, Dimensions & Comparison Tool",
+      "description": "Comprehensive database of sailing yacht specifications. Search {yachtPhrase} by length, year, manufacturer. Compare dimensions, sail plans, and accommodation. Free to use.",
+      "ogTitle": "Sailing Yacht Info — Specs, Dimensions & Comparison Tool",
+      "ogDescription": "Search {yachtPhrase} by manufacturer, length, year. Compare specs side by side. Free database for sailors and buyers.",
+      "twitterTitle": "Sailing Yacht Info — Specs & Comparison Tool",
+      "twitterDescription": "Search {yachtPhrase}. Compare dimensions, sail plans, accommodation. Free."
+    },
+    "hero": {
+      "title": "Sailing Yacht Specs & Comparison",
+      "description": "Search <strong>{yachtPhrase}</strong> by manufacturer, length, year. Compare dimensions, sail plans, and accommodation. Free database for sailors, buyers, and brokers.",
+      "browseYachts": "Browse Yachts",
+      "compareSideBySide": "Compare Side by Side"
+    },
+    "browseBySize": {
+      "title": "Browse by Size",
+      "under25": "Under 25ft",
+      "range2530": "25–30ft",
+      "range3035": "30–35ft",
+      "range3540": "35–40ft",
+      "range4050": "40–50ft",
+      "over50": "50ft+"
+    },
+    "featuredYachts": {
+      "title": "Latest Yachts Added",
+      "subtitle": "Recently added models with full specifications",
+      "viewAll": "View all →",
+      "building": "Building yacht database...",
+      "buildingSubtitle": "Featured yachts will appear here once deployment completes.",
+      "loa": "{length}m LOA",
+      "models": "{count, plural, one {# model} other {# models}}",
+      "unknown": "Unknown"
+    },
+    "popularManufacturers": {
+      "title": "Popular Manufacturers",
+      "subtitle": "Browse yachts by builder",
+      "viewAll": "All manufacturers →"
+    },
+    "whyUse": {
+      "title": "Why Use Sailing Yacht Info?",
+      "detailedSpecs": {
+        "title": "Detailed Specs",
+        "description": "LOA, beam, draft, displacement, sail area, rig type, cabins, berths, and more."
+      },
+      "sideBySide": {
+        "title": "Side-by-Side Compare",
+        "description": "Select up to 4 yachts and compare every spec in one view."
+      },
+      "performanceRatios": {
+        "title": "Performance Ratios",
+        "description": "D/L, SA/D, ballast ratio, capsize screening — calculated automatically."
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": "How many yachts are in the database?",
+      "q2": "Can I compare yachts side by side?",
+      "a2": "Yes! Select up to 4 yachts from the browse page and click Compare to see specs side by side — length, displacement, sail area, cabins, and more.",
+      "q3": "Is the database free to use?",
+      "a3": "Yes, the Sailing Yacht Info is completely free for personal use and for organizations with annual revenue under $100,000.",
+      "q4": "Where does the data come from?",
+      "a4": "Specifications are sourced from manufacturer brochures, official documentation, and verified owner contributions."
+    },
+    "cta": {
+      "title": "Ready to find your next yacht?",
+      "subtitle": "Search the database or compare boats side by side.",
+      "browseAll": "Browse All Yachts"
+    }
+  },
+  "LanguageSwitcher": {
+    "en": "English",
+    "fr": "Français",
+    "switchTo": "Switch to {language}"
+  }
+}

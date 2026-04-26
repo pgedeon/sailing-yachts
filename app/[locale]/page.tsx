@@ -9,6 +9,8 @@ import { generateWebsiteJsonLd, generateFaqJsonLd, getSiteUrl } from "@/lib/seo"
 import { slugify } from "@/lib/utils/slugify";
 import { getSiteStats, formatYachtPhrase, formatYachtCountFAQ } from "@/lib/site-stats";
 import { buildSafeQuery } from "@/lib/build-safe";
+import { useTranslations } from "next-intl";
+import { getMessages, getTranslations } from "next-intl/server";
 
 // ISR: Revalidate homepage cache every hour
 export const revalidate = 3600;
@@ -70,15 +72,20 @@ async function getTopManufacturers() {
   )();
 }
 
+interface HomeProps {
+  params: Promise<{ locale: string }>;
+}
+
 // Generate metadata with live yacht count
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({ params }: HomeProps) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Home" });
   const stats = await getSiteStats();
   const yachtPhrase = formatYachtPhrase(stats);
 
   return {
-    title: "Sailing Yacht Info — Specs, Dimensions & Comparison Tool",
-    description:
-      `Comprehensive database of sailing yacht specifications. Search ${yachtPhrase} by length, year, manufacturer. Compare dimensions, sail plans, and accommodation. Free to use.`,
+    title: t("meta.title"),
+    description: t("meta.description", { yachtPhrase }),
     keywords: [
       "sailing yacht specs",
       "sailboat dimensions",
@@ -92,27 +99,30 @@ export async function generateMetadata(): Promise<Metadata> {
       "boat specs",
     ],
     openGraph: {
-      title: "Sailing Yacht Info — Specs, Dimensions & Comparison Tool",
-      description:
-        `Search ${yachtPhrase} by manufacturer, length, year. Compare specs side by side. Free database for sailors and buyers.`,
-      url: getSiteUrl("/"),
+      title: t("meta.ogTitle"),
+      description: t("meta.ogDescription", { yachtPhrase }),
+      url: getSiteUrl(`/${locale}`),
       type: "website",
       siteName: "Sailing Yacht Info",
+      locale: locale === "fr" ? "fr_FR" : "en_US",
       images: [{ url: getSiteUrl("/api/og?title=Sailing%20Yachts%20Database&description=Specs%2C%20Dimensions%20%26%20Comparison"), width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
-      title: "Sailing Yacht Info — Specs & Comparison Tool",
-      description: `Search ${yachtPhrase}. Compare dimensions, sail plans, accommodation. Free.`,
+      title: t("meta.twitterTitle"),
+      description: t("meta.twitterDescription", { yachtPhrase }),
     },
     alternates: {
-      canonical: getSiteUrl("/"),
-      languages: { en: getSiteUrl("/"), fr: "https://sailboats.fr" },
+      canonical: getSiteUrl(`/${locale}`),
+      languages: { en: getSiteUrl("/en"), fr: getSiteUrl("/fr") },
     },
   };
 }
 
-export default async function Home() {
+export default async function Home({ params }: HomeProps) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Home" });
+
   const [featuredYachts, topManufacturers, stats] = await Promise.all([
     getFeaturedYachts(),
     getTopManufacturers(),
@@ -121,10 +131,10 @@ export default async function Home() {
   const yachtPhrase = formatYachtPhrase(stats);
 
   const FAQ_ITEMS = [
-    { q: "How many yachts are in the database?", a: formatYachtCountFAQ(stats) },
-    { q: "Can I compare yachts side by side?", a: "Yes! Select up to 4 yachts from the browse page and click Compare to see specs side by side — length, displacement, sail area, cabins, and more." },
-    { q: "Is the database free to use?", a: "Yes, the Sailing Yacht Info is completely free for personal use and for organizations with annual revenue under $100,000." },
-    { q: "Where does the data come from?", a: "Specifications are sourced from manufacturer brochures, official documentation, and verified owner contributions." },
+    { q: t("faq.q1"), a: formatYachtCountFAQ(stats) },
+    { q: t("faq.q2"), a: t("faq.a2") },
+    { q: t("faq.q3"), a: t("faq.a3") },
+    { q: t("faq.q4"), a: t("faq.a4") },
   ];
 
   const jsonLd = generateWebsiteJsonLd();
@@ -138,6 +148,15 @@ export default async function Home() {
     })),
   };
 
+  const browseBySize = [
+    { label: t("browseBySize.under25"), min: 0, max: 25 },
+    { label: t("browseBySize.range2530"), min: 25, max: 30 },
+    { label: t("browseBySize.range3035"), min: 30, max: 35 },
+    { label: t("browseBySize.range3540"), min: 35, max: 40 },
+    { label: t("browseBySize.range4050"), min: 40, max: 50 },
+    { label: t("browseBySize.over50"), min: 50, max: 999 },
+  ];
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -148,24 +167,26 @@ export default async function Home() {
         <section className="bg-gradient-to-b from-sky-50 to-white py-16 sm:py-24 px-4">
           <div className="max-w-5xl mx-auto text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-              Sailing Yacht Specs & Comparison
+              {t("hero.title")}
             </h1>
             <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Search <strong>{yachtPhrase}</strong> by manufacturer, length, year. Compare dimensions,
-              sail plans, and accommodation. Free database for sailors, buyers, and brokers.
+              {t.rich("hero.description", {
+                yachtPhrase,
+                strong: (children) => <strong>{children}</strong>,
+              })}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/yachts"
+                href={`/${locale}/yachts`}
                 className="px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition shadow-lg shadow-blue-200"
               >
-                Browse Yachts
+                {t("hero.browseYachts")}
               </Link>
               <Link
-                href="/compare"
+                href={`/${locale}/compare`}
                 className="px-8 py-4 border-2 border-blue-600 text-blue-600 rounded-lg font-semibold text-lg hover:bg-blue-50 transition"
               >
-                Compare Side by Side
+                {t("hero.compareSideBySide")}
               </Link>
             </div>
           </div>
@@ -174,19 +195,12 @@ export default async function Home() {
         {/* Quick Links by Size */}
         <section className="py-12 px-4 bg-white border-b">
           <div className="max-w-5xl mx-auto">
-            <h2 className="text-xl font-bold text-gray-900 mb-6 text-center">Browse by Size</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-6 text-center">{t("browseBySize.title")}</h2>
             <div className="flex flex-wrap justify-center gap-3">
-              {[
-                { label: "Under 25ft", min: 0, max: 25 },
-                { label: "25–30ft", min: 25, max: 30 },
-                { label: "30–35ft", min: 30, max: 35 },
-                { label: "35–40ft", min: 35, max: 40 },
-                { label: "40–50ft", min: 40, max: 50 },
-                { label: "50ft+", min: 50, max: 999 },
-              ].map(({ label, min, max }) => (
+              {browseBySize.map(({ label, min, max }) => (
                 <Link
                   key={label}
-                  href={`/yachts?minLength=${min}&maxLength=${max}`}
+                  href={`/${locale}/yachts?minLength=${min}&maxLength=${max}`}
                   className="px-5 py-2 bg-gray-100 hover:bg-blue-100 text-gray-700 hover:text-blue-700 rounded-full text-sm font-medium transition"
                 >
                   {label}
@@ -201,11 +215,11 @@ export default async function Home() {
           <div className="max-w-5xl mx-auto">
             <div className="flex items-end justify-between mb-8">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">Latest Yachts Added</h2>
-                <p className="text-gray-600 mt-1">Recently added models with full specifications</p>
+                <h2 className="text-2xl font-bold text-gray-900">{t("featuredYachts.title")}</h2>
+                <p className="text-gray-600 mt-1">{t("featuredYachts.subtitle")}</p>
               </div>
-              <Link href="/yachts" className="text-blue-600 hover:underline font-medium text-sm">
-                View all →
+              <Link href={`/${locale}/yachts`} className="text-blue-600 hover:underline font-medium text-sm">
+                {t("featuredYachts.viewAll")}
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:cols-2 lg:grid-cols-3 gap-6">
@@ -213,10 +227,10 @@ export default async function Home() {
                 featuredYachts.map((yacht: any) => (
                   <Link
                     key={yacht.id}
-                    href={`/yachts/${yacht.slug}`}
+                    href={`/${locale}/yachts/${yacht.slug}`}
                     className="block bg-white rounded-xl border border-gray-200 p-5 hover:shadow-lg hover:border-blue-200 transition"
                   >
-                    <div className="text-sm text-gray-500 mb-1">{yacht.manufacturer || "Unknown"}</div>
+                    <div className="text-sm text-gray-500 mb-1">{yacht.manufacturer || t("featuredYachts.unknown")}</div>
                     <h3 className="font-semibold text-gray-900 text-lg">{yacht.modelName}</h3>
                     <div className="mt-3 flex items-center gap-4 text-sm text-gray-600">
                       {yacht.year && <span>{yacht.year}</span>}
@@ -226,8 +240,8 @@ export default async function Home() {
                 ))
               ) : (
                 <div className="col-span-full text-center py-8">
-                  <div className="text-gray-500">Building yacht database...</div>
-                  <div className="text-sm text-gray-500 mt-1">Featured yachts will appear here once deployment completes.</div>
+                  <div className="text-gray-500">{t("featuredYachts.building")}</div>
+                  <div className="text-sm text-gray-500 mt-1">{t("featuredYachts.buildingSubtitle")}</div>
                 </div>
               )}
             </div>
@@ -239,11 +253,11 @@ export default async function Home() {
           <div className="max-w-5xl mx-auto">
             <div className="flex items-end justify-between mb-8">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">Popular Manufacturers</h2>
-                <p className="text-gray-600 mt-1">Browse yachts by builder</p>
+                <h2 className="text-2xl font-bold text-gray-900">{t("popularManufacturers.title")}</h2>
+                <p className="text-gray-600 mt-1">{t("popularManufacturers.subtitle")}</p>
               </div>
-              <Link href="/manufacturers" className="text-blue-600 hover:underline font-medium text-sm">
-                All manufacturers →
+              <Link href={`/${locale}/manufacturers`} className="text-blue-600 hover:underline font-medium text-sm">
+                {t("popularManufacturers.viewAll")}
               </Link>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -251,19 +265,19 @@ export default async function Home() {
                 topManufacturers.map((mfr: any) => (
                   <Link
                     key={mfr.name}
-                    href={`/manufacturers/${slugify(mfr.name)}`}
+                    href={`/${locale}/manufacturers/${slugify(mfr.name)}`}
                     className="block bg-gray-50 rounded-lg p-4 hover:bg-blue-50 transition border border-gray-100"
                   >
                     <div className="font-semibold text-gray-900">{mfr.name}</div>
                     <div className="text-sm text-gray-500 mt-1">
-                      {mfr.yachtCount} model{mfr.yachtCount !== 1 ? "s" : ""}
+                      {t("featuredYachts.models", { count: mfr.yachtCount })}
                     </div>
                   </Link>
                 ))
               ) : (
                 <div className="col-span-full text-center py-8">
-                  <div className="text-gray-500">Building manufacturer database...</div>
-                  <div className="text-sm text-gray-500 mt-1">Popular manufacturers will appear here once deployment completes.</div>
+                  <div className="text-gray-500">{t("featuredYachts.building")}</div>
+                  <div className="text-sm text-gray-500 mt-1">{t("featuredYachts.buildingSubtitle")}</div>
                 </div>
               )}
             </div>
@@ -275,22 +289,22 @@ export default async function Home() {
         {/* Features / Benefits */}
         <section className="py-16 px-4 bg-sky-50">
           <div className="max-w-5xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">Why Use Sailing Yacht Info?</h2>
+            <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">{t("whyUse.title")}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
               <div className="text-center">
                 <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4 text-white text-2xl">🔍</div>
-                <h3 className="font-semibold text-gray-900 mb-2">Detailed Specs</h3>
-                <p className="text-gray-600 text-sm">LOA, beam, draft, displacement, sail area, rig type, cabins, berths, and more.</p>
+                <h3 className="font-semibold text-gray-900 mb-2">{t("whyUse.detailedSpecs.title")}</h3>
+                <p className="text-gray-600 text-sm">{t("whyUse.detailedSpecs.description")}</p>
               </div>
               <div className="text-center">
                 <div className="w-14 h14 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4 text-white text-2xl">⚖️</div>
-                <h3 className="font-semibold text-gray-900 mb-2">Side-by-Side Compare</h3>
-                <p className="text-gray-600 text-sm">Select up to 4 yachts and compare every spec in one view.</p>
+                <h3 className="font-semibold text-gray-900 mb-2">{t("whyUse.sideBySide.title")}</h3>
+                <p className="text-gray-600 text-sm">{t("whyUse.sideBySide.description")}</p>
               </div>
               <div className="text-center">
                 <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4 text-white text-2xl">📊</div>
-                <h3 className="font-semibold text-gray-900 mb-2">Performance Ratios</h3>
-                <p className="text-gray-600 text-sm">D/L, SA/D, ballast ratio, capsize screening — calculated automatically.</p>
+                <h3 className="font-semibold text-gray-900 mb-2">{t("whyUse.performanceRatios.title")}</h3>
+                <p className="text-gray-600 text-sm">{t("whyUse.performanceRatios.description")}</p>
               </div>
             </div>
           </div>
@@ -299,7 +313,7 @@ export default async function Home() {
         {/* FAQ Section */}
         <section className="py-16 px-4 bg-white">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">Frequently Asked Questions</h2>
+            <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">{t("faq.title")}</h2>
             <div className="space-y-6">
               {FAQ_ITEMS.map((item, idx) => (
                 <div key={idx} className="border-b border-gray-200 pb-6">
@@ -321,13 +335,13 @@ export default async function Home() {
         {/* CTA */}
         <section className="py-16 px-4 bg-gray-900 text-white text-center">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-4">Ready to find your next yacht?</h2>
-            <p className="text-gray-300 mb-8">Search the database or compare boats side by side.</p>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4">{t("cta.title")}</h2>
+            <p className="text-gray-300 mb-8">{t("cta.subtitle")}</p>
             <Link
-              href="/yachts"
+              href={`/${locale}/yachts`}
               className="inline-block px-8 py-4 bg-blue-700 text-white rounded-lg font-semibold text-lg hover:bg-blue-600 transition"
             >
-              Browse All Yachts
+              {t("cta.browseAll")}
             </Link>
           </div>
         </section>
