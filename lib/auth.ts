@@ -7,8 +7,11 @@ import GoogleProvider from "next-auth/providers/google"
 import { db } from "./db"
 import { users } from "./db"
 
-// Enforce NEXTAUTH_SECRET at startup — no fallback
-function getRequiredSecret(): string {
+// Lazily validate NEXTAUTH_SECRET — only when auth is actually used at runtime.
+// This prevents build-time crashes during `next build` static analysis.
+// The secret is validated on first auth request, not at module import time.
+let _secretValidated = false
+function getSecret(): string {
   const secret = process.env.NEXTAUTH_SECRET
   if (!secret) {
     throw new Error(
@@ -17,11 +20,14 @@ function getRequiredSecret(): string {
       "Generate one with: openssl rand -base64 32"
     )
   }
-  if (secret.length < 32) {
-    console.warn(
-      "[auth] WARNING: NEXTAUTH_SECRET is less than 32 characters. " +
-      "Consider using a longer secret for better security."
-    )
+  if (!_secretValidated) {
+    if (secret.length < 32) {
+      console.warn(
+        "[auth] WARNING: NEXTAUTH_SECRET is less than 32 characters. " +
+        "Consider using a longer secret for better security."
+      )
+    }
+    _secretValidated = true
   }
   return secret
 }
@@ -262,5 +268,10 @@ export const authOptions: NextAuthOptions = {
       return session
     }
   },
-  secret: getRequiredSecret(),
+  // Use getter so the secret is resolved lazily — avoids crashing during
+  // `next build` when NEXTAUTH_SECRET isn't available (CI / static analysis).
+  // The secret is validated on the first actual auth request.
+  get secret() {
+    return getSecret()
+  },
 }
