@@ -685,7 +685,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
 
           {/* Footer */}
           <div className="p-3 border-t border-gray-100 bg-gray-50 flex items-center justify-between">
-            <span className="text-xs text-gray-500">{selectedIds.length}/{MAX_COMPARE} selected</span>
+            <span className="text-xs text-gray-500" aria-live="polite">{selectedIds.length}/{MAX_COMPARE} selected</span>
             <button
               onClick={() => setPickerOpen(false)}
               className="text-sm text-blue-600 hover:text-blue-800 font-medium"
