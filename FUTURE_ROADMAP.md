@@ -29,9 +29,10 @@
 - ~~**P13.3 — Keyboard navigation enhancement:** Ensure all interactive elements (filters, compare selector, search, tabs) are fully keyboard-accessible with visible focus indicators. Tests: keyboard navigation E2E tests.~~ *(completed 2026-04-25)*
 - ~~**P13.4 — Form accessibility & error handling:** Add proper labels, aria-describedby for errors, live regions for dynamic content updates, and accessible form validation across search, compare, and newsletter forms. Tests: form accessibility tests.~~ *(completed 2026-04-25)*
 - ~~**P13.5 — Image alt text & media accessibility:** Audit all images for meaningful alt text, add aria-labels to icon-only buttons, ensure SVG icons have accessible names. Tests: media accessibility audit tests.~~ *(completed 2026-04-25)*
-- **P13.6 — Reduced motion & responsive accessibility:** Respect prefers-reduced-motion, ensure touch targets are 44px minimum, test with screen reader patterns. Tests: reduced-motion and responsive a11y tests.
+- ~~**P13.6 — Reduced motion & responsive accessibility:** Respect `prefers-reduced-motion`, ensure touch targets are 44px minimum, test with screen reader patterns. Tests: 50 reduced-motion and responsive a11y tests.~~ *(completed 2026-04-26)*
 
 ### Notes
 - Phase 13 focuses on making the site accessible to all users.
 - Accessibility improvements also improve SEO and overall UX.
 - Priority order ensures the highest-impact fixes land first.
+- **Phase 13 is complete.** All 6 items delivered.
