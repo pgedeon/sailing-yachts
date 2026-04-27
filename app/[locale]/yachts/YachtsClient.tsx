@@ -10,6 +10,7 @@ import { FILTER_PRESETS, detectActivePreset, type FilterPreset } from '@/lib/fil
 import type { YachtsListingResult, FilterOptions, YachtListItem } from '@/lib/yachts';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 // Use the shared type from lib/yachts
 type Yacht = YachtListItem;
@@ -27,6 +28,7 @@ interface YachtsClientProps {
 
 export default function YachtsClient({ initialData, filterOptions: initialFilterOptions }: YachtsClientProps) {
   const searchParams = useSearchParams();
+  const t = useTranslations('Yachts');
 
   // Initialize from SSR data if available
   const [manufacturers, setManufacturers] = useState<Array<{ id: number; name: string }>>(
@@ -181,7 +183,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
 
     // Focus the modal close button
     requestAnimationFrame(() => {
-      const closeBtn = modalRef.current?.querySelector<HTMLButtonElement>('button[aria-label="Close modal"]');
+      const closeBtn = modalRef.current?.querySelector<HTMLButtonElement>('button[aria-label="' + t('modal.close') + '"]');
       closeBtn?.focus();
     });
 
@@ -269,18 +271,18 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
   const format = (v: number | null | undefined) => (v != null ? v.toLocaleString() : '—');
 
   const FilterSidebar = () => (
-    <div className="bg-white rounded-lg shadow p-4" role="group" aria-label="Filter yachts">
+    <div className="bg-white rounded-lg shadow p-4" role="group" aria-label={t('filters.heading')}>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-semibold" id="filters-heading">Filters</h2>
+        <h2 className="font-semibold" id="filters-heading">{t('filters.heading')}</h2>
         {activeFilterCount > 0 && (
           <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full font-medium" aria-live="polite">
-            {activeFilterCount} active
+            {t('filters.activeCount', { count: activeFilterCount })}
           </span>
         )}
       </div>
 
       <div className="mb-6">
-        <h3 className="text-sm font-medium mb-2" id="filter-manufacturer-heading">Manufacturer</h3>
+        <h3 className="text-sm font-medium mb-2" id="filter-manufacturer-heading">{t('filters.manufacturer')}</h3>
         {manufacturers.length === 0 ? <p className="text-sm text-gray-500">Loading...</p> : (
           <ul className="space-y-1 max-h-48 overflow-y-auto" role="group" aria-labelledby="filter-manufacturer-heading">
             {manufacturers.map(m => (
@@ -296,8 +298,8 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
       </div>
 
       <div className="mb-6">
-        <h3 className="text-sm font-medium mb-2" id="filter-rigtype-heading">Rig Type</h3>
-        {distinct.rigTypes.length === 0 ? <p className="text-sm text-gray-500">No options</p> : (
+        <h3 className="text-sm font-medium mb-2" id="filter-rigtype-heading">{t('filters.rigType')}</h3>
+        {distinct.rigTypes.length === 0 ? <p className="text-sm text-gray-500">{t('filters.noOptions')}</p> : (
           <ul className="space-y-1 max-h-48 overflow-y-auto" role="radiogroup" aria-labelledby="filter-rigtype-heading">
             {distinct.rigTypes.map(v => (
               <li key={v}>
@@ -312,8 +314,8 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
       </div>
 
       <div className="mb-6">
-        <h3 className="text-sm font-medium mb-2" id="filter-keeltype-heading">Keel Type</h3>
-        {distinct.keelTypes.length === 0 ? <p className="text-sm text-gray-500">No options</p> : (
+        <h3 className="text-sm font-medium mb-2" id="filter-keeltype-heading">{t('filters.keelType')}</h3>
+        {distinct.keelTypes.length === 0 ? <p className="text-sm text-gray-500">{t('filters.noOptions')}</p> : (
           <ul className="space-y-1 max-h-48 overflow-y-auto" role="radiogroup" aria-labelledby="filter-keeltype-heading">
             {distinct.keelTypes.map(v => (
               <li key={v}>
@@ -328,8 +330,8 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
       </div>
 
       <div className="mb-6">
-        <h3 className="text-sm font-medium mb-2" id="filter-hull-heading">Hull Material</h3>
-        {distinct.hullMaterials.length === 0 ? <p className="text-sm text-gray-500">No options</p> : (
+        <h3 className="text-sm font-medium mb-2" id="filter-hull-heading">{t('filters.hullMaterial')}</h3>
+        {distinct.hullMaterials.length === 0 ? <p className="text-sm text-gray-500">{t('filters.noOptions')}</p> : (
           <ul className="space-y-1 max-h-48 overflow-y-auto" role="radiogroup" aria-labelledby="filter-hull-heading">
             {distinct.hullMaterials.map(v => (
               <li key={v}>
@@ -344,7 +346,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
       </div>
 
       <button onClick={clearFilters} className="w-full py-2 px-4 bg-gray-200 hover:bg-gray-300 rounded text-sm transition-colors">
-        Clear Filters
+        {t('filters.clearFilters')}
       </button>
     </div>
   );
@@ -354,7 +356,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
       <div className="max-w-7xl mx-auto p-4 sm:p-6">
         {/* Header with mobile filter toggle */}
         <div className="flex items-center justify-between mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold">Sail Yachts</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">{t('heading')}</h1>
           <button
             ref={filterToggleRef}
             onClick={() => setFiltersOpen(!filtersOpen)}
@@ -365,7 +367,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
             <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
             </svg>
-            Filters
+            {t('filters.toggle')}
             {activeFilterCount > 0 && (
               <span className="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-blue-600 text-white font-semibold">
                 {activeFilterCount}
@@ -375,13 +377,13 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
         </div>
 
         {/* Filter Presets */}
-        <div className="mb-4 sm:mb-6" role="group" aria-label="Quick filter presets">
+        <div className="mb-4 sm:mb-6" role="group" aria-label={t('presets.label')}>
           <div className="flex flex-wrap gap-2">
             {FILTER_PRESETS.map(preset => (
               <button
                 key={preset.id}
                 onClick={() => applyPreset(preset)}
-                title={preset.description}
+                title={t(`presets.${preset.id}.description`)}
                 aria-pressed={activePresetId === preset.id}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
                   activePresetId === preset.id
@@ -390,18 +392,18 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
                 }`}
               >
                 <span>{preset.icon}</span>
-                <span>{preset.label}</span>
+                <span>{t(`presets.${preset.id}.label`)}</span>
               </button>
             ))}
           </div>
           {activePreset && (
             <div className="mt-2 flex items-center gap-2">
-              <span className="text-sm text-gray-500">{activePreset.icon} {activePreset.description}</span>
+              <span className="text-sm text-gray-500">{activePreset.icon} {t(`presets.${activePreset.id}.description`)}</span>
               <button
                 onClick={clearFilters}
                 className="text-xs text-blue-600 hover:text-blue-800 underline"
               >
-                Clear preset
+                {t('presets.clearPreset')}
               </button>
             </div>
           )}
@@ -419,10 +421,10 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
 
           {/* Main */}
           <main className="flex-1 min-w-0">
-            {loading && yachts.length === 0 ? (<p className="p-8 text-center text-gray-500" role="status" aria-live="polite">Loading yachts...</p>) : yachts.length === 0 ? (
+            {loading && yachts.length === 0 ? (<p className="p-8 text-center text-gray-500" role="status" aria-live="polite">{t('loading')}</p>) : yachts.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-gray-500 mb-2">No yachts match your filters.</p>
-                <button onClick={clearFilters} className="text-blue-600 hover:underline text-sm">Clear all filters</button>
+                <p className="text-gray-500 mb-2">{t('noResults')}</p>
+                <button onClick={clearFilters} className="text-blue-600 hover:underline text-sm">{t('clearAllFilters')}</button>
               </div>
             ) : (
               <>
@@ -455,17 +457,17 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
                         <CompletenessBadge score={calculateCompletenessScore(yacht)} />
                       </div>
                       <dl className="mt-3 text-sm">
-                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">Length:</dt><dd className="font-medium">{format(yacht.lengthOverall)} m</dd></div>
-                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">Beam:</dt><dd className="font-medium">{format(yacht.beam)} m</dd></div>
-                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">Draft:</dt><dd className="font-medium">{format(yacht.draft)} m</dd></div>
-                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">Displacement:</dt><dd className="font-medium">{format(yacht.displacement)} kg</dd></div>
-                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">Rig:</dt><dd className="font-medium">{yacht.rigType ?? '—'}</dd></div>
-                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">Keel:</dt><dd className="font-medium">{yacht.keelType ?? '—'}</dd></div>
-                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">Hull:</dt><dd className="font-medium">{yacht.hullMaterial ?? '—'}</dd></div>
+                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">{t('specs.length')}</dt><dd className="font-medium">{format(yacht.lengthOverall)} m</dd></div>
+                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">{t('specs.beam')}</dt><dd className="font-medium">{format(yacht.beam)} m</dd></div>
+                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">{t('specs.draft')}</dt><dd className="font-medium">{format(yacht.draft)} m</dd></div>
+                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">{t('specs.displacement')}</dt><dd className="font-medium">{format(yacht.displacement)} kg</dd></div>
+                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">{t('specs.rig')}</dt><dd className="font-medium">{yacht.rigType ?? '—'}</dd></div>
+                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">{t('specs.keel')}</dt><dd className="font-medium">{yacht.keelType ?? '—'}</dd></div>
+                        <div className="flex justify-between py-0.5"><dt className="text-gray-500">{t('specs.hull')}</dt><dd className="font-medium">{yacht.hullMaterial ?? '—'}</dd></div>
                       </dl>
                       {yacht.slug && (
                         <a href={`/yachts/${yacht.slug}`} className="mt-3 text-blue-600 hover:underline text-sm font-medium inline-block">
-                          View Details →
+                          {t('viewDetails')}
                         </a>
                       )}
                     </div>
@@ -474,9 +476,9 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
 
                 {totalPages > 1 && (
                   <nav className="mt-6 flex items-center justify-between text-sm" aria-label="Pagination">
-                    <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="px-4 py-2 border rounded-lg disabled:opacity-50 hover:bg-gray-50 transition-colors">Previous</button>
-                    <span className="text-gray-600" aria-live="polite">Page {page} of {totalPages} <span className="text-gray-500">({total} total)</span></span>
-                    <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="px-4 py-2 border rounded-lg disabled:opacity-50 hover:bg-gray-50 transition-colors">Next</button>
+                    <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="px-4 py-2 border rounded-lg disabled:opacity-50 hover:bg-gray-50 transition-colors">{t('pagination.previous')}</button>
+                    <span className="text-gray-600" aria-live="polite">{t('pagination.pageInfo', { page, totalPages })} <span className="text-gray-500">{t('pagination.total', { total })}</span></span>
+                    <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="px-4 py-2 border rounded-lg disabled:opacity-50 hover:bg-gray-50 transition-colors">{t('pagination.next')}</button>
                   </nav>
                 )}
               </>
@@ -508,34 +510,34 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
               <button
                 onClick={closeModal}
                 className="text-gray-500 hover:text-gray-700 text-2xl leading-none flex-shrink-0"
-                aria-label="Close modal"
+                aria-label={t('modal.close')}
               >
                 &times;
               </button>
             </div>
             <p className="text-gray-600 mb-4">{selectedYacht.year ?? ''}</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">Length Overall:</span> <span className="font-medium">{format(selectedYacht.lengthOverall)} m</span></div>
-              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">Beam:</span> <span className="font-medium">{format(selectedYacht.beam)} m</span></div>
-              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">Draft:</span> <span className="font-medium">{format(selectedYacht.draft)} m</span></div>
-              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">Displacement:</span> <span className="font-medium">{format(selectedYacht.displacement)} kg</span></div>
-              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">Ballast:</span> <span className="font-medium">{format(selectedYacht.ballast)} kg</span></div>
-              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">Sail Area:</span> <span className="font-medium">{format(selectedYacht.sailAreaMain)} m²</span></div>
-              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">Rig Type:</span> <span className="font-medium">{selectedYacht.rigType ?? '—'}</span></div>
-              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">Keel Type:</span> <span className="font-medium">{selectedYacht.keelType ?? '—'}</span></div>
-              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">Hull:</span> <span className="font-medium">{selectedYacht.hullMaterial ?? '—'}</span></div>
-              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">Cabins:</span> <span className="font-medium">{format(selectedYacht.cabins)}</span></div>
-              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">Berths:</span> <span className="font-medium">{format(selectedYacht.berths)}</span></div>
-              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">Heads:</span> <span className="font-medium">{format(selectedYacht.heads)}</span></div>
-              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">Max Occupancy:</span> <span className="font-medium">{format(selectedYacht.maxOccupancy)}</span></div>
-              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">Engine HP:</span> <span className="font-medium">{format(selectedYacht.engineHp)}</span></div>
-              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">Engine:</span> <span className="font-medium">{selectedYacht.engineType ?? '—'}</span></div>
-              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">Fuel:</span> <span className="font-medium">{format(selectedYacht.fuelCapacity)} L</span></div>
-              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">Water:</span> <span className="font-medium">{format(selectedYacht.waterCapacity)} L</span></div>
+              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">{t('specs.lengthOverall')}</span> <span className="font-medium">{format(selectedYacht.lengthOverall)} m</span></div>
+              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">{t('specs.beam')}</span> <span className="font-medium">{format(selectedYacht.beam)} m</span></div>
+              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">{t('specs.draft')}</span> <span className="font-medium">{format(selectedYacht.draft)} m</span></div>
+              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">{t('specs.displacement')}</span> <span className="font-medium">{format(selectedYacht.displacement)} kg</span></div>
+              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">{t('specs.ballast')}</span> <span className="font-medium">{format(selectedYacht.ballast)} kg</span></div>
+              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">{t('specs.sailArea')}</span> <span className="font-medium">{format(selectedYacht.sailAreaMain)} m²</span></div>
+              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">{t('specs.rigType')}</span> <span className="font-medium">{selectedYacht.rigType ?? '—'}</span></div>
+              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">{t('specs.keelType')}</span> <span className="font-medium">{selectedYacht.keelType ?? '—'}</span></div>
+              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">{t('specs.hull')}</span> <span className="font-medium">{selectedYacht.hullMaterial ?? '—'}</span></div>
+              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">{t('specs.cabins')}</span> <span className="font-medium">{format(selectedYacht.cabins)}</span></div>
+              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">{t('specs.berths')}</span> <span className="font-medium">{format(selectedYacht.berths)}</span></div>
+              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">{t('specs.heads')}</span> <span className="font-medium">{format(selectedYacht.heads)}</span></div>
+              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">{t('specs.maxOccupancy')}</span> <span className="font-medium">{format(selectedYacht.maxOccupancy)}</span></div>
+              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">{t('specs.engineHp')}</span> <span className="font-medium">{format(selectedYacht.engineHp)}</span></div>
+              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">{t('specs.engine')}</span> <span className="font-medium">{selectedYacht.engineType ?? '—'}</span></div>
+              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">{t('specs.fuel')}</span> <span className="font-medium">{format(selectedYacht.fuelCapacity)} L</span></div>
+              <div className="flex justify-between sm:block"><span className="text-gray-500 sm:text-xs sm:uppercase sm:tracking-wide">{t('specs.water')}</span> <span className="font-medium">{format(selectedYacht.waterCapacity)} L</span></div>
             </div>
             {selectedYacht.description && (
               <div className="mt-4 pt-4 border-t">
-                <h3 className="font-semibold text-sm text-gray-500 uppercase tracking-wide mb-1">Description</h3>
+                <h3 className="font-semibold text-sm text-gray-500 uppercase tracking-wide mb-1">{t('specs.description')}</h3>
                 <p className="text-gray-700 text-sm leading-relaxed">{selectedYacht.description}</p>
               </div>
             )}
@@ -546,7 +548,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
                   href={`/yachts/${selectedYacht.slug}`}
                   className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium text-sm"
                 >
-                  View Full Spec Sheet →
+                  {t('viewFullSpec')}
                 </a>
               </div>
             )}

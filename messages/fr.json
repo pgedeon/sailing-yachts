@@ -113,5 +113,111 @@
     "en": "English",
     "fr": "Français",
     "switchTo": "Passer en {language}"
+  },
+  "Yachts": {
+    "meta": {
+      "title": "Parcourir les yachts à voile — Sailing Yacht Info",
+      "description": "Recherchez et filtrez les yachts à voile par constructeur, longueur, année et plus encore."
+    },
+    "heading": "Yachts à voile",
+    "loading": "Chargement des yachts...",
+    "noResults": "Aucun yacht ne correspond à vos filtres.",
+    "clearAllFilters": "Effacer tous les filtres",
+    "filters": {
+      "heading": "Filtres",
+      "activeCount": "{count} actif{count, plural, one {} other {s}}",
+      "manufacturer": "Constructeur",
+      "rigType": "Type de gréement",
+      "keelType": "Type de quille",
+      "hullMaterial": "Matériau de coque",
+      "noOptions": "Aucune option",
+      "clearFilters": "Effacer les filtres",
+      "toggle": "Filtres"
+    },
+    "presets": {
+      "label": "Filtres rapides",
+      "clearPreset": "Effacer le filtre",
+      "bluewater": {
+        "label": "Croiseurs hauturiers",
+        "description": "Yachts prêts pour l'océan de 35 à 55 pi avec un déplacement lourd et des quilles éprouvées"
+      },
+      "racing": {
+        "label": "Yachts de course",
+        "description": "Yachts légers et rapides avec gréements de performance et quilles à bulbe"
+      },
+      "budget": {
+        "label": "Petit budget",
+        "description": "Croiseurs compacts abordables de moins de 30 pi, idéaux pour les premiers acheteurs"
+      },
+      "family": {
+        "label": "Croiseurs familiaux",
+        "description": "Yachts de croisière confortables avec 3+ cabines, de 30 à 45 pi"
+      }
+    },
+    "specs": {
+      "length": "Longueur :",
+      "beam": "Bau :",
+      "draft": "Tirant d'eau :",
+      "displacement": "Déplacement :",
+      "rig": "Gréement :",
+      "keel": "Quille :",
+      "hull": "Coque :",
+      "lengthOverall": "Longueur hors tout :",
+      "ballast": "Lest :",
+      "sailArea": "Surface de voilure :",
+      "rigType": "Type de gréement :",
+      "keelType": "Type de quille :",
+      "cabins": "Cabines :",
+      "berths": "Couchettes :",
+      "heads": "Toilettes :",
+      "maxOccupancy": "Capacité max :",
+      "engineHp": "Puissance moteur :",
+      "engine": "Moteur :",
+      "fuel": "Carburant :",
+      "water": "Eau :",
+      "description": "Description"
+    },
+    "viewDetails": "Voir les détails →",
+    "viewFullSpec": "Voir la fiche complète →",
+    "pagination": {
+      "previous": "Précédent",
+      "next": "Suivant",
+      "pageInfo": "Page {page} sur {totalPages}",
+      "total": "({total} au total)"
+    },
+    "modal": {
+      "close": "Fermer la fenêtre"
+    }
+  },
+  "Search": {
+    "meta": {
+      "title": "Rechercher des yachts — Sailing Yacht Info",
+      "description": "Recherchez des yachts à voile par constructeur, nom de modèle, type de gréement, type de quille et plus encore."
+    },
+    "heading": "Rechercher des yachts",
+    "subtitle": "Trouvez des yachts à voile par constructeur, modèle ou spécifications",
+    "placeholder": "Recherchez par constructeur, nom de modèle, type de gréement...",
+    "searchButton": "Rechercher",
+    "searching": "Recherche en cours...",
+    "hint": "Tapez au moins 2 caractères pour les suggestions. Appuyez sur Entrée pour rechercher.",
+    "results": {
+      "count": "{total} yacht{total, plural, one {} other {s}} trouvé{total, plural, one {} other {s}}",
+      "searching": "Recherche en cours...",
+      "for": "pour",
+      "loa": "LOA",
+      "beam": "Bau",
+      "draft": "Tirant d'eau"
+    },
+    "saveSearch": "Enregistrer la recherche",
+    "saved": "Enregistré !",
+    "saveFailed": "Échec",
+    "empty": {
+      "heading": "Aucun yacht trouvé",
+      "description": "Essayez avec d'autres mots-clés"
+    },
+    "popular": "Recherches populaires",
+    "suggestions": {
+      "label": "Suggestions de recherche"
+    }
   }
 }

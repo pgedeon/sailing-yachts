@@ -3,33 +3,44 @@ import { generateBreadcrumbJsonLd, getSiteUrl } from "@/lib/seo";
 import dynamic from "next/dynamic";
 const SearchClient = dynamic(() => import("./SearchClient").then(m => ({ default: m.SearchClient })), { ssr: false, loading: () => null });
 import { shouldNoindexSearchPage } from "@/lib/thin-page-governance";
+import { getTranslations } from "next-intl/server";
+
+interface SearchPageProps {
+  params: Promise<{ locale: string }>;
+}
 
 /**
  * Search page metadata.
  * Search results pages should be noindexed for user-specific queries,
  * but the base /search page itself can be indexed.
  */
-export const metadata: Metadata = {
-  title: "Search Yachts — Sailing Yacht Info",
-  description:
-    "Search sailing yachts by manufacturer, model name, rig type, keel type, and more. Find the perfect sailboat with our comprehensive database.",
-  alternates: {
-    canonical: "/search",
-  },
-  openGraph: {
-    title: "Search Sailing Yacht Info",
-    description:
-      "Search and find sailing yachts by manufacturer, model, and specifications.",
-  },
-  robots: shouldNoindexSearchPage()
-    ? { index: false, follow: false }
-    : { index: true, follow: true },
-};
+export async function generateMetadata({ params }: SearchPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Search" });
 
-export default function SearchPage() {
+  return {
+    title: t("meta.title"),
+    description: t("meta.description"),
+    alternates: {
+      canonical: `/${locale}/search`,
+    },
+    openGraph: {
+      title: t("meta.title"),
+      description: t("meta.description"),
+    },
+    robots: shouldNoindexSearchPage()
+      ? { index: false, follow: false }
+      : { index: true, follow: true },
+  };
+}
+
+export default async function SearchPage({ params }: SearchPageProps) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Search" });
+
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Home", path: "/" },
-    { name: "Search" },
+    { name: t("heading") },
   ]);
 
   return (
