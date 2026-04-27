@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
-import { generateYachtsListMetadata, generateBreadcrumbJsonLd, generateCollectionPageJsonLd, getSiteUrl } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, generateCollectionPageJsonLd, getSiteUrl } from "@/lib/seo";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
 const YachtsClient = dynamic(() => import("./YachtsClient"), { ssr: false, loading: () => null });
 import { shouldNoindexYachtsPage, generateYachtsPageCanonical } from "@/lib/thin-page-governance";
 import { getYachtsListing, getFilterOptions, type YachtsListingResult, type FilterOptions } from "@/lib/yachts";
+import { getTranslations } from "next-intl/server";
 
 // Revalidate every 60 minutes — yacht list doesn't change frequently
 export const revalidate = 3600;
 
 interface YachtsPageParams {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{
     page?: string;
     'filters[manufacturers]'?: string[];
@@ -29,31 +31,32 @@ interface YachtsPageParams {
  * Generate dynamic metadata for yachts page based on search params.
  * Implements thin-page governance with canonical URLs and noindex rules.
  */
-export async function generateMetadata({ searchParams }: YachtsPageParams): Promise<Metadata> {
-  const params = await searchParams;
+export async function generateMetadata({ params, searchParams }: YachtsPageParams): Promise<Metadata> {
+  const { locale } = await params;
+  const sp = await searchParams;
+  const t = await getTranslations({ locale, namespace: "Yachts" });
 
   const normalizedParams = {
-    page: params.page,
-    manufacturers: params['filters[manufacturers]'],
-    rigType: params['filters[rigType]'],
-    keelType: params['filters[keelType]'],
-    hullMaterial: params['filters[hullMaterial]'],
-    lengthMin: params['filters[lengthMin]'],
-    lengthMax: params['filters[lengthMax]'],
-    displacementMin: params['filters[displacementMin]'],
-    displacementMax: params['filters[displacementMax]'],
-    cabinsMin: params['filters[cabinsMin]'],
-    cabinsMax: params['filters[cabinsMax]'],
+    page: sp.page,
+    manufacturers: sp['filters[manufacturers]'],
+    rigType: sp['filters[rigType]'],
+    keelType: sp['filters[keelType]'],
+    hullMaterial: sp['filters[hullMaterial]'],
+    lengthMin: sp['filters[lengthMin]'],
+    lengthMax: sp['filters[lengthMax]'],
+    displacementMin: sp['filters[displacementMin]'],
+    displacementMax: sp['filters[displacementMax]'],
+    cabinsMin: sp['filters[cabinsMin]'],
+    cabinsMax: sp['filters[cabinsMax]'],
   };
 
   const noindex = shouldNoindexYachtsPage(normalizedParams);
   const canonicalPath = generateYachtsPageCanonical(normalizedParams);
   const canonicalUrl = getSiteUrl(canonicalPath);
 
-  const baseMetadata = generateYachtsListMetadata();
-
   return {
-    ...baseMetadata,
+    title: t("meta.title"),
+    description: t("meta.description"),
     alternates: {
       canonical: canonicalUrl,
     },
@@ -63,12 +66,15 @@ export async function generateMetadata({ searchParams }: YachtsPageParams): Prom
   };
 }
 
-export default async function YachtsPage({ searchParams }: YachtsPageParams) {
+export default async function YachtsPage({ params, searchParams }: YachtsPageParams) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Yachts" });
+
   // Fetch default listing data server-side for SEO
   // Only pre-fetch for the default (no-filter) view — filtered views use client-side fetching
-  const params = await searchParams;
-  const hasFilters = Object.keys(params).some(k => k.startsWith('filters['));
-  const page = parseInt(params.page || '1', 10);
+  const sp = await searchParams;
+  const hasFilters = Object.keys(sp).some(k => k.startsWith('filters['));
+  const page = parseInt(sp.page || '1', 10);
 
   let initialData: YachtsListingResult | null = null;
   let filterOptions: FilterOptions | null = null;
@@ -87,12 +93,12 @@ export default async function YachtsPage({ searchParams }: YachtsPageParams) {
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Home", path: "/" },
-    { name: "Browse Yachts" },
+    { name: t("heading") },
   ]);
 
   const collectionJsonLd = generateCollectionPageJsonLd({
-    name: "Browse Sailing Yacht Info",
-    description: "Search and filter sailing yachts by manufacturer, length, year, and more.",
+    name: t("meta.title"),
+    description: t("meta.description"),
     url: getSiteUrl("/yachts"),
   });
 

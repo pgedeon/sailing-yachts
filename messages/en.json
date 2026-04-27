@@ -113,5 +113,111 @@
     "en": "English",
     "fr": "Français",
     "switchTo": "Switch to {language}"
+  },
+  "Yachts": {
+    "meta": {
+      "title": "Browse Sailing Yachts — Sailing Yacht Info",
+      "description": "Search and filter sailing yachts by manufacturer, length, year, and more."
+    },
+    "heading": "Sail Yachts",
+    "loading": "Loading yachts...",
+    "noResults": "No yachts match your filters.",
+    "clearAllFilters": "Clear all filters",
+    "filters": {
+      "heading": "Filters",
+      "activeCount": "{count} active",
+      "manufacturer": "Manufacturer",
+      "rigType": "Rig Type",
+      "keelType": "Keel Type",
+      "hullMaterial": "Hull Material",
+      "noOptions": "No options",
+      "clearFilters": "Clear Filters",
+      "toggle": "Filters"
+    },
+    "presets": {
+      "label": "Quick filter presets",
+      "clearPreset": "Clear preset",
+      "bluewater": {
+        "label": "Bluewater Cruisers",
+        "description": "Ocean-ready yachts 35–55ft with heavy displacement and proven keel designs"
+      },
+      "racing": {
+        "label": "Racing Yachts",
+        "description": "Light, fast yachts with performance rigs and fin/bulb keels"
+      },
+      "budget": {
+        "label": "Budget Friendly",
+        "description": "Affordable compact cruisers under 30ft, great for first-time buyers"
+      },
+      "family": {
+        "label": "Family Cruisers",
+        "description": "Comfortable cruising yachts with 3+ cabins, 30–45ft"
+      }
+    },
+    "specs": {
+      "length": "Length:",
+      "beam": "Beam:",
+      "draft": "Draft:",
+      "displacement": "Displacement:",
+      "rig": "Rig:",
+      "keel": "Keel:",
+      "hull": "Hull:",
+      "lengthOverall": "Length Overall:",
+      "ballast": "Ballast:",
+      "sailArea": "Sail Area:",
+      "rigType": "Rig Type:",
+      "keelType": "Keel Type:",
+      "cabins": "Cabins:",
+      "berths": "Berths:",
+      "heads": "Heads:",
+      "maxOccupancy": "Max Occupancy:",
+      "engineHp": "Engine HP:",
+      "engine": "Engine:",
+      "fuel": "Fuel:",
+      "water": "Water:",
+      "description": "Description"
+    },
+    "viewDetails": "View Details →",
+    "viewFullSpec": "View Full Spec Sheet →",
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "pageInfo": "Page {page} of {totalPages}",
+      "total": "({total} total)"
+    },
+    "modal": {
+      "close": "Close modal"
+    }
+  },
+  "Search": {
+    "meta": {
+      "title": "Search Yachts — Sailing Yacht Info",
+      "description": "Search sailing yachts by manufacturer, model name, rig type, keel type, and more."
+    },
+    "heading": "Search Yachts",
+    "subtitle": "Find sailing yachts by manufacturer, model, or specifications",
+    "placeholder": "Search by manufacturer, model name, rig type...",
+    "searchButton": "Search",
+    "searching": "Searching...",
+    "hint": "Type at least 2 characters for suggestions. Press Enter to search.",
+    "results": {
+      "count": "{total} yacht{total, plural, one {} other {s}} found",
+      "searching": "Searching...",
+      "for": "for",
+      "loa": "LOA",
+      "beam": "Beam",
+      "draft": "Draft"
+    },
+    "saveSearch": "Save Search",
+    "saved": "Saved!",
+    "saveFailed": "Failed",
+    "empty": {
+      "heading": "No yachts found",
+      "description": "Try searching with different keywords"
+    },
+    "popular": "Popular searches",
+    "suggestions": {
+      "label": "Search suggestions"
+    }
   }
 }

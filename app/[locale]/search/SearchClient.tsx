@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 interface SearchResult {
   id: number;
@@ -31,6 +32,7 @@ interface AutocompleteSuggestion {
 }
 
 export function SearchClient() {
+  const t = useTranslations("Search");
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [total, setTotal] = useState(0);
@@ -146,14 +148,14 @@ export function SearchClient() {
         }),
       });
       if (res.ok) {
-        setSaveMessage("Saved!");
+        setSaveMessage(t("saved"));
         setTimeout(() => setSaveMessage(null), 2000);
       } else {
-        setSaveMessage("Failed");
+        setSaveMessage(t("saveFailed"));
         setTimeout(() => setSaveMessage(null), 2000);
       }
     } catch {
-      setSaveMessage("Failed");
+      setSaveMessage(t("saveFailed"));
       setTimeout(() => setSaveMessage(null), 2000);
     }
   };
@@ -201,10 +203,10 @@ export function SearchClient() {
       {/* Hero / Search Header */}
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">
-          Search Yachts
+          {t("heading")}
         </h1>
         <p className="text-muted-foreground">
-          Find sailing yachts by manufacturer, model, or specifications
+          {t("subtitle")}
         </p>
       </div>
 
@@ -236,8 +238,8 @@ export function SearchClient() {
               onFocus={() => {
                 if (suggestions.length > 0) setShowSuggestions(true);
               }}
-              placeholder="Search by manufacturer, model name, rig type..."
-              aria-label="Search yachts"
+              placeholder={t("placeholder")}
+              aria-label={t("heading")}
               className="w-full pl-12 pr-4 py-3 border border-border rounded-lg bg-white text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-base"
               autoComplete="off"
             />
@@ -253,7 +255,7 @@ export function SearchClient() {
                 ref={suggestionsRef}
                 className="absolute top-full left-0 right-0 mt-1 bg-white border border-border rounded-lg shadow-lg z-50 overflow-hidden"
                 role="listbox"
-                aria-label="Search suggestions"
+                aria-label={t("suggestions.label")}
               >
                 {suggestions.map((s, i) => (
                   <button
@@ -286,11 +288,11 @@ export function SearchClient() {
             disabled={loading || !query.trim()}
             className="px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors sm:w-auto w-full"
           >
-            {loading ? "Searching..." : "Search"}
+            {loading ? t("searching") : t("searchButton")}
           </button>
         </div>
         <p className="mt-2 text-xs text-muted-foreground">
-          Type at least 2 characters for suggestions. Press Enter to search.
+          {t("hint")}
         </p>
       </div>
 
@@ -300,11 +302,11 @@ export function SearchClient() {
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm text-muted-foreground">
               {loading
-                ? "Searching..."
-                : total + " yacht" + (total !== 1 ? "s" : "") + " found"}
+                ? t("results.searching")
+                : t("results.count", { total })}
               {query && (
                 <span>
-                  {" "}for &ldquo;<span className="font-medium text-foreground">{query}</span>&rdquo;
+                  {" "}{t("results.for")} &ldquo;<span className="font-medium text-foreground">{query}</span>&rdquo;
                 </span>
               )}
             </p>
@@ -313,12 +315,12 @@ export function SearchClient() {
               <button
                 onClick={handleSaveSearch}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
-                aria-label="Save this search to your account"
+                aria-label={t("saveSearch")}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                 </svg>
-                {saveMessage || "Save Search"}
+                {saveMessage || t("saveSearch")}
               </button>
             )}
           </div>
@@ -333,10 +335,10 @@ export function SearchClient() {
             <div className="text-center py-12" role="status">
               <div className="text-4xl mb-4">⛵</div>
               <h2 className="text-xl font-semibold text-foreground mb-2">
-                No yachts found
+                {t("empty.heading")}
               </h2>
               <p className="text-muted-foreground mb-4">
-                Try searching with different keywords
+                {t("empty.description")}
               </p>
               <div className="flex flex-wrap justify-center gap-2">
                 {["Beneteau", "Hanse", "Jeanneau", "Bavaria", "sloop"].map(
@@ -408,7 +410,7 @@ export function SearchClient() {
                             {yacht.lengthOverall}m
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            LOA
+                            {t("results.loa")}
                           </div>
                         </div>
                       )}
@@ -418,7 +420,7 @@ export function SearchClient() {
                             {yacht.beam}m
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            Beam
+                            {t("results.beam")}
                           </div>
                         </div>
                       )}
@@ -428,7 +430,7 @@ export function SearchClient() {
                             {yacht.draft}m
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            Draft
+                            {t("results.draft")}
                           </div>
                         </div>
                       )}
@@ -445,7 +447,7 @@ export function SearchClient() {
       {!searched && (
         <div className="mt-4">
           <h2 className="text-sm font-medium text-muted-foreground mb-3">
-            Popular searches
+            {t("popular")}
           </h2>
           <div className="flex flex-wrap gap-2">
             {[
