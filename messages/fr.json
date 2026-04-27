@@ -26,7 +26,11 @@
     "footer": {
       "copyright": "© {year} Sailing Yacht Info. Tous droits réservés.",
       "dataSource": "Données issues des spécifications des constructeurs.",
-      "builtBy": "Créé avec ❤️ par {link3dput} · {linkSailboats}"
+      "builtBy": "Créé avec ❤️ par {link3dput} · {linkSailboats}",
+      "builtByPrefix": "Créé avec ❤️ par",
+      "builtBySeparator": "·",
+      "builtBy3dput": "3DPUT",
+      "builtBySailboats": "Sailboats.fr"
     },
     "auth": {
       "signIn": "Connexion",

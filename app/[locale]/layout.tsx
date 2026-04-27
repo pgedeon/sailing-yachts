@@ -100,18 +100,14 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
             {t("footer.dataSource")}
           </p>
           <p className="mt-2 text-xs">
-            {t.rich("footer.builtBy", {
-              link3dput: (children: React.ReactNode) => (
-                <a href="https://3dput.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground transition-colors">
-                  {children}
-                </a>
-              ),
-              linkSailboats: (children: React.ReactNode) => (
-                <a href="https://sailboats.fr" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground transition-colors">
-                  {children}
-                </a>
-              ),
-            })}
+            {t("footer.builtByPrefix")}{" "}
+            <a href="https://3dput.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground transition-colors">
+              {t("footer.builtBy3dput")}
+            </a>{" "}
+            {t("footer.builtBySeparator")}{" "}
+            <a href="https://sailboats.fr" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground transition-colors">
+              {t("footer.builtBySailboats")}
+            </a>
           </p>
         </div>
       </footer>
