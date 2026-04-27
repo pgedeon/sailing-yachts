@@ -4,7 +4,8 @@ The site lives on `info.sailboats.fr` (a French domain) and cross-links with `sa
 
 - ~~**P14.1 — i18n infrastructure & French translation system:** Set up `next-intl` (or equivalent) with message catalogs, locale detection middleware, `[locale]` route group, and a `useTranslations` hook. Translate all static UI strings in header, footer, navigation, and homepage. Add language switcher component. Tests: i18n unit tests for message loading, locale detection, and language switcher rendering. *(priority: critical — blocks all other P14 items)*~~ *(completed 2026-04-27 — PR #227 + hotfix PR #228 for t.rich() serialization bug)*
 
-- [ ] **P14.2 — French translations for yacht listing & search pages:** Translate all UI text on `/yachts`, `/search`, filter labels, sort options, pagination, and yacht card labels. Translate filter presets (Bluewater cruisers, Racing yachts, etc.). Tests: French rendering tests for listing and search pages.
+- ~~**P14.2 — French translations for yacht listing & search pages:** Translate all UI text on `/yachts`, `/search`, filter labels, sort options, pagination, and yacht card labels. Translate filter presets (Bluewater cruisers, Racing yachts, etc.). Tests: French rendering tests for listing and search pages. *(completed 2026-04-27 — PR #230, 117 i18n tests)*
+
 
 - [ ] **P14.3 — French translations for yacht detail & comparison pages:** Translate yacht detail page labels (specs table headers, performance ratios, "Who is this boat for?", related yachts section). Translate compare page headers and labels. Tests: French rendering tests for detail and compare pages.
 
