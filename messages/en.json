@@ -301,7 +301,11 @@
     },
     "compare": "Compare This Yacht",
     "bestValue": {
-      "seeRanked": "See {label} ranked by value score"
+      "seeRanked": "See {label} ranked by value score",
+      "label40ft": "Best Value 40ft Cruisers",
+      "label35ft": "Best Value 35ft Sailboats",
+      "labelFamily": "Best Value Family Cruisers Under 45ft",
+      "labelBluewater": "Best Value Bluewater Sailboats"
     },
     "notFound": {
       "heading": "Yacht not found",
@@ -416,6 +420,7 @@
       "heading": "Saved Comparisons",
       "noSaved": "No saved comparisons yet. Select 2+ yachts and click Save.",
       "yachtCount": "{count} yachts · {date}"
-    }
+    },
+    "breadcrumbHome": "Home"
   }
 }

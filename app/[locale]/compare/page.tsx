@@ -56,7 +56,7 @@ export default async function ComparePage({
     : [];
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
-    { name: "Home", path: "/" },
+    { name: t("breadcrumbHome"), path: "/" },
     { name: t("heading") },
   ]);
 

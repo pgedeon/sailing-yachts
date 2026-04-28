@@ -664,10 +664,10 @@ export default function YachtDetailClient() {
         const loa = yacht.lengthOverall;
         let bestValueSlug = "";
         let bestValueLabel = "";
-        if (loa >= 11.5 && loa <= 12.8) { bestValueSlug = "40ft-cruisers"; bestValueLabel = "Best Value 40ft Cruisers"; }
-        else if (loa >= 10.0 && loa < 11.5) { bestValueSlug = "35ft-sailboats"; bestValueLabel = "Best Value 35ft Sailboats"; }
-        else if (loa >= 10.5 && loa <= 13.7) { bestValueSlug = "family-cruisers-under-45ft"; bestValueLabel = "Best Value Family Cruisers Under 45ft"; }
-        else if (loa >= 10.0 && loa <= 15.0) { bestValueSlug = "bluewater-value"; bestValueLabel = "Best Value Bluewater Sailboats"; }
+        if (loa >= 11.5 && loa <= 12.8) { bestValueSlug = "40ft-cruisers"; bestValueLabel = t("bestValue.label40ft"); }
+        else if (loa >= 10.0 && loa < 11.5) { bestValueSlug = "35ft-sailboats"; bestValueLabel = t("bestValue.label35ft"); }
+        else if (loa >= 10.5 && loa <= 13.7) { bestValueSlug = "family-cruisers-under-45ft"; bestValueLabel = t("bestValue.labelFamily"); }
+        else if (loa >= 10.0 && loa <= 15.0) { bestValueSlug = "bluewater-value"; bestValueLabel = t("bestValue.labelBluewater"); }
         return bestValueSlug ? (
           <div className="best-value-cross-link no-print max-w-7xl mx-auto px-4 mb-8" data-testid="best-value-cross-link">
             <a
@@ -736,7 +736,7 @@ export default function YachtDetailClient() {
 }
 
 // Performance ratio calculations
-function calculatePerformanceRatios(yacht: YachtData, t: (key: string, params?: Record<string, string | number>) => string) {
+function calculatePerformanceRatios(yacht: YachtData, t: (key: string, params?: Record<string, string | number | Date>) => string) {
   const ratios: { name: string; value: string; description: string }[] = [];
 
   const loa = Number(yacht.lengthOverall) || null;
@@ -776,7 +776,7 @@ function calculatePerformanceRatios(yacht: YachtData, t: (key: string, params?: 
 }
 
 // "Who is this boat for?" logic
-function getBoatRecommendation(yacht: YachtData, t: (key: string, params?: Record<string, string | number>) => string): string | null {
+function getBoatRecommendation(yacht: YachtData, t: (key: string, params?: Record<string, string | number | Date>) => string): string | null {
   const parts: string[] = [];
   const loa = Number(yacht.lengthOverall) || 0;
   const cabins = yacht.cabins || 0;

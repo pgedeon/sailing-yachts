@@ -301,7 +301,11 @@
     },
     "compare": "Comparer ce yacht",
     "bestValue": {
-      "seeRanked": "Voir {label} classés par rapport qualité-prix"
+      "seeRanked": "Voir {label} classés par rapport qualité-prix",
+      "label40ft": "Meilleurs rapports qualité/prix — Croiseurs 40 pieds",
+      "label35ft": "Meilleurs rapports qualité/prix — Voiliers 35 pieds",
+      "labelFamily": "Meilleurs rapports qualité/prix — Croiseurs familiaux < 45 pieds",
+      "labelBluewater": "Meilleurs rapports qualité/prix — Voiliers hauturiers"
     },
     "notFound": {
       "heading": "Yacht introuvable",
@@ -416,6 +420,7 @@
       "heading": "Comparaisons enregistrées",
       "noSaved": "Aucune comparaison enregistrée. Sélectionnez 2+ yachts et cliquez sur Enregistrer.",
       "yachtCount": "{count} yacht{count, plural, one {} other {s}} · {date}"
-    }
+    },
+    "breadcrumbHome": "Accueil"
   }
 }

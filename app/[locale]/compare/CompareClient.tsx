@@ -870,8 +870,8 @@ export function CompareClient({ initialIds }: CompareClientProps) {
             </table>
           </div>
           <div className="px-5 py-2.5 bg-gray-50 border-t text-xs text-gray-500 flex items-center justify-between">
-            <span><span className="font-semibold text-green-600">Green</span> = best value in row</span>
-            <span className="md:hidden text-gray-500">← Swipe to see more →</span>
+            <span>{t("legend.greenBest")}</span>
+            <span className="md:hidden text-gray-500">{t("legend.swipeHint")}</span>
           </div>
           <script dangerouslySetInnerHTML={{ __html: `
             (function() {
