@@ -219,5 +219,203 @@
     "suggestions": {
       "label": "Suggestions de recherche"
     }
+  },
+  "YachtDetail": {
+    "meta": {
+      "title": "{manufacturer} {model} ({year}) — Sailing Yacht Info",
+      "description": "{manufacturer} {model} ({year}) spécifications du yacht à voile. Longueur, bau, tirant d'eau, déplacement, type de gréement, cabines et plus encore.",
+      "notFoundTitle": "Yacht introuvable",
+      "notFoundDescription": "Le yacht demandé n'a pas été trouvé."
+    },
+    "breadcrumb": {
+      "home": "Accueil",
+      "yachts": "Yachts"
+    },
+    "loading": "Chargement du yacht…",
+    "error": "Erreur : {message}",
+    "backToBrowse": "Retour à la liste",
+    "printSpecSheet": "Imprimer la fiche",
+    "printHeader": "Sailing Yacht Info — Fiche technique",
+    "printFooter": "Imprimé depuis info.sailboats.fr — {manufacturer} {model} ({year}) — {date}",
+    "noImage": "Aucune image disponible",
+    "builtBy": "Un yacht à voile construit par {manufacturer}.",
+    "sourceLabel": "Source :",
+    "coreSpecs": {
+      "lengthOverall": "Longueur hors tout",
+      "beam": "Bau",
+      "draft": "Tirant d'eau",
+      "displacement": "Déplacement"
+    },
+    "groupLabels": {
+      "dimensions": "Dimensions",
+      "sailplan": "Plan de voilure",
+      "accommodation": "Aménagement",
+      "technical": "Technique",
+      "performance": "Performance",
+      "hull": "Coque",
+      "other": "Autres spécifications"
+    },
+    "performance": {
+      "heading": "Ratios de performance",
+      "displacementLength": "Déplacement/Longueur",
+      "sailAreaDisplacement": "Surface de voilure/Déplacement",
+      "ballastRatio": "Ratio de lest",
+      "capsizeScreening": "Screening de chavirage",
+      "dlUltraLight": "Ultra léger (course)",
+      "dlLight": "Léger (croiseur de performance)",
+      "dlModerate": "Modéré (croiseur)",
+      "dlHeavy": "Lourd (croiseur hauturier)",
+      "sadUnderCanvased": "Sous-toilé (maniement facile)",
+      "sadModerate": "Modéré (croisière)",
+      "sadPerformance": "Croiseur de performance",
+      "sadHighPerformance": "Haute performance (course)",
+      "ballastLow": "Faible (plus de gîte, moins de stabilité)",
+      "ballastModerate": "Modéré (bon équilibre)",
+      "ballastHigh": "Élevé (raide, stable)",
+      "csfExcellent": "Excellente stabilité au large",
+      "csfGood": "Bonne stabilité côtier/hauturier",
+      "csfModerate": "Modérée (côtier)",
+      "csfHigh": "Élevé (déplacement léger, prudence au large)"
+    },
+    "recommendation": {
+      "heading": "Pour qui est ce bateau ?",
+      "daySailing": "idéal pour la journée et les sorties du week-end",
+      "coastalCruising": "une taille polyvalente pour la croisière côtière et les voyages occasionnels",
+      "bluewater": "adapté à la grande croisière et aux traversées océaniques",
+      "familyFriendly": "aménagement familial avec des couchettes généreuses",
+      "couples": "confortable pour les couples ou les petites familles",
+      "solidConstruction": "construction solide inspire confiance dans toutes les conditions",
+      "classicRig": "gréement classique offrant des qualités de maniement éprouvées",
+      "template": "Ce yacht est {parts}."
+    },
+    "badges": {
+      "daySailer": "Sortie à la journée",
+      "coastalCruiser": "Croiseur côtier",
+      "bluewater": "Hauturier",
+      "familyFriendly": "Familial",
+      "easyHandling": "Maniement facile"
+    },
+    "reviews": {
+      "heading": "Avis clients",
+      "verified": "vérifié"
+    },
+    "compare": "Comparer ce yacht",
+    "bestValue": {
+      "seeRanked": "Voir {label} classés par rapport qualité-prix"
+    },
+    "notFound": {
+      "heading": "Yacht introuvable",
+      "description": "Le yacht demandé n'a pas été trouvé.",
+      "browseAll": "Parcourir tous les yachts"
+    },
+    "correctionFields": {
+      "lengthOverall": "Longueur hors tout",
+      "beam": "Bau",
+      "draft": "Tirant d'eau",
+      "displacement": "Déplacement",
+      "ballast": "Lest",
+      "sailAreaMain": "Surface de voilure (grand-voile)",
+      "rigType": "Type de gréement",
+      "keelType": "Type de quille",
+      "hullMaterial": "Matériau de coque",
+      "cabins": "Cabines",
+      "berths": "Couchettes",
+      "heads": "Toilettes",
+      "maxOccupancy": "Capacité max",
+      "engineHp": "Puissance moteur",
+      "engineType": "Type de moteur",
+      "fuelCapacity": "Capacité carburant",
+      "waterCapacity": "Capacité eau"
+    }
+  },
+  "YachtDetailSub": {
+    "similarYachts": "Yachts similaires",
+    "basedOnSpecs": "Basé sur des spécifications comparables",
+    "sameSizeAlternatives": "Alternatives de même taille",
+    "withinRange": "Dans une fourchette de ±1 mètre",
+    "noImage": "Pas d'image",
+    "viewDetails": "Voir les détails",
+    "matchPercent": "{percent} % de correspondance",
+    "moreFromManufacturer": "Plus de ce constructeur",
+    "buyingGuides": "Guides d'achat & Ressources",
+    "guidesFallback": "Guides experts et ressources pour vous aider à choisir le bon yacht.",
+    "browseAllGuides": "Parcourir tous les guides",
+    "guidesRelated": "Guides experts liés à ce yacht.",
+    "viewAllGuides": "Voir tous les guides →",
+    "relatedArticles": "Articles sur la voile",
+    "minRead": "{minutes} min de lecture"
+  },
+  "Compare": {
+    "heading": "Comparer des yachts",
+    "subtitle": "Sélectionnez jusqu'à {max} yachts à comparer côte à côte",
+    "share": "Partager",
+    "copied": "Copié !",
+    "save": "Enregistrer",
+    "saved": "Enregistrés",
+    "nameComparison": "Nommer cette comparaison",
+    "saveButton": "Enregistrer",
+    "slot": {
+      "addYacht": "Ajouter un yacht",
+      "slotN": "Emplacement {n}",
+      "chooseYachts": "Choisir des yachts à comparer",
+      "addAnother": "Ajouter un autre yacht"
+    },
+    "picker": {
+      "searchPlaceholder": "Rechercher par constructeur ou modèle…",
+      "loading": "Chargement des yachts…",
+      "noMatch": "Aucun yacht ne correspond à votre recherche.",
+      "done": "Terminé",
+      "selected": "{count}/{max} sélectionné{count, plural, one {} other {s}}"
+    },
+    "prompt": {
+      "selectYachts": "Sélectionnez des yachts à comparer",
+      "chooseSubtitle": "Choisissez 2 à {max} yachts ci-dessus pour voir une comparaison détaillée"
+    },
+    "loading": "Chargement de la comparaison…",
+    "table": {
+      "spec": "Spécification",
+      "estPriceRange": "Gamme de prix estimée",
+      "notes": "Notes",
+      "designNotes": "Notes de conception"
+    },
+    "groups": {
+      "dimensions": "Dimensions",
+      "riggingSails": "Gréement & Voilure",
+      "construction": "Construction",
+      "accommodation": "Aménagement",
+      "technical": "Technique",
+      "notes": "Notes"
+    },
+    "fields": {
+      "lengthOverall": "Longueur hors tout",
+      "beam": "Bau",
+      "draft": "Tirant d'eau",
+      "displacement": "Déplacement",
+      "ballast": "Lest",
+      "sailAreaMain": "Surface de voilure (grand-voile)",
+      "rigType": "Type de gréement",
+      "keelType": "Type de quille",
+      "hullMaterial": "Matériau de coque",
+      "cabins": "Cabines",
+      "berths": "Couchettes",
+      "heads": "Toilettes",
+      "maxOccupancy": "Capacité max",
+      "engineHp": "Puissance moteur",
+      "engineType": "Type de moteur",
+      "fuel": "Carburant",
+      "water": "Eau"
+    },
+    "legend": {
+      "greenBest": "Vert = meilleure valeur de la ligne",
+      "swipeHint": "← Glissez pour voir plus →"
+    },
+    "backToBrowse": "← Retour à la liste",
+    "printHeader": "Rapport comparatif de yachts à voile",
+    "printDate": "Généré par sailboats.fr · {date}",
+    "savedComparisons": {
+      "heading": "Comparaisons enregistrées",
+      "noSaved": "Aucune comparaison enregistrée. Sélectionnez 2+ yachts et cliquez sur Enregistrer.",
+      "yachtCount": "{count} yacht{count, plural, one {} other {s}} · {date}"
+    }
   }
 }

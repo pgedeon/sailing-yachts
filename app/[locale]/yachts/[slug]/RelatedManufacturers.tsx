@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import ArrowRight from "@/app/components/icons/ArrowRight";
 
@@ -27,6 +28,7 @@ export function RelatedManufacturers({
   currentYachtId,
   limit = 3,
 }: RelatedManufacturersProps) {
+  const t = useTranslations("YachtDetailSub");
   const [yachts, setYachts] = useState<RelatedYacht[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -54,7 +56,7 @@ export function RelatedManufacturers({
   if (loading) {
     return (
       <section className="mt-10 sm:mt-12" data-testid="related-manufacturers-section">
-        <h2 className="text-lg sm:text-xl font-bold mb-4">More from this Manufacturer</h2>
+        <h2 className="text-lg sm:text-xl font-bold mb-4">{t("moreFromManufacturer")}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-pulse">
           {[1, 2, 3].map((i) => (
             <div key={i} className="h-48 bg-muted rounded-lg" />
@@ -76,7 +78,7 @@ export function RelatedManufacturers({
     >
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg sm:text-xl font-bold">
-          More from this Manufacturer
+          {t("moreFromManufacturer")}
         </h2>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -98,7 +100,7 @@ export function RelatedManufacturers({
               </div>
             ) : (
               <div className="h-36 sm:h-40 bg-muted flex items-center justify-center text-muted-foreground text-sm">
-                No image
+                {t("noImage")}
               </div>
             )}
 
@@ -118,7 +120,7 @@ export function RelatedManufacturers({
               </div>
 
               <div className="mt-3 flex items-center text-xs text-primary font-medium">
-                View details
+                {t("viewDetails")}
                 <ArrowRight className="h-3 w-3 ml-1 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </div>
             </div>

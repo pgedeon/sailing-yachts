@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { BookOpen, ExternalLink } from "lucide-react";
 
 interface RelatedGuide {
@@ -24,6 +25,7 @@ export function RelatedGuides({
   lengthOverall,
   rigType,
 }: RelatedGuidesProps) {
+  const t = useTranslations("YachtDetailSub");
   const [guides, setGuides] = useState<RelatedGuide[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -49,9 +51,9 @@ export function RelatedGuides({
         data-testid="related-guides-section"
       >
         <div className="flex items-center gap-2 mb-4">
-          <BookOpen className="h-5 w-5 text-sky-700"  aria-hidden="true" />
+          <BookOpen className="h-5 w-5 text-sky-700" aria-hidden="true" />
           <h2 className="text-lg sm:text-xl font-bold text-sky-900">
-            Buying Guides & Resources
+            {t("buyingGuides")}
           </h2>
         </div>
         <div className="space-y-3">
@@ -74,20 +76,20 @@ export function RelatedGuides({
         data-testid="related-guides-section"
       >
         <div className="flex items-center gap-2 mb-4">
-          <BookOpen className="h-5 w-5 text-sky-700"  aria-hidden="true" />
+          <BookOpen className="h-5 w-5 text-sky-700" aria-hidden="true" />
           <h2 className="text-lg sm:text-xl font-bold text-sky-900">
-            Buying Guides & Resources
+            {t("buyingGuides")}
           </h2>
         </div>
         <p className="text-sm text-muted-foreground mb-4">
-          Expert guides and resources to help you choose the right yacht.
+          {t("guidesFallback")}
         </p>
         <a
           href="/guides"
           className="inline-flex items-center gap-2 text-sm font-medium text-sky-700 hover:text-sky-900 transition"
         >
-          Browse all guides
-          <ExternalLink className="h-4 w-4"  aria-hidden="true" />
+          {t("browseAllGuides")}
+          <ExternalLink className="h-4 w-4" aria-hidden="true" />
         </a>
       </section>
     );
@@ -99,13 +101,13 @@ export function RelatedGuides({
       data-testid="related-guides-section"
     >
       <div className="flex items-center gap-2 mb-4">
-        <BookOpen className="h-5 w-5 text-sky-700"  aria-hidden="true" />
+        <BookOpen className="h-5 w-5 text-sky-700" aria-hidden="true" />
         <h2 className="text-lg sm:text-xl font-bold text-sky-900">
-          Buying Guides & Resources
+          {t("buyingGuides")}
         </h2>
       </div>
       <p className="text-sm text-muted-foreground mb-4">
-        Expert guides related to this yacht.
+        {t("guidesRelated")}
       </p>
       <div className="space-y-3">
         {guides.map((guide) => (
@@ -132,12 +134,12 @@ export function RelatedGuides({
                   )}
                   {guide.readingTimeMinutes && (
                     <span className="text-xs text-sky-500">
-                      {guide.readingTimeMinutes} min read
+                      {t("minRead", { minutes: guide.readingTimeMinutes })}
                     </span>
                   )}
                 </div>
               </div>
-              <ExternalLink className="h-4 w-4 text-sky-600 flex-shrink-0"  aria-hidden="true" />
+              <ExternalLink className="h-4 w-4 text-sky-600 flex-shrink-0" aria-hidden="true" />
             </div>
           </a>
         ))}
@@ -146,7 +148,7 @@ export function RelatedGuides({
         href="/guides"
         className="inline-flex items-center gap-1 text-xs text-sky-600 hover:text-sky-800 mt-4 transition"
       >
-        View all guides →
+        {t("viewAllGuides")}
       </a>
     </section>
   );

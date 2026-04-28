@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import YachtImage from "@/app/components/yacht/YachtImage";
@@ -24,6 +25,7 @@ interface SimilarYachtsProps {
 }
 
 export function SimilarYachts({ slug }: SimilarYachtsProps) {
+  const t = useTranslations("YachtDetailSub");
   const [yachts, setYachts] = useState<SimilarYacht[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -49,7 +51,7 @@ export function SimilarYachts({ slug }: SimilarYachtsProps) {
   if (loading) {
     return (
       <section className="mt-10 sm:mt-12" data-testid="similar-yachts-section">
-        <h2 className="text-lg sm:text-xl font-bold mb-4">Similar Yachts</h2>
+        <h2 className="text-lg sm:text-xl font-bold mb-4">{t("similarYachts")}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-pulse">
           {[1, 2, 3].map((i) => (
             <div key={i} className="h-48 bg-muted rounded-lg" />
@@ -70,9 +72,9 @@ export function SimilarYachts({ slug }: SimilarYachtsProps) {
   return (
     <section className="mt-10 sm:mt-12" data-testid="similar-yachts-section">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg sm:text-xl font-bold">Similar Yachts</h2>
+        <h2 className="text-lg sm:text-xl font-bold">{t("similarYachts")}</h2>
         <span className="text-sm text-muted-foreground">
-          Based on comparable specifications
+          {t("basedOnSpecs")}
         </span>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -92,11 +94,11 @@ export function SimilarYachts({ slug }: SimilarYachtsProps) {
                   fill
                   className="w-full h-full group-hover:scale-105 transition-transform duration-200"
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                 aria-hidden="true" />
+                  aria-hidden="true" />
               </div>
             ) : (
               <div className="h-36 sm:h-40 bg-muted flex items-center justify-center text-muted-foreground text-sm">
-                No image
+                {t("noImage")}
               </div>
             )}
 
@@ -134,13 +136,13 @@ export function SimilarYachts({ slug }: SimilarYachtsProps) {
                   />
                 </div>
                 <span className="text-xs text-muted-foreground whitespace-nowrap">
-                  {Math.round(yacht.score * 100)}% match
+                  {t("matchPercent", { percent: Math.round(yacht.score * 100) })}
                 </span>
               </div>
 
               <div className="mt-2 flex items-center text-xs text-primary font-medium">
-                View details
-                <ArrowRight className="h-3 w-3 ml-1 group-hover:translate-x-1 transition-transform"  aria-hidden="true" />
+                {t("viewDetails")}
+                <ArrowRight className="h-3 w-3 ml-1 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </div>
             </div>
           </Link>
