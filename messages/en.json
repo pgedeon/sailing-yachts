@@ -417,5 +417,275 @@
       "noSaved": "No saved comparisons yet. Select 2+ yachts and click Save.",
       "yachtCount": "{count} yachts · {date}"
     }
+  },
+  "Manufacturers": {
+    "meta": {
+      "title": "Sailing Yacht Manufacturers",
+      "description": "Browse sailing yacht manufacturers, explore brand histories, and discover how many models each builder offers.",
+      "notFoundTitle": "Manufacturer Not Found",
+      "notFoundDescription": "The requested sailing yacht manufacturer could not be found."
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "manufacturers": "Manufacturers"
+    },
+    "listing": {
+      "title": "Sailing Yacht Manufacturers",
+      "description": "Browse sailing yacht manufacturers, explore brand histories, and discover how many models each builder offers.",
+      "models": "{count} model{count, plural, one {} other {s}}",
+      "emptyTitle": "Manufacturers will appear here once the build completes.",
+      "emptySubtitle": "This page is using ISR (Incremental Static Regeneration) and will show live data on production."
+    },
+    "detail": {
+      "profileLabel": "Manufacturer Profile",
+      "yachtsSuffix": "Yachts",
+      "descriptionFallback": "{name} is featured in the Sailing Yacht Info with {count} yacht{count, plural, one {} other {s}} currently indexed.",
+      "visitWebsite": "Visit builder website",
+      "country": "Country",
+      "founded": "Founded",
+      "yachtsIndexed": "Yachts indexed",
+      "modelsAndSpecs": "Models & Specs",
+      "modelsSubtitle": "Browse the current lineup and linked yacht detail pages.",
+      "noModels": "No yacht models are available for this manufacturer yet.",
+      "viewYachtDetails": "View yacht details →",
+      "specLabels": {
+        "length": "Length",
+        "beam": "Beam",
+        "draft": "Draft",
+        "cabins": "Cabins",
+        "rig": "Rig"
+      },
+      "browseBySize": {
+        "title": "Browse {name} Yachts by Size",
+        "under30": "Under 30ft",
+        "range3035": "30–35ft",
+        "range3540": "35–40ft",
+        "range4050": "40–50ft",
+        "over50": "50ft+"
+      },
+      "spotlight": {
+        "label": "Manufacturer Spotlight",
+        "title": "Read our {name} spotlight",
+        "descriptionFallback": "Go deeper on {name}'s history, brand positioning, major milestones, and notable yacht models.",
+        "openSpotlight": "Open spotlight →"
+      }
+    },
+    "spotlight": {
+      "meta": {
+        "notFoundTitle": "Manufacturer Spotlight Not Found",
+        "notFoundDescription": "The requested manufacturer spotlight could not be found."
+      },
+      "breadcrumb": {
+        "home": "Home",
+        "manufacturers": "Manufacturers",
+        "spotlight": "Spotlight"
+      },
+      "label": "Manufacturer Spotlight",
+      "descriptionFallback": "Explore {name}'s history, positioning, and standout yachts in the Sailing Yacht Info.",
+      "backToManufacturer": "Back to manufacturer page",
+      "browseYachts": "Browse {name} yachts",
+      "spotlightDate": "Spotlight date",
+      "brandHistory": "Brand History",
+      "brandPositioning": "Brand Positioning",
+      "brandPositioningFallback": "{name} sits in the Sailing Yacht Info as a builder worth tracking for sailors comparing brand philosophy, fleet depth, and notable production models.",
+      "milestones": "Milestones",
+      "milestonesEmpty": "Milestones will appear here as this spotlight expands.",
+      "notableModels": "Notable Models",
+      "notableModelsSubtitle": "These yachts help illustrate how the brand expresses its design brief in real boats.",
+      "seeFullLineup": "See full manufacturer lineup →",
+      "notableModelsEmpty": "Notable models will appear here as this spotlight expands.",
+      "viewYachtDetails": "View yacht details →",
+      "builderPage": "Builder page",
+      "exploreMore": "Explore more from {name}",
+      "exploreMoreDescription": "Jump back to the full builder profile, compare the current lineup, or browse yachts filtered to this manufacturer.",
+      "returnTo": "Return to {name}",
+      "viewAllYachts": "View all {name} yachts"
+    },
+    "comparisons": {
+      "title": "Compare {name} Yachts",
+      "subtitle": "Side-by-side comparisons to help you choose the right model.",
+      "vs": "vs",
+      "compare": "Compare →"
+    },
+    "partners": {
+      "meta": {
+        "title": "{name} Partners & Dealers | Authorized Dealers, Brokers & Services",
+        "notFoundTitle": "Manufacturer Not Found",
+        "notFoundDescription": "The requested sailing yacht manufacturer could not be found."
+      },
+      "breadcrumb": {
+        "home": "Home",
+        "manufacturers": "Manufacturers",
+        "partners": "Partners & Dealers"
+      },
+      "officialNetwork": "Official Network",
+      "title": "{name} Partners & Dealers",
+      "description": "Connect with authorized {name} dealers, brokers, and service centers worldwide. All partners are verified and offer genuine {name} products and services.",
+      "stats": {
+        "activePartners": "Active Partners",
+        "authorizedDealers": "Authorized Dealers",
+        "serviceCenters": "Service Centers",
+        "brokers": "Brokers"
+      },
+      "empty": {
+        "title": "Partner Network Coming Soon",
+        "description": "We're building out the official {name} partner network. Check back soon for authorized dealers, brokers, and service centers in your area."
+      },
+      "filters": {
+        "title": "Find Partners By:",
+        "all": "All Partners",
+        "dealersSales": "Dealers & Sales",
+        "serviceCenters": "Service Centers",
+        "brokers": "Brokers",
+        "partsChandlery": "Parts & Chandlery"
+      },
+      "authorizedPartners": "Authorized Partners",
+      "verifiedPartnersWorldwide": "{count} verified {name} partners worldwide",
+      "whyChoose": {
+        "title": "Why Choose an Official {name} Partner?",
+        "description": "All authorized partners meet our stringent standards for quality, service, and customer satisfaction.",
+        "genuineProducts": "Genuine Products",
+        "genuineDescription": "Authentic {name} parts and equipment",
+        "expertSupport": "Expert Support",
+        "expertDescription": "Factory-trained technicians and support staff",
+        "warrantyProtection": "Warranty Protection",
+        "warrantyDescription": "Full manufacturer warranty coverage"
+      },
+      "card": {
+        "typeLabels": {
+          "newSales": "New Sales",
+          "usedSales": "Used Sales",
+          "service": "Service Center",
+          "repair": "Repair Shop",
+          "brokerage": "Yacht Broker",
+          "parts": "Parts & Chandlery",
+          "charter": "Charter Company",
+          "consultation": "Consultation",
+          "partner": "Partner"
+        },
+        "confidence": {
+          "verified": "Verified",
+          "high": "High Confidence",
+          "moderate": "Moderate",
+          "low": "Low Confidence"
+        },
+        "inactive": "Inactive",
+        "expired": "Expired",
+        "more": "+{count} more",
+        "website": "Website →",
+        "serviceArea": "Service Area: {area}",
+        "priceRange": "Price Range: {range}",
+        "priceOnRequest": "Price on request",
+        "validFrom": "Valid from {start}",
+        "validTo": " to {end}",
+        "dataFrom": "Data from {source}"
+      }
+    }
+  },
+  "Guides": {
+    "meta": {
+      "title": "Sailing Guides & Resources",
+      "description": "Expert sailing guides, buying advice, and educational resources for yacht buyers and sailors. Learn about boat selection, ownership, and sailing terminology."
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "guides": "Guides"
+    },
+    "heading": "Sailing Guides & Resources",
+    "description": "Expert guides, buying advice, and educational resources to help you choose the right yacht and make the most of your sailing adventures.",
+    "sidebar": {
+      "categories": "Categories",
+      "allGuides": "All Guides ({count})",
+      "noCategories": "No categories available yet.",
+      "getNewGuides": "Get New Guides",
+      "getNewGuidesDescription": "Subscribe for updates when we publish new guides.",
+      "subscribe": "Subscribe"
+    },
+    "buyingGuides": "Buying Guides",
+    "otherGuides": "Other Guides",
+    "allGuidesHeading": "All Guides",
+    "articleCard": {
+      "minRead": "{minutes} min read",
+      "freshness": {
+        "needsReview": "Needs review",
+        "dueForReview": "Due for review",
+        "reviewed": "Reviewed {date}"
+      }
+    },
+    "cta": {
+      "exploreTitle": "Explore Our Yacht Database",
+      "exploreDescription": "Browse our complete sailing yacht database from top manufacturers. Compare specs, read reviews, and find your perfect boat.",
+      "browseYachts": "Browse Yachts"
+    },
+    "empty": {
+      "moreComingTitle": "More guides coming soon",
+      "moreComingDescription": "We're working on creating more comprehensive sailing guides and resources for you.",
+      "comingSoonTitle": "Coming Soon",
+      "comingSoonDescription": "We're working on creating comprehensive sailing guides and resources for you."
+    },
+    "guideTypes": {
+      "bestSailboatsFor": "Best Sailboats For",
+      "howToChoose": "How to Choose",
+      "xVsYExplained": "X vs Y Explained",
+      "newVsUsed": "New vs Used",
+      "whatSizeCruiser": "What Size Cruiser"
+    },
+    "article": {
+      "meta": {
+        "notFoundTitle": "Article Not Found"
+      },
+      "breadcrumb": {
+        "home": "Home",
+        "guides": "Guides"
+      },
+      "onThisPage": "On This Page",
+      "minRead": "{minutes} min read",
+      "reviewed": "Reviewed {date}",
+      "frequentlyAskedQuestions": "Frequently Asked Questions",
+      "newsletter": {
+        "title": "Get New Guides in Your Inbox",
+        "description": "Subscribe to receive the latest sailing guides, buying advice, and resources."
+      },
+      "browseCta": {
+        "title": "Explore Our Yacht Database",
+        "description": "Compare specs, read reviews, and find your perfect sailing yacht from our curated collection.",
+        "browseYachts": "Browse Yachts →"
+      },
+      "relatedGuides": "Related Guides"
+    }
+  },
+  "Glossary": {
+    "meta": {
+      "title": "Sailing Glossary – Nautical Terminology & Yacht Specifications",
+      "description": "Comprehensive sailing glossary with {count} nautical terms, yacht specifications, and sailing terminology. Learn about LOA, beam, draft, ballast ratio, keel types, rig configurations, and more.",
+      "notFoundTitle": "Term Not Found",
+      "notFoundDescription": "The requested sailing glossary term could not be found."
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "glossary": "Glossary"
+    },
+    "heading": "Sailing Glossary",
+    "description": "Comprehensive nautical terminology and yacht specification terms. Understand LOA, beam, draft, ballast ratio, keel types, rig configurations, and more.",
+    "termStats": "{terms} terms · {categories} categories",
+    "filterAll": "All ({count})",
+    "altCount": "{count} alt",
+    "cta": {
+      "title": "Learn More About Sailing",
+      "description": "Explore our buying guides, manufacturer spotlights, and expert articles to deepen your sailing knowledge.",
+      "browseGuides": "Browse Guides",
+      "browseYachts": "Browse Yachts"
+    },
+    "term": {
+      "meta": {
+        "title": "{term} – Sailing Glossary",
+        "description": "{term}: {definition}"
+      },
+      "alsoKnownAs": "Also known as:",
+      "relatedTerms": "Related Terms",
+      "exploreMoreTitle": "Explore More Terms",
+      "exploreMoreDescription": "Browse our complete sailing glossary to learn more about nautical terminology and yacht specifications.",
+      "viewAllTerms": "View All Glossary Terms"
+    }
   }
 }

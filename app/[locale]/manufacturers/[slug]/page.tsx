@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { unstable_cache } from "next/cache";
+import { getTranslations } from "next-intl/server";
 
 import {
   generateBreadcrumbJsonLd,
@@ -38,7 +39,7 @@ async function getManufacturerData(slug: string) {
 }
 
 interface ManufacturerPageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }
 
 function formatNumber(value: number | null, suffix: string) {
@@ -52,13 +53,14 @@ function formatNumber(value: number | null, suffix: string) {
 export async function generateMetadata({
   params,
 }: ManufacturerPageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Manufacturers" });
   const data = await getManufacturerData(slug);
 
   if (!data || !data.manufacturer) {
     return {
-      title: "Manufacturer Not Found",
-      description: "The requested sailing yacht manufacturer could not be found.",
+      title: t("meta.notFoundTitle"),
+      description: t("meta.notFoundDescription"),
     };
   }
 
@@ -101,7 +103,8 @@ export async function generateMetadata({
 export default async function ManufacturerPage({
   params,
 }: ManufacturerPageProps) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Manufacturers" });
   const data = await getManufacturerData(slug);
 
   if (!data || !data.manufacturer) {
@@ -157,7 +160,7 @@ export default async function ManufacturerPage({
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
               <Link href="/" className="hover:text-foreground transition-colors">
-                Home
+                {t("breadcrumb.home")}
               </Link>
             </li>
             <li aria-hidden="true">/</li>
@@ -166,7 +169,7 @@ export default async function ManufacturerPage({
                 href="/manufacturers"
                 className="hover:text-foreground transition-colors"
               >
-                Manufacturers
+                {t("breadcrumb.manufacturers")}
               </Link>
             </li>
             <li aria-hidden="true">/</li>
@@ -178,16 +181,16 @@ export default async function ManufacturerPage({
 
         <section className="rounded-2xl border border-border bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-6 sm:p-8">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
-            Manufacturer Profile
+            {t("detail.profileLabel")}
           </p>
           <div className="mt-3 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
-                {manufacturer.name} Yachts
+                {manufacturer.name} {t("detail.yachtsSuffix")}
               </h1>
               <p className="mt-4 max-w-3xl text-muted-foreground leading-relaxed">
                 {manufacturer.description ||
-                  `${manufacturer.name} is featured in the Sailing Yacht Info with ${manufacturer.yachtCount} yacht${manufacturer.yachtCount === 1 ? "" : "s"} currently indexed.`}
+                  t("detail.descriptionFallback", { name: manufacturer.name, count: manufacturer.yachtCount })}
               </p>
             </div>
 
@@ -198,26 +201,26 @@ export default async function ManufacturerPage({
                 rel="noopener noreferrer"
                 className="inline-flex items-center rounded-lg border border-sky-200 bg-white px-4 py-2 text-sm font-medium text-sky-700 hover:bg-sky-50 transition-colors"
               >
-                Visit builder website
+                {t("detail.visitWebsite")}
               </a>
             )}
           </div>
 
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             <div className="rounded-xl border border-border bg-white/80 p-4">
-              <div className="text-sm text-muted-foreground">Country</div>
+              <div className="text-sm text-muted-foreground">{t("detail.country")}</div>
               <div className="mt-1 text-lg font-semibold">
                 {manufacturer.country || "—"}
               </div>
             </div>
             <div className="rounded-xl border border-border bg-white/80 p-4">
-              <div className="text-sm text-muted-foreground">Founded</div>
+              <div className="text-sm text-muted-foreground">{t("detail.founded")}</div>
               <div className="mt-1 text-lg font-semibold">
                 {manufacturer.foundedYear || "—"}
               </div>
             </div>
             <div className="rounded-xl border border-border bg-white/80 p-4">
-              <div className="text-sm text-muted-foreground">Yachts indexed</div>
+              <div className="text-sm text-muted-foreground">{t("detail.yachtsIndexed")}</div>
               <div className="mt-1 text-lg font-semibold">
                 {manufacturer.yachtCount}
               </div>
@@ -230,14 +233,14 @@ export default async function ManufacturerPage({
             <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-3xl">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
-                  Manufacturer Spotlight
+                  {t("detail.spotlight.label")}
                 </p>
                 <h2 className="mt-3 text-2xl font-bold tracking-tight">
-                  Read our {manufacturer.name} spotlight
+                  {t("detail.spotlight.title", { name: manufacturer.name })}
                 </h2>
                 <p className="mt-3 text-muted-foreground leading-relaxed">
                   {spotlight.metaDescription ||
-                    `Go deeper on ${manufacturer.name}'s history, brand positioning, major milestones, and notable yacht models.`}
+                    t("detail.spotlight.descriptionFallback", { name: manufacturer.name })}
                 </p>
               </div>
 
@@ -245,7 +248,7 @@ export default async function ManufacturerPage({
                 href={`/manufacturers/${manufacturer.slug}/spotlight`}
                 className="inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 transition-colors"
               >
-                Open spotlight →
+                {t("detail.spotlight.openSpotlight")}
               </Link>
             </div>
           </section>
@@ -254,22 +257,22 @@ export default async function ManufacturerPage({
 
         {/* Cross-linking: Browse by Size */}
         <section className="mt-10 sm:mt-12 bg-muted/30 rounded-xl p-6">
-          <h2 className="text-lg font-semibold mb-4">Browse {manufacturer.name} Yachts by Size</h2>
+          <h2 className="text-lg font-semibold mb-4">{t("detail.browseBySize.title", { name: manufacturer.name })}</h2>
           <div className="flex flex-wrap gap-3">
             <Link href="/yachts?minLength=0&maxLength=30" className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
-              Under 30ft
+              {t("detail.browseBySize.under30")}
             </Link>
             <Link href="/yachts?minLength=30&maxLength=35" className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
-              30–35ft
+              {t("detail.browseBySize.range3035")}
             </Link>
             <Link href="/yachts?minLength=35&maxLength=40" className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
-              35–40ft
+              {t("detail.browseBySize.range3540")}
             </Link>
             <Link href="/yachts?minLength=40&maxLength=50" className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
-              40–50ft
+              {t("detail.browseBySize.range4050")}
             </Link>
             <Link href="/yachts?minLength=50" className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
-              50ft+
+              {t("detail.browseBySize.over50")}
             </Link>
           </div>
         </section>
@@ -277,16 +280,16 @@ export default async function ManufacturerPage({
         <section className="mt-10 sm:mt-12">
           <div className="flex items-end justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-2xl font-bold">Models & Specs</h2>
+              <h2 className="text-2xl font-bold">{t("detail.modelsAndSpecs")}</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Browse the current lineup and linked yacht detail pages.
+                {t("detail.modelsSubtitle")}
               </p>
             </div>
           </div>
 
           {yachts.length === 0 ? (
             <div className="rounded-xl border border-dashed border-border p-8 text-center text-muted-foreground">
-              No yacht models are available for this manufacturer yet.
+              {t("detail.noModels")}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
@@ -321,29 +324,29 @@ export default async function ManufacturerPage({
 
                       <dl className="mt-4 space-y-2 text-sm">
                         <div className="flex justify-between gap-3">
-                          <dt className="text-muted-foreground">Length</dt>
+                          <dt className="text-muted-foreground">{t("detail.specLabels.length")}</dt>
                           <dd className="font-medium">
                             {formatNumber(yacht.lengthOverall, "m")}
                           </dd>
                         </div>
                         <div className="flex justify-between gap-3">
-                          <dt className="text-muted-foreground">Beam</dt>
+                          <dt className="text-muted-foreground">{t("detail.specLabels.beam")}</dt>
                           <dd className="font-medium">
                             {formatNumber(yacht.beam, "m")}
                           </dd>
                         </div>
                         <div className="flex justify-between gap-3">
-                          <dt className="text-muted-foreground">Draft</dt>
+                          <dt className="text-muted-foreground">{t("detail.specLabels.draft")}</dt>
                           <dd className="font-medium">
                             {formatNumber(yacht.draft, "m")}
                           </dd>
                         </div>
                         <div className="flex justify-between gap-3">
-                          <dt className="text-muted-foreground">Cabins</dt>
+                          <dt className="text-muted-foreground">{t("detail.specLabels.cabins")}</dt>
                           <dd className="font-medium">{yacht.cabins ?? "—"}</dd>
                         </div>
                         <div className="flex justify-between gap-3">
-                          <dt className="text-muted-foreground">Rig</dt>
+                          <dt className="text-muted-foreground">{t("detail.specLabels.rig")}</dt>
                           <dd className="font-medium text-right">
                             {yacht.rigType || "—"}
                           </dd>
@@ -352,7 +355,7 @@ export default async function ManufacturerPage({
 
                       {yacht.slug && (
                         <div className="mt-4 text-sm font-medium text-sky-700">
-                          View yacht details →
+                          {t("detail.viewYachtDetails")}
                         </div>
                       )}
                     </div>

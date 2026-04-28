@@ -1,19 +1,27 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { getAllGlossaryTerms, getGlossaryCategories } from "@/lib/glossary";
 import { getSiteUrl, generateBreadcrumbJsonLd, generateCollectionPageJsonLd } from "@/lib/seo";
 
 // ISR: Revalidate glossary every 6 hours
 export const revalidate = 21600;
 
-export async function generateMetadata(): Promise<Metadata> {
+interface GlossaryPageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: GlossaryPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Glossary" });
   const terms = getAllGlossaryTerms();
   const categories = getGlossaryCategories();
 
   return {
-    title: "Sailing Glossary – Nautical Terminology & Yacht Specifications",
-    description:
-      `Comprehensive sailing glossary with ${terms.length} nautical terms, yacht specifications, and sailing terminology. Learn about LOA, beam, draft, ballast ratio, keel types, rig configurations, and more.`,
+    title: t("meta.title"),
+    description: t("meta.description", { count: terms.length }),
     keywords: [
       "sailing glossary",
       "nautical terms",
@@ -27,19 +35,19 @@ export async function generateMetadata(): Promise<Metadata> {
       "draft",
       "ballast ratio",
       "keel types",
-      ...categories.map(c => c.toLowerCase()),
+      ...categories.map((c) => c.toLowerCase()),
     ],
     openGraph: {
-      title: "Sailing Glossary – Nautical Terminology & Yacht Specifications",
-      description: `Comprehensive sailing glossary with ${terms.length} nautical terms and yacht specifications.`,
+      title: t("meta.title"),
+      description: t("meta.description", { count: terms.length }),
       url: getSiteUrl("/glossary"),
       type: "website",
       siteName: "Sailing Yacht Info",
     },
     twitter: {
       card: "summary",
-      title: "Sailing Glossary – Nautical Terminology",
-      description: `Comprehensive sailing glossary with ${terms.length} nautical terms and yacht specifications.`,
+      title: t("meta.title"),
+      description: t("meta.description", { count: terms.length }),
     },
     alternates: {
       canonical: getSiteUrl("/glossary"),
@@ -47,7 +55,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function GlossaryPage() {
+export default async function GlossaryPage({ params }: GlossaryPageProps) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Glossary" });
+
   const [terms, categories] = await Promise.all([
     getAllGlossaryTerms(),
     getGlossaryCategories(),
@@ -83,14 +94,13 @@ export default async function GlossaryPage() {
         <section className="bg-gradient-to-b from-sky-50 to-white py-16 px-4">
           <div className="max-w-5xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Sailing Glossary
+              {t("heading")}
             </h1>
             <p className="text-lg text-gray-600 mb-8 max-w-3xl mx-auto">
-              Comprehensive nautical terminology and yacht specification terms.
-              Understand LOA, beam, draft, ballast ratio, keel types, rig configurations, and more.
+              {t("description")}
             </p>
             <p className="text-sm text-gray-500">
-              {terms.length} terms · {categories.length} categories
+              {t("termStats", { terms: terms.length, categories: categories.length })}
             </p>
           </div>
         </section>
@@ -103,12 +113,12 @@ export default async function GlossaryPage() {
                 href="/glossary"
                 className="px-4 py-2 rounded-full bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition"
               >
-                All ({terms.length})
+                {t("filterAll", { count: terms.length })}
               </Link>
               {categories.map((cat) => (
                 <Link
                   key={cat}
-                  href={`#category-${cat.toLowerCase().replace(/\s+/g, '-')}`}
+                  href={`#category-${cat.toLowerCase().replace(/\s+/g, "-")}`}
                   className="px-4 py-2 rounded-full bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition"
                 >
                   {cat}
@@ -122,13 +132,13 @@ export default async function GlossaryPage() {
         <section className="py-12 px-4">
           <div className="max-w-5xl mx-auto space-y-16">
             {categories.map((category) => {
-              const categoryTerms = terms.filter((t) => t.category === category);
+              const categoryTerms = terms.filter((term) => term.category === category);
               if (categoryTerms.length === 0) return null;
 
               return (
                 <div
                   key={category}
-                  id={`category-${category.toLowerCase().replace(/\s+/g, '-')}`}
+                  id={`category-${category.toLowerCase().replace(/\s+/g, "-")}`}
                   className="scroll-mt-8"
                 >
                   <h2 className="text-2xl font-bold text-gray-900 mb-6 pb-2 border-b border-gray-200">
@@ -147,7 +157,7 @@ export default async function GlossaryPage() {
                           </h3>
                           {term.aliases && term.aliases.length > 0 && (
                             <span className="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded">
-                              {term.aliases.length} alt
+                              {t("altCount", { count: term.aliases.length })}
                             </span>
                           )}
                         </div>
@@ -167,23 +177,23 @@ export default async function GlossaryPage() {
         <section className="bg-gray-50 py-12 px-4 mt-12">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Learn More About Sailing
+              {t("cta.title")}
             </h2>
             <p className="text-gray-600 mb-6">
-              Explore our buying guides, manufacturer spotlights, and expert articles to deepen your sailing knowledge.
+              {t("cta.description")}
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link
                 href="/guides"
                 className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
               >
-                Browse Guides
+                {t("cta.browseGuides")}
               </Link>
               <Link
                 href="/yachts"
                 className="px-6 py-3 bg-white text-gray-900 font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition"
               >
-                Browse Yachts
+                {t("cta.browseYachts")}
               </Link>
             </div>
           </div>

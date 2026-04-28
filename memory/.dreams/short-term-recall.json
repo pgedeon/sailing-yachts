@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-04-17T01:08:29.053Z",
+  "updatedAt": "2026-04-28T01:19:28.589Z",
   "entries": {
     "memory:memory/2026-04-10.md:9:9": {
       "key": "memory:memory/2026-04-10.md:9:9",
@@ -701,7 +701,6 @@
         "issue",
         "content",
         "freshness",
-        "system",
         "auto"
       ]
     },
@@ -855,7 +854,7 @@
         "guides",
         "how",
         "choose",
-        "your"
+        "first"
       ]
     },
     "memory:memory/2026-04-13.md:32:32": {
@@ -916,8 +915,8 @@
         "faq",
         "harvesting",
         "pipeline",
-        "the",
-        "only"
+        "only",
+        "remaining"
       ]
     },
     "memory:memory/2026-04-12.md:48:51": {
