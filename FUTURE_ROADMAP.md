@@ -6,8 +6,7 @@ The site lives on `info.sailboats.fr` (a French domain) and cross-links with `sa
 
 - ~~**P14.2 — French translations for yacht listing & search pages:** Translate all UI text on `/yachts`, `/search`, filter labels, sort options, pagination, and yacht card labels. Translate filter presets (Bluewater cruisers, Racing yachts, etc.). Tests: French rendering tests for listing and search pages. *(completed 2026-04-27 — PR #230, 117 i18n tests)*
 
-
-- [ ] **P14.3 — French translations for yacht detail & comparison pages:** Translate yacht detail page labels (specs table headers, performance ratios, "Who is this boat for?", related yachts section). Translate compare page headers and labels. Tests: French rendering tests for detail and compare pages.
+- ~~**P14.3 — French translations for yacht detail & comparison pages:** Translate yacht detail page labels (specs table headers, performance ratios, "Who is this boat for?", related yachts section). Translate compare page headers and labels. Tests: French rendering tests for detail and compare pages. *(completed 2026-04-28 — PR #232 + hotfix PRs #234 #235 for getMessages locale bug & NextIntlClientProvider locale prop)*
 
 - [ ] **P14.4 — French translations for manufacturers, guides & glossary:** Translate manufacturer listing page, guide pages, and glossary pages. Add French glossary descriptions alongside English. Tests: French rendering tests for content pages.
 
@@ -21,4 +20,5 @@ The site lives on `info.sailboats.fr` (a French domain) and cross-links with `sa
 - Database content (yacht specs, manufacturer names) stays language-neutral.
 - UI strings, labels, descriptions, and SEO metadata get translated.
 - **⚠️ P14.1 gotcha:** `t.rich()` in `next-intl` v4 with RSC passes functions across server→client boundary, causing 500 errors. Use `t()` + direct JSX composition instead.
-- **Phase 14 is in progress.** P14.1 complete, P14.2–P14.6 remaining.
+- **⚠️ P14.3 gotcha:** `getMessages()` without explicit `{ locale }` falls back to default locale (en) for client components. Also `NextIntlClientProvider` needs explicit `locale={locale}` prop. Both must be set in `app/[locale]/layout.tsx`.
+- **Phase 14 is in progress.** P14.1–P14.3 complete, P14.4–P14.6 remaining.
