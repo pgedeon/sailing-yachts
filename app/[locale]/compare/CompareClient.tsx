@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { PriceTierBadge } from "@/app/components/PriceTierBadge";
 import { calculatePriceTier } from "@/lib/price-tier";
 import Link from "next/link";
@@ -62,58 +63,58 @@ const MAX_COMPARE = 4;
 
 interface FieldDef {
   key: keyof Yacht;
-  label: string;
+  labelKey: string;
   unit?: string;
   lowerBetter?: boolean;
 }
 
-const SPEC_GROUPS: { group: string; fields: FieldDef[] }[] = [
+// Spec groups with translation keys instead of hardcoded labels
+const SPEC_GROUP_KEYS = ["dimensions", "riggingSails", "construction", "accommodation", "technical"] as const;
+
+const SPEC_GROUPS_CONFIG: { groupKey: typeof SPEC_GROUP_KEYS[number]; fieldKeys: FieldDef[] }[] = [
   {
-    group: "Dimensions",
-    fields: [
-      { key: 'lengthOverall', label: 'Length Overall', unit: 'm' },
-      { key: 'beam', label: 'Beam', unit: 'm' },
-      { key: 'draft', label: 'Draft', unit: 'm', lowerBetter: true },
-      { key: 'displacement', label: 'Displacement', unit: 'kg', lowerBetter: true },
-      { key: 'ballast', label: 'Ballast', unit: 'kg' },
+    groupKey: "dimensions",
+    fieldKeys: [
+      { key: 'lengthOverall', labelKey: 'lengthOverall', unit: 'm' },
+      { key: 'beam', labelKey: 'beam', unit: 'm' },
+      { key: 'draft', labelKey: 'draft', unit: 'm', lowerBetter: true },
+      { key: 'displacement', labelKey: 'displacement', unit: 'kg', lowerBetter: true },
+      { key: 'ballast', labelKey: 'ballast', unit: 'kg' },
     ],
   },
   {
-    group: "Rigging & Sails",
-    fields: [
-      { key: 'sailAreaMain', label: 'Sail Area (Main)', unit: 'm²' },
-      { key: 'rigType', label: 'Rig Type' },
+    groupKey: "riggingSails",
+    fieldKeys: [
+      { key: 'sailAreaMain', labelKey: 'sailAreaMain', unit: 'm²' },
+      { key: 'rigType', labelKey: 'rigType' },
     ],
   },
   {
-    group: "Construction",
-    fields: [
-      { key: 'keelType', label: 'Keel Type' },
-      { key: 'hullMaterial', label: 'Hull Material' },
+    groupKey: "construction",
+    fieldKeys: [
+      { key: 'keelType', labelKey: 'keelType' },
+      { key: 'hullMaterial', labelKey: 'hullMaterial' },
     ],
   },
   {
-    group: "Accommodation",
-    fields: [
-      { key: 'cabins', label: 'Cabins' },
-      { key: 'berths', label: 'Berths' },
-      { key: 'heads', label: 'Heads' },
-      { key: 'maxOccupancy', label: 'Max Occupancy' },
+    groupKey: "accommodation",
+    fieldKeys: [
+      { key: 'cabins', labelKey: 'cabins' },
+      { key: 'berths', labelKey: 'berths' },
+      { key: 'heads', labelKey: 'heads' },
+      { key: 'maxOccupancy', labelKey: 'maxOccupancy' },
     ],
   },
   {
-    group: "Technical",
-    fields: [
-      { key: 'engineHp', label: 'Engine HP' },
-      { key: 'engineType', label: 'Engine Type' },
-      { key: 'fuelCapacity', label: 'Fuel', unit: 'L' },
-      { key: 'waterCapacity', label: 'Water', unit: 'L' },
+    groupKey: "technical",
+    fieldKeys: [
+      { key: 'engineHp', labelKey: 'engineHp' },
+      { key: 'engineType', labelKey: 'engineType' },
+      { key: 'fuelCapacity', labelKey: 'fuel', unit: 'L' },
+      { key: 'waterCapacity', labelKey: 'water', unit: 'L' },
     ],
   },
 ];
-
-// Flatten for convenience
-const ALL_COMPARE_FIELDS: FieldDef[] = SPEC_GROUPS.flatMap(g => g.fields);
 
 const YACHT_COLORS = [
   { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-400', ring: 'ring-blue-200', dot: 'bg-blue-500' },
@@ -123,6 +124,25 @@ const YACHT_COLORS = [
 ];
 
 export function CompareClient({ initialIds }: CompareClientProps) {
+  const t = useTranslations("Compare");
+
+  // Build SPEC_GROUPS with translated labels at render time
+  const SPEC_GROUPS: { group: string; fields: { key: keyof Yacht; label: string; unit?: string; lowerBetter?: boolean }[] }[] = useMemo(() =>
+    SPEC_GROUPS_CONFIG.map(cfg => ({
+      group: t(`groups.${cfg.groupKey}`),
+      fields: cfg.fieldKeys.map(f => ({
+        key: f.key,
+        label: t(`fields.${f.labelKey}`),
+        unit: f.unit,
+        lowerBetter: f.lowerBetter,
+      })),
+    })),
+    [t]
+  );
+
+  // Flatten for convenience
+  const ALL_COMPARE_FIELDS = useMemo(() => SPEC_GROUPS.flatMap(g => g.fields), [SPEC_GROUPS]);
+
   const [selectedIds, setSelectedIds] = useState<number[]>(initialIds.slice(0, MAX_COMPARE));
   const [yachts, setYachts] = useState<Yacht[]>([]);
   const [allYachts, setAllYachts] = useState<YachtOption[]>([]);
@@ -317,7 +337,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
     return String(value);
   };
 
-  const highlightBest = (field: keyof Yacht, value: any, fieldDef: FieldDef) => {
+  const highlightBest = (field: keyof Yacht, value: any, fieldDef: { lowerBetter?: boolean }) => {
     if (yachts.length < 2 || value === null || value === undefined || typeof value !== 'number') return '';
     const numVals = yachts.map(y => y[field] as number | null).filter((v): v is number => v !== null && v !== undefined);
     if (numVals.length < 2) return '';
@@ -361,7 +381,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
     return grouped;
   }, [yachts]);
 
-  const builtInFieldKeys = new Set(ALL_COMPARE_FIELDS.map(f => f.label.toLowerCase()));
+  const builtInFieldKeys = useMemo(() => new Set(ALL_COMPARE_FIELDS.map(f => f.label.toLowerCase())), [ALL_COMPARE_FIELDS]);
   const displayGroups = useMemo(() => {
     const result: { group: string; type: 'builtin' | 'extra' }[] = SPEC_GROUPS.map(g => ({ group: g.group, type: 'builtin' as const }));
     for (const group of Object.keys(extraSpecRows)) {
@@ -373,7 +393,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
       }
     }
     return result;
-  }, [extraSpecRows]);
+  }, [extraSpecRows, builtInFieldKeys, SPEC_GROUPS]);
 
   const colCount = Math.max(yachts.length, 1);
 
@@ -384,11 +404,11 @@ export function CompareClient({ initialIds }: CompareClientProps) {
         <div>
         {/* Print-only header */}
         <div className="hidden printing-compare:block compare-print-header">
-          <h1>Sailing Yacht Comparison Report</h1>
-          <p>Generated by sailboats.fr · {new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
+          <h1>{t("printHeader")}</h1>
+          <p>{t("printDate", { date: new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) })}</p>
         </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Compare Yachts</h1>
-          <p className="mt-1 text-gray-500">Select up to {MAX_COMPARE} yachts to compare side by side</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t("heading")}</h1>
+          <p className="mt-1 text-gray-500">{t("subtitle", { max: MAX_COMPARE })}</p>
         </div>
         {/* Share + Save actions */}
         {selectedIds.length >= 2 && (
@@ -403,14 +423,14 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                   <svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-green-600">Copied!</span>
+                  <span className="text-green-600">{t("copied")}</span>
                 </>
               ) : (
                 <>
                   <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                   </svg>
-                  <span>Share</span>
+                  <span>{t("share")}</span>
                 </>
               )}
             </button>
@@ -421,7 +441,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
               <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
               </svg>
-              <span>Save</span>
+              <span>{t("save")}</span>
             </button>
             <button
               onClick={() => setSavedPanelOpen(!savedPanelOpen)}
@@ -430,7 +450,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
               <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
-              <span>Saved</span>
+              <span>{t("saved")}</span>
               {savedList.length > 0 && (
                 <span className="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700 font-semibold">
                   {savedList.length}
@@ -445,7 +465,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
       {/* Save comparison input */}
       {showSaveInput && selectedIds.length >= 2 && (
         <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Name this comparison</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">{t("nameComparison")}</label>
           <div className="flex gap-2">
             <input
               type="text"
@@ -462,7 +482,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
               disabled={!saveName.trim()}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              Save
+              {t("saveButton")}
             </button>
             <button
               onClick={() => { setShowSaveInput(false); setSaveName(''); }}
@@ -480,7 +500,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
       {savedPanelOpen && (
         <div className="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-700">Saved Comparisons</h3>
+            <h3 className="text-sm font-semibold text-gray-700">{t("savedComparisons.heading")}</h3>
             <button
               onClick={() => setSavedPanelOpen(false)}
               className="text-gray-500 hover:text-gray-700 transition-colors"
@@ -492,7 +512,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
           </div>
           {savedList.length === 0 ? (
             <div className="px-4 py-6 text-center text-gray-500 text-sm">
-              No saved comparisons yet. Select 2+ yachts and click Save.
+              {t("savedComparisons.noSaved")}
             </div>
           ) : (
             <ul className="divide-y divide-gray-100 max-h-64 overflow-y-auto">
@@ -504,7 +524,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                   >
                     <div className="text-sm font-medium text-gray-800 truncate">{sc.name}</div>
                     <div className="text-xs text-gray-500 mt-0.5">
-                      {sc.yachtIds.length} yachts · {new Date(sc.createdAt).toLocaleDateString()}
+                      {t("savedComparisons.yachtCount", { count: sc.yachtIds.length, date: new Date(sc.createdAt).toLocaleDateString() })}
                     </div>
                   </button>
                   <button
@@ -584,7 +604,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                     <svg className="w-6 h-6 mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
-                    <span className="text-sm">Add yacht</span>
+                    <span className="text-sm">{t("slot.addYacht")}</span>
                   </button>
                 )}
               </div>
@@ -601,7 +621,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            {selectedIds.length === 0 ? 'Choose yachts to compare' : 'Add another yacht'}
+            {selectedIds.length === 0 ? t("slot.chooseYachts") : t("slot.addAnother")}
           </button>
         )}
       </div>
@@ -617,7 +637,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
               </svg>
               <input
                 type="text"
-                placeholder="Search by manufacturer or model..."
+                placeholder={t("picker.searchPlaceholder")}
                 aria-label="Search yachts to add to comparison"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
@@ -630,9 +650,9 @@ export function CompareClient({ initialIds }: CompareClientProps) {
           {/* Scrollable List */}
           <div className="max-h-64 overflow-y-auto overscroll-contain">
             {loadingOptions ? (
-              <div className="p-6 text-center text-gray-500 text-sm">Loading yachts...</div>
+              <div className="p-6 text-center text-gray-500 text-sm">{t("picker.loading")}</div>
             ) : groupedYachts.length === 0 ? (
-              <div className="p-6 text-center text-gray-500 text-sm">No yachts match your search.</div>
+              <div className="p-6 text-center text-gray-500 text-sm">{t("picker.noMatch")}</div>
             ) : (
               groupedYachts.map(([manufacturer, yachtsList]) => (
                 <div key={manufacturer}>
@@ -672,7 +692,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                         </div>
                         {isSelected && (
                           <span className={`text-xs px-2 py-0.5 rounded-full ${color?.bg} ${color?.text} font-medium`}>
-                            Slot {slotIdx + 1}
+                            {t("slot.slotN", { n: slotIdx + 1 })}
                           </span>
                         )}
                       </button>
@@ -685,12 +705,12 @@ export function CompareClient({ initialIds }: CompareClientProps) {
 
           {/* Footer */}
           <div className="p-3 border-t border-gray-100 bg-gray-50 flex items-center justify-between">
-            <span className="text-xs text-gray-500" aria-live="polite">{selectedIds.length}/{MAX_COMPARE} selected</span>
+            <span className="text-xs text-gray-500" aria-live="polite">{t("picker.selected", { count: selectedIds.length, max: MAX_COMPARE })}</span>
             <button
               onClick={() => setPickerOpen(false)}
               className="text-sm text-blue-600 hover:text-blue-800 font-medium"
             >
-              Done
+              {t("picker.done")}
             </button>
           </div>
         </div>
@@ -702,8 +722,8 @@ export function CompareClient({ initialIds }: CompareClientProps) {
           <svg className="w-16 h-16 mx-auto mb-4 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1} aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
           </svg>
-          <p className="text-lg font-medium text-gray-500">Select yachts to compare</p>
-          <p className="text-sm mt-1">Choose 2 to {MAX_COMPARE} yachts above to see a detailed comparison</p>
+          <p className="text-lg font-medium text-gray-500">{t("prompt.selectYachts")}</p>
+          <p className="text-sm mt-1">{t("prompt.chooseSubtitle", { max: MAX_COMPARE })}</p>
         </div>
       )}
 
@@ -711,7 +731,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
       {loading && (
         <div className="text-center py-12">
           <div className="inline-block w-8 h-8 border-2 border-blue-300 border-t-blue-600 rounded-full animate-spin" />
-          <p className="mt-3 text-gray-500 text-sm">Loading comparison...</p>
+          <p className="mt-3 text-gray-500 text-sm">{t("loading")}</p>
         </div>
       )}
 
@@ -729,7 +749,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-gray-50 border-b">
-                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-40 sticky left-0 bg-gray-50 z-10">Spec</th>
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-40 sticky left-0 bg-gray-50 z-10">{t("table.spec")}</th>
                   {yachts.map((yacht, i) => (
                     <th key={yacht.id} className="px-5 py-3 text-left min-w-[160px]">
                       <Link href={`/yachts/${yacht.slug}`} className="hover:underline">
@@ -746,7 +766,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                 {/* Price Tier Row */}
                 <tr className="bg-gray-50/50">
                   <td className="px-5 py-3 text-gray-600 font-medium whitespace-nowrap sticky left-0 bg-gray-50/50 z-10">
-                    Est. Price Range
+                    {t("table.estPriceRange")}
                   </td>
                   {yachts.map((yacht, i) => {
                     const priceInfo = calculatePriceTier({
@@ -785,9 +805,9 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                           {yachts.map((yacht) => {
                             const value = yacht[field.key] as any;
                             const display = formatValue(value, field.unit);
-                            const highlight = highlightBest(field.key, value, field);
+                            const hl = highlightBest(field.key, value, field);
                             return (
-                              <td key={yacht.id} className={`px-5 py-3 whitespace-nowrap ${highlight || 'text-gray-700'}`}>
+                              <td key={yacht.id} className={`px-5 py-3 whitespace-nowrap ${hl || 'text-gray-700'}`}>
                                 {display}
                               </td>
                             );
@@ -831,12 +851,12 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                   <>
                     <tr className="bg-slate-50">
                       <td colSpan={yachts.length + 1} className="px-5 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                        Notes
+                        {t("groups.notes")}
                       </td>
                     </tr>
                     <tr className="hover:bg-gray-50/50 transition-colors">
                       <td className="px-5 py-3 text-gray-600 font-medium whitespace-nowrap sticky left-0 bg-white z-10">
-                        Design Notes
+                        {t("table.designNotes")}
                       </td>
                       {yachts.map(yacht => (
                         <td key={yacht.id} className="px-5 py-3 text-gray-700 text-sm max-w-xs">
@@ -902,7 +922,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
           />
         </div>
       )}
-        <Link href="/yachts" className="text-blue-600 hover:underline text-sm">← Back to browse</Link>
+        <Link href="/yachts" className="text-blue-600 hover:underline text-sm">{t("backToBrowse")}</Link>
       </div>
     </div>
   );

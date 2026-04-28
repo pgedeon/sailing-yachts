@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { generateCompareMetadata, generateBreadcrumbJsonLd, getSiteUrl } from "@/lib/seo";
 import dynamic from "next/dynamic";
 const CompareClient = dynamic(() => import("./CompareClient").then(m => ({ default: m.CompareClient })), { ssr: false, loading: () => null });
@@ -6,6 +7,7 @@ import { shouldNoindexComparePage } from "@/lib/thin-page-governance";
 
 interface ComparePageParams {
   searchParams: Promise<{ ids?: string }>;
+  params: Promise<{ locale: string }>;
 }
 
 /**
@@ -37,10 +39,15 @@ export async function generateMetadata({ searchParams }: ComparePageParams): Pro
 
 export default async function ComparePage({
   searchParams,
+  params,
 }: {
   searchParams: Promise<{ ids?: string }>;
+  params: Promise<{ locale: string }>;
 }) {
   const { ids } = await searchParams;
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Compare" });
+
   const initialIds = ids
     ? ids
         .split(",")
@@ -50,7 +57,7 @@ export default async function ComparePage({
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Home", path: "/" },
-    { name: "Compare Yachts" },
+    { name: t("heading") },
   ]);
 
   return (

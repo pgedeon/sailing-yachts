@@ -219,5 +219,203 @@
     "suggestions": {
       "label": "Search suggestions"
     }
+  },
+  "YachtDetail": {
+    "meta": {
+      "title": "{manufacturer} {model} ({year}) — Sailing Yacht Info",
+      "description": "{manufacturer} {model} ({year}) sailing yacht specifications. Length, beam, draft, displacement, rig type, cabins and more.",
+      "notFoundTitle": "Yacht Not Found",
+      "notFoundDescription": "The requested sailing yacht could not be found."
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "yachts": "Yachts"
+    },
+    "loading": "Loading yacht…",
+    "error": "Error: {message}",
+    "backToBrowse": "Back to Browse",
+    "printSpecSheet": "Print Spec Sheet",
+    "printHeader": "Sailing Yacht Info — Spec Sheet",
+    "printFooter": "Printed from info.sailboats.fr — {manufacturer} {model} ({year}) — {date}",
+    "noImage": "No image available",
+    "builtBy": "A sailing yacht built by {manufacturer}.",
+    "sourceLabel": "Source:",
+    "coreSpecs": {
+      "lengthOverall": "Length Overall",
+      "beam": "Beam",
+      "draft": "Draft",
+      "displacement": "Displacement"
+    },
+    "groupLabels": {
+      "dimensions": "Dimensions",
+      "sailplan": "Sail Plan",
+      "accommodation": "Accommodation",
+      "technical": "Technical",
+      "performance": "Performance",
+      "hull": "Hull",
+      "other": "Other Specs"
+    },
+    "performance": {
+      "heading": "Performance Ratios",
+      "displacementLength": "Displacement/Length",
+      "sailAreaDisplacement": "Sail Area/Displacement",
+      "ballastRatio": "Ballast Ratio",
+      "capsizeScreening": "Capsize Screening",
+      "dlUltraLight": "Ultra light (racing)",
+      "dlLight": "Light (performance cruiser)",
+      "dlModerate": "Moderate (cruiser)",
+      "dlHeavy": "Heavy (bluewater cruiser)",
+      "sadUnderCanvased": "Under-canvased (easy handling)",
+      "sadModerate": "Moderate (cruising)",
+      "sadPerformance": "Performance cruiser",
+      "sadHighPerformance": "High performance (racing)",
+      "ballastLow": "Low (more heel, less stability)",
+      "ballastModerate": "Moderate (good balance)",
+      "ballastHigh": "High (stiff, stable)",
+      "csfExcellent": "Excellent offshore stability",
+      "csfGood": "Good coastal/offshore",
+      "csfModerate": "Moderate (coastal)",
+      "csfHigh": "High (light displacement, care needed offshore)"
+    },
+    "recommendation": {
+      "heading": "Who is this boat for?",
+      "daySailing": "ideal for day sailing and weekend trips",
+      "coastalCruising": "a versatile size for coastal cruising and occasional extended voyages",
+      "bluewater": "suited for extended cruising and bluewater passages",
+      "familyFriendly": "family-friendly layout with generous accommodation",
+      "couples": "comfortable for couples or small families",
+      "solidConstruction": "solid construction inspires confidence in varied conditions",
+      "classicRig": "classic rig configuration offers proven handling characteristics",
+      "template": "This yacht is {parts}."
+    },
+    "badges": {
+      "daySailer": "Day Sailer",
+      "coastalCruiser": "Coastal Cruiser",
+      "bluewater": "Bluewater",
+      "familyFriendly": "Family Friendly",
+      "easyHandling": "Easy Handling"
+    },
+    "reviews": {
+      "heading": "Customer Reviews",
+      "verified": "verified"
+    },
+    "compare": "Compare This Yacht",
+    "bestValue": {
+      "seeRanked": "See {label} ranked by value score"
+    },
+    "notFound": {
+      "heading": "Yacht not found",
+      "description": "The requested sailing yacht could not be found.",
+      "browseAll": "Browse all yachts"
+    },
+    "correctionFields": {
+      "lengthOverall": "Length Overall",
+      "beam": "Beam",
+      "draft": "Draft",
+      "displacement": "Displacement",
+      "ballast": "Ballast",
+      "sailAreaMain": "Sail Area (Main)",
+      "rigType": "Rig Type",
+      "keelType": "Keel Type",
+      "hullMaterial": "Hull Material",
+      "cabins": "Cabins",
+      "berths": "Berths",
+      "heads": "Heads",
+      "maxOccupancy": "Max Occupancy",
+      "engineHp": "Engine HP",
+      "engineType": "Engine Type",
+      "fuelCapacity": "Fuel Capacity",
+      "waterCapacity": "Water Capacity"
+    }
+  },
+  "YachtDetailSub": {
+    "similarYachts": "Similar Yachts",
+    "basedOnSpecs": "Based on comparable specifications",
+    "sameSizeAlternatives": "Same Size Alternatives",
+    "withinRange": "Within ±1 meter length",
+    "noImage": "No image",
+    "viewDetails": "View details",
+    "matchPercent": "{percent}% match",
+    "moreFromManufacturer": "More from this Manufacturer",
+    "buyingGuides": "Buying Guides & Resources",
+    "guidesFallback": "Expert guides and resources to help you choose the right yacht.",
+    "browseAllGuides": "Browse all guides",
+    "guidesRelated": "Expert guides related to this yacht.",
+    "viewAllGuides": "View all guides →",
+    "relatedArticles": "Related Sailing Articles",
+    "minRead": "{minutes} min read"
+  },
+  "Compare": {
+    "heading": "Compare Yachts",
+    "subtitle": "Select up to {max} yachts to compare side by side",
+    "share": "Share",
+    "copied": "Copied!",
+    "save": "Save",
+    "saved": "Saved",
+    "nameComparison": "Name this comparison",
+    "saveButton": "Save",
+    "slot": {
+      "addYacht": "Add yacht",
+      "slotN": "Slot {n}",
+      "chooseYachts": "Choose yachts to compare",
+      "addAnother": "Add another yacht"
+    },
+    "picker": {
+      "searchPlaceholder": "Search by manufacturer or model...",
+      "loading": "Loading yachts...",
+      "noMatch": "No yachts match your search.",
+      "done": "Done",
+      "selected": "{count}/{max} selected"
+    },
+    "prompt": {
+      "selectYachts": "Select yachts to compare",
+      "chooseSubtitle": "Choose 2 to {max} yachts above to see a detailed comparison"
+    },
+    "loading": "Loading comparison...",
+    "table": {
+      "spec": "Spec",
+      "estPriceRange": "Est. Price Range",
+      "notes": "Notes",
+      "designNotes": "Design Notes"
+    },
+    "groups": {
+      "dimensions": "Dimensions",
+      "riggingSails": "Rigging & Sails",
+      "construction": "Construction",
+      "accommodation": "Accommodation",
+      "technical": "Technical",
+      "notes": "Notes"
+    },
+    "fields": {
+      "lengthOverall": "Length Overall",
+      "beam": "Beam",
+      "draft": "Draft",
+      "displacement": "Displacement",
+      "ballast": "Ballast",
+      "sailAreaMain": "Sail Area (Main)",
+      "rigType": "Rig Type",
+      "keelType": "Keel Type",
+      "hullMaterial": "Hull Material",
+      "cabins": "Cabins",
+      "berths": "Berths",
+      "heads": "Heads",
+      "maxOccupancy": "Max Occupancy",
+      "engineHp": "Engine HP",
+      "engineType": "Engine Type",
+      "fuel": "Fuel",
+      "water": "Water"
+    },
+    "legend": {
+      "greenBest": "Green = best value in row",
+      "swipeHint": "← Swipe to see more →"
+    },
+    "backToBrowse": "← Back to browse",
+    "printHeader": "Sailing Yacht Comparison Report",
+    "printDate": "Generated by sailboats.fr · {date}",
+    "savedComparisons": {
+      "heading": "Saved Comparisons",
+      "noSaved": "No saved comparisons yet. Select 2+ yachts and click Save.",
+      "yachtCount": "{count} yachts · {date}"
+    }
   }
 }

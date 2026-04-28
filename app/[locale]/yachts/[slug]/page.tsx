@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { unstable_cache } from "next/cache";
+import { getTranslations } from "next-intl/server";
 
 import {
   generateYachtPageMetadata,
@@ -94,19 +95,20 @@ function generateOfferJsonLd(params: {
 }
 
 interface YachtDetailPageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }
 
 export async function generateMetadata({
   params,
 }: YachtDetailPageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "YachtDetail" });
   const data = await getYachtData(slug);
 
   if (!data) {
     return {
-      title: "Yacht Not Found",
-      description: "The requested sailing yacht could not be found.",
+      title: t("meta.notFoundTitle"),
+      description: t("meta.notFoundDescription"),
     };
   }
 
@@ -146,18 +148,19 @@ export async function generateMetadata({
 }
 
 export default async function YachtDetailPage({ params }: YachtDetailPageProps) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "YachtDetail" });
   const data = await getYachtData(slug);
 
   if (!data) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-12 text-center">
-        <h1 className="text-2xl font-bold text-red-600">Yacht not found</h1>
+        <h1 className="text-2xl font-bold text-red-600">{t("notFound.heading")}</h1>
         <p className="mt-2 text-muted-foreground">
-          The requested sailing yacht could not be found.
+          {t("notFound.description")}
         </p>
         <a href="/yachts" className="mt-4 inline-block text-primary underline">
-          Browse all yachts
+          {t("notFound.browseAll")}
         </a>
       </div>
     );
@@ -198,8 +201,8 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
   });
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
-    { name: "Home", path: "/" },
-    { name: "Yachts", path: "/yachts" },
+    { name: t("breadcrumb.home"), path: "/" },
+    { name: t("breadcrumb.yachts"), path: "/yachts" },
     { name: `${manufacturerName} ${yachtData.modelName}`, path: `/yachts/${slug}` },
   ]);
 
