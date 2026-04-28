@@ -35,7 +35,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   ];
 
   return (
-    <NextIntlClientProvider messages={messages}>
+    <NextIntlClientProvider locale={locale} messages={messages}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
