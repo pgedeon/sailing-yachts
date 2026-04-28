@@ -1,34 +1,36 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getTermBySlug, getRelatedTerms } from "@/lib/glossary";
-import { getSiteUrl, generateBreadcrumbJsonLd, generateCollectionPageJsonLd } from "@/lib/seo";
+import { getSiteUrl, generateBreadcrumbJsonLd } from "@/lib/seo";
 
 // ISR: Revalidate glossary term pages every 6 hours
 export const revalidate = 21600;
 
 interface GlossaryTermPageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }
 
 export async function generateMetadata({
   params,
 }: GlossaryTermPageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Glossary" });
   const term = getTermBySlug(slug);
 
   if (!term) {
     return {
-      title: "Term Not Found",
-      description: "The requested sailing glossary term could not be found.",
+      title: t("meta.notFoundTitle"),
+      description: t("meta.notFoundDescription"),
     };
   }
 
   const description = `${term.term}: ${term.definition.substring(0, 160)}`;
 
   return {
-    title: `${term.term} – Sailing Glossary`,
-    description,
+    title: t("term.meta.title", { term: term.term }),
+    description: t("term.meta.description", { term: term.term, definition: term.definition.substring(0, 160) }),
     keywords: [
       term.term,
       term.category,
@@ -66,7 +68,8 @@ export async function generateStaticParams() {
 }
 
 export default async function GlossaryTermPage({ params }: GlossaryTermPageProps) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Glossary" });
   const term = getTermBySlug(slug);
 
   if (!term) {
@@ -95,11 +98,11 @@ export default async function GlossaryTermPage({ params }: GlossaryTermPageProps
         <nav className="max-w-5xl mx-auto px-4 py-4" aria-label="Breadcrumb">
           <ol className="flex items-center text-sm text-gray-500">
             <li>
-              <Link href="/" className="hover:text-gray-900">Home</Link>
+              <Link href="/" className="hover:text-gray-900">{t("breadcrumb.home")}</Link>
             </li>
             <li className="mx-2">/</li>
             <li>
-              <Link href="/glossary" className="hover:text-gray-900">Glossary</Link>
+              <Link href="/glossary" className="hover:text-gray-900">{t("breadcrumb.glossary")}</Link>
             </li>
             <li className="mx-2">/</li>
             <li className="text-gray-900">{term.term}</li>
@@ -119,7 +122,7 @@ export default async function GlossaryTermPage({ params }: GlossaryTermPageProps
           {term.aliases && term.aliases.length > 0 && (
             <div className="mb-6">
               <p className="text-sm text-gray-500">
-                <span className="font-medium">Also known as:</span> {term.aliases.join(", ")}
+                <span className="font-medium">{t("term.alsoKnownAs")}</span> {term.aliases.join(", ")}
               </p>
             </div>
           )}
@@ -133,7 +136,7 @@ export default async function GlossaryTermPage({ params }: GlossaryTermPageProps
         {/* Related Terms */}
         {relatedTerms.length > 0 && (
           <section className="max-w-5xl mx-auto px-4 py-8 border-t border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Related Terms</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">{t("term.relatedTerms")}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {relatedTerms.map((related) => (
                 <Link
@@ -158,16 +161,16 @@ export default async function GlossaryTermPage({ params }: GlossaryTermPageProps
         <section className="max-w-5xl mx-auto px-4 py-12 border-t border-gray-200">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Explore More Terms
+              {t("term.exploreMoreTitle")}
             </h2>
             <p className="text-gray-600 mb-6">
-              Browse our complete sailing glossary to learn more about nautical terminology and yacht specifications.
+              {t("term.exploreMoreDescription")}
             </p>
             <Link
               href="/glossary"
               className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
             >
-              View All Glossary Terms
+              {t("term.viewAllTerms")}
             </Link>
           </div>
         </section>

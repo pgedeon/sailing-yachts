@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { unstable_cache } from "next/cache";
+import { getTranslations } from "next-intl/server";
 
 import {
   generateBreadcrumbJsonLd,
@@ -33,24 +34,25 @@ async function getPartnerPageData(slug: string) {
 }
 
 interface PartnersPageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }
 
 export async function generateMetadata({
   params,
 }: PartnersPageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Manufacturers" });
   const data = await getPartnerPageData(slug);
 
   if (!data || !data.manufacturer) {
     return {
-      title: "Manufacturer Not Found",
-      description: "The requested sailing yacht manufacturer could not be found.",
+      title: t("partners.meta.notFoundTitle"),
+      description: t("partners.meta.notFoundDescription"),
     };
   }
 
   const manufacturer = data.manufacturer;
-  const title = `${manufacturer.name} Partners & Dealers | Authorized Dealers, Brokers & Services`;
+  const title = t("partners.meta.title", { name: manufacturer.name });
   const description = manufacturer.description
     ? `${manufacturer.description} - Find authorized ${manufacturer.name} dealers, brokers, service centers, and yacht sales partners.`
     : `Discover authorized ${manufacturer.name} dealers, brokers, service centers, and yacht sales partners worldwide.`;
@@ -92,7 +94,8 @@ export async function generateMetadata({
 export default async function PartnersPage({
   params,
 }: PartnersPageProps) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Manufacturers" });
   const data = await getPartnerPageData(slug);
 
   if (!data || !data.manufacturer) {
@@ -152,7 +155,7 @@ export default async function PartnersPage({
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
               <Link href="/" className="hover:text-foreground transition-colors">
-                Home
+                {t("partners.breadcrumb.home")}
               </Link>
             </li>
             <li aria-hidden="true">/</li>
@@ -161,7 +164,7 @@ export default async function PartnersPage({
                 href="/manufacturers"
                 className="hover:text-foreground transition-colors"
               >
-                Manufacturers
+                {t("partners.breadcrumb.manufacturers")}
               </Link>
             </li>
             <li aria-hidden="true">/</li>
@@ -175,23 +178,22 @@ export default async function PartnersPage({
             </li>
             <li aria-hidden="true">/</li>
             <li aria-current="page" className="text-foreground font-medium">
-              Partners & Dealers
+              {t("partners.breadcrumb.partners")}
             </li>
           </ol>
         </nav>
 
         <section className="rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-6 sm:p-8">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
-            Official Network
+            {t("partners.officialNetwork")}
           </p>
           <div className="mt-3 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
               <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
-                {manufacturer.name} Partners & Dealers
+                {t("partners.title", { name: manufacturer.name })}
               </h1>
               <p className="mt-4 max-w-3xl text-muted-foreground leading-relaxed">
-                Connect with authorized {manufacturer.name} dealers, brokers, and service centers worldwide.
-                All partners are verified and offer genuine {manufacturer.name} products and services.
+                {t("partners.description", { name: manufacturer.name })}
               </p>
             </div>
           </div>
@@ -199,25 +201,25 @@ export default async function PartnersPage({
           {/* Statistics */}
           <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             <div className="rounded-xl border border-border bg-white/80 p-4">
-              <div className="text-sm text-muted-foreground">Active Partners</div>
+              <div className="text-sm text-muted-foreground">{t("partners.stats.activePartners")}</div>
               <div className="mt-1 text-lg font-semibold">
                 {activeDealers.length}
               </div>
             </div>
             <div className="rounded-xl border border-border bg-white/80 p-4">
-              <div className="text-sm text-muted-foreground">Authorized Dealers</div>
+              <div className="text-sm text-muted-foreground">{t("partners.stats.authorizedDealers")}</div>
               <div className="mt-1 text-lg font-semibold">
                 {dealers.length}
               </div>
             </div>
             <div className="rounded-xl border border-border bg-white/80 p-4">
-              <div className="text-sm text-muted-foreground">Service Centers</div>
+              <div className="text-sm text-muted-foreground">{t("partners.stats.serviceCenters")}</div>
               <div className="mt-1 text-lg font-semibold">
                 {serviceCenters.length}
               </div>
             </div>
             <div className="rounded-xl border border-border bg-white/80 p-4">
-              <div className="text-sm text-muted-foreground">Brokers</div>
+              <div className="text-sm text-muted-foreground">{t("partners.stats.brokers")}</div>
               <div className="mt-1 text-lg font-semibold">
                 {brokers.length}
               </div>
@@ -228,45 +230,45 @@ export default async function PartnersPage({
         {!hasOffers ? (
           <section className="mt-10 sm:mt-12 text-center py-12">
             <div className="rounded-xl border border-dashed border-border p-8 text-muted-foreground">
-              <h2 className="text-xl font-semibold mb-2">Partner Network Coming Soon</h2>
-              <p>We're building out the official {manufacturer.name} partner network. Check back soon for authorized dealers, brokers, and service centers in your area.</p>
+              <h2 className="text-xl font-semibold mb-2">{t("partners.empty.title", { name: manufacturer.name })}</h2>
+              <p>{t("partners.empty.description", { name: manufacturer.name })}</p>
             </div>
           </section>
         ) : (
           <>
             {/* Quick Filters */}
             <section className="mt-8 sm:mt-10 bg-muted/30 rounded-xl p-6">
-              <h2 className="text-lg font-semibold mb-4">Find Partners By:</h2>
+              <h2 className="text-lg font-semibold mb-4">{t("partners.filters.title")}</h2>
               <div className="flex flex-wrap gap-3">
                 <Link
                   href={`/manufacturers/${slug}/partners?type=all`}
                   className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors"
                 >
-                  All Partners
+                  {t("partners.filters.all")}
                 </Link>
                 <Link
                   href={`/manufacturers/${slug}/partners?type=dealer`}
                   className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors"
                 >
-                  Dealers & Sales
+                  {t("partners.filters.dealersSales")}
                 </Link>
                 <Link
                   href={`/manufacturers/${slug}/partners?type=service`}
                   className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors"
                 >
-                  Service Centers
+                  {t("partners.filters.serviceCenters")}
                 </Link>
                 <Link
                   href={`/manufacturers/${slug}/partners?type=broker`}
                   className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors"
                 >
-                  Brokers
+                  {t("partners.filters.brokers")}
                 </Link>
                 <Link
                   href={`/manufacturers/${slug}/partners?type=parts`}
                   className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors"
                 >
-                  Parts & Chandlery
+                  {t("partners.filters.partsChandlery")}
                 </Link>
               </div>
             </section>
@@ -275,16 +277,16 @@ export default async function PartnersPage({
             <section className="mt-10 sm:mt-12">
               <div className="flex items-end justify-between gap-4 mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold">Authorized Partners</h2>
+                  <h2 className="text-2xl font-bold">{t("partners.authorizedPartners")}</h2>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    {activeDealers.length} verified {manufacturer.name} partners worldwide
+                    {t("partners.verifiedPartnersWorldwide", { count: activeDealers.length, name: manufacturer.name })}
                   </p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                 {activeDealers.map((offer) => (
-                  <PartnerCard key={offer.id} offer={offer} manufacturer={manufacturer.name} />
+                  <PartnerCard key={offer.id} offer={offer} manufacturer={manufacturer.name} t={t} />
                 ))}
               </div>
             </section>
@@ -292,31 +294,31 @@ export default async function PartnersPage({
             {/* About Partner Program */}
             <section className="mt-12 sm:mt-16 bg-sky-50 rounded-2xl p-8">
               <div className="max-w-4xl mx-auto text-center">
-                <h2 className="text-2xl font-bold mb-4">Why Choose an Official {manufacturer.name} Partner?</h2>
+                <h2 className="text-2xl font-bold mb-4">{t("partners.whyChoose.title", { name: manufacturer.name })}</h2>
                 <p className="text-muted-foreground mb-6">
-                  All authorized partners meet our stringent standards for quality, service, and customer satisfaction.
+                  {t("partners.whyChoose.description")}
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="text-center">
                     <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-3">
                       <span className="text-xl">✓</span>
                     </div>
-                    <h3 className="font-semibold mb-2">Genuine Products</h3>
-                    <p className="text-sm text-muted-foreground">Authentic {manufacturer.name} parts and equipment</p>
+                    <h3 className="font-semibold mb-2">{t("partners.whyChoose.genuineProducts")}</h3>
+                    <p className="text-sm text-muted-foreground">{t("partners.whyChoose.genuineDescription", { name: manufacturer.name })}</p>
                   </div>
                   <div className="text-center">
                     <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-3">
                       <span className="text-xl">⚡</span>
                     </div>
-                    <h3 className="font-semibold mb-2">Expert Support</h3>
-                    <p className="text-sm text-muted-foreground">Factory-trained technicians and support staff</p>
+                    <h3 className="font-semibold mb-2">{t("partners.whyChoose.expertSupport")}</h3>
+                    <p className="text-sm text-muted-foreground">{t("partners.whyChoose.expertDescription")}</p>
                   </div>
                   <div className="text-center">
                     <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-3">
                       <span className="text-xl">🛡️</span>
                     </div>
-                    <h3 className="font-semibold mb-2">Warranty Protection</h3>
-                    <p className="text-sm text-muted-foreground">Full manufacturer warranty coverage</p>
+                    <h3 className="font-semibold mb-2">{t("partners.whyChoose.warrantyProtection")}</h3>
+                    <p className="text-sm text-muted-foreground">{t("partners.whyChoose.warrantyDescription")}</p>
                   </div>
                 </div>
               </div>
@@ -329,7 +331,7 @@ export default async function PartnersPage({
 }
 
 // Partner Card Component
-function PartnerCard({ offer, manufacturer }: { offer: any; manufacturer: string }) {
+function PartnerCard({ offer, manufacturer, t }: { offer: any; manufacturer: string; t: any }) {
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'new_sales':
@@ -354,31 +356,31 @@ function PartnerCard({ offer, manufacturer }: { offer: any; manufacturer: string
   const getTypeLabel = (type: string) => {
     switch (type) {
       case 'new_sales':
-        return 'New Sales';
+        return t("partners.card.typeLabels.newSales");
       case 'used_sales':
-        return 'Used Sales';
+        return t("partners.card.typeLabels.usedSales");
       case 'service':
-        return 'Service Center';
+        return t("partners.card.typeLabels.service");
       case 'repair':
-        return 'Repair Shop';
+        return t("partners.card.typeLabels.repair");
       case 'brokerage':
-        return 'Yacht Broker';
+        return t("partners.card.typeLabels.brokerage");
       case 'parts':
-        return 'Parts & Chandlery';
+        return t("partners.card.typeLabels.parts");
       case 'charter':
-        return 'Charter Company';
+        return t("partners.card.typeLabels.charter");
       case 'consultation':
-        return 'Consultation';
+        return t("partners.card.typeLabels.consultation");
       default:
-        return 'Partner';
+        return t("partners.card.typeLabels.partner");
     }
   };
 
   const getConfidenceBadge = (confidence: number) => {
-    if (confidence >= 4) return { label: 'Verified', color: 'bg-green-100 text-green-800' };
-    if (confidence >= 3) return { label: 'High Confidence', color: 'bg-blue-100 text-blue-800' };
-    if (confidence >= 2) return { label: 'Moderate', color: 'bg-yellow-100 text-yellow-800' };
-    return { label: 'Low Confidence', color: 'bg-gray-100 text-gray-800' };
+    if (confidence >= 4) return { label: t("partners.card.confidence.verified"), color: 'bg-green-100 text-green-800' };
+    if (confidence >= 3) return { label: t("partners.card.confidence.high"), color: 'bg-blue-100 text-blue-800' };
+    if (confidence >= 2) return { label: t("partners.card.confidence.moderate"), color: 'bg-yellow-100 text-yellow-800' };
+    return { label: t("partners.card.confidence.low"), color: 'bg-gray-100 text-gray-800' };
   };
 
   const confidenceBadge = getConfidenceBadge(offer.sourceConfidence || 3);
@@ -404,12 +406,12 @@ function PartnerCard({ offer, manufacturer }: { offer: any; manufacturer: string
                 </span>
                 {!isActive && (
                   <span className="text-xs px-2 py-1 rounded-full bg-red-100 text-red-800">
-                    Inactive
+                    {t("partners.card.inactive")}
                   </span>
                 )}
                 {isExpired && (
                   <span className="text-xs px-2 py-1 rounded-full bg-orange-100 text-orange-800">
-                    Expired
+                    {t("partners.card.expired")}
                   </span>
                 )}
               </div>
@@ -429,7 +431,7 @@ function PartnerCard({ offer, manufacturer }: { offer: any; manufacturer: string
           ))}
           {offer.specializations && offer.specializations.length > 2 && (
             <span className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded">
-              +{offer.specializations.length - 2} more
+              {t("partners.card.more", { count: offer.specializations.length - 2 })}
             </span>
           )}
         </div>
@@ -465,7 +467,7 @@ function PartnerCard({ offer, manufacturer }: { offer: any; manufacturer: string
               rel="noopener noreferrer"
               className="text-sky-600 hover:text-sky-700 transition-colors flex items-center gap-2"
             >
-              🌐 Website →
+              🌐 {t("partners.card.website")}
             </a>
           )}
         </div>
@@ -481,22 +483,22 @@ function PartnerCard({ offer, manufacturer }: { offer: any; manufacturer: string
         {/* Service Area */}
         {offer.serviceArea && (
           <div className="mt-2 text-sm text-muted-foreground">
-            🎯 Service Area: {offer.serviceArea}
+            🎯 {t("partners.card.serviceArea", { area: offer.serviceArea })}
           </div>
         )}
 
         {/* Price Range */}
         {(offer.priceRangeMin || offer.priceRangeMax) && (
           <div className="mt-3 text-sm font-medium text-sky-700">
-            💰 Price Range: {formatPrice(offer.priceRangeMin, offer.priceRangeMax, offer.currency)}
+            💰 {t("partners.card.priceRange", { range: formatPrice(offer.priceRangeMin, offer.priceRangeMax, offer.currency) })}
           </div>
         )}
 
         {/* Validity */}
         {offer.validityStart && (
           <div className="mt-2 text-xs text-muted-foreground">
-            📅 Valid from {new Date(offer.validityStart).toLocaleDateString()}
-            {offer.validityEnd && ` to ${new Date(offer.validityEnd).toLocaleDateString()}`}
+            📅 {t("partners.card.validFrom", { start: new Date(offer.validityStart).toLocaleDateString() })}
+            {offer.validityEnd ? t("partners.card.validTo", { end: new Date(offer.validityEnd).toLocaleDateString() }) : ""}
           </div>
         )}
 
@@ -509,7 +511,7 @@ function PartnerCard({ offer, manufacturer }: { offer: any; manufacturer: string
 
         {/* Source Disclosure */}
         <div className="mt-4 pt-3 border-t border-border text-xs text-muted-foreground">
-          📊 Data from {offer.dataSource}
+          📊 {t("partners.card.dataFrom", { source: offer.dataSource })}
           {offer.dataSourceUrl && (
             <a
               href={offer.dataSourceUrl}

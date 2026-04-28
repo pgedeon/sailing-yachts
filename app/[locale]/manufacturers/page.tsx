@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { unstable_cache } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { getManufacturersWithCounts } from "@/lib/manufacturers";
 import { slugify } from "@/lib/utils/slugify";
 import { buildSafeQuery } from "@/lib/build-safe";
@@ -31,34 +32,40 @@ async function getManufacturers() {
   )();
 }
 
-const title = "Sailing Yacht Manufacturers";
-const description =
+const jsonLdTitle = "Sailing Yacht Manufacturers";
+const jsonLdDescription =
   "Browse sailing yacht manufacturers, explore brand histories, and discover how many models each builder offers.";
-const ogImage = "https://info.sailboats.fr/api/og?title=Sailing%20Yacht%20Manufacturers&description=Browse%20builders%2C%20brands%2C%20and%20model%20counts&length=Brand%20directory";
 
 export const metadata: Metadata = {
-  title,
-  description,
+  title: jsonLdTitle,
+  description: jsonLdDescription,
   openGraph: {
-    title,
-    description,
+    title: jsonLdTitle,
+    description: jsonLdDescription,
     url: "/manufacturers",
     type: "website",
     siteName: "Sailing Yacht Info",
-    images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
+    images: [{ url: "https://info.sailboats.fr/api/og?title=Sailing%20Yacht%20Manufacturers&description=Browse%20builders%2C%20brands%2C%20and%20model%20counts&length=Brand%20directory", width: 1200, height: 630, alt: jsonLdTitle }],
   },
   twitter: {
     card: "summary_large_image",
-    title,
-    description,
-    images: [ogImage],
+    title: jsonLdTitle,
+    description: jsonLdDescription,
+    images: ["https://info.sailboats.fr/api/og?title=Sailing%20Yacht%20Manufacturers&description=Browse%20builders%2C%20brands%2C%20and%20model%20counts&length=Brand%20directory"],
   },
   alternates: {
     canonical: "/manufacturers",
   },
 };
 
-export default async function ManufacturersPage() {
+interface ManufacturersListingPageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export default async function ManufacturersPage({ params }: ManufacturersListingPageProps) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Manufacturers" });
+
   const manufacturers = await getManufacturers();
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
@@ -67,8 +74,8 @@ export default async function ManufacturersPage() {
   ]);
 
   const collectionJsonLd = generateCollectionPageJsonLd({
-    name: title,
-    description,
+    name: jsonLdTitle,
+    description: jsonLdDescription,
     url: getSiteUrl("/manufacturers"),
     itemCount: manufacturers.length,
   });
@@ -102,12 +109,12 @@ export default async function ManufacturersPage() {
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
               <Link href="/" className="hover:text-foreground transition-colors">
-                Home
+                {t("breadcrumb.home")}
               </Link>
             </li>
             <li aria-hidden="true">/</li>
             <li aria-current="page" className="text-foreground font-medium">
-              Manufacturers
+              {t("breadcrumb.manufacturers")}
             </li>
           </ol>
         </nav>
@@ -115,20 +122,20 @@ export default async function ManufacturersPage() {
         <section className="rounded-2xl border border-border bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-6 sm:p-8">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              {title}
+              {t("listing.title")}
             </h1>
             <p className="text-lg text-gray-600 mb-8">
-              {description}
+              {t("listing.description")}
             </p>
             
             {manufacturers.length === 0 ? (
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
                 <div className="text-center">
                   <div className="text-yellow-800 mb-2">
-                    Manufacturers will appear here once the build completes.
+                    {t("listing.emptyTitle")}
                   </div>
                   <div className="text-sm text-yellow-600">
-                    This page is using ISR (Incremental Static Regeneration) and will show live data on production.
+                    {t("listing.emptySubtitle")}
                   </div>
                 </div>
               </div>
@@ -142,7 +149,7 @@ export default async function ManufacturersPage() {
                   >
                     <div className="font-semibold text-gray-900">{manufacturer.name}</div>
                     <div className="text-sm text-gray-500 mt-1">
-                      {manufacturer.yachtCount} model{manufacturer.yachtCount !== 1 ? "s" : ""}
+                      {t("listing.models", { count: manufacturer.yachtCount })}
                     </div>
                   </Link>
                 ))}

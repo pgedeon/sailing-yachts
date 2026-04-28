@@ -417,5 +417,275 @@
       "noSaved": "Aucune comparaison enregistrée. Sélectionnez 2+ yachts et cliquez sur Enregistrer.",
       "yachtCount": "{count} yacht{count, plural, one {} other {s}} · {date}"
     }
+  },
+  "Manufacturers": {
+    "meta": {
+      "title": "Constructeurs de yachts à voile",
+      "description": "Parcourez les constructeurs de yachts à voile, explorez les histoires de marque et découvrez combien de modèles chaque constructeur propose.",
+      "notFoundTitle": "Constructeur introuvable",
+      "notFoundDescription": "Le constructeur de yachts demandé n'a pas été trouvé."
+    },
+    "breadcrumb": {
+      "home": "Accueil",
+      "manufacturers": "Constructeurs"
+    },
+    "listing": {
+      "title": "Constructeurs de yachts à voile",
+      "description": "Parcourez les constructeurs de yachts à voile, explorez les histoires de marque et découvrez combien de modèles chaque constructeur propose.",
+      "models": "{count} modèle{count, plural, one {} other {s}}",
+      "emptyTitle": "Les constructeurs apparaîtront ici une fois la construction terminée.",
+      "emptySubtitle": "Cette page utilise l'ISR (régénération statique incrémentale) et affichera les données en direct en production."
+    },
+    "detail": {
+      "profileLabel": "Profil du constructeur",
+      "yachtsSuffix": "Yachts",
+      "descriptionFallback": "{name} figure dans Sailing Yacht Info avec {count} yacht{count, plural, one {} other {s}} actuellement indexé{count, plural, one {} other {s}}.",
+      "visitWebsite": "Visiter le site du constructeur",
+      "country": "Pays",
+      "founded": "Fondé",
+      "yachtsIndexed": "Yachts indexés",
+      "modelsAndSpecs": "Modèles et spécifications",
+      "modelsSubtitle": "Parcourez la gamme actuelle et les pages de détail des yachts.",
+      "noModels": "Aucun modèle de yacht n'est disponible pour ce constructeur.",
+      "viewYachtDetails": "Voir les détails du yacht →",
+      "specLabels": {
+        "length": "Longueur",
+        "beam": "Bau",
+        "draft": "Tirant d'eau",
+        "cabins": "Cabines",
+        "rig": "Gréement"
+      },
+      "browseBySize": {
+        "title": "Parcourir les yachts {name} par taille",
+        "under30": "Moins de 30 pieds",
+        "range3035": "30–35 pieds",
+        "range3540": "35–40 pieds",
+        "range4050": "40–50 pieds",
+        "over50": "50 pieds+"
+      },
+      "spotlight": {
+        "label": "Spotlight constructeur",
+        "title": "Lire notre spotlight {name}",
+        "descriptionFallback": "Explorez l'histoire de {name}, son positionnement de marque, ses jalons majeurs et ses modèles de yacht remarquables.",
+        "openSpotlight": "Ouvrir le spotlight →"
+      }
+    },
+    "spotlight": {
+      "meta": {
+        "notFoundTitle": "Spotlight constructeur introuvable",
+        "notFoundDescription": "Le spotlight constructeur demandé n'a pas été trouvé."
+      },
+      "breadcrumb": {
+        "home": "Accueil",
+        "manufacturers": "Constructeurs",
+        "spotlight": "Spotlight"
+      },
+      "label": "Spotlight constructeur",
+      "descriptionFallback": "Explorez l'histoire de {name}, son positionnement et ses yachts remarquables dans Sailing Yacht Info.",
+      "backToManufacturer": "Retour à la page constructeur",
+      "browseYachts": "Parcourir les yachts {name}",
+      "spotlightDate": "Date du spotlight",
+      "brandHistory": "Histoire de la marque",
+      "brandPositioning": "Positionnement de marque",
+      "brandPositioningFallback": "{name} figure dans Sailing Yacht Info comme un constructeur à suivre pour les marins comparant la philosophie de marque, la profondeur de la flotte et les modèles de production notables.",
+      "milestones": "Jalons",
+      "milestonesEmpty": "Les jalons apparaîtront ici au fur et à mesure que ce spotlight s'enrichira.",
+      "notableModels": "Modèles remarquables",
+      "notableModelsSubtitle": "Ces yachts illustrent comment la marque exprime son cahier des charges dans des bateaux réels.",
+      "seeFullLineup": "Voir la gamme complète du constructeur →",
+      "notableModelsEmpty": "Les modèles remarquables apparaîtront ici au fur et à mesure que ce spotlight s'enrichira.",
+      "viewYachtDetails": "Voir les détails du yacht →",
+      "builderPage": "Page constructeur",
+      "exploreMore": "Explorer plus de {name}",
+      "exploreMoreDescription": "Retournez au profil complet du constructeur, comparez la gamme actuelle ou parcourez les yachts filtrés par ce constructeur.",
+      "returnTo": "Retour à {name}",
+      "viewAllYachts": "Voir tous les yachts {name}"
+    },
+    "comparisons": {
+      "title": "Comparer les yachts {name}",
+      "subtitle": "Comparaisons côte à côte pour vous aider à choisir le bon modèle.",
+      "vs": "vs",
+      "compare": "Comparer →"
+    },
+    "partners": {
+      "meta": {
+        "title": "{name} Partenaires et concessionnaires | Concessionnaires, courtiers et services agréés",
+        "notFoundTitle": "Constructeur introuvable",
+        "notFoundDescription": "Le constructeur de yachts demandé n'a pas été trouvé."
+      },
+      "breadcrumb": {
+        "home": "Accueil",
+        "manufacturers": "Constructeurs",
+        "partners": "Partenaires et concessionnaires"
+      },
+      "officialNetwork": "Réseau officiel",
+      "title": "Partenaires et concessionnaires {name}",
+      "description": "Connectez-vous avec les concessionnaires, courtiers et centres de service agréés {name} dans le monde entier. Tous les partenaires sont vérifiés et offrent des produits et services {name} authentiques.",
+      "stats": {
+        "activePartners": "Partenaires actifs",
+        "authorizedDealers": "Concessionnaires agréés",
+        "serviceCenters": "Centres de service",
+        "brokers": "Courtiers"
+      },
+      "empty": {
+        "title": "Réseau de partenaires bientôt disponible",
+        "description": "Nous développons le réseau officiel de partenaires {name}. Revenez bientôt pour les concessionnaires, courtiers et centres de service agréés dans votre région."
+      },
+      "filters": {
+        "title": "Trouver des partenaires par :",
+        "all": "Tous les partenaires",
+        "dealersSales": "Concessionnaires et ventes",
+        "serviceCenters": "Centres de service",
+        "brokers": "Courtiers",
+        "partsChandlery": "Pièces et accastillage"
+      },
+      "authorizedPartners": "Partenaires agréés",
+      "verifiedPartnersWorldwide": "{count} partenaires {name} vérifiés dans le monde",
+      "whyChoose": {
+        "title": "Pourquoi choisir un partenaire officiel {name} ?",
+        "description": "Tous les partenaires agréés répondent à nos normes strictes de qualité, service et satisfaction client.",
+        "genuineProducts": "Produits authentiques",
+        "genuineDescription": "Pièces et équipements {name} authentiques",
+        "expertSupport": "Support expert",
+        "expertDescription": "Techniciens et personnel de support formés par l'usine",
+        "warrantyProtection": "Protection de garantie",
+        "warrantyDescription": "Couverture complète de la garantie constructeur"
+      },
+      "card": {
+        "typeLabels": {
+          "newSales": "Vente neuf",
+          "usedSales": "Vente occasion",
+          "service": "Centre de service",
+          "repair": "Réparation",
+          "brokerage": "Courtier en yachts",
+          "parts": "Pièces et accastillage",
+          "charter": "Société de charter",
+          "consultation": "Consultation",
+          "partner": "Partenaire"
+        },
+        "confidence": {
+          "verified": "Vérifié",
+          "high": "Haute confiance",
+          "moderate": "Modéré",
+          "low": "Faible confiance"
+        },
+        "inactive": "Inactif",
+        "expired": "Expiré",
+        "more": "+{count} de plus",
+        "website": "Site web →",
+        "serviceArea": "Zone de service : {area}",
+        "priceRange": "Fourchette de prix : {range}",
+        "priceOnRequest": "Prix sur demande",
+        "validFrom": "Valide à partir du {start}",
+        "validTo": " au {end}",
+        "dataFrom": "Données de {source}"
+      }
+    }
+  },
+  "Guides": {
+    "meta": {
+      "title": "Guides et ressources voile",
+      "description": "Guides experts, conseils d'achat et ressources éducatives pour les acheteurs de yachts et les marins. Apprenez-en plus sur la sélection de bateaux, la propriété et la terminologie de la voile."
+    },
+    "breadcrumb": {
+      "home": "Accueil",
+      "guides": "Guides"
+    },
+    "heading": "Guides et ressources voile",
+    "description": "Guides experts, conseils d'achat et ressources éducatives pour vous aider à choisir le bon yacht et à profiter au maximum de vos aventures en voile.",
+    "sidebar": {
+      "categories": "Catégories",
+      "allGuides": "Tous les guides ({count})",
+      "noCategories": "Aucune catégorie disponible pour le moment.",
+      "getNewGuides": "Recevoir les nouveaux guides",
+      "getNewGuidesDescription": "Abonnez-vous pour recevoir des mises à jour lors de la publication de nouveaux guides.",
+      "subscribe": "S'abonner"
+    },
+    "buyingGuides": "Guides d'achat",
+    "otherGuides": "Autres guides",
+    "allGuidesHeading": "Tous les guides",
+    "articleCard": {
+      "minRead": "{minutes} min de lecture",
+      "freshness": {
+        "needsReview": "À réviser",
+        "dueForReview": "Révision attendue",
+        "reviewed": "Révisé le {date}"
+      }
+    },
+    "cta": {
+      "exploreTitle": "Explorez notre base de données de yachts",
+      "exploreDescription": "Parcourez notre base de données complète de yachts à voile des meilleurs constructeurs. Comparez les spécifications, lisez les avis et trouvez votre bateau idéal.",
+      "browseYachts": "Parcourir les yachts"
+    },
+    "empty": {
+      "moreComingTitle": "D'autres guides arrivent bientôt",
+      "moreComingDescription": "Nous travaillons à la création de guides de voile et de ressources plus complets pour vous.",
+      "comingSoonTitle": "Bientôt disponible",
+      "comingSoonDescription": "Nous travaillons à la création de guides de voile et de ressources complets pour vous."
+    },
+    "guideTypes": {
+      "bestSailboatsFor": "Les meilleurs voiliers pour",
+      "howToChoose": "Comment choisir",
+      "xVsYExplained": "X vs Y expliqué",
+      "newVsUsed": "Neuf vs occasion",
+      "whatSizeCruiser": "Quelle taille de croiseur"
+    },
+    "article": {
+      "meta": {
+        "notFoundTitle": "Article introuvable"
+      },
+      "breadcrumb": {
+        "home": "Accueil",
+        "guides": "Guides"
+      },
+      "onThisPage": "Sur cette page",
+      "minRead": "{minutes} min de lecture",
+      "reviewed": "Révisé le {date}",
+      "frequentlyAskedQuestions": "Questions fréquentes",
+      "newsletter": {
+        "title": "Recevez les nouveaux guides dans votre boîte mail",
+        "description": "Abonnez-vous pour recevoir les derniers guides voile, conseils d'achat et ressources."
+      },
+      "browseCta": {
+        "title": "Explorez notre base de données de yachts",
+        "description": "Comparez les spécifications, lisez les avis et trouvez votre yacht à voile idéal dans notre collection sélectionnée.",
+        "browseYachts": "Parcourir les yachts →"
+      },
+      "relatedGuides": "Guides associés"
+    }
+  },
+  "Glossary": {
+    "meta": {
+      "title": "Glossaire nautique – Terminologie nautique et spécifications de yachts",
+      "description": "Glossaire nautique complet avec {count} termes nautiques, spécifications de yachts et terminologie de la voile. Découvrez LOA, bau, tirant d'eau, ratio de lest, types de quille, configurations de gréement et plus encore.",
+      "notFoundTitle": "Terme introuvable",
+      "notFoundDescription": "Le terme du glossaire nautique demandé n'a pas été trouvé."
+    },
+    "breadcrumb": {
+      "home": "Accueil",
+      "glossary": "Glossaire"
+    },
+    "heading": "Glossaire nautique",
+    "description": "Terminologie nautique complète et termes de spécification de yachts. Comprenez LOA, bau, tirant d'eau, ratio de lest, types de quille, configurations de gréement et plus encore.",
+    "termStats": "{terms} termes · {categories} catégories",
+    "filterAll": "Tous ({count})",
+    "altCount": "{count} alt",
+    "cta": {
+      "title": "En savoir plus sur la voile",
+      "description": "Explorez nos guides d'achat, les spotlights constructeurs et nos articles d'experts pour approfondir vos connaissances en voile.",
+      "browseGuides": "Parcourir les guides",
+      "browseYachts": "Parcourir les yachts"
+    },
+    "term": {
+      "meta": {
+        "title": "{term} – Glossaire nautique",
+        "description": "{term} : {definition}"
+      },
+      "alsoKnownAs": "Aussi connu sous :",
+      "relatedTerms": "Termes associés",
+      "exploreMoreTitle": "Explorer plus de termes",
+      "exploreMoreDescription": "Parcourez notre glossaire nautique complet pour en savoir plus sur la terminologie nautique et les spécifications de yachts.",
+      "viewAllTerms": "Voir tous les termes du glossaire"
+    }
   }
 }

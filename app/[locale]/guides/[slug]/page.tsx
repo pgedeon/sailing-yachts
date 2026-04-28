@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { marked } from "marked";
+import { getTranslations } from "next-intl/server";
 import {
   getArticleBySlug,
   getRelatedArticles,
@@ -87,11 +88,12 @@ function countWords(text: string): number {
 }
 
 interface PageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string; locale: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const article = await getArticleBySlug(params.slug);
+  const { slug } = await params;
+  const article = await getArticleBySlug(slug);
   if (!article) {
     return { title: "Article Not Found" };
   }
@@ -125,7 +127,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function GuideArticlePage({ params }: PageProps) {
-  const article = await getArticleBySlug(params.slug);
+  const { slug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Guides" });
+
+  const article = await getArticleBySlug(slug);
   if (!article) {
     notFound();
   }
@@ -229,11 +234,11 @@ export default async function GuideArticlePage({ params }: PageProps) {
         <nav className="bg-slate-900 border-b border-slate-700/50 py-3 px-4">
           <div className="max-w-5xl mx-auto flex items-center gap-2 text-sm">
             <Link href="/" className="text-amber-300/80 hover:text-amber-200 transition">
-              Home
+              {t("article.breadcrumb.home")}
             </Link>
             <span className="text-slate-600">/</span>
             <Link href="/guides" className="text-amber-300/80 hover:text-amber-200 transition">
-              Guides
+              {t("article.breadcrumb.guides")}
             </Link>
             <span className="text-slate-600">/</span>
             <span className="text-slate-300 font-medium truncate">
@@ -282,10 +287,10 @@ export default async function GuideArticlePage({ params }: PageProps) {
                 </time>
               )}
               {article.readingTimeMinutes && (
-                <span className="text-slate-400">{article.readingTimeMinutes} min read</span>
+                <span className="text-slate-400">{t("article.minRead", { minutes: article.readingTimeMinutes })}</span>
               )}
               {article.lastReviewedAt && (
-                <span className="text-emerald-400/80 text-xs">Reviewed {formatDate(article.lastReviewedAt)}</span>
+                <span className="text-emerald-400/80 text-xs">{t("article.reviewed", { date: formatDate(article.lastReviewedAt) })}</span>
               )}
             </div>
           </div>
@@ -307,7 +312,7 @@ export default async function GuideArticlePage({ params }: PageProps) {
                 <div className="sticky top-8 bg-slate-50/50 rounded-xl border border-slate-100 p-6">
                   <div className="border-l-2 border-amber-500/40 pl-4">
                     <h2 className="text-xs font-semibold text-slate-400 mb-4 uppercase tracking-[0.2em]">
-                      On This Page
+                      {t("article.onThisPage")}
                     </h2>
                     <nav>
                       <ul className="space-y-2.5">
@@ -371,7 +376,7 @@ export default async function GuideArticlePage({ params }: PageProps) {
                 <section className="mt-14 bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden">
                   <div className="p-6 border-b border-slate-200">
                     <h2 className="text-xl font-bold text-slate-800 font-serif">
-                      Frequently Asked Questions
+                      {t("article.frequentlyAskedQuestions")}
                     </h2>
                   </div>
                   <div className="divide-y divide-slate-200">
@@ -390,11 +395,10 @@ export default async function GuideArticlePage({ params }: PageProps) {
 
               <div className="mt-14 bg-slate-900 rounded-2xl p-10 text-white shadow-xl">
                 <h3 className="text-xl font-semibold text-amber-300 mb-2 font-serif">
-                  Get New Guides in Your Inbox
+                  {t("article.newsletter.title")}
                 </h3>
                 <p className="text-slate-300 mb-5">
-                  Subscribe to receive the latest sailing guides, buying advice,
-                  and resources.
+                  {t("article.newsletter.description")}
                 </p>
                 <NewsletterSignup source={`guide-${article.slug}`} />
               </div>
@@ -404,17 +408,16 @@ export default async function GuideArticlePage({ params }: PageProps) {
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMwLTkuOTQtOC4wNi0xOC0xOC0xOGgydjM2YzAgOS45NCA4LjA2IDE4IDE4IDE4SDE4Yy05Ljk0IDAtMTgtOC4wNi0xOC0xOHYtMzZoMzZ6IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9Ii4wMyIvPjwvZz48L3N2Zz4=')] opacity-30" />
                 <div className="relative z-10">
                   <h3 className="text-2xl font-semibold mb-3 font-serif">
-                    Explore Our Yacht Database
+                    {t("article.browseCta.title")}
                   </h3>
                   <p className="text-amber-100 mb-6 max-w-md mx-auto">
-                    Compare specs, read reviews, and find your perfect sailing
-                    yacht from our curated collection.
+                    {t("article.browseCta.description")}
                   </p>
                   <Link
                     href="/yachts"
                     className="inline-block bg-white text-amber-700 px-8 py-3.5 rounded-xl font-semibold hover:bg-amber-50 transition shadow-lg"
                   >
-                    Browse Yachts →
+                    {t("article.browseCta.browseYachts")}
                   </Link>
                 </div>
               </div>
@@ -427,7 +430,7 @@ export default async function GuideArticlePage({ params }: PageProps) {
           <section className="py-16 px-4 bg-slate-50 border-t border-slate-200">
             <div className="max-w-5xl mx-auto">
               <h2 className="text-2xl font-bold text-slate-800 mb-8 font-serif">
-                Related Guides
+                {t("article.relatedGuides")}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {relatedArticles.map((related) => (

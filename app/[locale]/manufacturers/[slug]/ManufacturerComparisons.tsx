@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { Scale } from "lucide-react";
 
 /**
@@ -16,6 +19,8 @@ export function ManufacturerComparisons({
   manufacturerName,
   yachts,
 }: ManufacturerComparisonsProps) {
+  const t = useTranslations("Manufacturers");
+
   // Only show if there are at least 2 yachts to compare
   const comparableYachts = yachts.filter((y) => y.slug);
   if (comparableYachts.length < 2) return null;
@@ -33,13 +38,13 @@ export function ManufacturerComparisons({
   return (
     <section className="mt-10 sm:mt-12 bg-gradient-to-r from-amber-50 via-white to-orange-50 border border-amber-200 rounded-xl p-6">
       <div className="flex items-center gap-2 mb-4">
-        <Scale className="h-5 w-5 text-amber-700"  aria-hidden="true" />
+        <Scale className="h-5 w-5 text-amber-700" aria-hidden="true" />
         <h2 className="text-lg sm:text-xl font-bold text-amber-900">
-          Compare {manufacturerName} Yachts
+          {t("comparisons.title", { name: manufacturerName })}
         </h2>
       </div>
       <p className="text-sm text-muted-foreground mb-4">
-        Side-by-side comparisons to help you choose the right model.
+        {t("comparisons.subtitle")}
       </p>
 
       <div className="space-y-3">
@@ -52,10 +57,10 @@ export function ManufacturerComparisons({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-amber-900 font-medium">
                 <span>{yachtA.modelName}</span>
-                <span className="text-amber-600">vs</span>
+                <span className="text-amber-600">{t("comparisons.vs")}</span>
                 <span>{yachtB.modelName}</span>
               </div>
-              <div className="text-sm text-amber-600">Compare →</div>
+              <div className="text-sm text-amber-600">{t("comparisons.compare")}</div>
             </div>
           </a>
         ))}
