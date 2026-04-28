@@ -22,7 +22,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   }
 
   // Providing all messages to the client side
-  const messages = await getMessages();
+  const messages = await getMessages({ locale });
   const t = await getTranslations({ locale, namespace: "Layout" });
 
   const navItems = [
