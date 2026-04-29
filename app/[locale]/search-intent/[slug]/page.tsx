@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSearchIntentBySlug } from "@/lib/search-intents";
-import { generateBreadcrumbJsonLd, getSiteUrl } from "@/lib/seo";
-import { generateCollectionPageJsonLd, generateYachtJsonLd } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, getSiteUrl, generateCollectionPageJsonLd, generateYachtJsonLd, buildLocaleAlternates } from "@/lib/seo";
 
 // ISR: Revalidate search intent pages every 6 hours
 export const revalidate = 21600;
@@ -13,9 +12,9 @@ export const dynamicParams = true;
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const { intent } = await getSearchIntentBySlug(slug);
 
   if (!intent || intent.id === 0) {
@@ -42,7 +41,7 @@ export async function generateMetadata({
     openGraph: {
       title: intent.title,
       description: intent.metaDescription || intent.intro.substring(0, 160),
-      url: getSiteUrl(`/search-intent/${slug}`),
+      url: getSiteUrl(`/${locale}/search-intent/${slug}`),
       type: "website",
       siteName: "Sailing Yacht Info",
     },
@@ -51,9 +50,7 @@ export async function generateMetadata({
       title: intent.title,
       description: intent.metaDescription || intent.intro.substring(0, 160),
     },
-    alternates: {
-      canonical: getSiteUrl(`/search-intent/${slug}`),
-    },
+    alternates: buildLocaleAlternates(`/search-intent/${slug}`),
     robots: {
       index: true,
       follow: true,
@@ -65,9 +62,9 @@ export async function generateMetadata({
 export default async function SearchIntentPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const { intent, yachts, totalCount } = await getSearchIntentBySlug(slug);
 
   // Not found
@@ -97,12 +94,12 @@ export default async function SearchIntentPage({
     { name: "Browse Yachts", path: "/yachts" },
     { name: intent.category || "Search Results", path: `/search-intent/${slug}` },
     { name: intent.title },
-  ]);
+  ], locale);
 
   const collectionJsonLd = generateCollectionPageJsonLd({
     name: intent.title,
     description: intent.metaDescription || intent.intro,
-    url: getSiteUrl(`/search-intent/${slug}`),
+    url: getSiteUrl(`/${locale}/search-intent/${slug}`),
     itemCount: totalCount,
   });
 
@@ -133,7 +130,7 @@ export default async function SearchIntentPage({
           key={yacht.id}
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateYachtJsonLd(yacht)),
+            __html: JSON.stringify(generateYachtJsonLd(yacht, locale)),
           }}
         />
       ))}

@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
+import { buildLocaleAlternates } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "My Favorites",
   description: "Your saved favorite sailing yachts for quick access and comparison.",
-  alternates: {
-    canonical: "/favorites",
-  },
+  alternates: buildLocaleAlternates("/favorites"),
   robots: { index: false, follow: false },
 };
 

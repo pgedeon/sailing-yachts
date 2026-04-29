@@ -8,6 +8,7 @@ import {
   generateBreadcrumbJsonLd,
   generateLocalBusinessJsonLd,
   getSiteUrl,
+  buildLocaleAlternates,
 } from "@/lib/seo";
 import {
   getPartnerOffersByManufacturerId,
@@ -85,9 +86,7 @@ export async function generateMetadata({
       description,
       images: [getSiteUrl("/api/og")],
     },
-    alternates: {
-      canonical: getSiteUrl(`/manufacturers/${slug}/partners`),
-    },
+    alternates: buildLocaleAlternates(`/manufacturers/${slug}/partners`),
   };
 }
 
@@ -109,7 +108,7 @@ export default async function PartnersPage({
     { name: "Manufacturers", path: "/manufacturers" },
     { name: manufacturer.name, path: `/manufacturers/${slug}` },
     { name: "Partners & Dealers" },
-  ]);
+  ], locale);
 
   // Aggregate data for schema
   const hasOffers = partnerOffers.length > 0;

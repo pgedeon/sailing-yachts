@@ -11,6 +11,7 @@ import {
   generateImageObjectJsonLd,
   generateVideoObjectJsonLd,
   generateDigitalDocumentJsonLd,
+  buildLocaleAlternates,
 } from "@/lib/seo";
 import { getYachtDetailData, getPrimaryImage } from "@/lib/yachts";
 import { getPriceSummary } from "@/lib/price-data";
@@ -125,7 +126,7 @@ export async function generateMetadata({
       ? parseFloat(data.yacht.lengthOverall)
       : null,
     primaryImage: primaryImage ?? undefined,
-  });
+  }, locale);
 
   // P10.5: Calculate completeness score
   const completenessScore = calculateCompletenessScore(data.yacht);
@@ -137,13 +138,7 @@ export async function generateMetadata({
     ...(noindexThin && {
       robots: { index: false, follow: true },
     }),
-    alternates: {
-      canonical: getSiteUrl(`/yachts/${slug}`),
-      languages: {
-        en: getSiteUrl(`/yachts/${slug}`),
-        fr: "https://sailboats.fr",
-      },
-    },
+    alternates: buildLocaleAlternates(`/yachts/${slug}`),
   };
 }
 
@@ -198,13 +193,13 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
     cabins: yachtData.cabins ?? undefined,
     primaryImage: primaryImage?.url ?? undefined,
     reviews: reviewData,
-  });
+  }, locale);
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: t("breadcrumb.home"), path: "/" },
     { name: t("breadcrumb.yachts"), path: "/yachts" },
     { name: `${manufacturerName} ${yachtData.modelName}`, path: `/yachts/${slug}` },
-  ]);
+  ], locale);
 
   // ImageObject structured data for primary image
   const imageObjectJsonLd = primaryImage?.url
@@ -247,7 +242,7 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
     draft: yachtData.draft ? parseFloat(yachtData.draft) : null,
     cabins: yachtData.cabins ?? undefined,
     beam: yachtData.beam ? parseFloat(yachtData.beam) : null,
-  });
+  }, locale);
 
   // P8.2: Fetch price data for AggregateOffer JSON-LD
   let offerJsonLd: any = null;

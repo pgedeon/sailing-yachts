@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getYachtsBySlugs, generateComparisonIntro, generateComparisonMetadata, getPrimaryImage, type YachtComparisonData } from "@/lib/compare-canonical";
-import { getSiteUrl, generateBreadcrumbJsonLd, generateYachtJsonLd } from "@/lib/seo";
+import { getSiteUrl, generateBreadcrumbJsonLd, generateYachtJsonLd , buildLocaleAlternates } from "@/lib/seo";
 import { PriceTierBadge } from "@/app/components/PriceTierBadge";
 import { calculatePriceTier } from "@/lib/price-tier";
 
@@ -12,9 +12,9 @@ export const revalidate = 21600;
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slugA: string; slugB: string }>;
+  params: Promise<{ slugA: string; slugB: string; locale: string }>;
 }): Promise<Metadata> {
-  const { slugA, slugB } = await params;
+  const { slugA, slugB, locale } = await params;
   const { yachtA, yachtB } = await getYachtsBySlugs(slugA, slugB);
 
   if (!yachtA || !yachtB) {
@@ -42,18 +42,16 @@ export async function generateMetadata({
       title: meta.title,
       description: meta.description,
     },
-    alternates: {
-      canonical: getSiteUrl(`/compare/${slugA}-vs-${slugB}`),
-    },
+    alternates: buildLocaleAlternates(`/compare/${slugA}-vs-${slugB}`),
   };
 }
 
 export default async function CanonicalComparePage({
   params,
 }: {
-  params: Promise<{ slugA: string; slugB: string }>;
+  params: Promise<{ slugA: string; slugB: string; locale: string }>;
 }) {
-  const { slugA, slugB } = await params;
+  const { slugA, slugB, locale } = await params;
   const { yachtA, yachtB } = await getYachtsBySlugs(slugA, slugB);
 
   if (!yachtA || !yachtB) {
@@ -91,7 +89,7 @@ export default async function CanonicalComparePage({
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Compare Yachts", path: "/compare" },
     { name: `${fullNameA} vs ${fullNameB}` },
-  ]);
+  ], locale);
 
   // Generate individual yacht JSON-LD
   const yachtALdData = {
@@ -134,13 +132,13 @@ export default async function CanonicalComparePage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateYachtJsonLd(yachtALdData)),
+          __html: JSON.stringify(generateYachtJsonLd(yachtALdData, locale)),
         }}
       />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateYachtJsonLd(yachtBLdData)),
+          __html: JSON.stringify(generateYachtJsonLd(yachtBLdData, locale)),
         }}
       />
 

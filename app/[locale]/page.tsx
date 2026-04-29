@@ -5,7 +5,7 @@ import NewsletterSignup from "@/components/NewsletterSignup";
 import { PersonalizedRecommendations } from "@/components/PersonalizedRecommendations";
 import { db, yachtModels, manufacturers } from "@/lib/db";
 import { desc, sql } from "drizzle-orm";
-import { generateWebsiteJsonLd, generateFaqJsonLd, getSiteUrl } from "@/lib/seo";
+import { generateWebsiteJsonLd, generateFaqJsonLd, getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
 import { slugify } from "@/lib/utils/slugify";
 import { getSiteStats, formatYachtPhrase, formatYachtCountFAQ } from "@/lib/site-stats";
 import { buildSafeQuery } from "@/lib/build-safe";
@@ -112,10 +112,7 @@ export async function generateMetadata({ params }: HomeProps) {
       title: t("meta.twitterTitle"),
       description: t("meta.twitterDescription", { yachtPhrase }),
     },
-    alternates: {
-      canonical: getSiteUrl(`/${locale}`),
-      languages: { en: getSiteUrl("/en"), fr: getSiteUrl("/fr") },
-    },
+    alternates: buildLocaleAlternates("/"),
   };
 }
 
@@ -137,7 +134,7 @@ export default async function Home({ params }: HomeProps) {
     { q: t("faq.q4"), a: t("faq.a4") },
   ];
 
-  const jsonLd = generateWebsiteJsonLd();
+  const jsonLd = generateWebsiteJsonLd(locale);
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",

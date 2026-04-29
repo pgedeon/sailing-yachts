@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { generateCompareMetadata, generateBreadcrumbJsonLd, getSiteUrl } from "@/lib/seo";
+import { generateCompareMetadata, generateBreadcrumbJsonLd, getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
 import dynamic from "next/dynamic";
 const CompareClient = dynamic(() => import("./CompareClient").then(m => ({ default: m.CompareClient })), { ssr: false, loading: () => null });
 import { shouldNoindexComparePage } from "@/lib/thin-page-governance";
@@ -28,9 +28,7 @@ export async function generateMetadata({ searchParams }: ComparePageParams): Pro
 
   return {
     ...baseMetadata,
-    alternates: {
-      canonical: "/compare",
-    },
+    alternates: buildLocaleAlternates("/compare"),
     robots: shouldNoindexComparePage(initialIds)
       ? { index: false, follow: false }
       : { index: true, follow: true },
@@ -58,7 +56,7 @@ export default async function ComparePage({
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Home", path: "/" },
     { name: t("heading") },
-  ]);
+  ], locale);
 
   return (
     <>

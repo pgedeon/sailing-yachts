@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { generateBreadcrumbJsonLd, generateCollectionPageJsonLd, getSiteUrl } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, generateCollectionPageJsonLd, getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
 const YachtsClient = dynamic(() => import("./YachtsClient"), { ssr: false, loading: () => null });
@@ -57,9 +57,7 @@ export async function generateMetadata({ params, searchParams }: YachtsPageParam
   return {
     title: t("meta.title"),
     description: t("meta.description"),
-    alternates: {
-      canonical: canonicalUrl,
-    },
+    alternates: buildLocaleAlternates("/yachts"),
     robots: noindex
       ? { index: false, follow: false }
       : { index: true, follow: true },
@@ -94,7 +92,7 @@ export default async function YachtsPage({ params, searchParams }: YachtsPagePar
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Home", path: "/" },
     { name: t("heading") },
-  ]);
+  ], locale);
 
   const collectionJsonLd = generateCollectionPageJsonLd({
     name: t("meta.title"),

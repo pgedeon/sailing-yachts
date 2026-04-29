@@ -5,6 +5,8 @@ import { SITE_URL, buildSitemapXml, sitemapResponse, SitemapEntry } from "@/lib/
 
 export const revalidate = 3600;
 
+const LOCALES = ["en", "fr"] as const;
+
 async function getImageEntries(): Promise<SitemapEntry[]> {
   return unstable_cache(
     async () => {
@@ -42,15 +44,17 @@ async function getImageEntries(): Promise<SitemapEntry[]> {
         });
       }
 
-      // Build entries, limiting to 10 images per yacht (Google's recommendation)
+      // Build entries for both locales, limiting to 10 images per yacht
       const entries: SitemapEntry[] = [];
       for (const [slug, imgs] of yachtImageMap) {
-        entries.push({
-          loc: `${SITE_URL}/yachts/${slug}`,
-          changefreq: "weekly",
-          priority: "0.7",
-          images: imgs.slice(0, 10),
-        });
+        for (const locale of LOCALES) {
+          entries.push({
+            loc: `${SITE_URL}/${locale}/yachts/${slug}`,
+            changefreq: "weekly",
+            priority: "0.7",
+            images: imgs.slice(0, 10),
+          });
+        }
       }
 
       return entries;

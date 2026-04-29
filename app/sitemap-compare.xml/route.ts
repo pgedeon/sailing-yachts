@@ -5,6 +5,8 @@ import { SITE_URL, buildSitemapXml, sitemapResponse, SitemapEntry } from "@/lib/
 
 export const revalidate = 3600;
 
+const LOCALES = ["en", "fr"] as const;
+
 async function getCompareEntries(): Promise<SitemapEntry[]> {
   return unstable_cache(
     async () => {
@@ -24,11 +26,14 @@ async function getCompareEntries(): Promise<SitemapEntry[]> {
           const yachtB = topYachts[j];
 
           if (yachtA.slug && yachtB.slug) {
-            entries.push({
-              loc: `${SITE_URL}/compare/${yachtA.slug}-vs-${yachtB.slug}`,
-              changefreq: "monthly",
-              priority: "0.5",
-            });
+            // Generate entries for both locales
+            for (const locale of LOCALES) {
+              entries.push({
+                loc: `${SITE_URL}/${locale}/compare/${yachtA.slug}-vs-${yachtB.slug}`,
+                changefreq: "monthly",
+                priority: "0.5",
+              });
+            }
           }
         }
       }

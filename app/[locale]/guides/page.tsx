@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getAllPublishedArticles, getAllCategories, getBuyingGuideArticles } from "@/lib/articles";
-import { getSiteUrl } from "@/lib/seo";
+import { getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
 import { BUYING_GUIDE_TEMPLATES, type GuideType } from "@/lib/buying-guides";
 
 // ISR: Revalidate guides hub every hour
@@ -41,9 +41,7 @@ export async function generateMetadata({
       title: t("meta.title"),
       description: t("meta.description"),
     },
-    alternates: {
-      canonical: getSiteUrl("/guides"),
-    },
+    alternates: buildLocaleAlternates("/guides"),
   };
 }
 

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { pool } from "@/lib/db";
-import { generateBreadcrumbJsonLd, getSiteUrl } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
 
 // ISR: Revalidate every 6 hours
 export const revalidate = 21600;
@@ -96,9 +96,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const pageDef = BEST_VALUE_PAGES.find((p) => p.slug === slug);
 
   if (!pageDef) {
@@ -122,9 +122,7 @@ export async function generateMetadata({
       type: "website",
       siteName: "Sailing Yacht Info",
     },
-    alternates: {
-      canonical: getSiteUrl(`/best-value/${slug}`),
-    },
+    alternates: buildLocaleAlternates(`/best-value/${slug}`),
   };
 }
 
@@ -282,9 +280,9 @@ function formatPrice(
 export default async function BestValuePage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const pageDef = BEST_VALUE_PAGES.find((p) => p.slug === slug);
 
   if (!pageDef) {
@@ -308,7 +306,7 @@ export default async function BestValuePage({
     { name: "Yachts", path: "/yachts" },
     { name: "Best Value", path: "/best-value" },
     { name: pageDef.title },
-  ]);
+  ], locale);
 
   const collectionJsonLd = {
     "@context": "https://schema.org",

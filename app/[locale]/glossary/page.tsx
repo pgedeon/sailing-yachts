@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getAllGlossaryTerms, getGlossaryCategories } from "@/lib/glossary";
-import { getSiteUrl, generateBreadcrumbJsonLd, generateCollectionPageJsonLd } from "@/lib/seo";
+import { getSiteUrl, generateBreadcrumbJsonLd, generateCollectionPageJsonLd , buildLocaleAlternates } from "@/lib/seo";
 
 // ISR: Revalidate glossary every 6 hours
 export const revalidate = 21600;
@@ -49,9 +49,7 @@ export async function generateMetadata({
       title: t("meta.title"),
       description: t("meta.description", { count: terms.length }),
     },
-    alternates: {
-      canonical: getSiteUrl("/glossary"),
-    },
+    alternates: buildLocaleAlternates("/glossary"),
   };
 }
 

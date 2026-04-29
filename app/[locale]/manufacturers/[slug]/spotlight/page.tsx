@@ -6,7 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { marked } from "marked";
 
 import { getSpotlightBySlug } from "@/lib/manufacturer-spotlights";
-import { generateBreadcrumbJsonLd, getSiteUrl } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -98,9 +98,7 @@ export async function generateMetadata({
       description,
       images: [getSiteUrl("/api/og")],
     },
-    alternates: {
-      canonical: url,
-    },
+    alternates: buildLocaleAlternates(`/manufacturers/${slug}/spotlight`),
   };
 }
 
@@ -129,7 +127,7 @@ export default async function ManufacturerSpotlightPage({
       name: "Spotlight",
       path: `/manufacturers/${spotlight.manufacturer.slug}/spotlight`,
     },
-  ]);
+  ], locale);
 
   const organizationJsonLd = {
     "@context": "https://schema.org",

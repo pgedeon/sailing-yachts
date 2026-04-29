@@ -8,6 +8,7 @@ import {
   generateBreadcrumbJsonLd,
   generateCollectionPageJsonLd,
   getSiteUrl,
+  buildLocaleAlternates,
 } from "@/lib/seo";
 import {
   getManufacturerBySlug,
@@ -94,9 +95,7 @@ export async function generateMetadata({
       description,
       images: [getSiteUrl("/api/og")],
     },
-    alternates: {
-      canonical: getSiteUrl(`/manufacturers/${slug}`),
-    },
+    alternates: buildLocaleAlternates(`/manufacturers/${slug}`),
   };
 }
 
@@ -117,7 +116,7 @@ export default async function ManufacturerPage({
     { name: "Home", path: "/" },
     { name: "Manufacturers", path: "/manufacturers" },
     { name: manufacturer.name },
-  ]);
+  ], locale);
 
   const collectionJsonLd = generateCollectionPageJsonLd({
     name: `${manufacturer.name} Yachts`,

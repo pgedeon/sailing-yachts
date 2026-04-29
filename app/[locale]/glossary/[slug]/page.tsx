@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getTermBySlug, getRelatedTerms } from "@/lib/glossary";
-import { getSiteUrl, generateBreadcrumbJsonLd } from "@/lib/seo";
+import { getSiteUrl, generateBreadcrumbJsonLd , buildLocaleAlternates } from "@/lib/seo";
 
 // ISR: Revalidate glossary term pages every 6 hours
 export const revalidate = 21600;
@@ -51,9 +51,7 @@ export async function generateMetadata({
       title: `${term.term} – Sailing Glossary`,
       description,
     },
-    alternates: {
-      canonical: getSiteUrl(`/glossary/${slug}`),
-    },
+    alternates: buildLocaleAlternates(`/glossary/${slug}`),
   };
 }
 

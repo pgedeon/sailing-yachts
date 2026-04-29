@@ -3,8 +3,7 @@ import Link from "next/link";
 import { unstable_cache } from "next/cache";
 import { getLandingPageYachts } from "@/lib/landing-pages";
 import { getLandingPageBySlug, getAllLandingPageSlugs } from "@/data/landing-pages";
-import { generateBreadcrumbJsonLd, getSiteUrl } from "@/lib/seo";
-import { generateCollectionPageJsonLd, generateYachtJsonLd } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, getSiteUrl, generateCollectionPageJsonLd, generateYachtJsonLd, buildLocaleAlternates } from "@/lib/seo";
 import { db, yachtModels, manufacturers } from "@/lib/db";
 import { sql, count } from "drizzle-orm";
 
@@ -20,9 +19,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const pageDefinition = getLandingPageBySlug(slug);
 
   if (!pageDefinition) {
@@ -45,7 +44,7 @@ export async function generateMetadata({
     openGraph: {
       title: pageDefinition.title,
       description: pageDefinition.metaDescription,
-      url: getSiteUrl(`/best/${slug}`),
+      url: getSiteUrl(`/${locale}/best/${slug}`),
       type: "website",
       siteName: "Sailing Yacht Info",
     },
@@ -54,9 +53,7 @@ export async function generateMetadata({
       title: pageDefinition.title,
       description: pageDefinition.metaDescription,
     },
-    alternates: {
-      canonical: getSiteUrl(`/best/${slug}`),
-    },
+    alternates: buildLocaleAlternates(`/best/${slug}`),
   };
 }
 
@@ -64,9 +61,9 @@ export async function generateMetadata({
 export default async function LandingPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const pageDefinition = getLandingPageBySlug(slug);
 
   if (!pageDefinition) {
@@ -98,12 +95,12 @@ export default async function LandingPage({
     { name: "Browse Yachts", path: "/yachts" },
     { name: "Best Yachts", path: "/best" },
     { name: pageDefinition.title },
-  ]);
+  ], locale);
 
   const collectionJsonLd = generateCollectionPageJsonLd({
     name: pageDefinition.title,
     description: pageDefinition.metaDescription,
-    url: getSiteUrl(`/best/${slug}`),
+    url: getSiteUrl(`/${locale}/best/${slug}`),
     itemCount: yachts.length,
   });
 
@@ -134,7 +131,7 @@ export default async function LandingPage({
           key={yacht.id}
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateYachtJsonLd(yacht)),
+            __html: JSON.stringify(generateYachtJsonLd(yacht, locale)),
           }}
         />
       ))}
