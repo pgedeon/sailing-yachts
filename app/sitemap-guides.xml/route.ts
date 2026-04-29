@@ -9,6 +9,8 @@ import {
 // ISR: Revalidate guides sitemap every 6 hours
 export const revalidate = 21600;
 
+const LOCALES = ["en", "fr"] as const;
+
 export async function GET() {
   try {
     const result = await pool.query(
@@ -18,17 +20,13 @@ export async function GET() {
        ORDER BY published_at DESC`
     );
 
-    const entries: SitemapEntry[] = [
+    const pages = [
       // Guides hub page
-      {
-        loc: `${SITE_URL}/guides`,
-        changefreq: "weekly",
-        priority: "0.7",
-      },
+      { path: "/guides", changefreq: "weekly", priority: "0.7" },
       // Individual guide pages
       ...result.rows.map(
         (row: { slug: string; published: Date; lastmod: Date }) => ({
-          loc: `${SITE_URL}/guides/${row.slug}`,
+          path: `/guides/${row.slug}`,
           lastmod: new Date(row.lastmod).toISOString(),
           changefreq: "monthly" as const,
           priority: "0.6",
@@ -36,19 +34,29 @@ export async function GET() {
       ),
     ];
 
+    // Generate entries for both locales
+    const entries: SitemapEntry[] = pages.flatMap((page) =>
+      LOCALES.map((locale) => ({
+        loc: `${SITE_URL}/${locale}${page.path}`,
+        lastmod: "lastmod" in page ? page.lastmod : undefined,
+        changefreq: page.changefreq,
+        priority: page.priority,
+      }))
+    );
+
     return sitemapResponse(buildSitemapXml(entries));
   } catch (error) {
     console.error("[sitemap-guides] Error:", error);
 
     // Return a minimal valid sitemap on error
     return sitemapResponse(
-      buildSitemapXml([
-        {
-          loc: `${SITE_URL}/guides`,
+      buildSitemapXml(
+        LOCALES.map((locale) => ({
+          loc: `${SITE_URL}/${locale}/guides`,
           changefreq: "weekly",
           priority: "0.7",
-        },
-      ])
+        }))
+      )
     );
   }
 }

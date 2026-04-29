@@ -6,6 +6,8 @@ import { eq } from "drizzle-orm";
 
 export const revalidate = 3600;
 
+const LOCALES = ["en", "fr"] as const;
+
 async function getManufacturerEntries(): Promise<SitemapEntry[]> {
   return unstable_cache(
     async () => {
@@ -17,11 +19,13 @@ async function getManufacturerEntries(): Promise<SitemapEntry[]> {
 
       const manufacturerEntries: SitemapEntry[] = mfrs
         .filter((m: { name: string | null }) => m.name !== null)
-        .map((m: { name: string | null }) => ({
-          loc: `${SITE_URL}/manufacturers/${slugify(m.name!)}`,
-          changefreq: "weekly" as const,
-          priority: "0.6",
-        }));
+        .flatMap((m: { name: string | null }) =>
+          LOCALES.map((locale) => ({
+            loc: `${SITE_URL}/${locale}/manufacturers/${slugify(m.name!)}`,
+            changefreq: "weekly" as const,
+            priority: "0.6",
+          }))
+        );
 
       // Add spotlight pages
       const spotlights = await db
@@ -34,11 +38,13 @@ async function getManufacturerEntries(): Promise<SitemapEntry[]> {
 
       const spotlightEntries: SitemapEntry[] = spotlights
         .filter((s: { manufacturerName: string | null }) => s.manufacturerName !== null)
-        .map((s: { manufacturerName: string | null }) => ({
-          loc: `${SITE_URL}/manufacturers/${slugify(s.manufacturerName!)}/spotlight`,
-          changefreq: "monthly" as const,
-          priority: "0.7",
-        }));
+        .flatMap((s: { manufacturerName: string | null }) =>
+          LOCALES.map((locale) => ({
+            loc: `${SITE_URL}/${locale}/manufacturers/${slugify(s.manufacturerName!)}/spotlight`,
+            changefreq: "monthly" as const,
+            priority: "0.7",
+          }))
+        );
 
       return [...manufacturerEntries, ...spotlightEntries];
     },

@@ -10,6 +10,27 @@ export function getSiteUrl(path = ""): string {
   return `${SITE_URL}${path}`;
 }
 
+/**
+ * Build locale-aware alternate URLs for hreflang tags.
+ * Given a path like "/yachts/beneteau-first-27", returns:
+ * { canonical: "/en/yachts/beneteau-first-27", languages: { en: "/en/...", fr: "/fr/..." } }
+ * If path already starts with /en or /fr, strips it first.
+ */
+export function buildLocaleAlternates(pathWithoutLocale: string): {
+  canonical: string;
+  languages: Record<string, string>;
+} {
+  const clean = pathWithoutLocale.replace(/^\/(en|fr)/, "");
+  const path = clean.startsWith("/") ? clean : "/" + clean;
+  return {
+    canonical: getSiteUrl(`/en${path}`),
+    languages: {
+      en: getSiteUrl(`/en${path}`),
+      fr: getSiteUrl(`/fr${path}`),
+    },
+  };
+}
+
 export function buildOgImageUrl(params: {
   title: string;
   description?: string | null;
@@ -50,17 +71,21 @@ export interface JsonLdWebsite {
   };
 }
 
-export function generateWebsiteJsonLd(): JsonLdWebsite {
+const SITE_DESCRIPTIONS: Record<string, string> = {
+  en: "Comprehensive database of sailing yacht specifications with advanced search and comparison tools.",
+  fr: "Base de données complète de spécifications de voiliers avec recherche avancée et outils de comparaison.",
+};
+
+export function generateWebsiteJsonLd(locale = "en"): JsonLdWebsite {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: SITE_NAME,
-    url: SITE_URL,
-    description:
-      "Comprehensive database of sailing yacht specifications with advanced search and comparison tools.",
+    url: `${SITE_URL}/${locale}`,
+    description: SITE_DESCRIPTIONS[locale] || SITE_DESCRIPTIONS.en,
     potentialAction: {
       "@type": "SearchAction",
-      target: `${SITE_URL}/yachts?q={search_term_string}`,
+      target: `${SITE_URL}/${locale}/yachts?q={search_term_string}`,
       "query-input": "required name=search_term_string",
     },
   };
@@ -119,23 +144,39 @@ export function generateYachtJsonLd(yacht: {
     authorName?: string | null;
     reviewDate?: Date | null;
   }> | null;
-}): JsonLdProduct {
+}, locale = "en"): JsonLdProduct {
+  // Localized property names
+  const propNames: Record<string, Record<string, string>> = {
+    loa: { en: "Length Overall", fr: "Longueur hors tout" },
+    beam: { en: "Beam", fr: "Bau" },
+    draft: { en: "Draft", fr: "Tirant d\'eau" },
+    displacement: { en: "Displacement", fr: "Déplacement" },
+    hullMaterial: { en: "Hull Material", fr: "Matériau de coque" },
+    rigType: { en: "Rig Type", fr: "Type de gréement" },
+    cabins: { en: "Cabins", fr: "Cabines" },
+  };
+
+  const descFallbacks: Record<string, string> = {
+    en: "sailing yacht specifications and details",
+    fr: "spécifications et détails du voilier",
+  };
+
   const props: JsonLdProduct["additionalProperty"] = [];
 
-  if (yacht.lengthOverall) props.push({ "@type": "PropertyValue", name: "Length Overall", value: yacht.lengthOverall, unitCode: "MTR" });
-  if (yacht.beam) props.push({ "@type": "PropertyValue", name: "Beam", value: yacht.beam, unitCode: "MTR" });
-  if (yacht.draft) props.push({ "@type": "PropertyValue", name: "Draft", value: yacht.draft, unitCode: "MTR" });
-  if (yacht.displacement) props.push({ "@type": "PropertyValue", name: "Displacement", value: yacht.displacement, unitCode: "KGM" });
-  if (yacht.hullMaterial) props.push({ "@type": "PropertyValue", name: "Hull Material", value: yacht.hullMaterial });
-  if (yacht.rigType) props.push({ "@type": "PropertyValue", name: "Rig Type", value: yacht.rigType });
-  if (yacht.cabins) props.push({ "@type": "PropertyValue", name: "Cabins", value: yacht.cabins });
+  if (yacht.lengthOverall) props.push({ "@type": "PropertyValue", name: propNames.loa[locale] || propNames.loa.en, value: yacht.lengthOverall, unitCode: "MTR" });
+  if (yacht.beam) props.push({ "@type": "PropertyValue", name: propNames.beam[locale] || propNames.beam.en, value: yacht.beam, unitCode: "MTR" });
+  if (yacht.draft) props.push({ "@type": "PropertyValue", name: propNames.draft[locale] || propNames.draft.en, value: yacht.draft, unitCode: "MTR" });
+  if (yacht.displacement) props.push({ "@type": "PropertyValue", name: propNames.displacement[locale] || propNames.displacement.en, value: yacht.displacement, unitCode: "KGM" });
+  if (yacht.hullMaterial) props.push({ "@type": "PropertyValue", name: propNames.hullMaterial[locale] || propNames.hullMaterial.en, value: yacht.hullMaterial });
+  if (yacht.rigType) props.push({ "@type": "PropertyValue", name: propNames.rigType[locale] || propNames.rigType.en, value: yacht.rigType });
+  if (yacht.cabins) props.push({ "@type": "PropertyValue", name: propNames.cabins[locale] || propNames.cabins.en, value: yacht.cabins });
 
   const result: JsonLdProduct = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: `${yacht.manufacturer} ${yacht.modelName} (${yacht.year})`,
-    description: yacht.description || `${yacht.manufacturer} ${yacht.modelName} sailing yacht specifications and details.`,
-    url: getSiteUrl(`/yachts/${yacht.slug}`),
+    description: yacht.description || `${yacht.manufacturer} ${yacht.modelName} ${descFallbacks[locale] || descFallbacks.en}.`,
+    url: getSiteUrl(`/${locale}/yachts/${yacht.slug}`),
     brand: {
       "@type": "Brand",
       name: yacht.manufacturer,
@@ -200,8 +241,10 @@ export interface JsonLdBreadcrumb {
 }
 
 export function generateBreadcrumbJsonLd(
-  items: Array<{ name: string; path?: string }>
+  items: Array<{ name: string; path?: string }>,
+  locale?: string
 ): JsonLdBreadcrumb {
+  const localePrefix = locale ? `/${locale}` : "";
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -209,7 +252,7 @@ export function generateBreadcrumbJsonLd(
       "@type": "ListItem",
       position: idx + 1,
       name: item.name,
-      ...(item.path ? { item: getSiteUrl(item.path) } : {}),
+      ...(item.path ? { item: getSiteUrl(`${localePrefix}${item.path}`) } : {}),
     })),
   };
 }
@@ -342,7 +385,7 @@ export function generateYachtPageMetadata(yacht: {
   description?: string | null;
   lengthOverall?: number | null;
   primaryImage?: string;
-}): Metadata {
+}, locale = "en"): Metadata {
   const title = `${yacht.manufacturer} ${yacht.modelName} (${yacht.year})`;
   const desc =
     yacht.description ||
@@ -369,7 +412,7 @@ export function generateYachtPageMetadata(yacht: {
     openGraph: {
       title,
       description: desc,
-      url: getSiteUrl(`/yachts/${yacht.slug}`),
+      url: getSiteUrl(`/${locale}/yachts/${yacht.slug}`),
       type: "website",
       siteName: SITE_NAME,
       images: [
@@ -485,51 +528,80 @@ export function generateFaqJsonLd(yacht: {
   draft?: number | null;
   cabins?: number | null;
   beam?: number | null;
-}): JsonLdFAQ | null {
+}, locale = "en"): JsonLdFAQ | null {
   const fullName = `${yacht.manufacturer} ${yacht.modelName}`;
   const questions: JsonLdFAQ["mainEntity"] = [];
 
+  // French templates
+  const templates: Record<string, {
+    weightQ: (n: string) => string;
+    weightA: (n: string, kg: string, lbs: string) => string;
+    lengthQ: (n: string) => string;
+    lengthA: (n: string, m: string, ft: string) => string;
+    draftQ: (n: string) => string;
+    draftA: (n: string, m: string, ft: string) => string;
+    cabinsQ: (n: string) => string;
+    cabinsA: (n: string, c: number) => string;
+  }> = {
+    en: {
+      weightQ: (n) => `How much does ${n} weigh?`,
+      weightA: (n, kg, lbs) => `The ${n} has a displacement of ${kg} kg (${lbs} lbs).`,
+      lengthQ: (n) => `How long is ${n}?`,
+      lengthA: (n, m, ft) => `The ${n} has a length overall (LOA) of ${m} m (${ft} ft).`,
+      draftQ: (n) => `What is the draft of ${n}?`,
+      draftA: (n, m, ft) => `The ${n} has a draft of ${m} m (${ft} ft).`,
+      cabinsQ: (n) => `How many cabins does ${n} have?`,
+      cabinsA: (n, c) => `The ${n} has ${c} cabin${c > 1 ? "s" : ""}.`,
+    },
+    fr: {
+      weightQ: (n) => `Combien pèse le ${n} ?`,
+      weightA: (n, kg, lbs) => `Le ${n} a un déplacement de ${kg} kg (${lbs} lbs).`,
+      lengthQ: (n) => `Quelle est la longueur du ${n} ?`,
+      lengthA: (n, m, ft) => `Le ${n} a une longueur hors tout (LOA) de ${m} m (${ft} ft).`,
+      draftQ: (n) => `Quel est le tirant d'eau du ${n} ?`,
+      draftA: (n, m, ft) => `Le ${n} a un tirant d'eau de ${m} m (${ft} ft).`,
+      cabinsQ: (n) => `Combien de cabines possède le ${n} ?`,
+      cabinsA: (n, c) => `Le ${n} possède ${c} cabine${c > 1 ? "s" : ""}.`,
+    },
+  };
+
+  const t = templates[locale] || templates.en;
+
   if (yacht.displacement) {
+    const kg = yacht.displacement.toLocaleString();
+    const lbs = (yacht.displacement * 2.20462).toLocaleString(undefined, {maximumFractionDigits: 0});
     questions.push({
       "@type": "Question",
-      name: `How much does ${fullName} weigh?`,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: `The ${fullName} has a displacement of ${yacht.displacement.toLocaleString()} kg (${(yacht.displacement * 2.20462).toLocaleString(undefined, {maximumFractionDigits: 0})} lbs).`,
-      },
+      name: t.weightQ(fullName),
+      acceptedAnswer: { "@type": "Answer", text: t.weightA(fullName, kg, lbs) },
     });
   }
 
   if (yacht.lengthOverall) {
+    const m = String(yacht.lengthOverall);
+    const ft = (yacht.lengthOverall * 3.28084).toFixed(1);
     questions.push({
       "@type": "Question",
-      name: `How long is ${fullName}?`,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: `The ${fullName} has a length overall (LOA) of ${yacht.lengthOverall} m (${(yacht.lengthOverall * 3.28084).toFixed(1)} ft).`,
-      },
+      name: t.lengthQ(fullName),
+      acceptedAnswer: { "@type": "Answer", text: t.lengthA(fullName, m, ft) },
     });
   }
 
   if (yacht.draft) {
+    const m = String(yacht.draft);
+    const ft = (yacht.draft * 3.28084).toFixed(1);
     questions.push({
       "@type": "Question",
-      name: `What is the draft of ${fullName}?`,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: `The ${fullName} has a draft of ${yacht.draft} m (${(yacht.draft * 3.28084).toFixed(1)} ft).`,
-      },
+      name: t.draftQ(fullName),
+      acceptedAnswer: { "@type": "Answer", text: t.draftA(fullName, m, ft) },
     });
   }
 
   if (yacht.cabins) {
     questions.push({
       "@type": "Question",
-      name: `How many cabins does ${fullName} have?`,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: `The ${fullName} has ${yacht.cabins} cabin${yacht.cabins > 1 ? "s" : ""}.`,
-      },
+      name: t.cabinsQ(fullName),
+      acceptedAnswer: { "@type": "Answer", text: t.cabinsA(fullName, yacht.cabins) },
     });
   }
 

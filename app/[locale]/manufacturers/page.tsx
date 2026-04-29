@@ -10,6 +10,7 @@ import {
   generateCollectionPageJsonLd,
   generateItemListJsonLd,
   getSiteUrl,
+  buildLocaleAlternates,
 } from "@/lib/seo";
 
 // ISR: Revalidate manufacturers list every hour
@@ -53,9 +54,7 @@ export const metadata: Metadata = {
     description: jsonLdDescription,
     images: ["https://info.sailboats.fr/api/og?title=Sailing%20Yacht%20Manufacturers&description=Browse%20builders%2C%20brands%2C%20and%20model%20counts&length=Brand%20directory"],
   },
-  alternates: {
-    canonical: "/manufacturers",
-  },
+  alternates: buildLocaleAlternates("/manufacturers"),
 };
 
 interface ManufacturersListingPageProps {
@@ -71,7 +70,7 @@ export default async function ManufacturersPage({ params }: ManufacturersListing
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Home", path: "/" },
     { name: "Manufacturers" },
-  ]);
+  ], locale);
 
   const collectionJsonLd = generateCollectionPageJsonLd({
     name: jsonLdTitle,

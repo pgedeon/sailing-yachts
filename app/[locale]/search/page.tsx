@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { generateBreadcrumbJsonLd, getSiteUrl } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
 import dynamic from "next/dynamic";
 const SearchClient = dynamic(() => import("./SearchClient").then(m => ({ default: m.SearchClient })), { ssr: false, loading: () => null });
 import { shouldNoindexSearchPage } from "@/lib/thin-page-governance";
@@ -21,9 +21,7 @@ export async function generateMetadata({ params }: SearchPageProps): Promise<Met
   return {
     title: t("meta.title"),
     description: t("meta.description"),
-    alternates: {
-      canonical: `/${locale}/search`,
-    },
+    alternates: buildLocaleAlternates("/search"),
     openGraph: {
       title: t("meta.title"),
       description: t("meta.description"),
@@ -41,7 +39,7 @@ export default async function SearchPage({ params }: SearchPageProps) {
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Home", path: "/" },
     { name: t("heading") },
-  ]);
+  ], locale);
 
   return (
     <>

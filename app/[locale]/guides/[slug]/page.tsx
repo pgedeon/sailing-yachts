@@ -7,7 +7,7 @@ import {
   getArticleBySlug,
   getRelatedArticles,
 } from "@/lib/articles";
-import { getSiteUrl, generateBreadcrumbJsonLd } from "@/lib/seo";
+import { getSiteUrl, generateBreadcrumbJsonLd , buildLocaleAlternates } from "@/lib/seo";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import BuyingGuideYachtList from "@/components/BuyingGuideYachtList";
 import { getTemplateById } from "@/lib/buying-guides";
@@ -120,9 +120,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: article.title,
       description: article.excerpt || undefined,
     },
-    alternates: {
-      canonical: url,
-    },
+    alternates: buildLocaleAlternates(`/guides/${slug}`),
   };
 }
 
@@ -149,7 +147,7 @@ export default async function GuideArticlePage({ params }: PageProps) {
     { name: "Home", path: "/" },
     { name: "Guides", path: "/guides" },
     { name: article.title, path: `/guides/${article.slug}` },
-  ]);
+  ], locale);
 
   const articleUrl = getSiteUrl(`/guides/${article.slug}`);
   const wordCount = countWords(contentHtml);

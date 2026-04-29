@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { pool } from "@/lib/db";
-import { generateBreadcrumbJsonLd, getSiteUrl } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
 
 // ISR: Revalidate every 6 hours
 export const revalidate = 21600;
@@ -37,9 +37,9 @@ interface SourceYacht {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, locale } = await params;
 
   // Parse manufacturer-model from slug
   const sourceYacht = await getSourceYacht(slug);
@@ -66,9 +66,7 @@ export async function generateMetadata({
       type: "website",
       siteName: "Sailing Yacht Info",
     },
-    alternates: {
-      canonical: getSiteUrl(`/cheaper-alternatives-to/${slug}`),
-    },
+    alternates: buildLocaleAlternates(`/cheaper-alternatives-to/${slug}`),
   };
 }
 
@@ -194,9 +192,9 @@ function formatPrice(
 export default async function CheaperAlternativesPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const sourceYacht = await getSourceYacht(slug);
 
   if (!sourceYacht) {
@@ -223,7 +221,7 @@ export default async function CheaperAlternativesPage({
       path: `/yachts/${sourceYacht.slug}`,
     },
     { name: "Cheaper Alternatives" },
-  ]);
+  ], locale);
 
   return (
     <>

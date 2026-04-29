@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSiteUrl } from "@/lib/seo";
+import { getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Best Value Sailboats — Ranked by Specs-Per-Dollar",
   description:
     "Find the best value sailing yachts ranked by our proprietary value score. Compare specs, accommodation, and pricing to spot the smartest buys.",
-  alternates: {
-    canonical: getSiteUrl("/best-value"),
-  },
+  alternates: buildLocaleAlternates("/best-value"),
 };
 
 const BEST_VALUE_CATEGORIES = [

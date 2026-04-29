@@ -5,6 +5,8 @@ import { SITE_URL, buildSitemapXml, sitemapResponse, SitemapEntry } from "@/lib/
 
 export const revalidate = 3600;
 
+const LOCALES = ["en", "fr"] as const;
+
 async function getYachtEntries(): Promise<SitemapEntry[]> {
   return unstable_cache(
     async () => {
@@ -17,12 +19,15 @@ async function getYachtEntries(): Promise<SitemapEntry[]> {
           .from(yachtModels)
           .where(isNotNull(yachtModels.slug));
 
-      return yachts.map((y: { slug: string | null; updatedAt: Date | null }) => ({
-        loc: `${SITE_URL}/yachts/${y.slug}`,
-        lastmod: y.updatedAt ? new Date(y.updatedAt).toISOString() : undefined,
-        changefreq: "weekly" as const,
-        priority: "0.8",
-      }));
+      // Generate entries for both locales
+      return yachts.flatMap((y: { slug: string | null; updatedAt: Date | null }) =>
+        LOCALES.map((locale) => ({
+          loc: `${SITE_URL}/${locale}/yachts/${y.slug}`,
+          lastmod: y.updatedAt ? new Date(y.updatedAt).toISOString() : undefined,
+          changefreq: "weekly" as const,
+          priority: "0.8",
+        }))
+      );
     },
     ["sitemap-yachts"],
     { tags: ["yachts"], revalidate: 3600 }
