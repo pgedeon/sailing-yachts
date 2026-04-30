@@ -1,50 +1,50 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
+import { getTranslations } from "next-intl/server";
+import { getSiteUrl, buildLocaleAlternates } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Best Value Sailboats — Ranked by Specs-Per-Dollar",
-  description:
-    "Find the best value sailing yachts ranked by our proprietary value score. Compare specs, accommodation, and pricing to spot the smartest buys.",
-  alternates: buildLocaleAlternates("/best-value"),
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "BestValue" });
+
+  return {
+    title: t("meta.title"),
+    description: t("meta.description"),
+    alternates: buildLocaleAlternates("/best-value"),
+  };
+}
 
 const BEST_VALUE_CATEGORIES = [
   {
     slug: "40ft-cruisers",
-    title: "Best Value 40ft Cruisers",
     icon: "💰",
-    description:
-      "Mid-size cruisers ranked by accommodation, build quality, and price-per-meter.",
-    yachtCount: "10+",
   },
   {
     slug: "35ft-sailboats",
-    title: "Best Value 35ft Sailboats",
     icon: "📊",
-    description:
-      "The most competitive segment in sailing — find the standouts.",
-    yachtCount: "15+",
   },
   {
     slug: "family-cruisers-under-45ft",
-    title: "Best Value Family Cruisers Under 45ft",
     icon: "👨‍👩‍👧‍👦",
-    description:
-      "Family-friendly sailboats ranked by cabins, berths, tankage, and price.",
-    yachtCount: "20+",
   },
   {
     slug: "bluewater-value",
-    title: "Best Value Bluewater Sailboats",
     icon: "🌊",
-    description:
-      "Ocean-ready yachts ranked by displacement-to-length, hull construction, and pricing.",
-    yachtCount: "15+",
   },
 ];
 
-export default function BestValueIndexPage() {
+export default async function BestValueIndexPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "BestValue" });
+
   return (
     <>
       {/* Header */}
@@ -52,15 +52,13 @@ export default function BestValueIndexPage() {
         <div className="max-w-5xl mx-auto text-center">
           <div className="mb-4 text-5xl">🏆</div>
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-            Best Value Sailboats
+            {t("index.heading")}
           </h1>
           <p className="text-lg text-gray-600 mb-4 max-w-3xl mx-auto">
-            Our value score ranks sailing yachts by balancing accommodation,
-            spec completeness, build data, and market pricing — so you can spot
-            the standout deals at a glance.
+            {t("index.description")}
           </p>
           <p className="text-sm text-gray-500">
-            Rankings improve as more pricing and spec data becomes available
+            {t("index.rankingsNote")}
           </p>
         </div>
       </section>
@@ -77,13 +75,13 @@ export default function BestValueIndexPage() {
               >
                 <div className="text-3xl mb-3">{cat.icon}</div>
                 <h2 className="font-bold text-gray-900 text-lg mb-2 group-hover:text-emerald-600 transition">
-                  {cat.title}
+                  {t(`categories.${cat.slug}.title`)}
                 </h2>
                 <p className="text-sm text-gray-600 mb-3">
-                  {cat.description}
+                  {t(`categories.${cat.slug}.description`)}
                 </p>
                 <span className="text-xs text-emerald-700 font-medium">
-                  View {cat.yachtCount} yachts →
+                  {t("index.viewYachts", { count: t(`categories.${cat.slug}.yachtCount`) })}
                 </span>
               </Link>
             ))}
@@ -92,12 +90,12 @@ export default function BestValueIndexPage() {
           {/* Cross-link to /best pages */}
           <div className="mt-12 text-center">
             <p className="text-sm text-gray-500">
-              Prefer curated picks?{" "}
+              {t("index.curatedPicks")}{" "}
               <Link
                 href="/best/40-foot-cruising-sailboats"
                 className="text-blue-600 hover:underline"
               >
-                Browse our best-of collections →
+                {t("index.curatedPicksLink")}
               </Link>
             </p>
           </div>
@@ -105,13 +103,10 @@ export default function BestValueIndexPage() {
           {/* Methodology */}
           <div className="mt-12 max-w-2xl mx-auto text-center">
             <h2 className="text-lg font-bold text-gray-900 mb-4">
-              About the Value Score
+              {t("index.aboutTitle")}
             </h2>
             <p className="text-sm text-gray-600">
-              The value score (0–100) combines accommodation capacity (30 pts),
-              space efficiency (20 pts), data completeness (15 pts), spec
-              richness (15 pts), and price-per-meter (20 pts) to rank yachts
-              that offer the most for your budget.
+              {t("index.aboutDescription")}
             </p>
           </div>
         </div>

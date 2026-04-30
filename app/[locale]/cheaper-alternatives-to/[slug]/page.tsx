@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { pool } from "@/lib/db";
-import { generateBreadcrumbJsonLd, getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates } from "@/lib/seo";
 
 // ISR: Revalidate every 6 hours
 export const revalidate = 21600;
@@ -40,15 +41,21 @@ export async function generateMetadata({
   params: Promise<{ slug: string; locale: string }>;
 }): Promise<Metadata> {
   const { slug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "CheaperAlternatives" });
 
-  // Parse manufacturer-model from slug
   const sourceYacht = await getSourceYacht(slug);
   if (!sourceYacht) {
-    return { title: "Not Found" };
+    return { title: t("meta.notFoundTitle") };
   }
 
-  const title = `Cheaper Alternatives to ${sourceYacht.manufacturer} ${sourceYacht.modelName}`;
-  const desc = `Find cheaper alternatives to the ${sourceYacht.manufacturer} ${sourceYacht.modelName}. Compare similar sailboats at lower price points.`;
+  const title = t("header.title", {
+    manufacturer: sourceYacht.manufacturer,
+    model: sourceYacht.modelName,
+  });
+  const desc = t("header.description", {
+    manufacturer: sourceYacht.manufacturer,
+    model: sourceYacht.modelName,
+  });
 
   return {
     title,
@@ -98,7 +105,6 @@ async function getAlternatives(
 ): Promise<AlternativeYacht[]> {
   if (!sourceYacht.lengthOverall) return [];
 
-  // Find yachts of similar size (±15%) but different model
   const lengthMin = sourceYacht.lengthOverall * 0.85;
   const lengthMax = sourceYacht.lengthOverall * 1.15;
 
@@ -138,7 +144,6 @@ async function getAlternatives(
       AND y.length_overall <= $2
       AND y.id != $3
     ORDER BY
-      -- Prioritize same cabin count, then by length closeness
       ABS(y.cabins - $4) ASC,
       ABS(y.length_overall - $5) ASC
     LIMIT 12
@@ -195,6 +200,7 @@ export default async function CheaperAlternativesPage({
   params: Promise<{ slug: string; locale: string }>;
 }) {
   const { slug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "CheaperAlternatives" });
   const sourceYacht = await getSourceYacht(slug);
 
   if (!sourceYacht) {
@@ -202,10 +208,10 @@ export default async function CheaperAlternativesPage({
       <main className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
-            Yacht Not Found
+            {t("meta.notFoundTitle")}
           </h1>
           <Link href="/" className="text-blue-600 hover:underline">
-            Return to Home
+            {t("meta.notFoundHomeLink")}
           </Link>
         </div>
       </main>
@@ -235,25 +241,24 @@ export default async function CheaperAlternativesPage({
         <div className="max-w-5xl mx-auto text-center">
           <div className="mb-4 text-4xl">🏷️</div>
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-            Cheaper Alternatives to the{" "}
-            {sourceYacht.manufacturer} {sourceYacht.modelName}
+            {t("header.title", {
+              manufacturer: sourceYacht.manufacturer,
+              model: sourceYacht.modelName,
+            })}
           </h1>
           <p className="text-lg text-gray-600 mb-8 max-w-3xl mx-auto">
-            Love the{" "}
-            <Link
-              href={`/yachts/${sourceYacht.slug}`}
-              className="text-blue-600 hover:underline font-medium"
-            >
-              {sourceYacht.manufacturer} {sourceYacht.modelName}
-            </Link>{" "}
-            but looking for something more affordable? Here are similar-sized
-            sailboats to consider.
+            {t("header.description", {
+              manufacturer: sourceYacht.manufacturer,
+              model: sourceYacht.modelName,
+            })}
           </p>
           {sourceYacht.lengthOverall && (
             <p className="text-sm text-gray-500">
-              Showing {alternatives.length} alternatives in the{" "}
-              {(sourceYacht.lengthOverall * 0.85).toFixed(1)}m–
-              {(sourceYacht.lengthOverall * 1.15).toFixed(1)}m range
+              {t("header.rangeNote", {
+                count: alternatives.length,
+                min: (sourceYacht.lengthOverall * 0.85).toFixed(1),
+                max: (sourceYacht.lengthOverall * 1.15).toFixed(1),
+              })}
             </p>
           )}
         </div>
@@ -305,7 +310,7 @@ export default async function CheaperAlternativesPage({
                   <div className="space-y-2 text-sm">
                     {yacht.lengthOverall && (
                       <div className="flex justify-between">
-                        <span className="text-gray-600">LOA:</span>
+                        <span className="text-gray-600">{t("specs.loa")}</span>
                         <span className="font-medium">
                           {yacht.lengthOverall.toFixed(1)}m
                         </span>
@@ -313,13 +318,13 @@ export default async function CheaperAlternativesPage({
                     )}
                     {yacht.cabins && (
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Cabins:</span>
+                        <span className="text-gray-600">{t("specs.cabins")}</span>
                         <span className="font-medium">{yacht.cabins}</span>
                       </div>
                     )}
                     {yacht.displacement && (
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Displacement:</span>
+                        <span className="text-gray-600">{t("specs.displacement")}</span>
                         <span className="font-medium">
                           {yacht.displacement >= 1000
                             ? `${(yacht.displacement / 1000).toFixed(1)}t`
@@ -342,17 +347,17 @@ export default async function CheaperAlternativesPage({
             <div className="text-center py-12">
               <div className="text-6xl mb-4">🔍</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                No alternatives found
+                {t("empty.title")}
               </h3>
               <p className="text-gray-600 mb-6">
-                Try browsing our{" "}
+                {t("empty.description")}{" "}
                 <Link
                   href="/yachts"
                   className="text-blue-600 hover:underline font-medium"
                 >
-                  complete yacht database
+                  {t("empty.databaseLink")}
                 </Link>
-                .
+                {t("empty.descriptionEnd")}
               </p>
             </div>
           )}
@@ -376,7 +381,10 @@ export default async function CheaperAlternativesPage({
                   d="M10 19l-7-7m0 0l7-7m-7 7h18"
                 />
               </svg>
-              Back to {sourceYacht.manufacturer} {sourceYacht.modelName}
+              {t("backTo", {
+                manufacturer: sourceYacht.manufacturer,
+                model: sourceYacht.modelName,
+              })}
             </Link>
           </div>
 
@@ -386,7 +394,7 @@ export default async function CheaperAlternativesPage({
               href="/best-value/40ft-cruisers"
               className="text-sm text-gray-500 hover:text-emerald-600"
             >
-              See our best-value rankings →
+              {t("bestValueLink")}
             </Link>
           </div>
         </div>

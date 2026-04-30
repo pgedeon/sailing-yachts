@@ -687,5 +687,174 @@
       "exploreMoreDescription": "Parcourez notre glossaire nautique complet pour en savoir plus sur la terminologie nautique et les spécifications de yachts.",
       "viewAllTerms": "Voir tous les termes du glossaire"
     }
+  },
+  "BestValue": {
+    "meta": {
+      "title": "Meilleurs rapports qualité-prix — Classement par score de valeur",
+      "description": "Trouvez les yachts à voile au meilleur rapport qualité-prix classés par notre score de valeur propriétaire. Comparez les spécifications, l'hébergement et les prix.",
+      "notFoundTitle": "Page introuvable",
+      "notFoundDescription": "La page meilleur rapport qualité-prix demandée n'a pas été trouvée."
+    },
+    "index": {
+      "heading": "Meilleurs rapports qualité-prix",
+      "description": "Notre score de valeur classe les yachts à voile en équilibrant l'hébergement, l'exhaustivité des spécifications, les données de construction et les prix du marché — pour repérer les meilleures affaires d'un coup d'œil.",
+      "rankingsNote": "Les classements s'améliorent au fur et à mesure que davantage de données sur les prix et les spécifications deviennent disponibles",
+      "viewYachts": "Voir {count} yachts →",
+      "curatedPicks": "Vous préférez des sélections curatorées ?",
+      "curatedPicksLink": "Parcourir nos collections coup de cœur →",
+      "aboutTitle": "À propos du score de valeur",
+      "aboutDescription": "Le score de valeur (0–100) combine la capacité d'hébergement (30 pts), l'efficacité de l'espace (20 pts), l'exhaustivité des données (15 pts), la richesse des spécifications (15 pts) et le prix au mètre (20 pts) pour classer les yachts offrant le meilleur rapport qualité-prix."
+    },
+    "categories": {
+      "40ft-cruisers": {
+        "title": "Meilleurs rapports qualité-prix — Croiseurs 40 pieds",
+        "description": "Croiseurs de taille moyenne classés par hébergement, qualité de construction et prix au mètre.",
+        "yachtCount": "10+"
+      },
+      "35ft-sailboats": {
+        "title": "Meilleurs rapports qualité-prix — Voiliers 35 pieds",
+        "description": "Le segment le plus compétitif de la voile — trouvez les valeurs sûres.",
+        "yachtCount": "15+"
+      },
+      "family-cruisers-under-45ft": {
+        "title": "Meilleurs rapports qualité-prix — Croiseurs familiaux moins de 45 pieds",
+        "description": "Voiliers familiaux classés par cabines, couchettes, capacité des réservoirs et prix.",
+        "yachtCount": "20+"
+      },
+      "bluewater-value": {
+        "title": "Meilleurs rapports qualité-prix — Voiliers hauturiers",
+        "description": "Yachts prêts pour l'océan classés par ratio déplacement-longueur, construction de la coque et prix.",
+        "yachtCount": "15+"
+      }
+    },
+    "detail": {
+      "notFoundTitle": "Page introuvable",
+      "notFoundHomeLink": "Retour à l'accueil",
+      "yachtsRanked": "{count, plural, one {# yacht classé} other {# yachts classés}} par score de valeur",
+      "valueScore": "Score de valeur",
+      "specs": {
+        "loa": "LOA :",
+        "beam": "Bau :",
+        "cabins": "Cabines :",
+        "berths": "Couchettes :",
+        "displacement": "Dépl. :",
+        "hull": "Coque :",
+        "price": "Prix :",
+        "pricePerMeter": "(~{price}/m)"
+      },
+      "priceOnRequest": "Prix sur demande",
+      "noYachts": {
+        "title": "Aucun yacht trouvé dans cette catégorie",
+        "description": "Essayez de parcourir notre",
+        "databaseLink": "base de données complète de yachts",
+        "descriptionEnd": "."
+      },
+      "exploreMore": "Explorer d'autres classements qualité-prix",
+      "curatedPicks": "Vous cherchez des sélections curatorées sans le classement de valeur ?",
+      "curatedPicksLink": "Parcourir les collections coup de cœur →",
+      "methodology": {
+        "summary": "Comment le score de valeur est-il calculé ?",
+        "intro": "Le score de valeur (0–100) combine plusieurs facteurs pour classer les yachts par valeur globale :",
+        "accommodation": "Hébergement (30 pts)",
+        "accommodationDesc": " — Capacité en cabines et couchettes",
+        "spaceEfficiency": "Efficacité de l'espace (20 pts)",
+        "spaceEfficiencyDesc": " — Cabines par mètre de LOA",
+        "dataCompleteness": "Exhaustivité des données (15 pts)",
+        "dataCompletenessDesc": " — Qualité de documentation des spécifications",
+        "specRichness": "Richesse des spécifications (15 pts)",
+        "specRichnessDesc": " — Nombre de points de données vérifiés",
+        "pricePerMeter": "Prix au mètre (20 pts)",
+        "pricePerMeterDesc": " — Prix du marché rapporté à la taille (lorsque disponible)",
+        "closing": "Les scores s'améliorent au fur et à mesure que davantage de données sur les prix et les spécifications deviennent disponibles."
+      }
+    }
+  },
+  "CheaperAlternatives": {
+    "meta": {
+      "notFoundTitle": "Yacht introuvable",
+      "notFoundHomeLink": "Retour à l'accueil"
+    },
+    "header": {
+      "title": "Alternatives moins chères au {manufacturer} {model}",
+      "description": "Vous aimez le {manufacturer} {model} mais cherchez quelque chose de plus abordable ? Voici des voiliers de taille similaire à considérer.",
+      "rangeNote": "{count, plural, one {# alternative affichée} other {# alternatives affichées}} dans la gamme {min}m–{max}m"
+    },
+    "specs": {
+      "loa": "LOA :",
+      "cabins": "Cabines :",
+      "displacement": "Déplacement :"
+    },
+    "empty": {
+      "title": "Aucune alternative trouvée",
+      "description": "Essayez de parcourir notre",
+      "databaseLink": "base de données complète de yachts",
+      "descriptionEnd": "."
+    },
+    "backTo": "Retour au {manufacturer} {model}",
+    "bestValueLink": "Voir nos classements qualité-prix →"
+  },
+  "SearchIntent": {
+    "meta": {
+      "notFoundTitle": "Intention de recherche introuvable",
+      "notFoundDescription": "Cette page d'intention de recherche n'est pas disponible."
+    },
+    "header": {
+      "popularSearch": "Recherche populaire : {count} fois",
+      "showingYachts": "{shown} sur {total} yachts correspondants affichés"
+    },
+    "specs": {
+      "loa": "LOA :",
+      "cabins": "Cabines :",
+      "displacement": "Déplacement :"
+    },
+    "cta": {
+      "showing": "{shown} sur {total} yachts correspondants affichés",
+      "viewAll": "Voir tous les yachts"
+    },
+    "newsletter": {
+      "title": "Recevez des alertes sur les nouveaux yachts",
+      "description": "Soyez notifié lorsque de nouveaux yachts correspondant à vos critères sont ajoutés à notre base de données.",
+      "subscribe": "S'abonner aux mises à jour"
+    },
+    "empty": {
+      "title": "Aucun yacht ne correspond à ces critères",
+      "description": "Essayez d'ajuster vos filtres ou parcourez notre",
+      "databaseLink": "base de données complète de yachts",
+      "descriptionEnd": ".",
+      "browseAll": "Parcourir tous les yachts"
+    },
+    "notFound": {
+      "title": "Intention de recherche introuvable",
+      "description": "Cette page d'intention de recherche n'est pas disponible.",
+      "homeLink": "Retour à l'accueil"
+    }
+  },
+  "LandingPages": {
+    "meta": {
+      "notFoundTitle": "Page introuvable",
+      "notFoundDescription": "Cette page n'est pas définie dans le système."
+    },
+    "header": {
+      "showingYachts": "{count, plural, one {# yacht correspondant} other {# yachts correspondants}} à vos critères"
+    },
+    "specs": {
+      "loa": "LOA :",
+      "cabins": "Cabines :",
+      "displacement": "Déplacement :"
+    },
+    "related": {
+      "title": "Explorer les catégories associées"
+    },
+    "empty": {
+      "title": "Aucun yacht ne correspond à vos critères",
+      "description": "Essayez d'ajuster vos critères de recherche ou parcourez notre",
+      "databaseLink": "base de données complète de yachts",
+      "descriptionEnd": "."
+    },
+    "notFound": {
+      "title": "Page introuvable",
+      "description": "Cette page n'est pas définie dans le système.",
+      "homeLink": "Retour à l'accueil"
+    }
   }
 }

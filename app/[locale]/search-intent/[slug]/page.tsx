@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { getSearchIntentBySlug } from "@/lib/search-intents";
 import { generateBreadcrumbJsonLd, getSiteUrl, generateCollectionPageJsonLd, generateYachtJsonLd, buildLocaleAlternates } from "@/lib/seo";
 
@@ -15,12 +16,13 @@ export async function generateMetadata({
   params: Promise<{ slug: string; locale: string }>;
 }): Promise<Metadata> {
   const { slug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "SearchIntent" });
   const { intent } = await getSearchIntentBySlug(slug);
 
   if (!intent || intent.id === 0) {
     return {
-      title: "Search Intent Not Found",
-      description: "This search intent page is not available.",
+      title: t("meta.notFoundTitle"),
+      description: t("meta.notFoundDescription"),
       robots: {
         index: false,
         follow: false,
@@ -65,6 +67,7 @@ export default async function SearchIntentPage({
   params: Promise<{ slug: string; locale: string }>;
 }) {
   const { slug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "SearchIntent" });
   const { intent, yachts, totalCount } = await getSearchIntentBySlug(slug);
 
   // Not found
@@ -73,16 +76,16 @@ export default async function SearchIntentPage({
       <main className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
-            Search Intent Not Found
+            {t("notFound.title")}
           </h1>
           <p className="text-gray-600 mb-6">
-            This search intent page is not available.
+            {t("notFound.description")}
           </p>
           <Link
             href="/"
             className="text-blue-600 hover:underline"
           >
-            Return to Home
+            {t("notFound.homeLink")}
           </Link>
         </div>
       </main>
@@ -125,7 +128,7 @@ export default async function SearchIntentPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
       />
-      {yachtJsonLd.map((yacht, idx) => (
+      {yachtJsonLd.map((yacht) => (
         <script
           key={yacht.id}
           type="application/ld+json"
@@ -147,11 +150,11 @@ export default async function SearchIntentPage({
           </p>
           {intent.searchCount > 0 && (
             <p className="text-sm text-gray-500 mb-4">
-              Popular search: {intent.searchCount.toLocaleString()} times
+              {t("header.popularSearch", { count: intent.searchCount.toLocaleString() })}
             </p>
           )}
           <p className="text-sm text-gray-500">
-            Showing {yachts.length} of {totalCount} matching yachts
+            {t("header.showingYachts", { shown: yachts.length, total: totalCount })}
           </p>
         </div>
       </section>
@@ -197,7 +200,7 @@ export default async function SearchIntentPage({
                     <div className="space-y-2 text-sm">
                       {yacht.lengthOverall && (
                         <div className="flex justify-between">
-                          <span className="text-gray-600">LOA:</span>
+                          <span className="text-gray-600">{t("specs.loa")}</span>
                           <span className="font-medium">
                             {yacht.lengthOverall.toFixed(1)}m
                           </span>
@@ -205,13 +208,13 @@ export default async function SearchIntentPage({
                       )}
                       {yacht.cabins && (
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Cabins:</span>
+                          <span className="text-gray-600">{t("specs.cabins")}</span>
                           <span className="font-medium">{yacht.cabins}</span>
                         </div>
                       )}
                       {yacht.displacement && (
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Displacement:</span>
+                          <span className="text-gray-600">{t("specs.displacement")}</span>
                           <span className="font-medium">
                             {yacht.displacement >= 1000
                               ? `${(yacht.displacement / 1000).toFixed(1)}t`
@@ -228,13 +231,13 @@ export default async function SearchIntentPage({
               {totalCount > yachts.length && (
                 <div className="mt-12 text-center">
                   <p className="text-gray-600 mb-4">
-                    Showing {yachts.length} of {totalCount} matching yachts
+                    {t("cta.showing", { shown: yachts.length, total: totalCount })}
                   </p>
                   <Link
                     href="/yachts"
                     className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition"
                   >
-                    View All Yachts
+                    {t("cta.viewAll")}
                   </Link>
                 </div>
               )}
@@ -242,17 +245,16 @@ export default async function SearchIntentPage({
               {/* Newsletter Signup */}
               <div className="mt-16 bg-blue-50 rounded-xl p-8 text-center">
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  Get New Yacht Alerts
+                  {t("newsletter.title")}
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  Be notified when new yachts matching your criteria are added to
-                  our database.
+                  {t("newsletter.description")}
                 </p>
                 <Link
                   href="/newsletter"
                   className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition"
                 >
-                  Subscribe for Updates
+                  {t("newsletter.subscribe")}
                 </Link>
               </div>
             </>
@@ -260,23 +262,23 @@ export default async function SearchIntentPage({
             <div className="text-center py-12">
               <div className="text-6xl mb-4">🔍</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                No yachts found matching these criteria
+                {t("empty.title")}
               </h3>
               <p className="text-gray-600 mb-6">
-                Try adjusting your filters or browse our{" "}
+                {t("empty.description")}{" "}
                 <Link
                   href="/yachts"
                   className="text-blue-600 hover:underline font-medium"
                 >
-                  complete yacht database
+                  {t("empty.databaseLink")}
                 </Link>
-                .
+                {t("empty.descriptionEnd")}
               </p>
               <Link
                 href="/yachts"
                 className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition"
               >
-                Browse All Yachts
+                {t("empty.browseAll")}
               </Link>
             </div>
           )}
