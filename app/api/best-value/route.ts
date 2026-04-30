@@ -1,12 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pool } from "@/lib/db";
-import {
-  BEST_VALUE_PAGES,
-  calculateValueScore,
-  type BestValuePageDef,
-} from "@/app/[locale]/best-value/[slug]/page";
+import { calculateValueScore } from "@/app/[locale]/best-value/[slug]/page";
 
 export const dynamic = "force-dynamic";
+
+// Static category definitions for the API (locale-independent)
+const BEST_VALUE_CATEGORIES = [
+  {
+    slug: "40ft-cruisers",
+    title: "Best Value 40ft Cruising Sailboats",
+    lengthMin: 11.5,
+    lengthMax: 12.8,
+  },
+  {
+    slug: "35ft-sailboats",
+    title: "Best Value 35ft Sailboats",
+    lengthMin: 10.0,
+    lengthMax: 11.5,
+  },
+  {
+    slug: "family-cruisers-under-45ft",
+    title: "Best Value Family Cruisers Under 45ft",
+    lengthMin: 10.5,
+    lengthMax: 13.7,
+  },
+  {
+    slug: "bluewater-value",
+    title: "Best Value Bluewater Sailboats",
+    lengthMin: 10.0,
+    lengthMax: 15.0,
+  },
+];
 
 interface BestValueYachtRow {
   id: number;
@@ -36,27 +60,27 @@ export async function GET(request: NextRequest) {
 
   // If a specific category is requested, return yachts for that category
   if (category) {
-    const pageDef = BEST_VALUE_PAGES.find((p) => p.slug === category);
-    if (!pageDef) {
+    const catDef = BEST_VALUE_CATEGORIES.find((p) => p.slug === category);
+    if (!catDef) {
       return NextResponse.json(
         {
           error: "Invalid category",
-          availableCategories: BEST_VALUE_PAGES.map((p) => p.slug),
+          availableCategories: BEST_VALUE_CATEGORIES.map((p) => p.slug),
         },
         { status: 400 }
       );
     }
 
-    const yachts = await fetchBestValueYachts(pageDef, limit);
+    const yachts = await fetchBestValueYachts(catDef.lengthMin, catDef.lengthMax, limit);
     return NextResponse.json({
-      category: pageDef.slug,
-      title: pageDef.title,
+      category: catDef.slug,
+      title: catDef.title,
       yachts,
     });
   }
 
   // Otherwise, return summary for all categories
-  const categories = BEST_VALUE_PAGES.map((p) => ({
+  const categories = BEST_VALUE_CATEGORIES.map((p) => ({
     slug: p.slug,
     title: p.title,
     lengthRange: `${p.lengthMin}m–${p.lengthMax}m`,
@@ -64,9 +88,9 @@ export async function GET(request: NextRequest) {
 
   // Fetch top 5 from each category for overview
   const results: Record<string, { title: string; yachts: BestValueYachtRow[] }> = {};
-  for (const pageDef of BEST_VALUE_PAGES) {
-    const yachts = await fetchBestValueYachts(pageDef, 5);
-    results[pageDef.slug] = { title: pageDef.title, yachts };
+  for (const catDef of BEST_VALUE_CATEGORIES) {
+    const yachts = await fetchBestValueYachts(catDef.lengthMin, catDef.lengthMax, 5);
+    results[catDef.slug] = { title: catDef.title, yachts };
   }
 
   return NextResponse.json({
@@ -76,7 +100,8 @@ export async function GET(request: NextRequest) {
 }
 
 async function fetchBestValueYachts(
-  pageDef: BestValuePageDef,
+  lengthMin: number,
+  lengthMax: number,
   limit: number
 ): Promise<BestValueYachtRow[]> {
   const query = `
@@ -118,11 +143,7 @@ async function fetchBestValueYachts(
     LIMIT $3
   `;
 
-  const result = await pool.query(query, [
-    pageDef.lengthMin,
-    pageDef.lengthMax,
-    limit,
-  ]);
+  const result = await pool.query(query, [lengthMin, lengthMax, limit]);
 
   const yachts: BestValueYachtRow[] = result.rows.map((r: any) => ({
     id: r.id,

@@ -687,5 +687,174 @@
       "exploreMoreDescription": "Browse our complete sailing glossary to learn more about nautical terminology and yacht specifications.",
       "viewAllTerms": "View All Glossary Terms"
     }
+  },
+  "BestValue": {
+    "meta": {
+      "title": "Best Value Sailboats — Ranked by Specs-Per-Dollar",
+      "description": "Find the best value sailing yachts ranked by our proprietary value score. Compare specs, accommodation, and pricing to spot the smartest buys.",
+      "notFoundTitle": "Page Not Found",
+      "notFoundDescription": "The requested best-value page could not be found."
+    },
+    "index": {
+      "heading": "Best Value Sailboats",
+      "description": "Our value score ranks sailing yachts by balancing accommodation, spec completeness, build data, and market pricing — so you can spot the standout deals at a glance.",
+      "rankingsNote": "Rankings improve as more pricing and spec data becomes available",
+      "viewYachts": "View {count} yachts →",
+      "curatedPicks": "Prefer curated picks?",
+      "curatedPicksLink": "Browse our best-of collections →",
+      "aboutTitle": "About the Value Score",
+      "aboutDescription": "The value score (0–100) combines accommodation capacity (30 pts), space efficiency (20 pts), data completeness (15 pts), spec richness (15 pts), and price-per-meter (20 pts) to rank yachts that offer the most for your budget."
+    },
+    "categories": {
+      "40ft-cruisers": {
+        "title": "Best Value 40ft Cruisers",
+        "description": "Mid-size cruisers ranked by accommodation, build quality, and price-per-meter.",
+        "yachtCount": "10+"
+      },
+      "35ft-sailboats": {
+        "title": "Best Value 35ft Sailboats",
+        "description": "The most competitive segment in sailing — find the standouts.",
+        "yachtCount": "15+"
+      },
+      "family-cruisers-under-45ft": {
+        "title": "Best Value Family Cruisers Under 45ft",
+        "description": "Family-friendly sailboats ranked by cabins, berths, tankage, and price.",
+        "yachtCount": "20+"
+      },
+      "bluewater-value": {
+        "title": "Best Value Bluewater Sailboats",
+        "description": "Ocean-ready yachts ranked by displacement-to-length, hull construction, and pricing.",
+        "yachtCount": "15+"
+      }
+    },
+    "detail": {
+      "notFoundTitle": "Page Not Found",
+      "notFoundHomeLink": "Return to Home",
+      "yachtsRanked": "{count, plural, one {# yacht ranked} other {# yachts ranked}} by value score",
+      "valueScore": "Value Score",
+      "specs": {
+        "loa": "LOA:",
+        "beam": "Beam:",
+        "cabins": "Cabins:",
+        "berths": "Berths:",
+        "displacement": "Displ:",
+        "hull": "Hull:",
+        "price": "Price:",
+        "pricePerMeter": "(~{price}/m)"
+      },
+      "priceOnRequest": "Price on request",
+      "noYachts": {
+        "title": "No yachts found in this category",
+        "description": "Try browsing our",
+        "databaseLink": "complete yacht database",
+        "descriptionEnd": "."
+      },
+      "exploreMore": "Explore More Best-Value Rankings",
+      "curatedPicks": "Looking for curated picks without the value ranking?",
+      "curatedPicksLink": "Browse best-of collections →",
+      "methodology": {
+        "summary": "How is the value score calculated?",
+        "intro": "The value score (0–100) combines multiple factors to rank yachts by overall value:",
+        "accommodation": "Accommodation (30 pts)",
+        "accommodationDesc": " — Cabins and berths capacity",
+        "spaceEfficiency": "Space efficiency (20 pts)",
+        "spaceEfficiencyDesc": " — Cabins per meter of LOA",
+        "dataCompleteness": "Data completeness (15 pts)",
+        "dataCompletenessDesc": " — How thoroughly specs are documented",
+        "specRichness": "Spec richness (15 pts)",
+        "specRichnessDesc": " — Number of verified data points",
+        "pricePerMeter": "Price-per-meter (20 pts)",
+        "pricePerMeterDesc": " — Market pricing relative to size (when available)",
+        "closing": "Scores improve as more pricing and spec data becomes available."
+      }
+    }
+  },
+  "CheaperAlternatives": {
+    "meta": {
+      "notFoundTitle": "Yacht Not Found",
+      "notFoundHomeLink": "Return to Home"
+    },
+    "header": {
+      "title": "Cheaper Alternatives to the {manufacturer} {model}",
+      "description": "Love the {manufacturer} {model} but looking for something more affordable? Here are similar-sized sailboats to consider.",
+      "rangeNote": "Showing {count} alternatives in the {min}m–{max}m range"
+    },
+    "specs": {
+      "loa": "LOA:",
+      "cabins": "Cabins:",
+      "displacement": "Displacement:"
+    },
+    "empty": {
+      "title": "No alternatives found",
+      "description": "Try browsing our",
+      "databaseLink": "complete yacht database",
+      "descriptionEnd": "."
+    },
+    "backTo": "Back to {manufacturer} {model}",
+    "bestValueLink": "See our best-value rankings →"
+  },
+  "SearchIntent": {
+    "meta": {
+      "notFoundTitle": "Search Intent Not Found",
+      "notFoundDescription": "This search intent page is not available."
+    },
+    "header": {
+      "popularSearch": "Popular search: {count} times",
+      "showingYachts": "Showing {shown} of {total} matching yachts"
+    },
+    "specs": {
+      "loa": "LOA:",
+      "cabins": "Cabins:",
+      "displacement": "Displacement:"
+    },
+    "cta": {
+      "showing": "Showing {shown} of {total} matching yachts",
+      "viewAll": "View All Yachts"
+    },
+    "newsletter": {
+      "title": "Get New Yacht Alerts",
+      "description": "Be notified when new yachts matching your criteria are added to our database.",
+      "subscribe": "Subscribe for Updates"
+    },
+    "empty": {
+      "title": "No yachts found matching these criteria",
+      "description": "Try adjusting your filters or browse our",
+      "databaseLink": "complete yacht database",
+      "descriptionEnd": ".",
+      "browseAll": "Browse All Yachts"
+    },
+    "notFound": {
+      "title": "Search Intent Not Found",
+      "description": "This search intent page is not available.",
+      "homeLink": "Return to Home"
+    }
+  },
+  "LandingPages": {
+    "meta": {
+      "notFoundTitle": "Landing Page Not Found",
+      "notFoundDescription": "This landing page is not defined in the system."
+    },
+    "header": {
+      "showingYachts": "Showing {count, plural, one {# yacht} other {# yachts}} matching your criteria"
+    },
+    "specs": {
+      "loa": "LOA:",
+      "cabins": "Cabins:",
+      "displacement": "Displacement:"
+    },
+    "related": {
+      "title": "Explore Related Categories"
+    },
+    "empty": {
+      "title": "No yachts found matching your criteria",
+      "description": "Try adjusting your search criteria or browse our",
+      "databaseLink": "complete yacht database",
+      "descriptionEnd": "."
+    },
+    "notFound": {
+      "title": "Landing Page Not Found",
+      "description": "This landing page is not defined in the system.",
+      "homeLink": "Return to Home"
+    }
   }
 }

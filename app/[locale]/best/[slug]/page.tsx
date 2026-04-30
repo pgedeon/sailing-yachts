@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { unstable_cache } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { getLandingPageYachts } from "@/lib/landing-pages";
 import { getLandingPageBySlug, getAllLandingPageSlugs } from "@/data/landing-pages";
 import { generateBreadcrumbJsonLd, getSiteUrl, generateCollectionPageJsonLd, generateYachtJsonLd, buildLocaleAlternates } from "@/lib/seo";
-import { db, yachtModels, manufacturers } from "@/lib/db";
-import { sql, count } from "drizzle-orm";
 
 // ISR: Revalidate landing pages every 6 hours
 export const revalidate = 21600;
@@ -64,6 +63,7 @@ export default async function LandingPage({
   params: Promise<{ slug: string; locale: string }>;
 }) {
   const { slug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "LandingPages" });
   const pageDefinition = getLandingPageBySlug(slug);
 
   if (!pageDefinition) {
@@ -71,16 +71,16 @@ export default async function LandingPage({
       <main className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
-            Landing Page Not Found
+            {t("notFound.title")}
           </h1>
           <p className="text-gray-600 mb-6">
-            This landing page is not defined in the system.
+            {t("notFound.description")}
           </p>
           <Link
             href="/"
             className="text-blue-600 hover:underline"
           >
-            Return to Home
+            {t("notFound.homeLink")}
           </Link>
         </div>
       </main>
@@ -126,7 +126,7 @@ export default async function LandingPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
       />
-      {yachtJsonLd.map((yacht, idx) => (
+      {yachtJsonLd.map((yacht) => (
         <script
           key={yacht.id}
           type="application/ld+json"
@@ -147,7 +147,7 @@ export default async function LandingPage({
             {pageDefinition.intro}
           </p>
           <p className="text-sm text-gray-500">
-            Showing {yachts.length} {yachts.length === 1 ? "yacht" : "yachts"} matching your criteria
+            {t("header.showingYachts", { count: yachts.length })}
           </p>
         </div>
       </section>
@@ -193,7 +193,7 @@ export default async function LandingPage({
                     <div className="space-y-2 text-sm">
                       {yacht.lengthOverall && (
                         <div className="flex justify-between">
-                          <span className="text-gray-600">LOA:</span>
+                          <span className="text-gray-600">{t("specs.loa")}</span>
                           <span className="font-medium">
                             {yacht.lengthOverall.toFixed(1)}m
                           </span>
@@ -201,13 +201,13 @@ export default async function LandingPage({
                       )}
                       {yacht.cabins && (
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Cabins:</span>
+                          <span className="text-gray-600">{t("specs.cabins")}</span>
                           <span className="font-medium">{yacht.cabins}</span>
                         </div>
                       )}
                       {yacht.displacement && (
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Displacement:</span>
+                          <span className="text-gray-600">{t("specs.displacement")}</span>
                           <span className="font-medium">
                             {yacht.displacement >= 1000
                               ? `${(yacht.displacement / 1000).toFixed(1)}t`
@@ -224,7 +224,7 @@ export default async function LandingPage({
               {pageDefinition.related && pageDefinition.related.length > 0 && (
                 <div className="mt-16 pt-8 border-t border-gray-200">
                   <h2 className="text-xl font-bold text-gray-900 mb-6">
-                    Explore Related Categories
+                    {t("related.title")}
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {pageDefinition.related.map((relatedSlug) => {
@@ -257,17 +257,17 @@ export default async function LandingPage({
             <div className="text-center py-12">
               <div className="text-6xl mb-4">🔍</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                No yachts found matching your criteria
+                {t("empty.title")}
               </h3>
               <p className="text-gray-600 mb-6">
-                Try adjusting your search criteria or browse our{" "}
+                {t("empty.description")}{" "}
                 <Link
                   href="/yachts"
                   className="text-blue-600 hover:underline font-medium"
                 >
-                  complete yacht database
+                  {t("empty.databaseLink")}
                 </Link>
-                .
+                {t("empty.descriptionEnd")}
               </p>
             </div>
           )}

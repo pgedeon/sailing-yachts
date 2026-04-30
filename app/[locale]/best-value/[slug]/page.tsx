@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { pool } from "@/lib/db";
-import { generateBreadcrumbJsonLd, getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates } from "@/lib/seo";
 
 // ISR: Revalidate every 6 hours
 export const revalidate = 21600;
@@ -29,9 +30,9 @@ interface BestValueYacht {
 
 export interface BestValuePageDef {
   slug: string;
-  title: string;
-  metaDescription: string;
-  intro: string;
+  titleKey: string;
+  metaDescriptionKey: string;
+  introKey: string;
   icon: string;
   lengthMin: number;
   lengthMax: number;
@@ -41,11 +42,9 @@ export interface BestValuePageDef {
 export const BEST_VALUE_PAGES: BestValuePageDef[] = [
   {
     slug: "40ft-cruisers",
-    title: "Best Value 40ft Cruising Sailboats",
-    metaDescription:
-      "Find the best value 40-foot cruising sailboats ranked by specs-per-dollar. Compare LOA, cabins, displacement and price to find your ideal mid-size cruiser.",
-    intro:
-      "Getting the most boat for your budget matters. These 40-foot cruising sailboats are ranked by a value score that balances living space, build quality, and market pricing — so you can spot the standout deals at a glance.",
+    titleKey: "categories.40ft-cruisers.title",
+    metaDescriptionKey: "categories.40ft-cruisers.description",
+    introKey: "categories.40ft-cruisers.description",
     icon: "💰",
     lengthMin: 11.5,
     lengthMax: 12.8,
@@ -53,11 +52,9 @@ export const BEST_VALUE_PAGES: BestValuePageDef[] = [
   },
   {
     slug: "35ft-sailboats",
-    title: "Best Value 35ft Sailboats",
-    metaDescription:
-      "Discover the best value 35-foot sailboats. Our value ranking combines specs, accommodation, and pricing data to help you find the smartest buy.",
-    intro:
-      "The 35-foot range is one of the most competitive segments in sailing. With so many models to choose from, our value score helps you quickly identify which boats offer the most space, performance, and equipment for the price.",
+    titleKey: "categories.35ft-sailboats.title",
+    metaDescriptionKey: "categories.35ft-sailboats.description",
+    introKey: "categories.35ft-sailboats.description",
     icon: "📊",
     lengthMin: 10.0,
     lengthMax: 11.5,
@@ -65,11 +62,9 @@ export const BEST_VALUE_PAGES: BestValuePageDef[] = [
   },
   {
     slug: "family-cruisers-under-45ft",
-    title: "Best Value Family Cruisers Under 45ft",
-    metaDescription:
-      "Compare the best value family cruising sailboats under 45 feet. Ranked by cabins, berths, tankage and price to find the perfect family cruiser.",
-    intro:
-      "Family cruisers need cabins, berths, tankage, and predictable handling. We rank the best family-friendly sailboats under 45 feet by combining accommodation data with pricing so you can find the right boat at the right price.",
+    titleKey: "categories.family-cruisers-under-45ft.title",
+    metaDescriptionKey: "categories.family-cruisers-under-45ft.description",
+    introKey: "categories.family-cruisers-under-45ft.description",
     icon: "👨‍👩‍👧‍👦",
     lengthMin: 10.5,
     lengthMax: 13.7,
@@ -77,11 +72,9 @@ export const BEST_VALUE_PAGES: BestValuePageDef[] = [
   },
   {
     slug: "bluewater-value",
-    title: "Best Value Bluewater Sailboats",
-    metaDescription:
-      "Find the best value bluewater sailboats for ocean cruising. Ranked by displacement, construction quality, and price-per-foot to help you choose wisely.",
-    intro:
-      "Bluewater sailboats demand heavier construction, reliable systems, and proven offshore track records. Our value ranking factors in displacement-to-length ratio, hull material, and available pricing to surface the smartest buys for ocean-bound sailors.",
+    titleKey: "categories.bluewater-value.title",
+    metaDescriptionKey: "categories.bluewater-value.description",
+    introKey: "categories.bluewater-value.description",
     icon: "🌊",
     lengthMin: 10.0,
     lengthMax: 15.0,
@@ -100,24 +93,28 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug, locale } = await params;
   const pageDef = BEST_VALUE_PAGES.find((p) => p.slug === slug);
+  const t = await getTranslations({ locale, namespace: "BestValue" });
 
   if (!pageDef) {
-    return { title: "Not Found" };
+    return { title: t("meta.notFoundTitle") };
   }
 
+  const title = t(pageDef.titleKey);
+  const description = t(pageDef.metaDescriptionKey);
+
   return {
-    title: pageDef.title,
-    description: pageDef.metaDescription,
+    title,
+    description,
     keywords: [
       "best value sailboat",
       "sailboat value comparison",
-      pageDef.title,
+      title,
       "sailing yacht",
       "cruising sailboat",
     ],
     openGraph: {
-      title: pageDef.title,
-      description: pageDef.metaDescription,
+      title,
+      description,
       url: getSiteUrl(`/best-value/${slug}`),
       type: "website",
       siteName: "Sailing Yacht Info",
@@ -265,7 +262,7 @@ function formatPrice(
   max: number | null,
   currency: string | null
 ): string {
-  if (!min && !max) return "Price on request";
+  if (!min && !max) return "";
   const cur = currency || "USD";
   const fmt = (n: number) =>
     new Intl.NumberFormat("en-US", {
@@ -283,6 +280,7 @@ export default async function BestValuePage({
   params: Promise<{ slug: string; locale: string }>;
 }) {
   const { slug, locale } = await params;
+  const t = await getTranslations({ locale, namespace: "BestValue" });
   const pageDef = BEST_VALUE_PAGES.find((p) => p.slug === slug);
 
   if (!pageDef) {
@@ -290,10 +288,10 @@ export default async function BestValuePage({
       <main className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
-            Page Not Found
+            {t("detail.notFoundTitle")}
           </h1>
           <Link href="/" className="text-blue-600 hover:underline">
-            Return to Home
+            {t("detail.notFoundHomeLink")}
           </Link>
         </div>
       </main>
@@ -301,18 +299,20 @@ export default async function BestValuePage({
   }
 
   const yachts = await getBestValueYachts(pageDef);
+  const pageTitle = t(pageDef.titleKey);
+  const pageIntro = t(pageDef.introKey);
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Yachts", path: "/yachts" },
     { name: "Best Value", path: "/best-value" },
-    { name: pageDef.title },
+    { name: pageTitle },
   ], locale);
 
   const collectionJsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: pageDef.title,
-    description: pageDef.metaDescription,
+    name: pageTitle,
+    description: t(pageDef.metaDescriptionKey),
     url: getSiteUrl(`/best-value/${slug}`),
     numberOfItems: yachts.length,
     isPartOf: {
@@ -326,8 +326,8 @@ export default async function BestValuePage({
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: pageDef.title,
-    description: pageDef.metaDescription,
+    name: pageTitle,
+    description: t(pageDef.metaDescriptionKey),
     numberOfItems: yachts.length,
     itemListElement: yachts.map((yacht, index) => ({
       "@type": "ListItem",
@@ -360,14 +360,13 @@ export default async function BestValuePage({
         <div className="max-w-5xl mx-auto text-center">
           <div className="mb-4 text-4xl">{pageDef.icon}</div>
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-            {pageDef.title}
+            {pageTitle}
           </h1>
           <p className="text-lg text-gray-600 mb-8 max-w-3xl mx-auto">
-            {pageDef.intro}
+            {pageIntro}
           </p>
           <p className="text-sm text-gray-500">
-            {yachts.length} {yachts.length === 1 ? "yacht" : "yachts"} ranked
-            by value score
+            {t("detail.yachtsRanked", { count: yachts.length })}
           </p>
         </div>
       </section>
@@ -438,7 +437,7 @@ export default async function BestValuePage({
                         <div className="flex items-center gap-2 flex-shrink-0">
                           <div className="text-right">
                             <div className="text-xs text-gray-500 uppercase tracking-wide">
-                              Value Score
+                              {t("detail.valueScore")}
                             </div>
                             <div className="text-2xl font-bold text-emerald-700">
                               {yacht.valueScore}
@@ -466,7 +465,7 @@ export default async function BestValuePage({
                       <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm">
                         {yacht.lengthOverall && (
                           <span>
-                            <span className="text-gray-500">LOA:</span>{" "}
+                            <span className="text-gray-500">{t("detail.specs.loa")}</span>{" "}
                             <span className="font-medium">
                               {yacht.lengthOverall.toFixed(1)}m
                             </span>
@@ -474,7 +473,7 @@ export default async function BestValuePage({
                         )}
                         {yacht.beam && (
                           <span>
-                            <span className="text-gray-500">Beam:</span>{" "}
+                            <span className="text-gray-500">{t("detail.specs.beam")}</span>{" "}
                             <span className="font-medium">
                               {yacht.beam.toFixed(1)}m
                             </span>
@@ -482,19 +481,19 @@ export default async function BestValuePage({
                         )}
                         {yacht.cabins && (
                           <span>
-                            <span className="text-gray-500">Cabins:</span>{" "}
+                            <span className="text-gray-500">{t("detail.specs.cabins")}</span>{" "}
                             <span className="font-medium">{yacht.cabins}</span>
                           </span>
                         )}
                         {yacht.berths && (
                           <span>
-                            <span className="text-gray-500">Berths:</span>{" "}
+                            <span className="text-gray-500">{t("detail.specs.berths")}</span>{" "}
                             <span className="font-medium">{yacht.berths}</span>
                           </span>
                         )}
                         {yacht.displacement && (
                           <span>
-                            <span className="text-gray-500">Displ:</span>{" "}
+                            <span className="text-gray-500">{t("detail.specs.displacement")}</span>{" "}
                             <span className="font-medium">
                               {yacht.displacement >= 1000
                                 ? `${(yacht.displacement / 1000).toFixed(1)}t`
@@ -504,7 +503,7 @@ export default async function BestValuePage({
                         )}
                         {yacht.hullMaterial && (
                           <span>
-                            <span className="text-gray-500">Hull:</span>{" "}
+                            <span className="text-gray-500">{t("detail.specs.hull")}</span>{" "}
                             <span className="font-medium">
                               {yacht.hullMaterial}
                             </span>
@@ -515,7 +514,7 @@ export default async function BestValuePage({
                       {/* Price Row */}
                       {(yacht.priceMin || yacht.priceMax) && (
                         <div className="mt-2 text-sm">
-                          <span className="text-gray-500">Price:</span>{" "}
+                          <span className="text-gray-500">{t("detail.specs.price")}</span>{" "}
                           <span className="font-semibold text-gray-900">
                             {formatPrice(
                               yacht.priceMin,
@@ -525,13 +524,13 @@ export default async function BestValuePage({
                           </span>
                           {yacht.lengthOverall && yacht.priceMin && (
                             <span className="text-gray-500 ml-2">
-                              (~
-                              {new Intl.NumberFormat("en-US", {
-                                style: "currency",
-                                currency: yacht.currency || "USD",
-                                maximumFractionDigits: 0,
-                              }).format(yacht.priceMin / yacht.lengthOverall)}
-                              /m)
+                              {t("detail.specs.pricePerMeter", {
+                                price: new Intl.NumberFormat("en-US", {
+                                  style: "currency",
+                                  currency: yacht.currency || "USD",
+                                  maximumFractionDigits: 0,
+                                }).format(yacht.priceMin / yacht.lengthOverall)
+                              })}
                             </span>
                           )}
                         </div>
@@ -545,17 +544,17 @@ export default async function BestValuePage({
             <div className="text-center py-12">
               <div className="text-6xl mb-4">🔍</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                No yachts found in this category
+                {t("detail.noYachts.title")}
               </h3>
               <p className="text-gray-600 mb-6">
-                Try browsing our{" "}
+                {t("detail.noYachts.description")}{" "}
                 <Link
                   href="/yachts"
                   className="text-blue-600 hover:underline font-medium"
                 >
-                  complete yacht database
+                  {t("detail.noYachts.databaseLink")}
                 </Link>
-                .
+                {t("detail.noYachts.descriptionEnd")}
               </p>
             </div>
           )}
@@ -563,7 +562,7 @@ export default async function BestValuePage({
           {/* Related Best-Value Pages */}
           <div className="mt-16 pt-8 border-t border-gray-200">
             <h2 className="text-xl font-bold text-gray-900 mb-6">
-              Explore More Best-Value Rankings
+              {t("detail.exploreMore")}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {BEST_VALUE_PAGES.filter((p) => p.slug !== slug).map((page) => (
@@ -576,11 +575,11 @@ export default async function BestValuePage({
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-xl">{page.icon}</span>
                     <h3 className="font-semibold text-gray-900 text-sm">
-                      {page.title}
+                      {t(page.titleKey)}
                     </h3>
                   </div>
                   <p className="text-xs text-gray-500 line-clamp-2">
-                    {page.intro.substring(0, 120)}...
+                    {t(page.introKey).substring(0, 120)}...
                   </p>
                 </Link>
               ))}
@@ -590,12 +589,12 @@ export default async function BestValuePage({
           {/* Cross-link to /best pages */}
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-500">
-              Looking for curated picks without the value ranking?{" "}
+              {t("detail.curatedPicks")}{" "}
               <Link
                 href="/best/40-foot-cruising-sailboats"
                 className="text-blue-600 hover:underline"
               >
-                Browse best-of collections →
+                {t("detail.curatedPicksLink")}
               </Link>
             </p>
           </div>
@@ -604,36 +603,36 @@ export default async function BestValuePage({
           <div className="mt-12 max-w-2xl mx-auto text-center">
             <details className="text-sm text-gray-500" data-testid="methodology-details">
               <summary className="cursor-pointer hover:text-gray-700">
-                How is the value score calculated?
+                {t("detail.methodology.summary")}
               </summary>
               <div className="mt-3 text-left space-y-2 bg-white rounded-lg border border-gray-200 p-4">
                 <p>
-                  The value score (0–100) combines multiple factors to rank
-                  yachts by overall value:
+                  {t("detail.methodology.intro")}
                 </p>
                 <ul className="list-disc pl-5 space-y-1">
                   <li>
-                    <strong>Accommodation (30 pts)</strong> — Cabins and berths
-                    capacity                  </li>
-                  <li>
-                    <strong>Space efficiency (20 pts)</strong> — Cabins per
-                    meter of LOA
+                    <strong>{t("detail.methodology.accommodation")}</strong>
+                    {t("detail.methodology.accommodationDesc")}
                   </li>
                   <li>
-                    <strong>Data completeness (15 pts)</strong> — How
-                    thoroughly specs are documented
+                    <strong>{t("detail.methodology.spaceEfficiency")}</strong>
+                    {t("detail.methodology.spaceEfficiencyDesc")}
                   </li>
                   <li>
-                    <strong>Spec richness (15 pts)</strong> — Number of
-                    verified data points
+                    <strong>{t("detail.methodology.dataCompleteness")}</strong>
+                    {t("detail.methodology.dataCompletenessDesc")}
                   </li>
                   <li>
-                    <strong>Price-per-meter (20 pts)</strong> — Market pricing
-                    relative to size (when available)
+                    <strong>{t("detail.methodology.specRichness")}</strong>
+                    {t("detail.methodology.specRichnessDesc")}
+                  </li>
+                  <li>
+                    <strong>{t("detail.methodology.pricePerMeter")}</strong>
+                    {t("detail.methodology.pricePerMeterDesc")}
                   </li>
                 </ul>
                 <p className="italic">
-                  Scores improve as more pricing and spec data becomes available.
+                  {t("detail.methodology.closing")}
                 </p>
               </div>
             </details>
