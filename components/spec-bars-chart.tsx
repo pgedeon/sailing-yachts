@@ -117,7 +117,7 @@ export function SpecBarsChart({ yachtSpecs }: SpecBarsChartProps) {
     if (!loa || loaded) return;
     setLoaded(true);
 
-    fetch(`/api/yachts/size-class-stats?loa=${loa}`)
+    fetch(`/api/size-class-stats?loa=${loa}`)
       .then((r) => r.json())
       .then((data) => {
         if (data && !data.error) setStats(data);
