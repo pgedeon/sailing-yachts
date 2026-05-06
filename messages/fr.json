@@ -326,6 +326,33 @@
       "engineType": "Type de moteur",
       "fuelCapacity": "Capacité carburant",
       "waterCapacity": "Capacité eau"
+    },
+    "specBars": {
+      "title": "Comparaison",
+      "description": "Voir où les caractéristiques de ce voilier se situent par rapport à des bateaux de taille similaire ({sizeClassRange}). Les barres montrent l'éventail de la classe de taille, avec la position de votre voilier mise en évidence.",
+      "sizeClass": "Catégorie de taille : LOA {min}–{max}m ({count} voiliers)",
+      "belowAverage": "Sous la moyenne",
+      "average": "Moyenne",
+      "aboveAverage": "Au-dessus de la moyenne",
+      "avg": "Moy.",
+      "dataTableToggle": "Voir le tableau de données (accessible)",
+      "specs": {
+        "lengthOverall": "Longueur hors tout",
+        "beam": "Bau",
+        "draft": "Tirant d'eau",
+        "displacement": "Déplacement",
+        "ballast": "Quille lest",
+        "sailAreaMain": "Surface de voilure",
+        "engineHp": "Puissance moteur"
+      },
+      "table": {
+        "spec": "Caractéristique",
+        "yachtValue": "Voilier",
+        "classMin": "Min catégorie",
+        "classAvg": "Moy. catégorie",
+        "classMax": "Max catégorie",
+        "percentile": "Percentile"
+      }
     }
   },
   "YachtDetailSub": {
