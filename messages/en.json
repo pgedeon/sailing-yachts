@@ -326,6 +326,33 @@
       "engineType": "Engine Type",
       "fuelCapacity": "Fuel Capacity",
       "waterCapacity": "Water Capacity"
+    },
+    "specBars": {
+      "title": "How It Compares",
+      "description": "See where this yacht's specs sit relative to similar-sized boats ({sizeClassRange}). Bars show the range across the size class, with your yacht's position highlighted.",
+      "sizeClass": "Size class: {min}–{max}m LOA ({count} yachts)",
+      "belowAverage": "Below average",
+      "average": "Average",
+      "aboveAverage": "Above average",
+      "avg": "Avg",
+      "dataTableToggle": "View data table (accessible)",
+      "specs": {
+        "lengthOverall": "Length Overall",
+        "beam": "Beam",
+        "draft": "Draft",
+        "displacement": "Displacement",
+        "ballast": "Ballast",
+        "sailAreaMain": "Sail Area",
+        "engineHp": "Engine Power"
+      },
+      "table": {
+        "spec": "Spec",
+        "yachtValue": "Yacht",
+        "classMin": "Class Min",
+        "classAvg": "Class Avg",
+        "classMax": "Class Max",
+        "percentile": "Percentile"
+      }
     }
   },
   "YachtDetailSub": {

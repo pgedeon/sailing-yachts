@@ -27,6 +27,12 @@ import SourceProvenance from "@/components/SourceProvenance";
 import { ReviewSummary } from "@/components/ReviewSummary";
 import { ReviewSubmissionForm } from "@/components/ReviewSubmissionForm";
 import { CorrectionForm } from "@/components/CorrectionForm";
+import dynamic from "next/dynamic";
+
+const SpecBarsChart = dynamic(
+  () => import("@/components/spec-bars-chart").then((m) => ({ default: m.SpecBarsChart })),
+  { ssr: false, loading: () => null },
+);
 
 interface SpecGroup {
   [group: string]: Array<{
@@ -432,6 +438,19 @@ export default function YachtDetailClient() {
       </div>
 
 
+
+      {/* P15.2: Spec Bars Visualization */}
+      <SpecBarsChart
+        yachtSpecs={{
+          lengthOverall: yacht.lengthOverall,
+          beam: yacht.beam,
+          draft: yacht.draft,
+          displacement: yacht.displacement,
+          ballast: yacht.ballast,
+          sailAreaMain: yacht.sailAreaMain,
+          engineHp: yacht.engineHp,
+        }}
+      />
 
       {/* Source Provenance (P10.3) */}
       <SourceProvenance
