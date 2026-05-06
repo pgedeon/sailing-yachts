@@ -416,6 +416,11 @@
       "heading": "Saved Comparisons",
       "noSaved": "No saved comparisons yet. Select 2+ yachts and click Save.",
       "yachtCount": "{count} yachts · {date}"
+    },
+    "radar": {
+      "title": "Spec Comparison",
+      "scaleNote": "Values normalized 0–100 relative to selected yachts",
+      "dataTableToggle": "Show data table"
     }
   },
   "Manufacturers": {

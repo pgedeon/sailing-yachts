@@ -9,6 +9,11 @@ import { CompareMonetization } from "@/app/components/CompareMonetization";
 import { LeadForm } from "@/app/components/LeadForm";
 import { CompareExport } from "@/app/components/CompareExport";
 import { BuyerChecklist } from "@/app/components/BuyerChecklist";
+import dynamic from "next/dynamic";
+const ComparisonRadarChart = dynamic(
+  () => import("@/components/comparison-radar-chart").then(m => ({ default: m.ComparisonRadarChart })),
+  { ssr: false, loading: () => null },
+);
 import {
   getSavedComparisons,
   saveComparison,
@@ -884,6 +889,13 @@ export function CompareClient({ initialIds }: CompareClientProps) {
               });
             })();
           `}} />
+        </div>
+      )}
+
+      {/* Spec Comparison Radar Chart */}
+      {yachts.length >= 2 && !loading && (
+        <div className="mt-8">
+          <ComparisonRadarChart yachts={yachts} />
         </div>
       )}
 
