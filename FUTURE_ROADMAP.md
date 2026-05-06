@@ -1,24 +1,30 @@
-### Phase 14 — French Localization & Internationalization (Priority: High)
+### Phase 14 — French Localization & Internationalization (Priority: High) — ✅ COMPLETE
 
-The site lives on `info.sailboats.fr` (a French domain) and cross-links with `sailboats.fr` (French content), yet all UI text is English. Adding French language support will double the addressable audience, improve SEO for French search queries, and create a coherent multilingual experience. Implementation uses Next.js 14 App Router i18n with `[locale]` route segment.
+- ~~**P14.1 — i18n infrastructure & French translation system**~~ *(completed 2026-04-27)*
+- ~~**P14.2 — French translations for yacht listing & search pages**~~ *(completed 2026-04-27)*
+- ~~**P14.3 — French translations for yacht detail & comparison pages**~~ *(completed 2026-04-28)*
+- ~~**P14.4 — French translations for manufacturers, guides & glossary**~~ *(completed 2026-04-28)*
+- ~~**P14.5 — French SEO & metadata**~~ *(completed 2026-04-29)*
+- ~~**P14.6 — French long-tail landing pages**~~ *(completed 2026-04-30)*
 
-- ~~**P14.1 — i18n infrastructure & French translation system:** Set up `next-intl` (or equivalent) with message catalogs, locale detection middleware, `[locale]` route group, and a `useTranslations` hook. Translate all static UI strings in header, footer, navigation, and homepage. Add language switcher component. Tests: i18n unit tests for message loading, locale detection, and language switcher rendering. *(priority: critical — blocks all other P14 items)*~~ *(completed 2026-04-27 — PR #227 + hotfix PR #228 for t.rich() serialization bug)*
+### Phase 15 — Interactive Spec Visualizations (Priority: High)
 
-- ~~**P14.2 — French translations for yacht listing & search pages:** Translate all UI text on `/yachts`, `/search`, filter labels, sort options, pagination, and yacht card labels. Translate filter presets (Bluewater cruisers, Racing yachts, etc.). Tests: French rendering tests for listing and search pages. *(completed 2026-04-27 — PR #230, 117 i18n tests)*
+The site has rich spec data (201 yachts with detailed dimensions, displacement, sail area, accommodation) but presents it as plain tables. Adding visual charts and gauges transforms the comparison experience from "reading numbers" to "seeing the differences" — dramatically improving user engagement and decision-making.
 
-- ~~**P14.3 — French translations for yacht detail & comparison pages:** Translate yacht detail page labels (specs table headers, performance ratios, "Who is this boat for?", related yachts section). Translate compare page headers and labels. Tests: French rendering tests for detail and compare pages. *(completed 2026-04-28 — PR #232 + hotfix PRs #234 #235 for getMessages locale bug & NextIntlClientProvider locale prop)*
+- **P15.1 — Spec comparison radar chart on compare page:** Add an interactive radar chart (using Recharts) to the `/compare` page showing normalized spec dimensions (length, beam, draft, displacement, sail area, engine HP) for 2-4 yachts overlaid. Normalize each dimension 0-100 based on min/max across compared yachts. Include toggle to show/hide individual yachts. Fully i18n-compatible with French labels. Tests: unit tests for normalization logic, rendering tests for chart component. *(priority: critical — visual centerpiece of Phase 15)*
 
-- ~~**P14.4 — French translations for manufacturers, guides & glossary:** Translate manufacturer listing page, guide pages, and glossary pages. Add French glossary descriptions alongside English. Tests: French rendering tests for content pages.~~ *(completed 2026-04-28 — PR #237)*
+- **P15.2 — Spec bars on yacht detail page:** Add horizontal bar chart visualizations on `/yachts/[slug]` for key specs (LOA, beam, draft, displacement, sail area, ballast ratio) showing where this yacht sits relative to its size class (±20% of its LOA). Color-coded ranges (below avg / average / above avg). Animated on scroll into view. Tests: unit tests for percentile calculation, rendering tests. *(priority: high)*
 
-- [ ] **P14.5 — French SEO & metadata:** Add French meta tags, JSON-LD, Open Graph, alternate hreflang tags (en/fr), French sitemap entries, and French RSS feed. Tests: SEO metadata tests for both locales.
+- **P15.3 — Side-by-side bar charts on compare detail:** Add grouped bar charts below the comparison table on `/compare/[slugA]-vs-[slugB]` pages, showing key specs side by side. Include performance ratios (D/L ratio, SA/D ratio, ballast ratio) calculated from raw specs. Tests: rendering tests, ratio calculation unit tests. *(priority: high)*
 
-- [ ] **P14.6 — French long-tail landing pages:** Translate best-value pages, cheaper-alternatives pages, and search-intent pages to French. Generate French variants of programmatic SEO pages. Tests: French long-tail page rendering tests.
+- **P15.4 — Size distribution chart on yacht listing:** Add a histogram/distribution chart on `/yachts` page showing the length distribution of all yachts, with the current filter range highlighted. Helps users understand the market landscape. Tests: rendering tests, filter interaction tests. *(priority: medium)*
+
+- **P15.5 — Manufacturer fleet overview charts:** On `/manufacturers/[slug]` pages, add a chart showing the manufacturer's yacht lineup by size, with year of introduction. Gives an overview of the brand's range at a glance. Tests: rendering tests. *(priority: medium)*
 
 ### Notes
-- Phase 14 makes the site accessible to the French-speaking sailing community.
-- The `.fr` domain strongly signals French market targeting — French content is expected.
-- Database content (yacht specs, manufacturer names) stays language-neutral.
-- UI strings, labels, descriptions, and SEO metadata get translated.
-- **⚠️ P14.1 gotcha:** `t.rich()` in `next-intl` v4 with RSC passes functions across server→client boundary, causing 500 errors. Use `t()` + direct JSX composition instead.
-- **⚠️ P14.3 gotcha:** `getMessages()` without explicit `{ locale }` falls back to default locale (en) for client components. Also `NextIntlClientProvider` needs explicit `locale={locale}` prop. Both must be set in `app/[locale]/layout.tsx`.
-- **Phase 14 is in progress.** P14.1–P14.4 complete, P14.5–P14.6 remaining.
+- Use Recharts (lightweight, React-native, already supports SSR) as the charting library.
+- All charts must work with next-intl — labels and tooltips translated.
+- Charts should be client components (`"use client"`) to avoid SSR issues with canvas/SVG.
+- Performance: use dynamic imports (`next/dynamic`) for chart components to avoid bloating initial JS bundle.
+- Accessibility: include text alternatives (data tables) hidden behind a toggle for screen readers.
+- **Phase 14 i18n patterns apply**: use `useTranslations()` in client components, `getTranslations()` in server components.
