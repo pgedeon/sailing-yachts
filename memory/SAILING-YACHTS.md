@@ -1,44 +1,44 @@
 # Sailing Yachts Builder Session Summary
 
-**Date:** 2026-04-24  
-**Issue worked on:** #216 / PR #217 - P13.2: Skip navigation & landmark structure
+**Date:** 2026-05-06
+**Issue worked on:** #244 / PR #245 + #246 - P15.2: Spec bars on yacht detail page
 
 ## What was implemented
-- **Skip-to-content link**: `<a href="#main-content">Skip to content</a>` with sr-only/focus:not-sr-only pattern. Appears fixed in top-left when Tab is pressed.
-- **ARIA landmarks in main layout**:
-  - `role="banner"` on `<header>`
-  - `id="main-content"` + `role="main"` on `<main>`
-  - `role="contentinfo"` on `<footer>`
-  - `aria-label="Main navigation"` on desktop `<nav>`
-  - `role="navigation"` + `aria-label="Mobile navigation"` on mobile menu panel
-  - `aria-controls="mobile-menu-panel"` on mobile menu button
-- **Heading structure audit**: Verified all public pages have proper h1 → h2 → h3 hierarchy
-- **27 unit tests**: `tests/landmark-structure.test.ts` — landmark presence, heading hierarchy, h1 uniqueness
+- **New API endpoint**: `/api/size-class-stats?loa=X` — computes min/max/avg/percentile stats for yachts within ±20% of given LOA. Uses PostgreSQL PERCENTILE_CONT for accurate percentile calculations. Cached with unstable_cache (5 min TTL).
+- **SpecBarsChart component**: Animated horizontal bar visualizations on yacht detail page
+  - Shows where each spec (LOA, beam, draft, displacement, ballast, sail area, engine HP) sits relative to its size class
+  - Color-coded: blue (<30th percentile), indigo (30-70th), green (>70th)
+  - Scroll animation via IntersectionObserver
+  - Accessible data table behind `<details>` toggle
+  - Dynamically imported (no SSR bundle impact)
+  - Full i18n (English + French)
+- **17 unit tests**: percentile calculation, color coding, size class range, spec filtering, API validation
 
 ## Build/Test Results
 - **Typecheck**: ✅ Pass
 - **Build**: ✅ Pass
-- **Vitest tests**: ✅ 27/27 pass
+- **Vitest tests**: ✅ 17/17 pass
+- **CI**: ✅ All checks pass (Lint, TypeScript, Build, Performance Budgets)
 
 ## Deploy Status
-- **PR #217**: ✅ Merged (squash)
-- **Vercel**: ✅ Auto-deploy completed (took ~2 min)
+- **PR #245**: ✅ Merged (squash) — initial implementation
+- **PR #246**: ✅ Merged (squash) — fix API route collision
+- **Vercel**: ✅ Production deployed
+
+## Issue Found and Fixed Post-Deploy
+- `/api/yachts/size-class-stats` was caught by Vercel's `/api/yachts/[slug]` dynamic route (404)
+- **Fix**: Moved endpoint to `/api/size-class-stats` to avoid collision
+- Deployed as PR #246
 
 ## Live Verification Results
 - **/**: ✅ OK
 - **/yachts**: ✅ OK
 - **/search**: ✅ OK
 - **/compare**: ✅ OK
-- **/manufacturers**: ✅ OK
-- **/guides**: ✅ OK
-- **/glossary**: ✅ OK
+- **/yachts/bavaria-c42-2021**: ✅ OK
 - **API /api/yachts**: ✅ 201 yachts
-- **Skip-to-content link in HTML**: ✅ Confirmed
-- **All ARIA landmarks in HTML**: ✅ Confirmed (banner, main, contentinfo, navigation)
-
-## Issues Found and Fixed
-- Fixed malformed P13.1 completion note in FUTURE_ROADMAP.md (text was corrupted)
-- Phase 12 marked as complete in roadmap
+- **API /api/size-class-stats?loa=12.5**: ✅ 118 yachts, 7 specs with percentile data
+- **spec-bars-section present in HTML**: ✅ Confirmed
 
 ## Next Recommended Task
-- **P13.3 — Keyboard navigation enhancement**: Ensure all interactive elements are fully keyboard-accessible with visible focus indicators
+- **P15.3 — Side-by-side bar charts on compare detail**: Add grouped bar charts below the comparison table on `/compare/[slugA]-vs-[slugB]` pages
