@@ -17,7 +17,7 @@ The site has rich spec data (201 yachts with detailed dimensions, displacement, 
 
 - ~~**P15.3 — Side-by-side bar charts on compare detail:** Add grouped bar charts below the comparison table on `/compare/[slugA]-vs-[slugB]` pages, showing key specs side by side. Include performance ratios (D/L ratio, SA/D ratio, ballast ratio) calculated from raw specs. Tests: rendering tests, ratio calculation unit tests. *(priority: high)*~~ *(completed 2026-05-07 — PR #249, 15 tests)*
 
-- **P15.4 — Size distribution chart on yacht listing:** Add a histogram/distribution chart on `/yachts` page showing the length distribution of all yachts, with the current filter range highlighted. Helps users understand the market landscape. Tests: rendering tests, filter interaction tests. *(priority: medium)*
+- ~~**P15.4 — Size distribution chart on yacht listing:** Add a histogram/distribution chart on `/yachts` page showing the length distribution of all yachts, with the current filter range highlighted. Helps users understand the market landscape. Tests: rendering tests, filter interaction tests. *(priority: medium)*~~ *(completed 2026-05-07 — PR #251, 10 tests)*
 
 - **P15.5 — Manufacturer fleet overview charts:** On `/manufacturers/[slug]` pages, add a chart showing the manufacturer's yacht lineup by size, with year of introduction. Gives an overview of the brand's range at a glance. Tests: rendering tests. *(priority: medium)*
 
