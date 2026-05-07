@@ -15,7 +15,7 @@ The site has rich spec data (201 yachts with detailed dimensions, displacement, 
 
 - ~~**P15.2 — Spec bars on yacht detail page:** Add horizontal bar chart visualizations on `/yachts/[slug]` for key specs (LOA, beam, draft, displacement, sail area, ballast ratio) showing where this yacht sits relative to its size class (±20% of its LOA). Color-coded ranges (below avg / average / above avg). Animated on scroll into view. Tests: unit tests for percentile calculation, rendering tests. *(priority: high)*~~ *(completed 2026-05-06 — PR #245, #246, 17 tests)*
 
-- **P15.3 — Side-by-side bar charts on compare detail:** Add grouped bar charts below the comparison table on `/compare/[slugA]-vs-[slugB]` pages, showing key specs side by side. Include performance ratios (D/L ratio, SA/D ratio, ballast ratio) calculated from raw specs. Tests: rendering tests, ratio calculation unit tests. *(priority: high)*
+- ~~**P15.3 — Side-by-side bar charts on compare detail:** Add grouped bar charts below the comparison table on `/compare/[slugA]-vs-[slugB]` pages, showing key specs side by side. Include performance ratios (D/L ratio, SA/D ratio, ballast ratio) calculated from raw specs. Tests: rendering tests, ratio calculation unit tests. *(priority: high)*~~ *(completed 2026-05-07 — PR #249, 15 tests)*
 
 - **P15.4 — Size distribution chart on yacht listing:** Add a histogram/distribution chart on `/yachts` page showing the length distribution of all yachts, with the current filter range highlighted. Helps users understand the market landscape. Tests: rendering tests, filter interaction tests. *(priority: medium)*
 
