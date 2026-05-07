@@ -448,6 +448,18 @@
       "title": "Spec Comparison",
       "scaleNote": "Values normalized 0–100 relative to selected yachts",
       "dataTableToggle": "Show data table"
+    },
+    "barCharts": {
+      "specTitle": "Spec Comparison",
+      "ratioTitle": "Performance Ratios",
+      "ratioNote": "Calculated from raw specifications",
+      "ratioDL": "D/L Ratio",
+      "ratioSAD": "SA/D Ratio",
+      "ratioBallast": "Ballast %",
+      "ratioDLExplain": "Displacement/Length — lower = lighter for its length ( cruiser ≈ 200–300, racer ≈ 100–150 )",
+      "ratioSADExplain": "Sail Area/Displacement — higher = more sail power ( ≈ 16–20 typical, > 22 performance )",
+      "ratioBallastExplain": "Ballast/Displacement — higher = stiffer, more resistant to heeling",
+      "dataTableToggle": "Show data table"
     }
   },
   "Manufacturers": {
