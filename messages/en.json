@@ -187,6 +187,15 @@
     },
     "modal": {
       "close": "Close modal"
+    },
+    "distribution": {
+      "heading": "Fleet Length Distribution",
+      "description": "Overview of all yachts by hull length",
+      "loading": "Loading chart...",
+      "tooltipCount": "Yachts",
+      "dataTableToggle": "View data table",
+      "colRange": "Length Range",
+      "colCount": "Number of Yachts"
     }
   },
   "Search": {

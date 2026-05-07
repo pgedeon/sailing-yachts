@@ -11,6 +11,8 @@ import type { YachtsListingResult, FilterOptions, YachtListItem } from '@/lib/ya
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import dynamic from 'next/dynamic';
+const LengthDistributionChart = dynamic(() => import('@/components/length-distribution-chart'), { ssr: false, loading: () => null });
 
 // Use the shared type from lib/yachts
 type Yacht = YachtListItem;
@@ -408,6 +410,9 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
             </div>
           )}
         </div>
+
+        {/* Length Distribution Chart */}
+        <LengthDistributionChart filterMin={lengthMin ? parseFloat(lengthMin) : null} filterMax={lengthMax ? parseFloat(lengthMax) : null} />
 
         <div className="flex flex-col md:flex-row gap-6">
           {/* Sidebar — always visible on md+, toggleable on mobile */}
