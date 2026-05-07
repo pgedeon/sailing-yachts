@@ -1,7 +1,13 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import type { YachtComparisonData } from "@/lib/compare-canonical";
 import { CompareMonetization } from "@/app/components/CompareMonetization";
+
+const ComparisonBarCharts = dynamic(
+  () => import("@/components/comparison-bar-charts").then(m => ({ default: m.ComparisonBarCharts })),
+  { ssr: false, loading: () => null },
+);
 
 interface CanonicalCompareClientProps {
   yachtA: YachtComparisonData;
@@ -9,7 +15,34 @@ interface CanonicalCompareClientProps {
 }
 
 export function CanonicalCompareClient({ yachtA, yachtB }: CanonicalCompareClientProps) {
-  const yachts = [
+  const specYachts = [
+    {
+      id: yachtA.id,
+      manufacturer: yachtA.manufacturer,
+      modelName: yachtA.modelName,
+      lengthOverall: yachtA.lengthOverall,
+      displacement: yachtA.displacement,
+      beam: yachtA.beam,
+      draft: yachtA.draft,
+      ballast: yachtA.ballast,
+      sailAreaMain: yachtA.sailAreaMain,
+      engineHp: yachtA.engineHp,
+    },
+    {
+      id: yachtB.id,
+      manufacturer: yachtB.manufacturer,
+      modelName: yachtB.modelName,
+      lengthOverall: yachtB.lengthOverall,
+      displacement: yachtB.displacement,
+      beam: yachtB.beam,
+      draft: yachtB.draft,
+      ballast: yachtB.ballast,
+      sailAreaMain: yachtB.sailAreaMain,
+      engineHp: yachtB.engineHp,
+    },
+  ];
+
+  const monetizationYachts = [
     {
       id: yachtA.id,
       manufacturer: yachtA.manufacturer,
@@ -36,5 +69,12 @@ export function CanonicalCompareClient({ yachtA, yachtB }: CanonicalCompareClien
     },
   ];
 
-  return <CompareMonetization yachts={yachts} />;
+  return (
+    <div className="max-w-5xl mx-auto mt-12">
+      <ComparisonBarCharts yachts={specYachts} />
+      <div className="mt-8">
+        <CompareMonetization yachts={monetizationYachts} />
+      </div>
+    </div>
+  );
 }

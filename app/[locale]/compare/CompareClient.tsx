@@ -14,6 +14,10 @@ const ComparisonRadarChart = dynamic(
   () => import("@/components/comparison-radar-chart").then(m => ({ default: m.ComparisonRadarChart })),
   { ssr: false, loading: () => null },
 );
+const ComparisonBarCharts = dynamic(
+  () => import("@/components/comparison-bar-charts").then(m => ({ default: m.ComparisonBarCharts })),
+  { ssr: false, loading: () => null },
+);
 import {
   getSavedComparisons,
   saveComparison,
@@ -896,6 +900,13 @@ export function CompareClient({ initialIds }: CompareClientProps) {
       {yachts.length >= 2 && !loading && (
         <div className="mt-8">
           <ComparisonRadarChart yachts={yachts} />
+        </div>
+      )}
+
+      {/* Spec Comparison Bar Charts */}
+      {yachts.length >= 2 && !loading && (
+        <div className="mt-8">
+          <ComparisonBarCharts yachts={yachts} />
         </div>
       )}
 

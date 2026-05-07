@@ -5,6 +5,7 @@ import { getYachtsBySlugs, generateComparisonIntro, generateComparisonMetadata, 
 import { getSiteUrl, generateBreadcrumbJsonLd, generateYachtJsonLd , buildLocaleAlternates } from "@/lib/seo";
 import { PriceTierBadge } from "@/app/components/PriceTierBadge";
 import { calculatePriceTier } from "@/lib/price-tier";
+import { CanonicalCompareClient } from "./CanonicalCompareClient";
 
 // ISR: Revalidate comparison pages every 6 hours
 export const revalidate = 21600;
@@ -581,6 +582,9 @@ export default async function CanonicalComparePage({
               ← Back to comparison tool
             </Link>
           </div>
+
+          {/* Spec Comparison Bar Charts & Monetization */}
+          <CanonicalCompareClient yachtA={yachtA} yachtB={yachtB} />
         </div>
       </section>
     </>
