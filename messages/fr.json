@@ -187,6 +187,15 @@
     },
     "modal": {
       "close": "Fermer la fenêtre"
+    },
+    "distribution": {
+      "heading": "Distribution des longueurs",
+      "description": "Vue d’ensemble de tous les voiliers par longueur de coque",
+      "loading": "Chargement du graphique...",
+      "tooltipCount": "Voiliers",
+      "dataTableToggle": "Voir le tableau de données",
+      "colRange": "Tranche de longueur",
+      "colCount": "Nombre de voiliers"
     }
   },
   "Search": {
