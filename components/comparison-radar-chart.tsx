@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import {
   RadarChart,
@@ -60,15 +60,21 @@ function normalise(value: number, min: number, max: number): number {
 /**
  * Build chart data: one entry per spec axis.
  * Each entry has { spec: translatedLabel, yacht_0: normalisedValue, … }.
+ *
+ * Visibility filtering: only visible yachts are used for min/max calculation,
+ * so the scale adapts to the visible subset.
  */
 function buildChartData(
   yachts: YachtSpecData[],
   labels: Record<string, string>,
+  visibleIndices: Set<number>,
 ): ChartEntry[] {
-  // Compute min/max per spec
+  const visibleYachts = yachts.filter((_, i) => visibleIndices.has(i));
+
+  // Compute min/max per spec across visible yachts only
   const ranges: Record<string, { min: number; max: number }> = {};
   for (const key of RADAR_SPEC_KEYS) {
-    const values = yachts
+    const values = visibleYachts
       .map((y) => y[key])
       .filter((v): v is number => v !== null && v !== undefined);
     if (values.length === 0) continue;
@@ -84,6 +90,10 @@ function buildChartData(
       spec: labels[key as string] || (key as string),
     };
     yachts.forEach((yacht, i) => {
+      if (!visibleIndices.has(i)) {
+        entry[`yacht_${i}`] = 0;
+        return;
+      }
       const raw = yacht[key] as number | null | undefined;
       entry[`yacht_${i}`] =
         raw !== null && raw !== undefined
@@ -96,6 +106,25 @@ function buildChartData(
 
 export function ComparisonRadarChart({ yachts }: ComparisonRadarChartProps) {
   const t = useTranslations("Compare");
+
+  // Visibility state: track which yachts are visible (all start visible)
+  const [visibleSet, setVisibleSet] = useState<Set<number>>(
+    () => new Set(yachts.map((_, i) => i)),
+  );
+
+  const toggleYacht = useCallback((index: number) => {
+    setVisibleSet((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) {
+        // Don't allow hiding all yachts — must have at least 1 visible
+        if (next.size <= 1) return prev;
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      return next;
+    });
+  }, []);
 
   const labels = useMemo(
     () => ({
@@ -110,7 +139,10 @@ export function ComparisonRadarChart({ yachts }: ComparisonRadarChartProps) {
     [t],
   );
 
-  const chartData = useMemo(() => buildChartData(yachts, labels), [yachts, labels]);
+  const chartData = useMemo(
+    () => buildChartData(yachts, labels, visibleSet),
+    [yachts, labels, visibleSet],
+  );
 
   if (yachts.length < 2 || chartData.length < 3) return null;
 
@@ -122,6 +154,43 @@ export function ComparisonRadarChart({ yachts }: ComparisonRadarChartProps) {
         </h3>
         <span className="text-xs text-gray-500">{t("radar.scaleNote")}</span>
       </div>
+
+      {/* Yacht toggle buttons */}
+      <div className="flex flex-wrap gap-2 mb-3">
+        {yachts.map((yacht, i) => {
+          const isVisible = visibleSet.has(i);
+          const color = CHART_COLORS[i % CHART_COLORS.length];
+          return (
+            <button
+              key={yacht.id}
+              onClick={() => toggleYacht(i)}
+              className={`
+                inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium
+                transition-all duration-200 border
+                ${
+                  isVisible
+                    ? "border-transparent text-white shadow-sm"
+                    : "border-gray-300 text-gray-500 bg-white hover:bg-gray-50"
+                }
+              `}
+              style={
+                isVisible
+                  ? { backgroundColor: color, opacity: 1 }
+                  : { opacity: 0.7 }
+              }
+              aria-pressed={isVisible}
+              aria-label={`${isVisible ? t("radar.hide") : t("radar.show")} ${yacht.manufacturer} ${yacht.modelName}`}
+            >
+              <span
+                className={`w-2.5 h-2.5 rounded-full ${isVisible ? "bg-white" : ""}`}
+                style={!isVisible ? { backgroundColor: color } : undefined}
+              />
+              {yacht.manufacturer} {yacht.modelName}
+            </button>
+          );
+        })}
+      </div>
+
       <div className="bg-white rounded-xl border border-gray-200 p-4">
         <ResponsiveContainer width="100%" height={380}>
           <RadarChart cx="50%" cy="50%" outerRadius="75%" data={chartData}>
@@ -136,17 +205,21 @@ export function ComparisonRadarChart({ yachts }: ComparisonRadarChartProps) {
               tick={{ fontSize: 10, fill: "#9ca3af" }}
               tickCount={5}
             />
-            {yachts.map((yacht, i) => (
-              <Radar
-                key={yacht.id}
-                name={`${yacht.manufacturer} ${yacht.modelName}`}
-                dataKey={`yacht_${i}`}
-                stroke={CHART_COLORS[i % CHART_COLORS.length]}
-                fill={CHART_COLORS[i % CHART_COLORS.length]}
-                fillOpacity={0.15}
-                strokeWidth={2}
-              />
-            ))}
+            {yachts.map((yacht, i) => {
+              const isVisible = visibleSet.has(i);
+              return (
+                <Radar
+                  key={yacht.id}
+                  name={`${yacht.manufacturer} ${yacht.modelName}`}
+                  dataKey={`yacht_${i}`}
+                  stroke={CHART_COLORS[i % CHART_COLORS.length]}
+                  fill={CHART_COLORS[i % CHART_COLORS.length]}
+                  fillOpacity={isVisible ? 0.15 : 0}
+                  strokeWidth={isVisible ? 2 : 0}
+                  strokeOpacity={isVisible ? 1 : 0}
+                />
+              );
+            })}
             <Legend />
             <Tooltip
               contentStyle={{
@@ -187,7 +260,7 @@ export function ComparisonRadarChart({ yachts }: ComparisonRadarChartProps) {
                 </td>
                 {yachts.map((_, i) => (
                   <td key={i} className="border border-gray-200 px-2 py-1">
-                    {row[`yacht_${i}`]}
+                    {visibleSet.has(i) ? row[`yacht_${i}`] : "—"}
                   </td>
                 ))}
               </tr>

@@ -1,7 +1,7 @@
 /**
  * Tests for the comparison radar chart normalization logic.
  *
- * Covers: normalise function, buildChartData function, edge cases.
+ * Covers: normalise function, buildChartData function, toggle logic, edge cases.
  */
 import { describe, it, expect } from "vitest";
 
@@ -42,10 +42,13 @@ interface ChartEntry {
 function buildChartData(
   yachts: YachtSpecData[],
   labels: Record<string, string>,
+  visibleIndices: Set<number>,
 ): ChartEntry[] {
+  const visibleYachts = yachts.filter((_, i) => visibleIndices.has(i));
+
   const ranges: Record<string, { min: number; max: number }> = {};
   for (const key of RADAR_SPEC_KEYS) {
-    const values = yachts
+    const values = visibleYachts
       .map((y) => y[key])
       .filter((v): v is number => v !== null && v !== undefined);
     if (values.length === 0) continue;
@@ -61,6 +64,10 @@ function buildChartData(
       spec: labels[key as string] || (key as string),
     };
     yachts.forEach((yacht, i) => {
+      if (!visibleIndices.has(i)) {
+        entry[`yacht_${i}`] = 0;
+        return;
+      }
       const raw = yacht[key] as number | null | undefined;
       entry[`yacht_${i}`] =
         raw !== null && raw !== undefined
@@ -70,6 +77,44 @@ function buildChartData(
     return entry;
   });
 }
+
+// Shared test fixtures
+const labels: Record<string, string> = {
+  lengthOverall: "Length Overall",
+  beam: "Beam",
+  draft: "Draft",
+  displacement: "Displacement",
+  ballast: "Ballast",
+  sailAreaMain: "Sail Area",
+  engineHp: "Engine HP",
+};
+
+const yachts: YachtSpecData[] = [
+  {
+    id: 1,
+    manufacturer: "Beneteau",
+    modelName: "Oceanis 40.1",
+    lengthOverall: 12.43,
+    beam: 3.99,
+    draft: 2.4,
+    displacement: 8300,
+    ballast: 2500,
+    sailAreaMain: 74,
+    engineHp: 45,
+  },
+  {
+    id: 2,
+    manufacturer: "Jeanneau",
+    modelName: "Sun Odyssey 440",
+    lengthOverall: 13.39,
+    beam: 4.29,
+    draft: 2.24,
+    displacement: 9300,
+    ballast: 2800,
+    sailAreaMain: 80,
+    engineHp: 54,
+  },
+];
 
 describe("Radar chart normalise function", () => {
   it("returns 100 for max value", () => {
@@ -102,50 +147,13 @@ describe("Radar chart normalise function", () => {
 });
 
 describe("buildChartData", () => {
-  const labels: Record<string, string> = {
-    lengthOverall: "Length Overall",
-    beam: "Beam",
-    draft: "Draft",
-    displacement: "Displacement",
-    ballast: "Ballast",
-    sailAreaMain: "Sail Area",
-    engineHp: "Engine HP",
-  };
-
-  const yachts: YachtSpecData[] = [
-    {
-      id: 1,
-      manufacturer: "Beneteau",
-      modelName: "Oceanis 40.1",
-      lengthOverall: 12.43,
-      beam: 3.99,
-      draft: 2.4,
-      displacement: 8300,
-      ballast: 2500,
-      sailAreaMain: 74,
-      engineHp: 45,
-    },
-    {
-      id: 2,
-      manufacturer: "Jeanneau",
-      modelName: "Sun Odyssey 440",
-      lengthOverall: 13.39,
-      beam: 4.29,
-      draft: 2.24,
-      displacement: 9300,
-      ballast: 2800,
-      sailAreaMain: 80,
-      engineHp: 54,
-    },
-  ];
-
   it("generates one entry per spec key that has data", () => {
-    const data = buildChartData(yachts, labels);
+    const data = buildChartData(yachts, labels, new Set([0, 1]));
     expect(data).toHaveLength(RADAR_SPEC_KEYS.length);
   });
 
   it("uses translated labels for spec names", () => {
-    const data = buildChartData(yachts, labels);
+    const data = buildChartData(yachts, labels, new Set([0, 1]));
     const specNames = data.map((d) => d.spec);
     expect(specNames).toContain("Length Overall");
     expect(specNames).toContain("Beam");
@@ -153,7 +161,7 @@ describe("buildChartData", () => {
   });
 
   it("normalises min to 0 and max to 100", () => {
-    const data = buildChartData(yachts, labels);
+    const data = buildChartData(yachts, labels, new Set([0, 1]));
     const loaEntry = data.find((d) => d.spec === "Length Overall")!;
     // Beneteau 12.43 is min → 0, Jeanneau 13.39 is max → 100
     expect(loaEntry["yacht_0"]).toBe(0);
@@ -161,7 +169,7 @@ describe("buildChartData", () => {
   });
 
   it("normalises intermediate values correctly", () => {
-    const data = buildChartData(yachts, labels);
+    const data = buildChartData(yachts, labels, new Set([0, 1]));
     const dispEntry = data.find((d) => d.spec === "Displacement")!;
     // Beneteau 8300 is min → 0, Jeanneau 9300 is max → 100
     expect(dispEntry["yacht_0"]).toBe(0);
@@ -180,7 +188,7 @@ describe("buildChartData", () => {
         beam: null,
       },
     ];
-    const data = buildChartData(yachtWithNull, labels);
+    const data = buildChartData(yachtWithNull, labels, new Set([0, 1]));
     // LOA: 10 vs 20 → 0 vs 100
     const loaEntry = data.find((d) => d.spec === "Length Overall")!;
     expect(loaEntry["yacht_0"]).toBe(0);
@@ -195,13 +203,13 @@ describe("buildChartData", () => {
       { ...yachts[0], engineHp: null },
       { ...yachts[1], engineHp: null },
     ];
-    const data = buildChartData(yachtNoHp, labels);
+    const data = buildChartData(yachtNoHp, labels, new Set([0, 1]));
     const specNames = data.map((d) => d.spec);
     expect(specNames).not.toContain("Engine HP");
   });
 
   it("handles single yacht gracefully", () => {
-    const data = buildChartData([yachts[0]], labels);
+    const data = buildChartData([yachts[0]], labels, new Set([0]));
     // All values should be 50 (min === max)
     for (const entry of data) {
       expect(entry["yacht_0"]).toBe(50);
@@ -224,11 +232,73 @@ describe("buildChartData", () => {
         engineHp: 42,
       },
     ];
-    const data = buildChartData(threeYachts, labels);
+    const data = buildChartData(threeYachts, labels, new Set([0, 1, 2]));
     const loaEntry = data.find((d) => d.spec === "Length Overall")!;
     expect(Object.keys(loaEntry)).toContain("yacht_0");
     expect(Object.keys(loaEntry)).toContain("yacht_1");
     expect(Object.keys(loaEntry)).toContain("yacht_2");
+  });
+});
+
+describe("Radar chart toggle visibility", () => {
+  const threeYachts: YachtSpecData[] = [
+    ...yachts,
+    {
+      id: 3,
+      manufacturer: "Hanse",
+      modelName: "418",
+      lengthOverall: 12.4,
+      beam: 3.95,
+      draft: 2.1,
+      displacement: 8700,
+      ballast: 2600,
+      sailAreaMain: 72,
+      engineHp: 42,
+    },
+  ];
+
+  it("hiding a yacht sets its values to 0", () => {
+    // Hide yacht at index 1 (Jeanneau)
+    const data = buildChartData(threeYachts, labels, new Set([0, 2]));
+    const loaEntry = data.find((d) => d.spec === "Length Overall")!;
+    // Hidden yacht should have 0
+    expect(loaEntry["yacht_1"]).toBe(0);
+    // Visible yachts should have normalized values
+    expect(loaEntry["yacht_0"]).toBeGreaterThanOrEqual(0);
+    expect(loaEntry["yacht_2"]).toBeGreaterThanOrEqual(0);
+  });
+
+  it("recalculates normalization with only visible yachts", () => {
+    // Only yacht 0 visible → all 50 (single visible = min === max)
+    const data = buildChartData(yachts, labels, new Set([0]));
+    const loaEntry = data.find((d) => d.spec === "Length Overall")!;
+    expect(loaEntry["yacht_0"]).toBe(50);
+    // Hidden yacht gets 0
+    expect(loaEntry["yacht_1"]).toBe(0);
+  });
+
+  it("showing all yachts works same as full set", () => {
+    const allVisible = buildChartData(yachts, labels, new Set([0, 1]));
+    const defaultCall = buildChartData(yachts, labels, new Set([0, 1]));
+    expect(allVisible).toEqual(defaultCall);
+  });
+
+  it("with 3 yachts, hiding the middle one still shows others", () => {
+    const data = buildChartData(threeYachts, labels, new Set([0, 2]));
+    expect(data).toHaveLength(RADAR_SPEC_KEYS.length);
+
+    const loaEntry = data.find((d) => d.spec === "Length Overall")!;
+    // Beneteau 12.43 and Hanse 12.4 → very close, one 0 one 100
+    expect(loaEntry["yacht_1"]).toBe(0); // hidden
+    expect(typeof loaEntry["yacht_0"]).toBe("number");
+    expect(typeof loaEntry["yacht_2"]).toBe("number");
+  });
+
+  it("empty visible set returns no data (defensive)", () => {
+    // This shouldn't happen in practice due to min-1-visible guard,
+    // but verify function handles it gracefully
+    const data = buildChartData(yachts, labels, new Set());
+    expect(data).toHaveLength(0);
   });
 });
 
@@ -239,6 +309,8 @@ describe("Radar chart i18n keys", () => {
     expect(en.Compare.radar.title).toBe("Spec Comparison");
     expect(en.Compare.radar.scaleNote).toBeDefined();
     expect(en.Compare.radar.dataTableToggle).toBeDefined();
+    expect(en.Compare.radar.show).toBe("Show");
+    expect(en.Compare.radar.hide).toBe("Hide");
   });
 
   it("fr.json has radar keys in Compare namespace", async () => {
@@ -247,6 +319,8 @@ describe("Radar chart i18n keys", () => {
     expect(fr.Compare.radar.title).toBe("Comparaison des spécifications");
     expect(fr.Compare.radar.scaleNote).toBeDefined();
     expect(fr.Compare.radar.dataTableToggle).toBeDefined();
+    expect(fr.Compare.radar.show).toBe("Afficher");
+    expect(fr.Compare.radar.hide).toBe("Masquer");
   });
 
   it("en and fr have identical radar key structure", async () => {

@@ -4,6 +4,11 @@ import dynamic from "next/dynamic";
 import type { YachtComparisonData } from "@/lib/compare-canonical";
 import { CompareMonetization } from "@/app/components/CompareMonetization";
 
+const ComparisonRadarChart = dynamic(
+  () => import("@/components/comparison-radar-chart").then(m => ({ default: m.ComparisonRadarChart })),
+  { ssr: false, loading: () => null },
+);
+
 const ComparisonBarCharts = dynamic(
   () => import("@/components/comparison-bar-charts").then(m => ({ default: m.ComparisonBarCharts })),
   { ssr: false, loading: () => null },
@@ -71,7 +76,10 @@ export function CanonicalCompareClient({ yachtA, yachtB }: CanonicalCompareClien
 
   return (
     <div className="max-w-5xl mx-auto mt-12">
-      <ComparisonBarCharts yachts={specYachts} />
+      <ComparisonRadarChart yachts={specYachts} />
+      <div className="mt-8">
+        <ComparisonBarCharts yachts={specYachts} />
+      </div>
       <div className="mt-8">
         <CompareMonetization yachts={monetizationYachts} />
       </div>
