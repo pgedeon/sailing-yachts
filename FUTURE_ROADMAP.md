@@ -7,7 +7,7 @@
 - ~~**P14.5 — French SEO & metadata**~~ *(completed 2026-04-29)*
 - ~~**P14.6 — French long-tail landing pages**~~ *(completed 2026-04-30)*
 
-### Phase 15 — Interactive Spec Visualizations (Priority: High) — 🔄 In Progress
+### Phase 15 — Interactive Spec Visualizations (Priority: High) — ✅ COMPLETE
 
 The site has rich spec data (201 yachts with detailed dimensions, displacement, sail area, accommodation) but presents it as plain tables. Adding visual charts and gauges transforms the comparison experience from "reading numbers" to "seeing the differences" — dramatically improving user engagement and decision-making.
 
@@ -19,7 +19,7 @@ The site has rich spec data (201 yachts with detailed dimensions, displacement, 
 
 - ~~**P15.4 — Size distribution chart on yacht listing:** Add a histogram/distribution chart on `/yachts` page showing the length distribution of all yachts, with the current filter range highlighted. Helps users understand the market landscape. Tests: rendering tests, filter interaction tests. *(priority: medium)*~~ *(completed 2026-05-07 — PR #251, 10 tests)*
 
-- **P15.5 — Manufacturer fleet overview charts:** On `/manufacturers/[slug]` pages, add a chart showing the manufacturer's yacht lineup by size, with year of introduction. Gives an overview of the brand's range at a glance. Tests: rendering tests. *(priority: medium)*
+- **P15.5 — Manufacturer fleet overview charts:** On `/manufacturers/[slug]` pages, add a chart showing the manufacturer's yacht lineup by size, with year of introduction. Gives an overview of the brand's range at a glance. Tests: rendering tests. *(priority: medium)* ~~*(completed 2026-05-08 — PR #255, 8 tests)*~~
 
 ### Notes
 - Use Recharts (lightweight, React-native, already supports SSR) as the charting library.
