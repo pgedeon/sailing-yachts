@@ -7,11 +7,11 @@
 - ~~**P14.5 — French SEO & metadata**~~ *(completed 2026-04-29)*
 - ~~**P14.6 — French long-tail landing pages**~~ *(completed 2026-04-30)*
 
-### Phase 15 — Interactive Spec Visualizations (Priority: High)
+### Phase 15 — Interactive Spec Visualizations (Priority: High) — 🔄 In Progress
 
 The site has rich spec data (201 yachts with detailed dimensions, displacement, sail area, accommodation) but presents it as plain tables. Adding visual charts and gauges transforms the comparison experience from "reading numbers" to "seeing the differences" — dramatically improving user engagement and decision-making.
 
-- **P15.1 — Spec comparison radar chart on compare page:** Add an interactive radar chart (using Recharts) to the `/compare` page showing normalized spec dimensions (length, beam, draft, displacement, sail area, engine HP) for 2-4 yachts overlaid. Normalize each dimension 0-100 based on min/max across compared yachts. Include toggle to show/hide individual yachts. Fully i18n-compatible with French labels. Tests: unit tests for normalization logic, rendering tests for chart component. *(priority: critical — visual centerpiece of Phase 15)*
+- ~~**P15.1 — Spec comparison radar chart on compare page:** Add an interactive radar chart (using Recharts) to the `/compare` page showing normalized spec dimensions (length, beam, draft, displacement, sail area, engine HP) for 2-4 yachts overlaid. Normalize each dimension 0-100 based on min/max across compared yachts. Include toggle to show/hide individual yachts. Fully i18n-compatible with French labels. Tests: unit tests for normalization logic, rendering tests for chart component. *(priority: critical — visual centerpiece of Phase 15)*~~ *(completed 2026-05-08 — PR #253, 22 tests)*
 
 - ~~**P15.2 — Spec bars on yacht detail page:** Add horizontal bar chart visualizations on `/yachts/[slug]` for key specs (LOA, beam, draft, displacement, sail area, ballast ratio) showing where this yacht sits relative to its size class (±20% of its LOA). Color-coded ranges (below avg / average / above avg). Animated on scroll into view. Tests: unit tests for percentile calculation, rendering tests. *(priority: high)*~~ *(completed 2026-05-06 — PR #245, #246, 17 tests)*
 
