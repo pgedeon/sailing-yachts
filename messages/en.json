@@ -456,7 +456,9 @@
     "radar": {
       "title": "Spec Comparison",
       "scaleNote": "Values normalized 0–100 relative to selected yachts",
-      "dataTableToggle": "Show data table"
+      "dataTableToggle": "Show data table",
+      "show": "Show",
+      "hide": "Hide"
     },
     "barCharts": {
       "specTitle": "Spec Comparison",

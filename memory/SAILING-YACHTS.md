@@ -1,44 +1,36 @@
 # Sailing Yachts Builder Session Summary
 
-**Date:** 2026-05-06
-**Issue worked on:** #244 / PR #245 + #246 - P15.2: Spec bars on yacht detail page
+**Date:** 2026-05-07
+**Issue worked on:** #250 / PR #251 - P15.4: Length distribution chart on yacht listing page
 
 ## What was implemented
-- **New API endpoint**: `/api/size-class-stats?loa=X` — computes min/max/avg/percentile stats for yachts within ±20% of given LOA. Uses PostgreSQL PERCENTILE_CONT for accurate percentile calculations. Cached with unstable_cache (5 min TTL).
-- **SpecBarsChart component**: Animated horizontal bar visualizations on yacht detail page
-  - Shows where each spec (LOA, beam, draft, displacement, ballast, sail area, engine HP) sits relative to its size class
-  - Color-coded: blue (<30th percentile), indigo (30-70th), green (>70th)
-  - Scroll animation via IntersectionObserver
+- **New API endpoint**: `/api/length-distribution` — returns 10 histogram bins (0-6m through 25m+) with yacht counts per bin. Uses SQL CASE expression for binning. Cached with unstable_cache (5 min TTL).
+- **LengthDistributionChart component**: Recharts bar chart on `/yachts` page
+  - Shows length distribution of all 201 yachts across 10 bins
+  - Highlights bins matching current lengthMin/lengthMax filter range (blue) vs dimmed (gray)
+  - Lazy-loaded via IntersectionObserver + next/dynamic (no SSR bundle impact)
   - Accessible data table behind `<details>` toggle
-  - Dynamically imported (no SSR bundle impact)
   - Full i18n (English + French)
-- **17 unit tests**: percentile calculation, color coding, size class range, spec filtering, API validation
+- **10 unit tests**: bin index calculation, boundary values, filter highlighting, response shape validation
 
 ## Build/Test Results
 - **Typecheck**: ✅ Pass
 - **Build**: ✅ Pass
-- **Vitest tests**: ✅ 17/17 pass
+- **Vitest tests**: ✅ 10/10 pass
 - **CI**: ✅ All checks pass (Lint, TypeScript, Build, Performance Budgets)
 
 ## Deploy Status
-- **PR #245**: ✅ Merged (squash) — initial implementation
-- **PR #246**: ✅ Merged (squash) — fix API route collision
+- **PR #251**: ✅ Merged (squash)
 - **Vercel**: ✅ Production deployed
-
-## Issue Found and Fixed Post-Deploy
-- `/api/yachts/size-class-stats` was caught by Vercel's `/api/yachts/[slug]` dynamic route (404)
-- **Fix**: Moved endpoint to `/api/size-class-stats` to avoid collision
-- Deployed as PR #246
 
 ## Live Verification Results
 - **/**: ✅ OK
-- **/yachts**: ✅ OK
+- **/yachts**: ✅ OK (69821 bytes, distribution references found in HTML)
 - **/search**: ✅ OK
 - **/compare**: ✅ OK
-- **/yachts/bavaria-c42-2021**: ✅ OK
 - **API /api/yachts**: ✅ 201 yachts
-- **API /api/size-class-stats?loa=12.5**: ✅ 118 yachts, 7 specs with percentile data
-- **spec-bars-section present in HTML**: ✅ Confirmed
+- **API /api/length-distribution**: ✅ 10 bins, 201 total yachts
+  - Distribution: 0-6m(1), 6-8m(6), 8-10m(26), 10-12m(46), 12-14m(55), 14-16m(32), 16-18m(16), 18-20m(10), 20-25m(7), 25m+(2)
 
 ## Next Recommended Task
-- **P15.3 — Side-by-side bar charts on compare detail**: Add grouped bar charts below the comparison table on `/compare/[slugA]-vs-[slugB]` pages
+- **P15.5 — Manufacturer fleet overview charts**: On `/manufacturers/[slug]` pages, add chart showing manufacturer's yacht lineup by size with year of introduction
