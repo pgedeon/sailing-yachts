@@ -16,6 +16,9 @@ import {
 } from "@/lib/manufacturers";
 import { getSpotlightByManufacturerId } from "@/lib/manufacturer-spotlights";
 import { ManufacturerComparisons } from "./ManufacturerComparisons";
+import dynamic from "next/dynamic";
+
+const ManufacturerFleetChart = dynamic(() => import("@/components/manufacturer-fleet-chart"), { ssr: false });
 
 // ISR: Revalidate manufacturer detail pages every hour
 export const revalidate = 3600;
@@ -385,6 +388,9 @@ export default async function ManufacturerPage({
             </div>
           )}
         </section>
+
+        {/* P15.5 — Fleet overview chart */}
+        <ManufacturerFleetChart yachts={yachts} manufacturerName={manufacturer.name} />
 
         {/* INTERNAL LINKING MODULE (P6.7) */}
         <ManufacturerComparisons manufacturerName={manufacturer.name} yachts={yachts} />

@@ -635,6 +635,17 @@
         "validTo": " au {end}",
         "dataFrom": "Données de {source}"
       }
+    },
+    "fleetChart": {
+      "heading": "Aperçu de la flotte {name}",
+      "description": "Gamme de yachts par longueur et année d'introduction. La taille des bulles représente le déplacement.",
+      "axisLength": "Longueur",
+      "axisYear": "Année",
+      "axisDisplacement": "Déplacement",
+      "dataTableToggle": "Afficher le tableau de données",
+      "colModel": "Modèle",
+      "colBeam": "Bau",
+      "colRig": "Type de gréement"
     }
   },
   "Guides": {

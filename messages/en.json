@@ -635,6 +635,17 @@
         "validTo": " to {end}",
         "dataFrom": "Data from {source}"
       }
+    },
+    "fleetChart": {
+      "heading": "{name} Fleet Overview",
+      "description": "Yacht lineup by length and year of introduction. Bubble size represents displacement.",
+      "axisLength": "Length",
+      "axisYear": "Year",
+      "axisDisplacement": "Displacement",
+      "dataTableToggle": "Show data table",
+      "colModel": "Model",
+      "colBeam": "Beam",
+      "colRig": "Rig Type"
     }
   },
   "Guides": {
