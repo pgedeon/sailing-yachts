@@ -492,7 +492,15 @@
       "emptySubtitle": "This page is using ISR (Incremental Static Regeneration) and will show live data on production.",
       "country": "Country",
       "founded": "Founded",
-      "foundedYear": "Est. {year}"
+      "foundedYear": "Est. {year}",
+      "allCountries": "All Countries",
+      "sortBy": "Sort by",
+      "sortName": "Name",
+      "sortYachtCount": "Models",
+      "sortFoundedYear": "Founded",
+      "resultsCount": "{filtered} of {total} manufacturers",
+      "noResults": "No manufacturers match this filter.",
+      "clearFilter": "Clear filter"
     },
     "detail": {
       "profileLabel": "Manufacturer Profile",

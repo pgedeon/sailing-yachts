@@ -492,7 +492,15 @@
       "emptySubtitle": "Cette page utilise l'ISR (régénération statique incrémentale) et affichera les données en direct en production.",
       "country": "Pays",
       "founded": "Fondé",
-      "foundedYear": "Depuis {year}"
+      "foundedYear": "Depuis {year}",
+      "allCountries": "Tous les pays",
+      "sortBy": "Trier par",
+      "sortName": "Nom",
+      "sortYachtCount": "Modèles",
+      "sortFoundedYear": "Fondé",
+      "resultsCount": "{filtered} sur {total} constructeurs",
+      "noResults": "Aucun constructeur ne correspond à ce filtre.",
+      "clearFilter": "Effacer le filtre"
     },
     "detail": {
       "profileLabel": "Profil du constructeur",
