@@ -18,7 +18,7 @@ describe("P13.2: Skip navigation & landmark structure", () => {
   // ── Skip-to-content link ──
   describe("Skip-to-content link", () => {
     const mainLayout = fs.readFileSync(
-      path.join(PROJECT_ROOT, "app/(main)/layout.tsx"),
+      path.join(PROJECT_ROOT, "app/[locale]/layout.tsx"),
       "utf-8"
     );
 
@@ -41,7 +41,12 @@ describe("P13.2: Skip navigation & landmark structure", () => {
   // ── ARIA Landmarks ──
   describe("ARIA landmarks", () => {
     const mainLayout = fs.readFileSync(
-      path.join(PROJECT_ROOT, "app/(main)/layout.tsx"),
+      path.join(PROJECT_ROOT, "app/[locale]/layout.tsx"),
+      "utf-8"
+    );
+    // Mobile menu ARIA attributes are in ClientNav.tsx (extracted during i18n refactor)
+    const clientNav = fs.readFileSync(
+      path.join(PROJECT_ROOT, "app/[locale]/ClientNav.tsx"),
       "utf-8"
     );
 
@@ -63,12 +68,12 @@ describe("P13.2: Skip navigation & landmark structure", () => {
     });
 
     it("mobile menu panel has role='navigation' and aria-label", () => {
-      expect(mainLayout).toContain('role="navigation"');
-      expect(mainLayout).toContain('aria-label="Mobile navigation"');
+      expect(clientNav).toContain('role="navigation"');
+      expect(clientNav).toContain('aria-label="Mobile navigation"');
     });
 
     it("mobile menu button has aria-controls attribute", () => {
-      expect(mainLayout).toContain('aria-controls="mobile-menu-panel"');
+      expect(clientNav).toContain('aria-controls="mobile-menu-panel"');
     });
   });
 
@@ -162,35 +167,35 @@ describe("P13.2: Skip navigation & landmark structure", () => {
 
     it("home page has proper heading hierarchy", () => {
       const result = checkLinearHeadingHierarchy(
-        path.join(PROJECT_ROOT, "app/(main)/page.tsx")
+        path.join(PROJECT_ROOT, "app/[locale]/page.tsx")
       );
       expect(result.valid, result.error).toBe(true);
     });
 
     it("guides listing page has proper heading hierarchy", () => {
       const result = checkLinearHeadingHierarchy(
-        path.join(PROJECT_ROOT, "app/(main)/guides/page.tsx")
+        path.join(PROJECT_ROOT, "app/[locale]/guides/page.tsx")
       );
       expect(result.valid, result.error).toBe(true);
     });
 
     it("glossary page has proper heading hierarchy", () => {
       const result = checkLinearHeadingHierarchy(
-        path.join(PROJECT_ROOT, "app/(main)/glossary/page.tsx")
+        path.join(PROJECT_ROOT, "app/[locale]/glossary/page.tsx")
       );
       expect(result.valid, result.error).toBe(true);
     });
 
     it("manufacturers page has proper heading hierarchy", () => {
       const result = checkLinearHeadingHierarchy(
-        path.join(PROJECT_ROOT, "app/(main)/manufacturers/page.tsx")
+        path.join(PROJECT_ROOT, "app/[locale]/manufacturers/page.tsx")
       );
       expect(result.valid, result.error).toBe(true);
     });
 
     it("links page has proper heading hierarchy", () => {
       const headings = getHeadings(
-        path.join(PROJECT_ROOT, "app/(main)/links/page.tsx")
+        path.join(PROJECT_ROOT, "app/[locale]/links/page.tsx")
       );
       expect(headings.length).toBeGreaterThan(0);
       expect(headings[0].level).toBe(1);
@@ -201,7 +206,7 @@ describe("P13.2: Skip navigation & landmark structure", () => {
       // so linear file order doesn't match DOM order. Check that all heading levels exist
       // and there's an h1.
       const result = checkHeadingHierarchy(
-        path.join(PROJECT_ROOT, "app/(main)/yachts/YachtsClient.tsx")
+        path.join(PROJECT_ROOT, "app/[locale]/yachts/YachtsClient.tsx")
       );
       expect(result.valid).toBe(true);
       // Verify heading levels: should have h1, h2, h3
@@ -213,14 +218,14 @@ describe("P13.2: Skip navigation & landmark structure", () => {
 
     it("search client has proper heading hierarchy", () => {
       const result = checkLinearHeadingHierarchy(
-        path.join(PROJECT_ROOT, "app/(main)/search/SearchClient.tsx")
+        path.join(PROJECT_ROOT, "app/[locale]/search/SearchClient.tsx")
       );
       expect(result.valid, result.error).toBe(true);
     });
 
     it("compare client has h1 elements", () => {
       const result = checkHeadingHierarchy(
-        path.join(PROJECT_ROOT, "app/(main)/compare/CompareClient.tsx")
+        path.join(PROJECT_ROOT, "app/[locale]/compare/CompareClient.tsx")
       );
       expect(result.valid).toBe(true);
     });
@@ -229,7 +234,7 @@ describe("P13.2: Skip navigation & landmark structure", () => {
       const result = checkHeadingHierarchy(
         path.join(
           PROJECT_ROOT,
-          "app/(main)/yachts/[slug]/YachtDetailClient.tsx"
+          "app/[locale]/yachts/[slug]/YachtDetailClient.tsx"
         )
       );
       expect(result.valid).toBe(true);
@@ -242,7 +247,7 @@ describe("P13.2: Skip navigation & landmark structure", () => {
       const result = checkLinearHeadingHierarchy(
         path.join(
           PROJECT_ROOT,
-          "app/(main)/favorites/FavoritesClient.tsx"
+          "app/[locale]/favorites/FavoritesClient.tsx"
         )
       );
       expect(result.valid, result.error).toBe(true);
@@ -258,12 +263,12 @@ describe("P13.2: Skip navigation & landmark structure", () => {
     }
 
     const pages = [
-      { name: "home", path: "app/(main)/page.tsx" },
-      { name: "guides listing", path: "app/(main)/guides/page.tsx" },
-      { name: "glossary listing", path: "app/(main)/glossary/page.tsx" },
-      { name: "manufacturers", path: "app/(main)/manufacturers/page.tsx" },
-      { name: "links", path: "app/(main)/links/page.tsx" },
-      { name: "favorites", path: "app/(main)/favorites/FavoritesClient.tsx" },
+      { name: "home", path: "app/[locale]/page.tsx" },
+      { name: "guides listing", path: "app/[locale]/guides/page.tsx" },
+      { name: "glossary listing", path: "app/[locale]/glossary/page.tsx" },
+      { name: "manufacturers", path: "app/[locale]/manufacturers/page.tsx" },
+      { name: "links", path: "app/[locale]/links/page.tsx" },
+      { name: "favorites", path: "app/[locale]/favorites/FavoritesClient.tsx" },
     ];
 
     for (const page of pages) {
@@ -275,7 +280,7 @@ describe("P13.2: Skip navigation & landmark structure", () => {
     // Client components that conditionally render h1 (e.g. print vs screen)
     it("compare client has h1 elements (print + screen)", () => {
       const count = countH1(
-        path.join(PROJECT_ROOT, "app/(main)/compare/CompareClient.tsx")
+        path.join(PROJECT_ROOT, "app/[locale]/compare/CompareClient.tsx")
       );
       expect(count).toBeGreaterThanOrEqual(1);
     });
@@ -284,7 +289,7 @@ describe("P13.2: Skip navigation & landmark structure", () => {
       const count = countH1(
         path.join(
           PROJECT_ROOT,
-          "app/(main)/yachts/[slug]/YachtDetailClient.tsx"
+          "app/[locale]/yachts/[slug]/YachtDetailClient.tsx"
         )
       );
       expect(count).toBeGreaterThanOrEqual(1);

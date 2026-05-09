@@ -76,7 +76,7 @@ describe("P13.3: Keyboard navigation enhancement", () => {
   // ── Mobile menu keyboard support ──
   describe("Mobile menu keyboard support", () => {
     const mobileMenu = fs.readFileSync(
-      path.join(PROJECT_ROOT, "app/(main)/MobileMenuKeyboard.tsx"),
+      path.join(PROJECT_ROOT, "app/[locale]/ClientNav.tsx"),
       "utf-8",
     );
 
@@ -111,12 +111,12 @@ describe("P13.3: Keyboard navigation enhancement", () => {
   // ── Layout keyboard accessibility ──
   describe("Layout keyboard accessibility", () => {
     const layout = fs.readFileSync(
-      path.join(PROJECT_ROOT, "app/(main)/layout.tsx"),
+      path.join(PROJECT_ROOT, "app/[locale]/layout.tsx"),
       "utf-8",
     );
 
     it("includes mobile menu component", () => {
-      expect(layout).toContain("MobileMenuKeyboard");
+      expect(layout).toContain("ClientNav");
     });
 
     it("has skip-to-content link", () => {
@@ -128,7 +128,7 @@ describe("P13.3: Keyboard navigation enhancement", () => {
   // ── YachtsClient modal keyboard support ──
   describe("YachtsClient modal keyboard support", () => {
     const yachtsClient = fs.readFileSync(
-      path.join(PROJECT_ROOT, "app/(main)/yachts/YachtsClient.tsx"),
+      path.join(PROJECT_ROOT, "app/[locale]/yachts/YachtsClient.tsx"),
       "utf-8",
     );
 
@@ -241,7 +241,7 @@ describe("P13.3: Keyboard navigation enhancement", () => {
   // ── CompareClient keyboard support ──
   describe("CompareClient keyboard support", () => {
     const compare = fs.readFileSync(
-      path.join(PROJECT_ROOT, "app/(main)/compare/CompareClient.tsx"),
+      path.join(PROJECT_ROOT, "app/[locale]/compare/CompareClient.tsx"),
       "utf-8",
     );
 
