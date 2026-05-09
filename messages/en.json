@@ -489,7 +489,10 @@
       "description": "Browse sailing yacht manufacturers, explore brand histories, and discover how many models each builder offers.",
       "models": "{count} model{count, plural, one {} other {s}}",
       "emptyTitle": "Manufacturers will appear here once the build completes.",
-      "emptySubtitle": "This page is using ISR (Incremental Static Regeneration) and will show live data on production."
+      "emptySubtitle": "This page is using ISR (Incremental Static Regeneration) and will show live data on production.",
+      "country": "Country",
+      "founded": "Founded",
+      "foundedYear": "Est. {year}"
     },
     "detail": {
       "profileLabel": "Manufacturer Profile",
