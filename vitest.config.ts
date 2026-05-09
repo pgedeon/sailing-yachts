@@ -3,7 +3,7 @@ import path from "path";
 
 export default defineConfig({
   test: {
-    include: ["tests/**/*.test.ts"],
+    include: ["tests/**/*.test.{ts,tsx}"],
     exclude: [
       // Standalone runner tests (use custom main(), not vitest describe/test)
       "tests/partner-offers.test.ts",
