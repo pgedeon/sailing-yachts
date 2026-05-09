@@ -28,3 +28,21 @@ The site has rich spec data (201 yachts with detailed dimensions, displacement, 
 - Performance: use dynamic imports (`next/dynamic`) for chart components to avoid bloating initial JS bundle.
 - Accessibility: include text alternatives (data tables) hidden behind a toggle for screen readers.
 - **Phase 14 i18n patterns apply**: use `useTranslations()` in client components, `getTranslations()` in server components.
+
+### Phase 16 — Manufacturer Data Enrichment (Priority: High)
+
+The manufacturers table has columns for country, founding year, website URL, logo URL, and description — but all 42 manufacturers have empty values. The manufacturer detail pages already render these fields (showing "—" placeholders). Enriching this data transforms thin manufacturer pages into authoritative brand profiles, improving SEO value and user experience.
+
+- **P16.1 — Seed manufacturer metadata (country, founding year, website, description):** Populate country, founded_year, website_url, and description for all 42 manufacturers using well-known sailing industry data. Write a seed script (scripts/seed-manufacturer-metadata.ts) that updates existing rows. Include a data file (scripts/manufacturer-data.json) with the enrichment data. Tests: verify all 42 manufacturers have non-null country and founded_year after seeding. *(priority: critical — foundation for all other P16 items)*
+
+- **P16.2 — Manufacturer logos and brand identity:** Add logo URLs for manufacturers (sourced from official websites or press kits, using placeholder/gravatar fallback for unavailable ones). Display logos on manufacturer listing page, manufacturer detail page, and yacht detail page. Update OG image generation to include manufacturer logo. Tests: rendering tests for logo display. *(priority: high)*
+
+- **P16.3 — Enhanced manufacturer listing page:** Redesign `/manufacturers` to show country flags, founding year, yacht count, and a short description in a card grid layout. Add filter by country and sort by name/yacht count/founding year. Tests: component rendering tests, filter logic tests. *(priority: high)*
+
+- **P16.4 — Manufacturer detail page improvements:** Show country flag, founding year, website link, and rich description prominently on `/manufacturers/[slug]`. Add "About [Brand]" section with history text. Show related manufacturers (same country or similar size range). Tests: rendering tests, related manufacturer query tests. *(priority: medium)*
+
+### Notes
+- Manufacturer metadata should be factually accurate — verify founding years and countries
+- Logos should be hosted or use official CDN URLs with proper attribution
+- All new content must be i18n-compatible (descriptions in both en and fr)
+- Use the existing Neon HTTP client pattern for DB updates (no psql/drizzle-kit push)

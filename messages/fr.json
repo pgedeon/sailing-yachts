@@ -489,7 +489,10 @@
       "description": "Parcourez les constructeurs de yachts à voile, explorez les histoires de marque et découvrez combien de modèles chaque constructeur propose.",
       "models": "{count} modèle{count, plural, one {} other {s}}",
       "emptyTitle": "Les constructeurs apparaîtront ici une fois la construction terminée.",
-      "emptySubtitle": "Cette page utilise l'ISR (régénération statique incrémentale) et affichera les données en direct en production."
+      "emptySubtitle": "Cette page utilise l'ISR (régénération statique incrémentale) et affichera les données en direct en production.",
+      "country": "Pays",
+      "founded": "Fondé",
+      "foundedYear": "Depuis {year}"
     },
     "detail": {
       "profileLabel": "Profil du constructeur",

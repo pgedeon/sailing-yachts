@@ -70,8 +70,11 @@ export async function generateMetadata({
 
   const manufacturer = data.manufacturer;
   const title = `${manufacturer.name} Yachts | Models & Specs`;
-  const description = manufacturer.description
-    ? manufacturer.description
+  const localeDescription = locale === "fr" && manufacturer.descriptionFr
+    ? manufacturer.descriptionFr
+    : manufacturer.description;
+  const description = localeDescription
+    ? localeDescription
     : `Browse ${manufacturer.name} sailing yachts, model specs, and builder information${manufacturer.country ? ` from ${manufacturer.country}` : ""}${manufacturer.foundedYear ? ` since ${manufacturer.foundedYear}` : ""}.`;
 
   return {
@@ -123,7 +126,7 @@ export default async function ManufacturerPage({
 
   const collectionJsonLd = generateCollectionPageJsonLd({
     name: `${manufacturer.name} Yachts`,
-    description: manufacturer.description || `Browse ${manufacturer.name} sailing yachts, model specs, and builder information.`,
+    description: (locale === "fr" && manufacturer.descriptionFr ? manufacturer.descriptionFr : manufacturer.description) || `Browse ${manufacturer.name} sailing yachts, model specs, and builder information.`, 
     url: getSiteUrl(`/manufacturers/${slug}`),
     itemCount: yachts.length,
   });
@@ -191,7 +194,7 @@ export default async function ManufacturerPage({
                 {manufacturer.name} {t("detail.yachtsSuffix")}
               </h1>
               <p className="mt-4 max-w-3xl text-muted-foreground leading-relaxed">
-                {manufacturer.description ||
+                {(locale === "fr" && manufacturer.descriptionFr ? manufacturer.descriptionFr : manufacturer.description) ||
                   t("detail.descriptionFallback", { name: manufacturer.name, count: manufacturer.yachtCount })}
               </p>
             </div>

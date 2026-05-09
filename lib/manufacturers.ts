@@ -10,6 +10,7 @@ export interface ManufacturerSummary {
   country: string | null;
   foundedYear: number | null;
   description: string | null;
+  descriptionFr: string | null;
   yachtCount: number;
 }
 
@@ -51,6 +52,7 @@ export async function getManufacturersWithCounts(): Promise<ManufacturerSummary[
       country: manufacturers.country,
       foundedYear: manufacturers.foundedYear,
       description: manufacturers.description,
+      descriptionFr: manufacturers.descriptionFr,
       yachtCount: count(yachtModels.id),
     })
     .from(manufacturers)
@@ -61,6 +63,7 @@ export async function getManufacturersWithCounts(): Promise<ManufacturerSummary[
       manufacturers.country,
       manufacturers.foundedYear,
       manufacturers.description,
+      manufacturers.descriptionFr,
     )
     .orderBy(asc(manufacturers.name));
 
@@ -73,6 +76,7 @@ export async function getManufacturersWithCounts(): Promise<ManufacturerSummary[
     country: row.country,
     foundedYear: row.foundedYear,
     description: row.description,
+    descriptionFr: row.descriptionFr,
     yachtCount: Number(row.yachtCount ?? 0),
   }));
 }
@@ -102,6 +106,7 @@ export async function getManufacturerBySlug(
     country: manufacturer.country,
     foundedYear: manufacturer.foundedYear,
     description: manufacturer.description,
+    descriptionFr: manufacturer.descriptionFr,
     yachtCount: Number(yachtCountResult[0]?.yachtCount ?? 0),
     websiteUrl: manufacturer.websiteUrl,
     logoUrl: manufacturer.logoUrl,

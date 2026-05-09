@@ -107,7 +107,7 @@ export default async function ManufacturersPage({ params }: ManufacturersListing
         <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
-              <Link href="/" className="hover:text-foreground transition-colors">
+              <Link href={`/${locale}`} className="hover:text-foreground transition-colors">
                 {t("breadcrumb.home")}
               </Link>
             </li>
@@ -143,13 +143,18 @@ export default async function ManufacturersPage({ params }: ManufacturersListing
                 {manufacturers.map((manufacturer: any) => (
                   <Link
                     key={manufacturer.name}
-                    href={`/manufacturers/${slugify(manufacturer.name)}`}
+                    href={`/${locale}/manufacturers/${slugify(manufacturer.name)}`}
                     className="block bg-white rounded-lg p-4 hover:bg-blue-50 transition border border-gray-100"
                   >
                     <div className="font-semibold text-gray-900">{manufacturer.name}</div>
                     <div className="text-sm text-gray-500 mt-1">
                       {t("listing.models", { count: manufacturer.yachtCount })}
                     </div>
+                    {manufacturer.country && (
+                      <div className="text-xs text-gray-400 mt-1">
+                        {manufacturer.country}{manufacturer.foundedYear ? ` · ${t("listing.foundedYear", { year: manufacturer.foundedYear })}` : ""}
+                      </div>
+                    )}
                   </Link>
                 ))}
               </div>
