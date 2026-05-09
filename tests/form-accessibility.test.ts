@@ -128,12 +128,13 @@ describe("P13.4: Form accessibility & error handling", () => {
   // ── SearchClient ──
   describe("SearchClient", () => {
     const component = fs.readFileSync(
-      path.join(PROJECT_ROOT, "app/(main)/search/SearchClient.tsx"),
+      path.join(PROJECT_ROOT, "app/[locale]/search/SearchClient.tsx"),
       "utf-8",
     );
 
     it("search input has aria-label", () => {
-      expect(component).toContain('aria-label="Search yachts"');
+      // After i18n refactor, the search heading is used as aria-label
+      expect(component).toContain('aria-label={t("heading")}');
     });
 
     it("autocomplete suggestions have role=listbox", () => {
@@ -141,7 +142,8 @@ describe("P13.4: Form accessibility & error handling", () => {
     });
 
     it("autocomplete suggestions have aria-label", () => {
-      expect(component).toContain('aria-label="Search suggestions"');
+      // After i18n refactor, aria-label uses translation key
+      expect(component).toContain('aria-label={t("suggestions.label")}');
     });
 
     it("results region has aria-live", () => {
@@ -160,7 +162,7 @@ describe("P13.4: Form accessibility & error handling", () => {
   // ── CompareClient ──
   describe("CompareClient picker search", () => {
     const component = fs.readFileSync(
-      path.join(PROJECT_ROOT, "app/(main)/compare/CompareClient.tsx"),
+      path.join(PROJECT_ROOT, "app/[locale]/compare/CompareClient.tsx"),
       "utf-8",
     );
 
@@ -177,7 +179,7 @@ describe("P13.4: Form accessibility & error handling", () => {
   // ── YachtsClient ──
   describe("YachtsClient results accessibility", () => {
     const component = fs.readFileSync(
-      path.join(PROJECT_ROOT, "app/(main)/yachts/YachtsClient.tsx"),
+      path.join(PROJECT_ROOT, "app/[locale]/yachts/YachtsClient.tsx"),
       "utf-8",
     );
 

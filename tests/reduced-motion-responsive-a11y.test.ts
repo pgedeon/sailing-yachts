@@ -157,7 +157,7 @@ describe("P13.6: Touch targets — CSS rules", () => {
 // ── Screen reader patterns ──
 describe("P13.6: Screen reader patterns — public pages", () => {
   describe("Home page", () => {
-    const homePage = readFile("app/(main)/page.tsx");
+    const homePage = readFile("app/[locale]/page.tsx");
 
     it("has semantic structure with headings", () => {
       expect(homePage).toMatch(/<h[1-3]/);
@@ -170,7 +170,7 @@ describe("P13.6: Screen reader patterns — public pages", () => {
   });
 
   describe("Yachts listing page", () => {
-    const yachtsPage = readFile("app/(main)/yachts/page.tsx");
+    const yachtsPage = readFile("app/[locale]/yachts/page.tsx");
 
     it("exports metadata or has a heading", () => {
       expect(yachtsPage).toMatch(/metadata|<h1|heading/);
@@ -178,7 +178,7 @@ describe("P13.6: Screen reader patterns — public pages", () => {
   });
 
   describe("YachtsClient component", () => {
-    const yachtsClient = readFile("app/(main)/yachts/YachtsClient.tsx");
+    const yachtsClient = readFile("app/[locale]/yachts/YachtsClient.tsx");
 
     it("has aria-live region for search results", () => {
       expect(yachtsClient).toContain("aria-live");
@@ -195,7 +195,7 @@ describe("P13.6: Screen reader patterns — public pages", () => {
   });
 
   describe("Search page", () => {
-    const searchClient = readFile("app/(main)/search/SearchClient.tsx");
+    const searchClient = readFile("app/[locale]/search/SearchClient.tsx");
 
     it("search input has accessible label", () => {
       expect(searchClient).toMatch(/aria-label|<label/);
@@ -215,7 +215,7 @@ describe("P13.6: Screen reader patterns — public pages", () => {
   });
 
   describe("Compare page", () => {
-    const compareClient = readFile("app/(main)/compare/CompareClient.tsx");
+    const compareClient = readFile("app/[locale]/compare/CompareClient.tsx");
 
     it("has accessible labels for picker inputs", () => {
       expect(compareClient).toMatch(/aria-label|<label/);
@@ -268,7 +268,7 @@ describe("P13.6: Screen reader patterns — public pages", () => {
 // ── Responsive accessibility checks ──
 describe("P13.6: Responsive accessibility — layout & components", () => {
   describe("Main layout", () => {
-    const layout = readFile("app/(main)/layout.tsx");
+    const layout = readFile("app/[locale]/layout.tsx");
 
     it("has skip-to-content link", () => {
       expect(layout).toContain('href="#main-content"');
@@ -292,13 +292,13 @@ describe("P13.6: Responsive accessibility — layout & components", () => {
 
     it("footer links have accessible text", () => {
       expect(layout).toMatch(
-        /3DPUT|Sailboats\.fr/,
+        /footer.builtBy3dput|footer.builtBySailboats/,
       );
     });
   });
 
   describe("Mobile menu responsive behavior", () => {
-    const mobileMenu = readFile("app/(main)/MobileMenuKeyboard.tsx");
+    const mobileMenu = readFile("app/[locale]/ClientNav.tsx");
 
     it("is hidden on desktop (md:hidden)", () => {
       expect(mobileMenu).toContain("md:hidden");
