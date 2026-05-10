@@ -4,6 +4,7 @@ import { eq, inArray, desc, asc, sql, count, isNotNull } from "drizzle-orm";
 export interface YachtDetailData {
   yacht: typeof yachtModels.$inferSelect;
   manufacturer: string;
+  manufacturerLogoUrl: string | null;
   images: Array<{
     url: string;
     caption: string | null;
@@ -196,6 +197,7 @@ export async function getYachtDetailData(slug: string): Promise<YachtDetailData 
     .select({
       yacht: yachtModels,
       manufacturer: manufacturers.name,
+      manufacturerLogoUrl: manufacturers.logoUrl,
     })
     .from(yachtModels)
     .leftJoin(manufacturers, eq(yachtModels.manufacturerId, manufacturers.id))
@@ -204,7 +206,7 @@ export async function getYachtDetailData(slug: string): Promise<YachtDetailData 
 
   if (yachtResult.length === 0) return null;
 
-  const { yacht, manufacturer } = yachtResult[0];
+  const { yacht, manufacturer, manufacturerLogoUrl } = yachtResult[0];
 
   // Fetch all spec values with category info
   const specs = await db
@@ -279,6 +281,7 @@ export async function getYachtDetailData(slug: string): Promise<YachtDetailData 
   return {
     yacht,
     manufacturer: manufacturer || "Unknown",
+    manufacturerLogoUrl: manufacturerLogoUrl || null,
     images: yachtImages.map((img: typeof images.$inferSelect) => ({
       url: img.url,
       caption: img.caption,

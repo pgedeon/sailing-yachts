@@ -18,6 +18,7 @@ import {
 import { getCountryFlag } from "@/lib/utils/country-flags";
 import { getSpotlightByManufacturerId } from "@/lib/manufacturer-spotlights";
 import { ManufacturerComparisons } from "./ManufacturerComparisons";
+import ManufacturerLogo from "@/components/manufacturer-logo";
 import dynamic from "next/dynamic";
 
 const ManufacturerFleetChart = dynamic(() => import("@/components/manufacturer-fleet-chart"), { ssr: false });
@@ -193,9 +194,12 @@ export default async function ManufacturerPage({
           </p>
           <div className="mt-3 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
-                {manufacturer.name} {t("detail.yachtsSuffix")}
-              </h1>
+              <div className="flex items-center gap-4">
+                <ManufacturerLogo name={manufacturer.name} logoUrl={manufacturer.logoUrl} size={64} />
+                <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                  {manufacturer.name} {t("detail.yachtsSuffix")}
+                </h1>
+              </div>
               <p className="mt-4 max-w-3xl text-muted-foreground leading-relaxed">
                 {(locale === "fr" && manufacturer.descriptionFr ? manufacturer.descriptionFr : manufacturer.description) ||
                   t("detail.descriptionFallback", { name: manufacturer.name, count: manufacturer.yachtCount })}
@@ -437,7 +441,8 @@ export default async function ManufacturerPage({
                   href={`/manufacturers/${rel.slug}`}
                   className="rounded-xl border border-border bg-card p-4 hover:border-sky-200 hover:shadow-sm transition-all text-center"
                 >
-                  <div className="text-2xl">{getCountryFlag(rel.country)}</div>
+                  <div className="flex justify-center"><ManufacturerLogo name={rel.name} logoUrl={rel.logoUrl} size={36} /></div>
+                  {rel.country && <div className="text-lg mt-1">{getCountryFlag(rel.country)}</div>}
                   <div className="mt-2 text-sm font-semibold leading-tight">{rel.name}</div>
                   <div className="mt-1 text-xs text-muted-foreground">
                     {t("detail.relatedManufacturers.yachtCount", { count: rel.yachtCount })}

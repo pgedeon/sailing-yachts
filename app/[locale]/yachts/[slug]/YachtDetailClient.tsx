@@ -12,6 +12,7 @@ import { PriceTierDetail } from "@/app/components/PriceTierBadge";
 import { PriceInsightBlock } from "@/app/components/PriceInsightBlock";
 import { calculatePriceTier } from "@/lib/price-tier";
 import { slugify } from "@/lib/utils/slugify";
+import ManufacturerLogo from "@/components/manufacturer-logo";
 import { SimilarYachts } from "./SimilarYachts";
 import { SameSizeAlternatives } from "./SameSizeAlternatives";
 import { RelatedManufacturers } from "./RelatedManufacturers";
@@ -46,6 +47,7 @@ interface YachtData {
   id: number;
   manufacturer: string;
   manufacturerId: number | null;
+  manufacturerLogoUrl: string | null;
   modelName: string;
   year: number;
   slug: string;
@@ -317,9 +319,12 @@ export default function YachtDetailClient() {
           <div className="flex items-center gap-2 mb-2">
             <CompletenessBadge score={calculateCompletenessScore(yacht)} size="md" showLabel aria-hidden="true" />
           </div>
-          <p className="text-base sm:text-lg text-muted-foreground mb-4">
-            {t("builtBy", { manufacturer: yacht.manufacturer })}
-          </p>
+          <div className="flex items-center gap-3 mb-4">
+            <ManufacturerLogo name={yacht.manufacturer} logoUrl={yacht.manufacturerLogoUrl ?? null} size={32} />
+            <p className="text-base sm:text-lg text-muted-foreground">
+              {t("builtBy", { manufacturer: yacht.manufacturer })}
+            </p>
+          </div>
           {yacht.description && (
             <p className="text-muted-foreground mb-4 leading-relaxed text-sm sm:text-base">
               {yacht.description}

@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { slugify } from "@/lib/utils/slugify";
 import type { ManufacturerSummary } from "@/lib/manufacturers";
+import ManufacturerLogo from "./manufacturer-logo";
 import { COUNTRY_FLAGS } from "@/lib/utils/country-flags";
 type SortKey = "name" | "yachtCount" | "foundedYear";
 type SortOrder = "asc" | "desc";
@@ -153,15 +154,20 @@ export default function ManufacturerListingClient({
                 href={`/${locale}/manufacturers/${slugify(m.name)}`}
                 className="block bg-white rounded-xl p-5 hover:bg-blue-50 hover:shadow-md transition border border-gray-100 group"
               >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="font-semibold text-gray-900 group-hover:text-sky-700 transition">
-                    {m.name}
-                  </div>
+                <div className="flex items-start gap-3">
+                  <ManufacturerLogo name={m.name} logoUrl={m.logoUrl} size={40} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="font-semibold text-gray-900 group-hover:text-sky-700 transition">
+                        {m.name}
+                      </div>
                   {m.country && (
                     <span className="text-xl shrink-0" title={m.country}>
                       {COUNTRY_FLAGS[m.country] ?? ""}
                     </span>
                   )}
+                    </div>
+                  </div>
                 </div>
                 <div className="flex items-center gap-3 mt-2 text-sm text-gray-500">
                   <span className="inline-flex items-center gap-1">
