@@ -168,3 +168,54 @@ export async function getYachtsByManufacturerId(
     primaryImage: primaryImageByYachtId.get(row.yacht.id) || null,
   }));
 }
+
+/**
+ * Get related manufacturers — same country, excluding the current one.
+ */
+export async function getRelatedManufacturers(
+  manufacturerId: number,
+  country: string | null,
+  limit = 6,
+): Promise<ManufacturerSummary[]> {
+  if (!country) return [];
+
+  const rows = await db
+    .select({
+      id: manufacturers.id,
+      name: manufacturers.name,
+      country: manufacturers.country,
+      foundedYear: manufacturers.foundedYear,
+      description: manufacturers.description,
+      descriptionFr: manufacturers.descriptionFr,
+      yachtCount: count(yachtModels.id),
+    })
+    .from(manufacturers)
+    .leftJoin(yachtModels, eq(yachtModels.manufacturerId, manufacturers.id))
+    .where(eq(manufacturers.country, country))
+    .groupBy(
+      manufacturers.id,
+      manufacturers.name,
+      manufacturers.country,
+      manufacturers.foundedYear,
+      manufacturers.description,
+      manufacturers.descriptionFr,
+    )
+    .orderBy(desc(count(yachtModels.id)))
+    .limit(limit + 1);
+
+  type RelatedRow = (typeof rows)[number];
+
+  return rows
+    .filter((row: RelatedRow) => row.id !== manufacturerId)
+    .slice(0, limit)
+    .map((row: RelatedRow) => ({
+      id: row.id,
+      name: row.name,
+      slug: slugify(row.name),
+      country: row.country,
+      foundedYear: row.foundedYear,
+      description: row.description,
+      descriptionFr: row.descriptionFr,
+      yachtCount: Number(row.yachtCount ?? 0),
+    }));
+}

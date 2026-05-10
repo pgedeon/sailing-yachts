@@ -534,6 +534,12 @@
         "title": "Read our {name} spotlight",
         "descriptionFallback": "Go deeper on {name}'s history, brand positioning, major milestones, and notable yacht models.",
         "openSpotlight": "Open spotlight →"
+      },
+      "aboutBrand": "About {name}",
+      "relatedManufacturers": {
+        "title": "Related Manufacturers",
+        "subtitle": "Other yacht builders from {country}",
+        "yachtCount": "{count, plural, one {# yacht} other {# yachts}}"
       }
     },
     "spotlight": {

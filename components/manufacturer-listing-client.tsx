@@ -1,36 +1,16 @@
 "use client";
-
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { slugify } from "@/lib/utils/slugify";
 import type { ManufacturerSummary } from "@/lib/manufacturers";
-
-// Country code to flag emoji mapping
-const COUNTRY_FLAGS: Record<string, string> = {
-  Austria: "🇦🇹",
-  Denmark: "🇩🇰",
-  Finland: "🇫🇮",
-  France: "🇫🇷",
-  Germany: "🇩🇪",
-  Italy: "🇮🇹",
-  Netherlands: "🇳🇱",
-  Norway: "🇳🇴",
-  Poland: "🇵🇱",
-  Slovenia: "🇸🇮",
-  Sweden: "🇸🇪",
-  "United Kingdom": "🇬🇧",
-  "United States": "🇺🇸",
-};
-
+import { COUNTRY_FLAGS } from "@/lib/utils/country-flags";
 type SortKey = "name" | "yachtCount" | "foundedYear";
 type SortOrder = "asc" | "desc";
-
 interface ManufacturerListingClientProps {
   manufacturers: ManufacturerSummary[];
   locale: string;
 }
-
 export default function ManufacturerListingClient({
   manufacturers,
   locale,
@@ -39,7 +19,6 @@ export default function ManufacturerListingClient({
   const [countryFilter, setCountryFilter] = useState<string>("all");
   const [sortKey, setSortKey] = useState<SortKey>("name");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
-
   // Derive unique countries from data
   const countries = useMemo(() => {
     const set = new Set<string>();
@@ -48,15 +27,12 @@ export default function ManufacturerListingClient({
     }
     return Array.from(set).sort();
   }, [manufacturers]);
-
   // Filter and sort
   const filtered = useMemo(() => {
     let list = manufacturers;
-
     if (countryFilter !== "all") {
       list = list.filter((m) => m.country === countryFilter);
     }
-
     list = [...list].sort((a, b) => {
       let cmp = 0;
       switch (sortKey) {
@@ -75,10 +51,8 @@ export default function ManufacturerListingClient({
       }
       return sortOrder === "asc" ? cmp : -cmp;
     });
-
     return list;
   }, [manufacturers, countryFilter, sortKey, sortOrder]);
-
   function handleSortChange(newKey: SortKey) {
     if (newKey === sortKey) {
       setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
@@ -87,17 +61,14 @@ export default function ManufacturerListingClient({
       setSortOrder(newKey === "name" ? "asc" : "desc"); // default desc for count/year
     }
   }
-
   function getSortIndicator(key: SortKey) {
     if (sortKey !== key) return "";
     return sortOrder === "asc" ? " ↑" : " ↓";
   }
-
   function getDescription(m: ManufacturerSummary): string | null {
     if (locale === "fr" && m.descriptionFr) return m.descriptionFr;
     return m.description ?? null;
   }
-
   return (
     <>
       {/* Filters & Sort Bar */}
@@ -123,7 +94,6 @@ export default function ManufacturerListingClient({
             ))}
           </select>
         </div>
-
         {/* Sort Buttons */}
         <div className="flex items-center gap-1 ml-auto">
           <span className="text-sm font-medium text-gray-700 mr-1">
@@ -151,7 +121,6 @@ export default function ManufacturerListingClient({
           ))}
         </div>
       </div>
-
       {/* Results count */}
       <div className="text-sm text-gray-500 mb-4">
         {t("listing.resultsCount", {
@@ -159,7 +128,6 @@ export default function ManufacturerListingClient({
           total: manufacturers.length,
         })}
       </div>
-
       {/* Cards Grid */}
       {filtered.length === 0 ? (
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
@@ -195,7 +163,6 @@ export default function ManufacturerListingClient({
                     </span>
                   )}
                 </div>
-
                 <div className="flex items-center gap-3 mt-2 text-sm text-gray-500">
                   <span className="inline-flex items-center gap-1">
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -212,7 +179,6 @@ export default function ManufacturerListingClient({
                     </span>
                   )}
                 </div>
-
                 {desc && (
                   <p className="mt-2 text-xs text-gray-400 line-clamp-2">
                     {desc}
