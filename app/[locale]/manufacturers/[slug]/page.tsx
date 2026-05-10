@@ -13,7 +13,9 @@ import {
 import {
   getManufacturerBySlug,
   getYachtsByManufacturerId,
+  getRelatedManufacturers,
 } from "@/lib/manufacturers";
+import { getCountryFlag } from "@/lib/utils/country-flags";
 import { getSpotlightByManufacturerId } from "@/lib/manufacturer-spotlights";
 import { ManufacturerComparisons } from "./ManufacturerComparisons";
 import dynamic from "next/dynamic";
@@ -30,12 +32,13 @@ async function getManufacturerData(slug: string) {
       const manufacturer = await getManufacturerBySlug(slug);
       if (!manufacturer) return null;
 
-      const [yachts, spotlight] = await Promise.all([
+      const [yachts, spotlight, related] = await Promise.all([
         getYachtsByManufacturerId(manufacturer.id),
         getSpotlightByManufacturerId(manufacturer.id),
+        getRelatedManufacturers(manufacturer.id, manufacturer.country),
       ]);
 
-      return { manufacturer, yachts, spotlight };
+      return { manufacturer, yachts, spotlight, related };
     },
     [`manufacturer:${slug}`],
     { tags: [`manufacturer:${slug}`, "manufacturers"], revalidate: 3600 }
@@ -116,7 +119,7 @@ export default async function ManufacturerPage({
     notFound();
   }
 
-  const { manufacturer, yachts, spotlight } = data;
+  const { manufacturer, yachts, spotlight, related } = data;
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Home", path: "/" },
@@ -215,7 +218,9 @@ export default async function ManufacturerPage({
             <div className="rounded-xl border border-border bg-white/80 p-4">
               <div className="text-sm text-muted-foreground">{t("detail.country")}</div>
               <div className="mt-1 text-lg font-semibold">
-                {manufacturer.country || "—"}
+                {manufacturer.country
+                  ? <>{getCountryFlag(manufacturer.country)} {manufacturer.country}</>
+                  : "—"}
               </div>
             </div>
             <div className="rounded-xl border border-border bg-white/80 p-4">
@@ -391,6 +396,57 @@ export default async function ManufacturerPage({
             </div>
           )}
         </section>
+
+
+        {/* About section */}
+        {((locale === "fr" && manufacturer.descriptionFr) || manufacturer.description) && (
+          <section className="mt-10 sm:mt-12">
+            <h2 className="text-2xl font-bold">{t("detail.aboutBrand", { name: manufacturer.name })}</h2>
+            <div className="mt-4 max-w-3xl text-muted-foreground leading-relaxed whitespace-pre-line">
+              {locale === "fr" && manufacturer.descriptionFr
+                ? manufacturer.descriptionFr
+                : manufacturer.description}
+            </div>
+            {manufacturer.websiteUrl && (
+              <a
+                href={manufacturer.websiteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-sky-700 hover:text-sky-900 transition-colors"
+              >
+                {t("detail.visitWebsite")}
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            )}
+          </section>
+        )}
+
+        {/* Related manufacturers */}
+        {related.length > 0 && (
+          <section className="mt-10 sm:mt-12">
+            <h2 className="text-2xl font-bold">{t("detail.relatedManufacturers.title")}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {t("detail.relatedManufacturers.subtitle", { country: manufacturer.country ?? "" })}
+            </p>
+            <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              {related.map((rel) => (
+                <Link
+                  key={rel.id}
+                  href={`/manufacturers/${rel.slug}`}
+                  className="rounded-xl border border-border bg-card p-4 hover:border-sky-200 hover:shadow-sm transition-all text-center"
+                >
+                  <div className="text-2xl">{getCountryFlag(rel.country)}</div>
+                  <div className="mt-2 text-sm font-semibold leading-tight">{rel.name}</div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {t("detail.relatedManufacturers.yachtCount", { count: rel.yachtCount })}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* P15.5 — Fleet overview chart */}
         <ManufacturerFleetChart yachts={yachts} manufacturerName={manufacturer.name} />
