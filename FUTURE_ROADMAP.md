@@ -37,9 +37,9 @@ The manufacturers table has columns for country, founding year, website URL, log
 
 - **P16.2 — Manufacturer logos and brand identity:** Add logo URLs for manufacturers (sourced from official websites or press kits, using placeholder/gravatar fallback for unavailable ones). Display logos on manufacturer listing page, manufacturer detail page, and yacht detail page. Update OG image generation to include manufacturer logo. Tests: rendering tests for logo display. *(priority: high)*
 
-- **P16.3 — Enhanced manufacturer listing page:** Redesign `/manufacturers` to show country flags, founding year, yacht count, and a short description in a card grid layout. Add filter by country and sort by name/yacht count/founding year. Tests: component rendering tests, filter logic tests. *(priority: high)*
+- ~~**P16.3 — Enhanced manufacturer listing page:** Redesign `/manufacturers` to show country flags, founding year, yacht count, and a short description in a card grid layout. Add filter by country and sort by name/yacht count/founding year. Tests: component rendering tests, filter logic tests. *(priority: high)*~~ *(completed 2026-05-09 — PR #261, Issue #260)*
 
-- **P16.4 — Manufacturer detail page improvements:** Show country flag, founding year, website link, and rich description prominently on `/manufacturers/[slug]`. Add "About [Brand]" section with history text. Show related manufacturers (same country or similar size range). Tests: rendering tests, related manufacturer query tests. *(priority: medium)*
+- ~~**P16.4 — Manufacturer detail page improvements:**~~ *(completed 2026-05-10 — PR #263, Issue #262)*
 
 ### Notes
 - Manufacturer metadata should be factually accurate — verify founding years and countries
