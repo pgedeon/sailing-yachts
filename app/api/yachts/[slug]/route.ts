@@ -38,7 +38,7 @@ export async function GET(
         const result = await getYachtDetailData(slug);
         if (!result) return null;
 
-        const { yacht, manufacturer, specsByGroup, images, reviews } = result;
+        const { yacht, manufacturer, manufacturerLogoUrl, specsByGroup, images, reviews } = result;
 
         // Rebuild specsByGroup with numeric values properly parsed
         const parsedSpecsByGroup: Record<
@@ -87,6 +87,7 @@ export async function GET(
           id: yacht.id,
           manufacturerId: yacht.manufacturerId,
           manufacturer: manufacturer,
+          manufacturerLogoUrl: manufacturerLogoUrl,
           modelName: yacht.modelName,
           year: yacht.year,
           slug: yacht.slug,

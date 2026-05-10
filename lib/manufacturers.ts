@@ -4,6 +4,7 @@ import { db, images, manufacturers, yachtModels } from "@/lib/db";
 import { slugify } from "@/lib/utils/slugify";
 
 export interface ManufacturerSummary {
+  logoUrl: string | null;
   id: number;
   name: string;
   slug: string;
@@ -16,7 +17,6 @@ export interface ManufacturerSummary {
 
 export interface ManufacturerDetail extends ManufacturerSummary {
   websiteUrl: string | null;
-  logoUrl: string | null;
 }
 
 export interface ManufacturerYachtCard {
@@ -53,6 +53,7 @@ export async function getManufacturersWithCounts(): Promise<ManufacturerSummary[
       foundedYear: manufacturers.foundedYear,
       description: manufacturers.description,
       descriptionFr: manufacturers.descriptionFr,
+      logoUrl: manufacturers.logoUrl,
       yachtCount: count(yachtModels.id),
     })
     .from(manufacturers)
@@ -64,6 +65,7 @@ export async function getManufacturersWithCounts(): Promise<ManufacturerSummary[
       manufacturers.foundedYear,
       manufacturers.description,
       manufacturers.descriptionFr,
+      manufacturers.logoUrl,
     )
     .orderBy(asc(manufacturers.name));
 
@@ -77,6 +79,7 @@ export async function getManufacturersWithCounts(): Promise<ManufacturerSummary[
     foundedYear: row.foundedYear,
     description: row.description,
     descriptionFr: row.descriptionFr,
+    logoUrl: row.logoUrl,
     yachtCount: Number(row.yachtCount ?? 0),
   }));
 }
@@ -187,6 +190,7 @@ export async function getRelatedManufacturers(
       foundedYear: manufacturers.foundedYear,
       description: manufacturers.description,
       descriptionFr: manufacturers.descriptionFr,
+      logoUrl: manufacturers.logoUrl,
       yachtCount: count(yachtModels.id),
     })
     .from(manufacturers)
@@ -199,6 +203,7 @@ export async function getRelatedManufacturers(
       manufacturers.foundedYear,
       manufacturers.description,
       manufacturers.descriptionFr,
+      manufacturers.logoUrl,
     )
     .orderBy(desc(count(yachtModels.id)))
     .limit(limit + 1);
@@ -216,6 +221,7 @@ export async function getRelatedManufacturers(
       foundedYear: row.foundedYear,
       description: row.description,
       descriptionFr: row.descriptionFr,
+      logoUrl: row.logoUrl,
       yachtCount: Number(row.yachtCount ?? 0),
     }));
 }
