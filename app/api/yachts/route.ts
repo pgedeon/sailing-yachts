@@ -1,12 +1,16 @@
 import { NextResponse } from 'next/server';
 import { pool } from '@/lib/db';
 import { cached, CACHE_TTL, CACHE_TAGS } from '@/lib/api-cache';
+import { assignUseCaseTags, type UseCaseTagId } from '@/lib/use-case-tags';
 
 export const dynamic = 'force-dynamic';
 
 // ─── Lightweight field sets ──────────────────────────────────────────
 const LIST_FIELDS = 'y.id, y.model_name, y.slug, y.year, y.length_overall, y.beam, y.draft, y.displacement, y.rig_type, y.keel_type, y.hull_material, y.cabins, y.manufacturer_id, m.name as manufacturer_name';
 const ALL_FIELDS = 'y.*, m.name as manufacturer_name';
+
+// ─── Fields needed for tag computation (used when useCase filter active) ──
+const TAG_FIELDS = 'y.id, y.model_name, y.slug, y.year, y.length_overall, y.beam, y.draft, y.displacement, y.ballast, y.sail_area_main, y.rig_type, y.keel_type, y.hull_material, y.cabins, y.berths, y.manufacturer_id, m.name as manufacturer_name';
 
 // ─── Cached: distinct filter options (changes rarely) ────────────────
 const getCachedFilterOptions = cached(
@@ -52,6 +56,22 @@ function addRangeFilter(
   }
 }
 
+// ─── Compute tags for a DB row ───────────────────────────────────────
+function computeTagsForRow(row: any): UseCaseTagId[] {
+  return assignUseCaseTags({
+    lengthOverall: row.length_overall ?? null,
+    beam: row.beam ?? null,
+    draft: row.draft ?? null,
+    displacement: row.displacement ?? null,
+    ballast: row.ballast ?? null,
+    sailAreaMain: row.sail_area_main ?? null,
+    cabins: row.cabins ?? null,
+    berths: row.berths ?? null,
+    rigType: row.rig_type ?? null,
+    keelType: row.keel_type ?? null,
+  });
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -60,6 +80,10 @@ export async function GET(request: Request) {
     const sortBy = searchParams.get('sort') || 'id';
     const sortOrder = searchParams.get('order') === 'desc' ? 'DESC' : 'ASC';
     const view = searchParams.get('view') || 'full'; // 'list' for lighter payload
+
+    // Use-case tag filter (computed in memory from spec heuristics)
+    const useCaseFilter = searchParams.get('filters[useCase]') as UseCaseTagId | null;
+    const validUseCaseFilter = useCaseFilter && ['bluewater-cruiser', 'weekend-sailor', 'racing', 'liveaboard', 'family-cruiser', 'light-wind-performer'].includes(useCaseFilter) ? useCaseFilter : null;
 
     // Build WHERE clauses
     const conditions: string[] = [];
@@ -95,18 +119,69 @@ export async function GET(request: Request) {
     addRangeFilter(searchParams, 'filters[cabinsMin]', 'filters[cabinsMax]', 'y.cabins', conditions, params, paramIdx, 'int');
     addRangeFilter(searchParams, 'filters[berthsMin]', 'filters[berthsMax]', 'y.berths', conditions, params, paramIdx, 'int');
 
-    // Keep backward compat for old single-bound filters
-    const cabinsMinLegacy = parseInt(searchParams.get('filters[cabinsMin]') || '', 10);
-    if (!isNaN(cabinsMinLegacy) && !searchParams.has('filters[cabinsMax]')) {
-      // Already handled by addRangeFilter above if cabinsMin exists
-    }
-
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
     // Validate sort column
     const allowedSorts = ['id', 'model_name', 'year', 'length_overall', 'beam', 'draft', 'displacement', 'ballast', 'sail_area_main', 'cabins', 'berths', 'heads', 'engine_hp'];
     const safeSort = allowedSorts.includes(sortBy) ? sortBy : 'id';
 
+    // When useCase filter is active, we need to fetch all matching rows,
+    // compute tags, filter in memory, then paginate.
+    if (validUseCaseFilter) {
+      // Fetch all rows matching other criteria (no LIMIT/OFFSET)
+      const fields = TAG_FIELDS;
+      const [dataResult, distinct] = await Promise.all([
+        pool.query(
+          `SELECT ${fields} FROM yacht_models y LEFT JOIN manufacturers m ON y.manufacturer_id = m.id ${whereClause} ORDER BY y.${safeSort} ${sortOrder}`,
+          params,
+        ),
+        getCachedFilterOptions(),
+      ]);
+
+      // Compute tags and filter
+      const tagged = dataResult.rows.map((row: any) => ({
+        row,
+        tags: computeTagsForRow(row),
+      })).filter(item => item.tags.includes(validUseCaseFilter));
+
+      const total = tagged.length;
+      const offset = (page - 1) * limit;
+      const paged = tagged.slice(offset, offset + limit);
+
+      // Map to response shape (always use full mapping since we fetched TAG_FIELDS)
+      const yachts = paged.map(({ row, tags }) => ({
+        id: row.id,
+        manufacturer: row.manufacturer_name ?? '',
+        modelName: row.model_name,
+        year: row.year ?? undefined,
+        slug: row.slug ?? undefined,
+        lengthOverall: row.length_overall ?? undefined,
+        beam: row.beam ?? undefined,
+        draft: row.draft ?? undefined,
+        displacement: row.displacement ?? undefined,
+        ballast: row.ballast ?? undefined,
+        sailAreaMain: row.sail_area_main ?? undefined,
+        rigType: row.rig_type ?? undefined,
+        keelType: row.keel_type ?? undefined,
+        hullMaterial: row.hull_material ?? undefined,
+        cabins: row.cabins ?? undefined,
+        berths: row.berths ?? undefined,
+        useCaseTags: tags,
+      }));
+
+      const response = NextResponse.json({
+        yachts,
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+        distinct,
+      });
+      response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=120');
+      return response;
+    }
+
+    // ── Normal path (no useCase filter) ──
     const offset = (page - 1) * limit;
     const fields = view === 'list' ? LIST_FIELDS : ALL_FIELDS;
 
