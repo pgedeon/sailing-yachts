@@ -25,6 +25,33 @@ const getCachedFilterOptions = cached(
   CACHE_TTL.FILTER_OPTIONS,
 );
 
+// ─── Helper: parse a numeric range filter ────────────────────────────
+function addRangeFilter(
+  searchParams: URLSearchParams,
+  paramMin: string,
+  paramMax: string,
+  column: string,
+  conditions: string[],
+  params: any[],
+  paramIdx: { value: number },
+  parse: 'float' | 'int' = 'float',
+) {
+  const minVal = parse === 'int'
+    ? parseInt(searchParams.get(paramMin) || '', 10)
+    : parseFloat(searchParams.get(paramMin) || '');
+  if (!isNaN(minVal as number)) {
+    conditions.push(`${column} >= $${paramIdx.value++}`);
+    params.push(minVal);
+  }
+  const maxVal = parse === 'int'
+    ? parseInt(searchParams.get(paramMax) || '', 10)
+    : parseFloat(searchParams.get(paramMax) || '');
+  if (!isNaN(maxVal as number)) {
+    conditions.push(`${column} <= $${paramIdx.value++}`);
+    params.push(maxVal);
+  }
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -37,52 +64,41 @@ export async function GET(request: Request) {
     // Build WHERE clauses
     const conditions: string[] = [];
     const params: any[] = [];
-    let paramIdx = 1;
+    const paramIdx = { value: 1 };
 
     const manufacturerFilter = searchParams.getAll('filters[manufacturers]').map(Number).filter(Boolean);
     if (manufacturerFilter.length > 0) {
-      const placeholders = manufacturerFilter.map(() => `$${paramIdx++}`).join(',');
+      const placeholders = manufacturerFilter.map(() => `$${paramIdx.value++}`).join(',');
       conditions.push(`y.manufacturer_id IN (${placeholders})`);
       params.push(...manufacturerFilter);
     }
 
     if (searchParams.get('filters[rigType]')) {
-      conditions.push(`y.rig_type = $${paramIdx++}`);
+      conditions.push(`y.rig_type = $${paramIdx.value++}`);
       params.push(searchParams.get('filters[rigType]'));
     }
     if (searchParams.get('filters[keelType]')) {
-      conditions.push(`y.keel_type = $${paramIdx++}`);
+      conditions.push(`y.keel_type = $${paramIdx.value++}`);
       params.push(searchParams.get('filters[keelType]'));
     }
     if (searchParams.get('filters[hullMaterial]')) {
-      conditions.push(`y.hull_material = $${paramIdx++}`);
+      conditions.push(`y.hull_material = $${paramIdx.value++}`);
       params.push(searchParams.get('filters[hullMaterial]'));
     }
 
-    const lengthMin = parseFloat(searchParams.get('filters[lengthMin]') || '');
-    if (!isNaN(lengthMin)) {
-      conditions.push(`y.length_overall >= $${paramIdx++}`);
-      params.push(lengthMin);
-    }
-    const lengthMax = parseFloat(searchParams.get('filters[lengthMax]') || '');
-    if (!isNaN(lengthMax)) {
-      conditions.push(`y.length_overall <= $${paramIdx++}`);
-      params.push(lengthMax);
-    }
-    const displacementMin = parseFloat(searchParams.get('filters[displacementMin]') || '');
-    if (!isNaN(displacementMin)) {
-      conditions.push(`y.displacement >= $${paramIdx++}`);
-      params.push(displacementMin);
-    }
-    const displacementMax = parseFloat(searchParams.get('filters[displacementMax]') || '');
-    if (!isNaN(displacementMax)) {
-      conditions.push(`y.displacement <= $${paramIdx++}`);
-      params.push(displacementMax);
-    }
-    const cabinsMin = parseInt(searchParams.get('filters[cabinsMin]') || '', 10);
-    if (!isNaN(cabinsMin)) {
-      conditions.push(`y.cabins >= $${paramIdx++}`);
-      params.push(cabinsMin);
+    // Range filters
+    addRangeFilter(searchParams, 'filters[lengthMin]', 'filters[lengthMax]', 'y.length_overall', conditions, params, paramIdx);
+    addRangeFilter(searchParams, 'filters[beamMin]', 'filters[beamMax]', 'y.beam', conditions, params, paramIdx);
+    addRangeFilter(searchParams, 'filters[draftMin]', 'filters[draftMax]', 'y.draft', conditions, params, paramIdx);
+    addRangeFilter(searchParams, 'filters[displacementMin]', 'filters[displacementMax]', 'y.displacement', conditions, params, paramIdx);
+    addRangeFilter(searchParams, 'filters[sailAreaMin]', 'filters[sailAreaMax]', 'y.sail_area_main', conditions, params, paramIdx);
+    addRangeFilter(searchParams, 'filters[cabinsMin]', 'filters[cabinsMax]', 'y.cabins', conditions, params, paramIdx, 'int');
+    addRangeFilter(searchParams, 'filters[berthsMin]', 'filters[berthsMax]', 'y.berths', conditions, params, paramIdx, 'int');
+
+    // Keep backward compat for old single-bound filters
+    const cabinsMinLegacy = parseInt(searchParams.get('filters[cabinsMin]') || '', 10);
+    if (!isNaN(cabinsMinLegacy) && !searchParams.has('filters[cabinsMax]')) {
+      // Already handled by addRangeFilter above if cabinsMin exists
     }
 
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
@@ -98,7 +114,7 @@ export async function GET(request: Request) {
     const [countResult, dataResult, distinct] = await Promise.all([
       pool.query(`SELECT COUNT(*)::int as count FROM yacht_models y ${whereClause}`, params),
       pool.query(
-        `SELECT ${fields} FROM yacht_models y LEFT JOIN manufacturers m ON y.manufacturer_id = m.id ${whereClause} ORDER BY y.${safeSort} ${sortOrder} LIMIT $${paramIdx++} OFFSET $${paramIdx++}`,
+        `SELECT ${fields} FROM yacht_models y LEFT JOIN manufacturers m ON y.manufacturer_id = m.id ${whereClause} ORDER BY y.${safeSort} ${sortOrder} LIMIT $${paramIdx.value++} OFFSET $${paramIdx.value++}`,
         [...params, limit, offset],
       ),
       getCachedFilterOptions(),

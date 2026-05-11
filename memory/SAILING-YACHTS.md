@@ -1,36 +1,52 @@
 # Sailing Yachts Builder Session Summary
 
-**Date:** 2026-05-07
-**Issue worked on:** #250 / PR #251 - P15.4: Length distribution chart on yacht listing page
+**Date:** 2026-05-10
+**Issue worked on:** #264 / PR #265 - P16.2: Manufacturer logos and brand identity
 
 ## What was implemented
-- **New API endpoint**: `/api/length-distribution` — returns 10 histogram bins (0-6m through 25m+) with yacht counts per bin. Uses SQL CASE expression for binning. Cached with unstable_cache (5 min TTL).
-- **LengthDistributionChart component**: Recharts bar chart on `/yachts` page
-  - Shows length distribution of all 201 yachts across 10 bins
-  - Highlights bins matching current lengthMin/lengthMax filter range (blue) vs dimmed (gray)
-  - Lazy-loaded via IntersectionObserver + next/dynamic (no SSR bundle impact)
-  - Accessible data table behind `<details>` toggle
-  - Full i18n (English + French)
-- **10 unit tests**: bin index calculation, boundary values, filter highlighting, response shape validation
+- **ManufacturerLogo component** (`components/manufacturer-logo.tsx`):
+  - Displays Clearbit Logo API images when `logo_url` is available
+  - Falls back gracefully to deterministic colored circle with brand initial on load error
+  - Reusable across all pages with configurable size (40/64/32px used)
+- **Seed script** (`scripts/seed-manufacturer-logos.ts`):
+  - Populated `logo_url` for 40/42 manufacturers using Clearbit Logo API
+  - 2 manufacturers (Hatteland, Vancouver/Northshore) have no website → use SVG fallback
+- **Logo display on 3 pages:**
+  - `/manufacturers` listing — 40px logo on each card
+  - `/manufacturers/[slug]` — 64px logo in header + 36px on related manufacturer cards
+  - `/yachts/[slug]` — 32px logo next to "built by" manufacturer name
+- **API update:** Added `manufacturerLogoUrl` to `/api/yachts/[slug]` response
+- **Data model:** Added `logoUrl` to `ManufacturerSummary` interface and all related queries
 
 ## Build/Test Results
 - **Typecheck**: ✅ Pass
 - **Build**: ✅ Pass
-- **Vitest tests**: ✅ 10/10 pass
-- **CI**: ✅ All checks pass (Lint, TypeScript, Build, Performance Budgets)
+- **Lint**: ✅ Pass
+- **Vitest tests**: ✅ 12/12 pass
+- **Performance Budgets**: ✅ Pass
 
 ## Deploy Status
-- **PR #251**: ✅ Merged (squash)
+- **PR #265**: ✅ Merged (squash)
 - **Vercel**: ✅ Production deployed
 
 ## Live Verification Results
 - **/**: ✅ OK
-- **/yachts**: ✅ OK (69821 bytes, distribution references found in HTML)
+- **/yachts**: ✅ OK
 - **/search**: ✅ OK
 - **/compare**: ✅ OK
+- **/manufacturers**: ✅ OK
+- **/manufacturers/beneteau**: ✅ OK
+- **/manufacturers/bavaria-yachts**: ✅ OK
+- **/yachts/beneteau-oceanis-40-1**: ✅ OK
 - **API /api/yachts**: ✅ 201 yachts
-- **API /api/length-distribution**: ✅ 10 bins, 201 total yachts
-  - Distribution: 0-6m(1), 6-8m(6), 8-10m(26), 10-12m(46), 12-14m(55), 14-16m(32), 16-18m(16), 18-20m(10), 20-25m(7), 25m+(2)
+- **API /api/yachts/[slug]**: ✅ Returns manufacturerLogoUrl
+- **Browser console errors**: Only Clearbit DNS failure (sandbox-only, fallback works) + pre-existing auth 404
+- **No "Application error" on any page**: ✅
+
+## Notes
+- Clearbit Logo API is not accessible from this sandbox server (DNS resolution fails), but works for real users
+- The `onError` fallback on the `<img>` element correctly shows the initial avatar when Clearbit fails
+- Phase 16 is now fully complete (P16.1-P16.4 all done)
 
 ## Next Recommended Task
-- **P15.5 — Manufacturer fleet overview charts**: On `/manufacturers/[slug]` pages, add chart showing manufacturer's yacht lineup by size with year of introduction
+- Phase 16 is COMPLETE. Check FUTURE_ROADMAP.md for Phase 17+ items or create new phase
