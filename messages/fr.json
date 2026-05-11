@@ -265,6 +265,114 @@
       "criteria": "Critères d’étiquetage",
       "disclaimer": "Les tags sont attribués automatiquement parmi {total} yachts à partir d’heuristiques basées sur les spécifications. Ils constituent un point de départ pour la recherche, et non une classification définitive. Vérifiez toujours l’adéquation d’un yacht à vos besoins spécifiques.",
       "browseAll": "Parcourir Tous les Yachts"
+    },
+    "finder": {
+      "heading": "Trouvez Votre Yacht Idéal",
+      "intro": "Répondez à quelques questions et nous vous proposerons les yachts les mieux adaptés à vos besoins.",
+      "stepOf": "Étape {current} sur {total}",
+      "prioritiesHint": "Sélectionnez une ou plusieurs priorités qui comptent le plus pour vous.",
+      "steps": {
+        "experience": "Quel est votre niveau d'expérience en voile ?",
+        "intendedUse": "Comment prévoyez-vous utiliser votre yacht ?",
+        "crewSize": "Combien de personnes seront généralement à bord ?",
+        "budget": "Quelle est votre fourchette de budget ?",
+        "priorities": "Qu'est-ce qui compte le plus pour vous ?"
+      },
+      "options": {
+        "experience": {
+          "beginner": {
+            "label": "Débutant",
+            "description": "Nouveau en voile ou juste après des cours"
+          },
+          "intermediate": {
+            "label": "Intermédiaire",
+            "description": "Plusieurs saisons d'expérience en voile"
+          },
+          "advanced": {
+            "label": "Avancé",
+            "description": "Expérience extensive incluant des passages au large"
+          }
+        },
+        "intendedUse": {
+          "coastal": {
+            "label": "Croisière Côtière",
+            "description": "Sorties à la journée et weekends le long de la côte"
+          },
+          "bluewater": {
+            "label": "Navigation Hauturière",
+            "description": "Passages océaniques et grands voyages"
+          },
+          "racing": {
+            "label": "Course",
+            "description": "Régates de club et événements de voile compétitifs"
+          },
+          "weekending": {
+            "label": "Escapades Week-end",
+            "description": "Courts séjours avec nuits à bord"
+          }
+        },
+        "crewSize": {
+          "solo": {
+            "label": "En solo",
+            "description": "Je naviguerai principalement seul"
+          },
+          "couple": {
+            "label": "En couple",
+            "description": "Deux personnes la plupart du temps"
+          },
+          "smallGroup": {
+            "label": "Petit groupe",
+            "description": "3-4 personnes, famille ou amis"
+          },
+          "largeGroup": {
+            "label": "Grand groupe",
+            "description": "5+ personnes pour des locations ou grands groupes"
+          }
+        },
+        "budget": {
+          "budget": {
+            "label": "Économique",
+            "description": "Yachts plus petits et simples — excellent rapport qualité-prix"
+          },
+          "midRange": {
+            "label": "Intermédiaire",
+            "description": "Yachts bien équipés dans la gamme populaire 35-42 pi"
+          },
+          "premium": {
+            "label": "Premium",
+            "description": "Yachts plus grands et plus luxueux"
+          },
+          "noLimit": {
+            "label": "Sans limite",
+            "description": "Montrez-moi tout, peu importe le budget"
+          }
+        },
+        "priorities": {
+          "speed": "Vitesse",
+          "comfort": "Confort",
+          "safety": "Sécurité",
+          "value": "Rapport qualité-prix"
+        }
+      },
+      "nav": {
+        "back": "Retour",
+        "next": "Suivant",
+        "seeResults": "Voir mes résultats",
+        "loading": "Recherche en cours..."
+      },
+      "results": {
+        "heading": "Vos meilleurs résultats",
+        "count": "{count, plural, one {# yacht correspond à vos préférences} other {# yachts correspondent à vos préférences}}",
+        "noResults": "Aucun yacht ne correspond à vos critères. Essayez d'ajuster vos préférences.",
+        "tryAgain": "Réessayer avec d'autres réponses",
+        "startOver": "Recommencer"
+      },
+      "breakdown": {
+        "useMatch": "Usage",
+        "sizeFit": "Taille",
+        "experience": "Expérience",
+        "priorities": "Priorités"
+      }
     }
   },
   "Search": {
