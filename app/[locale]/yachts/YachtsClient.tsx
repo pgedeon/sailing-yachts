@@ -8,15 +8,17 @@ import CompletenessBadge from '@/components/CompletenessBadge';
 import { calculateCompletenessScore } from '@/lib/completeness';
 import { FILTER_PRESETS, detectActivePreset, type FilterPreset } from '@/lib/filter-presets';
 import type { YachtsListingResult, FilterOptions, YachtListItem } from '@/lib/yachts';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { assignUseCaseTags, USE_CASE_TAG_IDS, type UseCaseTagId } from '@/lib/use-case-tags';
+import { UseCaseBadgeGroup } from '@/components/use-case-badge';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
 const LengthDistributionChart = dynamic(() => import('@/components/length-distribution-chart'), { ssr: false, loading: () => null });
 const RangeSlider = dynamic(() => import('@/app/components/RangeSlider'), { ssr: false, loading: () => null });
 
-// Use the shared type from lib/yachts
-type Yacht = YachtListItem;
+// Use the shared type from lib/yachts — extended with optional useCaseTags from API
+type Yacht = YachtListItem & { useCaseTags?: UseCaseTagId[] };
 
 // ─── Data-driven range definitions ───────────────────────────────────
 const RANGE_FILTERS = [
@@ -73,6 +75,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
   const rigType = searchParams.get('filters[rigType]') ?? undefined;
   const keelType = searchParams.get('filters[keelType]') ?? undefined;
   const hullMaterial = searchParams.get('filters[hullMaterial]') ?? undefined;
+  const useCaseFilter = searchParams.get('filters[useCase]') ?? undefined;
 
   // Active filter count for badge (count non-empty filter params)
   const activeFilterCount = Array.from(searchParams.keys()).filter(k => k.startsWith('filters[') && searchParams.get(k)).length;
@@ -85,6 +88,26 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
   const currentKey = filterKey(searchParams);
   const lastFetchedKey = useRef<string>(initialData ? 'initial' : '');
   const abortRef = useRef<AbortController | null>(null);
+
+  // Compute tags for yachts that don't have them from the API (client-side fallback)
+  const yachtsWithTags = useMemo(() =>
+    yachts.map(y => ({
+      ...y,
+      useCaseTags: y.useCaseTags ?? assignUseCaseTags({
+        lengthOverall: y.lengthOverall ?? null,
+        beam: y.beam ?? null,
+        draft: y.draft ?? null,
+        displacement: y.displacement ?? null,
+        ballast: y.ballast ?? null,
+        sailAreaMain: y.sailAreaMain ?? null,
+        cabins: y.cabins ?? null,
+        berths: y.berths ?? null,
+        rigType: y.rigType ?? null,
+        keelType: y.keelType ?? null,
+      }),
+    })),
+    [yachts]
+  );
 
   // Fetch manufacturers list (once, only if not provided via SSR)
   useEffect(() => {
@@ -124,6 +147,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
     if (rigType) q.set('filters[rigType]', rigType);
     if (keelType) q.set('filters[keelType]', keelType);
     if (hullMaterial) q.set('filters[hullMaterial]', hullMaterial);
+    if (useCaseFilter) q.set('filters[useCase]', useCaseFilter);
 
     // Pass all range filter params from URL to API
     for (const rf of RANGE_FILTERS) {
@@ -309,6 +333,26 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
             {t('filters.activeCount', { count: activeFilterCount })}
           </span>
         )}
+      </div>
+
+      {/* Use Case Tag filter */}
+      <div className="mb-6">
+        <h3 className="text-sm font-medium mb-2" id="filter-usecase-heading">{t('filters.useCase')}</h3>
+        <ul className="space-y-1 max-h-56 overflow-y-auto" role="radiogroup" aria-labelledby="filter-usecase-heading">
+          {USE_CASE_TAG_IDS.map(tagId => (
+            <li key={tagId}>
+              <label className="inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="form-checkbox rounded"
+                  checked={useCaseFilter === tagId}
+                  onChange={() => setFilter('useCase', useCaseFilter === tagId ? null : tagId)}
+                />
+                <span className="ml-2 text-sm">{t(`useCaseTags.${tagId}.label`)}</span>
+              </label>
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* Manufacturer filter */}
@@ -499,7 +543,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
             ) : (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" role="region" aria-label="Yacht listings" aria-live="polite">
-                  {yachts.map(yacht => (
+                  {yachtsWithTags.map(yacht => (
                     <div key={yacht.id} className="border rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow relative">
                       <div className="flex items-start justify-between gap-2">
                         <h3 className="font-bold text-lg leading-tight">
@@ -526,6 +570,12 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
                         })} />
                         <CompletenessBadge score={calculateCompletenessScore(yacht)} />
                       </div>
+                      {/* Use case tags */}
+                      {yacht.useCaseTags && yacht.useCaseTags.length > 0 && (
+                        <div className="mt-2">
+                          <UseCaseBadgeGroup tagIds={yacht.useCaseTags} />
+                        </div>
+                      )}
                       <dl className="mt-3 text-sm">
                         <div className="flex justify-between py-0.5"><dt className="text-gray-500">{t('specs.length')}</dt><dd className="font-medium">{format(yacht.lengthOverall)} m</dd></div>
                         <div className="flex justify-between py-0.5"><dt className="text-gray-500">{t('specs.beam')}</dt><dd className="font-medium">{format(yacht.beam)} m</dd></div>

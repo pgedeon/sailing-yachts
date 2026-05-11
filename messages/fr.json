@@ -156,7 +156,8 @@
         "cabinsMax": "Cabines maximum",
         "berthsMin": "Couchettes minimum",
         "berthsMax": "Couchettes maximum"
-      }
+      },
+      "useCase": "Usage"
     },
     "presets": {
       "label": "Filtres rapides",
@@ -220,6 +221,50 @@
       "dataTableToggle": "Voir le tableau de données",
       "colRange": "Tranche de longueur",
       "colCount": "Nombre de voiliers"
+    },
+    "useCaseTags": {
+      "bluewater-cruiser": {
+        "label": "Croiseur Hauturier",
+        "description": "Yachts prêts pour l’océan avec un déplacement important, un ratio de lest élevé et une construction robuste, conçus pour les traversées au long cours et les voyages transocéaniques.",
+        "criteria": "LOA ≥ 10,5 m (35 pi), déplacement ≥ 5 000 kg, ratio de lest ≥ 30 %, ou type de quille éprouvée (quillard/aillee/longue)."
+      },
+      "weekend-sailor": {
+        "label": "Sortie Week-end",
+        "description": "Yachts compacts et faciles à manier, idéaux pour les sorties côtières et la croisière du week-end. Assez légers pour être gérés par un équipage réduit.",
+        "criteria": "LOA ≤ 10 m (33 pi). Exclut les yachts également étiquetés Croiseur Hauturier."
+      },
+      "racing": {
+        "label": "Course",
+        "description": "Yachts légers et puissants avec un faible ratio déplacement/longueur et une grande surface de voilure, optimisés pour la vitesse et la régate.",
+        "criteria": "Ratio Déplacement/Longueur ≤ 200, Ratio Surface de voilure/Déplacement ≥ 18."
+      },
+      "liveaboard": {
+        "label": "Vie à Bord",
+        "description": "Yachts spacieux avec plusieurs cabines, conçus pour la vie à bord prolongée. Espace suffisant pour les provisions, les effets personnels et une croisière confortable à long terme.",
+        "criteria": "LOA ≥ 11 m (36 pi), 3 cabines ou plus."
+      },
+      "family-cruiser": {
+        "label": "Croiseur Familial",
+        "description": "Yachts de taille modérée offrant un logement généreux et des caractéristiques de conduite indulgentes, parfaits pour les vacances en voilier en famille avec des enfants.",
+        "criteria": "LOA 9–14 m (30–46 pi), 2 cabines ou plus."
+      },
+      "light-wind-performer": {
+        "label": "Performant Petits Vent",
+        "description": "Yachts dotés d’un plan de voilure généreux par rapport à leur poids, excellents dans les conditions de vent léger où d’autres bateaux peinent à avancer.",
+        "criteria": "Ratio Surface de voilure/Déplacement ≥ 17, déplacement ≤ 6 000 kg."
+      }
+    },
+    "useCaseTagsPage": {
+      "meta": {
+        "title": "Catégories d’Usage des Yachts — Sailing Yacht Info",
+        "description": "Comprenez comment les yachts sont classés par type de navigation — hauturier, course, croisière familiale et plus encore."
+      },
+      "heading": "Catégories d’Usage des Yachts",
+      "intro": "Chaque yacht de notre base de données est automatiquement étiqueté en fonction de ses caractéristiques techniques. Ces tags vous aident à trouver rapidement les yachts adaptés à vos objectifs de navigation. Un même yacht peut avoir plusieurs tags si ses spécifications correspondent à plusieurs usages.",
+      "yachtCount": "{count, plural, one {# yacht} other {# yachts}}",
+      "criteria": "Critères d’étiquetage",
+      "disclaimer": "Les tags sont attribués automatiquement parmi {total} yachts à partir d’heuristiques basées sur les spécifications. Ils constituent un point de départ pour la recherche, et non une classification définitive. Vérifiez toujours l’adéquation d’un yacht à vos besoins spécifiques.",
+      "browseAll": "Parcourir Tous les Yachts"
     }
   },
   "Search": {

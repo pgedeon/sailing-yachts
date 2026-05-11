@@ -156,7 +156,8 @@
         "cabinsMax": "Maximum cabins",
         "berthsMin": "Minimum berths",
         "berthsMax": "Maximum berths"
-      }
+      },
+      "useCase": "Use Case"
     },
     "presets": {
       "label": "Quick filter presets",
@@ -220,6 +221,50 @@
       "dataTableToggle": "View data table",
       "colRange": "Length Range",
       "colCount": "Number of Yachts"
+    },
+    "useCaseTags": {
+      "bluewater-cruiser": {
+        "label": "Bluewater Cruiser",
+        "description": "Ocean-ready yachts with heavy displacement, high ballast ratio, and robust construction designed for long-distance offshore passages and transoceanic voyages.",
+        "criteria": "LOA ≥ 10.5m (35ft), displacement ≥ 5,000 kg, ballast ratio ≥ 30%, or proven keel type (fin/long/full)."
+      },
+      "weekend-sailor": {
+        "label": "Weekend Sailor",
+        "description": "Compact, easy-to-handle yachts ideal for short coastal trips and weekend cruising. Light enough for a small crew to manage comfortably.",
+        "criteria": "LOA ≤ 10m (33ft). Excludes yachts also tagged as Bluewater Cruisers."
+      },
+      "racing": {
+        "label": "Racing",
+        "description": "Light and powerful yachts with low displacement-to-length ratios and high sail area, optimized for speed and competitive sailing.",
+        "criteria": "Displacement/Length ratio ≤ 200, Sail Area/Displacement ratio ≥ 18."
+      },
+      "liveaboard": {
+        "label": "Liveaboard",
+        "description": "Spacious yachts with multiple cabins designed for extended living aboard. Plenty of room for provisions, personal belongings, and comfortable long-term cruising.",
+        "criteria": "LOA ≥ 11m (36ft), 3 or more cabins."
+      },
+      "family-cruiser": {
+        "label": "Family Cruiser",
+        "description": "Moderate-size yachts with generous accommodation and forgiving handling characteristics, perfect for family sailing holidays with children.",
+        "criteria": "LOA 9–14m (30–46ft), 2 or more cabins."
+      },
+      "light-wind-performer": {
+        "label": "Light Wind Performer",
+        "description": "Yachts with generous sail plans relative to their weight, excelling in light air conditions where other boats struggle to move.",
+        "criteria": "Sail Area/Displacement ratio ≥ 17, displacement ≤ 6,000 kg."
+      }
+    },
+    "useCaseTagsPage": {
+      "meta": {
+        "title": "Yacht Use Case Categories — Sailing Yacht Info",
+        "description": "Understand how yachts are categorized by sailing use case — bluewater, racing, family cruising, and more."
+      },
+      "heading": "Yacht Use Case Categories",
+      "intro": "Every yacht in our database is automatically tagged based on its specifications. These tags help you quickly find yachts suited to your sailing goals. A single yacht may have multiple tags if its specs fit several use cases.",
+      "yachtCount": "{count, plural, one {# yacht} other {# yachts}}",
+      "criteria": "Tagging Criteria",
+      "disclaimer": "Tags are assigned automatically from {total} yachts based on spec-based heuristics. They are a starting point for research, not a definitive classification. Always verify a yacht's suitability for your specific needs.",
+      "browseAll": "Browse All Yachts"
     }
   },
   "Search": {
