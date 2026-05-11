@@ -132,7 +132,31 @@
       "hullMaterial": "Hull Material",
       "noOptions": "No options",
       "clearFilters": "Clear Filters",
-      "toggle": "Filters"
+      "toggle": "Filters",
+      "range": {
+        "length": "Length (m)",
+        "beam": "Beam (m)",
+        "draft": "Draft (m)",
+        "displacement": "Displacement (kg)",
+        "sailArea": "Sail Area (m²)",
+        "cabins": "Cabins",
+        "berths": "Berths",
+        "active": "filtered",
+        "lengthMin": "Minimum length",
+        "lengthMax": "Maximum length",
+        "beamMin": "Minimum beam",
+        "beamMax": "Maximum beam",
+        "draftMin": "Minimum draft",
+        "draftMax": "Maximum draft",
+        "displacementMin": "Minimum displacement",
+        "displacementMax": "Maximum displacement",
+        "sailAreaMin": "Minimum sail area",
+        "sailAreaMax": "Maximum sail area",
+        "cabinsMin": "Minimum cabins",
+        "cabinsMax": "Maximum cabins",
+        "berthsMin": "Minimum berths",
+        "berthsMax": "Maximum berths"
+      }
     },
     "presets": {
       "label": "Quick filter presets",

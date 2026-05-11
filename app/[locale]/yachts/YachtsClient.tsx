@@ -13,9 +13,21 @@ import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
 const LengthDistributionChart = dynamic(() => import('@/components/length-distribution-chart'), { ssr: false, loading: () => null });
+const RangeSlider = dynamic(() => import('@/app/components/RangeSlider'), { ssr: false, loading: () => null });
 
 // Use the shared type from lib/yachts
 type Yacht = YachtListItem;
+
+// ─── Data-driven range definitions ───────────────────────────────────
+const RANGE_FILTERS = [
+  { key: 'length', minParam: 'filters[lengthMin]', maxParam: 'filters[lengthMax]', dbMin: 4, dbMax: 30, step: 0.5, unit: 'm' },
+  { key: 'beam', minParam: 'filters[beamMin]', maxParam: 'filters[beamMax]', dbMin: 1.5, dbMax: 12, step: 0.1, unit: 'm' },
+  { key: 'draft', minParam: 'filters[draftMin]', maxParam: 'filters[draftMax]', dbMin: 0.3, dbMax: 4.5, step: 0.1, unit: 'm' },
+  { key: 'displacement', minParam: 'filters[displacementMin]', maxParam: 'filters[displacementMax]', dbMin: 0, dbMax: 50000, step: 500, unit: 'kg' },
+  { key: 'sailArea', minParam: 'filters[sailAreaMin]', maxParam: 'filters[sailAreaMax]', dbMin: 5, dbMax: 350, step: 5, unit: 'm²' },
+  { key: 'cabins', minParam: 'filters[cabinsMin]', maxParam: 'filters[cabinsMax]', dbMin: 0, dbMax: 7, step: 1, unit: '' },
+  { key: 'berths', minParam: 'filters[berthsMin]', maxParam: 'filters[berthsMax]', dbMin: 0, dbMax: 18, step: 1, unit: '' },
+] as const;
 
 // Serialize filters to a string key for stable comparison
 function filterKey(searchParams: URLSearchParams): string {
@@ -61,11 +73,6 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
   const rigType = searchParams.get('filters[rigType]') ?? undefined;
   const keelType = searchParams.get('filters[keelType]') ?? undefined;
   const hullMaterial = searchParams.get('filters[hullMaterial]') ?? undefined;
-  const lengthMin = searchParams.get('filters[lengthMin]') ?? undefined;
-  const lengthMax = searchParams.get('filters[lengthMax]') ?? undefined;
-  const displacementMin = searchParams.get('filters[displacementMin]') ?? undefined;
-  const displacementMax = searchParams.get('filters[displacementMax]') ?? undefined;
-  const cabinsMin = searchParams.get('filters[cabinsMin]') ?? undefined;
 
   // Active filter count for badge (count non-empty filter params)
   const activeFilterCount = Array.from(searchParams.keys()).filter(k => k.startsWith('filters[') && searchParams.get(k)).length;
@@ -117,11 +124,14 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
     if (rigType) q.set('filters[rigType]', rigType);
     if (keelType) q.set('filters[keelType]', keelType);
     if (hullMaterial) q.set('filters[hullMaterial]', hullMaterial);
-    if (lengthMin) q.set('filters[lengthMin]', lengthMin);
-    if (lengthMax) q.set('filters[lengthMax]', lengthMax);
-    if (displacementMin) q.set('filters[displacementMin]', displacementMin);
-    if (displacementMax) q.set('filters[displacementMax]', displacementMax);
-    if (cabinsMin) q.set('filters[cabinsMin]', cabinsMin);
+
+    // Pass all range filter params from URL to API
+    for (const rf of RANGE_FILTERS) {
+      const minVal = searchParams.get(rf.minParam);
+      const maxVal = searchParams.get(rf.maxParam);
+      if (minVal) q.set(rf.minParam, minVal);
+      if (maxVal) q.set(rf.maxParam, maxVal);
+    }
 
     fetch(`/api/yachts?${q.toString()}`, { cache: 'no-store', signal: controller.signal })
       .then(r => {
@@ -218,6 +228,24 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
     lastFetchedKey.current = '';
   };
 
+  const setRangeFilter = useCallback((minParam: string, maxParam: string, minVal: number, maxVal: number, dbMin: number, dbMax: number) => {
+    const url = new URLSearchParams(searchParams.toString());
+    // Only set params if they differ from the full range
+    if (minVal <= dbMin) {
+      url.delete(minParam);
+    } else {
+      url.set(minParam, String(minVal));
+    }
+    if (maxVal >= dbMax) {
+      url.delete(maxParam);
+    } else {
+      url.set(maxParam, String(maxVal));
+    }
+    window.history.pushState({}, '', `?${url.toString()}`);
+    setPage(1);
+    lastFetchedKey.current = '';
+  }, [searchParams]);
+
   const clearFilters = () => {
     window.history.pushState({}, '', '?page=1');
     setPage(1);
@@ -283,6 +311,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
         )}
       </div>
 
+      {/* Manufacturer filter */}
       <div className="mb-6">
         <h3 className="text-sm font-medium mb-2" id="filter-manufacturer-heading">{t('filters.manufacturer')}</h3>
         {manufacturers.length === 0 ? <p className="text-sm text-gray-500">Loading...</p> : (
@@ -299,6 +328,38 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
         )}
       </div>
 
+      {/* Range sliders */}
+      {RANGE_FILTERS.map(rf => {
+        const currentMin = parseFloat(searchParams.get(rf.minParam) || '') || rf.dbMin;
+        const currentMax = parseFloat(searchParams.get(rf.maxParam) || '') || rf.dbMax;
+        const isDefault = currentMin <= rf.dbMin && currentMax >= rf.dbMax;
+        const label = t(`filters.range.${rf.key}`);
+
+        return (
+          <div key={rf.key} className="mb-5">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium">{label}</h3>
+              <span className="text-xs text-gray-500">
+                {isDefault ? '' : t('filters.range.active')}
+              </span>
+            </div>
+            <RangeSlider
+              min={rf.dbMin}
+              max={rf.dbMax}
+              step={rf.step}
+              valueMin={currentMin}
+              valueMax={currentMax}
+              onChange={(min, max) => setRangeFilter(rf.minParam, rf.maxParam, min, max, rf.dbMin, rf.dbMax)}
+              formatLabel={(v) => rf.unit ? `${v}${rf.unit}` : String(v)}
+              ariaLabelMin={t(`filters.range.${rf.key}Min`)}
+              ariaLabelMax={t(`filters.range.${rf.key}Max`)}
+              debounceMs={300}
+            />
+          </div>
+        );
+      })}
+
+      {/* Categorical filters */}
       <div className="mb-6">
         <h3 className="text-sm font-medium mb-2" id="filter-rigtype-heading">{t('filters.rigType')}</h3>
         {distinct.rigTypes.length === 0 ? <p className="text-sm text-gray-500">{t('filters.noOptions')}</p> : (
@@ -352,6 +413,10 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
       </button>
     </div>
   );
+
+  // Get current length range for the distribution chart
+  const lengthMin = searchParams.get('filters[lengthMin]');
+  const lengthMax = searchParams.get('filters[lengthMax]');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -418,7 +483,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
           {/* Sidebar — always visible on md+, toggleable on mobile */}
           <aside
             id="filter-sidebar"
-            className={`${filtersOpen ? 'block' : 'hidden'} md:block w-full md:w-64 flex-shrink-0`}
+            className={`${filtersOpen ? 'block' : 'hidden'} md:block w-full md:w-72 flex-shrink-0`}
             aria-hidden={!filtersOpen && true}
           >
             <FilterSidebar />

@@ -29,7 +29,7 @@ The site has rich spec data (201 yachts with detailed dimensions, displacement, 
 - Accessibility: include text alternatives (data tables) hidden behind a toggle for screen readers.
 - **Phase 14 i18n patterns apply**: use `useTranslations()` in client components, `getTranslations()` in server components.
 
-### Phase 16 — Manufacturer Data Enrichment (Priority: High)
+### Phase 16 — Manufacturer Data Enrichment (Priority: High) — ✅ COMPLETE
 
 The manufacturers table has columns for country, founding year, website URL, logo URL, and description — but all 42 manufacturers have empty values. The manufacturer detail pages already render these fields (showing "—" placeholders). Enriching this data transforms thin manufacturer pages into authoritative brand profiles, improving SEO value and user experience.
 
@@ -46,3 +46,26 @@ The manufacturers table has columns for country, founding year, website URL, log
 - Logos should be hosted or use official CDN URLs with proper attribution
 - All new content must be i18n-compatible (descriptions in both en and fr)
 - Use the existing Neon HTTP client pattern for DB updates (no psql/drizzle-kit push)
+
+### Phase 17 — Advanced Yacht Discovery & Smart Recommendations (Priority: High)
+
+The /yachts listing page has basic filter dropdowns (manufacturer, rig type, keel type, hull material, length range) but lacks the advanced filtering and smart discovery features that serious sailors expect. Adding range sliders, cabin/berth filters, smart recommendation engine, and "yacht finder" wizard would transform the discovery experience and significantly increase engagement and time-on-site.
+
+- **P17.1 — Advanced range filters with slider UI:** Replace plain text inputs for length/displacement range with dual-handle range sliders (using a lightweight React slider library or custom implementation). Add new filterable ranges: cabin count, berth count, draft range, sail area range. Show live result count as filters change. Preserve filters in URL params for sharing. Tests: filter logic unit tests, URL serialization tests, slider interaction tests. *(priority: critical — UX foundation for Phase 17)*
+
+- **P17.2 — Yacht "Use Case" tags & filter:** Add use-case tags to yachts (e.g., "Bluewater Cruiser", "Weekend Sailor", "Racing", "Liveaboard", "Family Cruiser", "Light Wind Performer") based on spec heuristics (displacement/length ratio, sail area, draft, cabin count). Display as colored badges on yacht cards. Add tag filter to /yachts page. Create a tag reference page at /yachts/tags explaining each category. Tests: tag assignment logic unit tests, rendering tests. *(priority: high)*
+
+- **P17.3 — Yacht Finder Wizard:** Add a multi-step "Find Your Perfect Yacht" wizard page at /yachts/finder. Steps: (1) sailing experience level, (2) intended use (coastal/bluewater/racing/weekending), (3) crew size, (4) budget range, (5) key priorities (speed/comfort/safety/value). Results page shows top matching yachts with match scores. Tests: scoring algorithm unit tests, wizard flow tests. *(priority: high)*
+
+- **P17.4 — "Yachts like this" smart recommendations:** Enhance the similar yachts section on detail pages with a weighted similarity score considering: LOA (±15%), use-case tag match, same rig/keel type, similar displacement/length ratio, price tier. Show match percentage badge. Add "Why recommended?" tooltip explaining the match factors. Tests: similarity scoring unit tests, rendering tests. *(priority: medium)*
+
+- **P17.5 — Saved search & alert system enhancement:** Enhance existing alert system to support filter-based alerts (e.g., "notify me when a new 35-40ft bluewater cruiser is added"). Add saved search management page at /account/searches. Show saved searches in user account dashboard. Tests: saved search CRUD tests, alert trigger logic tests. *(priority: medium)*
+
+### Notes
+- All new filters must be i18n-compatible (labels in en + fr)
+- Range sliders must be accessible (keyboard navigation, ARIA labels)
+- Use-case tag heuristics should be documented and configurable
+- Wizard should work without login (results available immediately)
+- Smart recommendations should fallback gracefully when insufficient data
+- Consider performance: filter changes should debounce API calls (300ms)
+- Mobile-first: sliders and wizard must work well on touch devices

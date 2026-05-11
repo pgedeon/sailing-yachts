@@ -132,7 +132,31 @@
       "hullMaterial": "Matériau de coque",
       "noOptions": "Aucune option",
       "clearFilters": "Effacer les filtres",
-      "toggle": "Filtres"
+      "toggle": "Filtres",
+      "range": {
+        "length": "Longueur (m)",
+        "beam": "Bau (m)",
+        "draft": "Tirant d'eau (m)",
+        "displacement": "Déplacement (kg)",
+        "sailArea": "Surface de voilure (m²)",
+        "cabins": "Cabines",
+        "berths": "Couchettes",
+        "active": "filtré",
+        "lengthMin": "Longueur minimale",
+        "lengthMax": "Longueur maximale",
+        "beamMin": "Bau minimum",
+        "beamMax": "Bau maximum",
+        "draftMin": "Tirant d'eau minimum",
+        "draftMax": "Tirant d'eau maximum",
+        "displacementMin": "Déplacement minimum",
+        "displacementMax": "Déplacement maximum",
+        "sailAreaMin": "Surface de voilure minimum",
+        "sailAreaMax": "Surface de voilure maximum",
+        "cabinsMin": "Cabines minimum",
+        "cabinsMax": "Cabines maximum",
+        "berthsMin": "Couchettes minimum",
+        "berthsMax": "Couchettes maximum"
+      }
     },
     "presets": {
       "label": "Filtres rapides",
