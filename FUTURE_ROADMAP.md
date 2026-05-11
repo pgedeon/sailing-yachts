@@ -55,7 +55,7 @@ The /yachts listing page has basic filter dropdowns (manufacturer, rig type, kee
 
 - ~~**P17.2 — Yacht "Use Case" tags & filter:**~~ Add use-case tags to yachts based on spec heuristics. Display as colored badges, add filter, tag reference page. *(completed 2026-05-11 — PR #269, Issue #268, 25 tests)*
 
-- **P17.3 — Yacht Finder Wizard:** Add a multi-step "Find Your Perfect Yacht" wizard page at /yachts/finder. Steps: (1) sailing experience level, (2) intended use (coastal/bluewater/racing/weekending), (3) crew size, (4) budget range, (5) key priorities (speed/comfort/safety/value). Results page shows top matching yachts with match scores. Tests: scoring algorithm unit tests, wizard flow tests. *(priority: high)*
+- ~~**P17.3 — Yacht Finder Wizard:**~~ 5-step wizard at /yachts/finder with weighted scoring algorithm. *(completed 2026-05-11 — PR #271, Issue #270, 23 tests)*
 
 - **P17.4 — "Yachts like this" smart recommendations:** Enhance the similar yachts section on detail pages with a weighted similarity score considering: LOA (±15%), use-case tag match, same rig/keel type, similar displacement/length ratio, price tier. Show match percentage badge. Add "Why recommended?" tooltip explaining the match factors. Tests: similarity scoring unit tests, rendering tests. *(priority: medium)*
 
