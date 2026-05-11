@@ -265,6 +265,114 @@
       "criteria": "Tagging Criteria",
       "disclaimer": "Tags are assigned automatically from {total} yachts based on spec-based heuristics. They are a starting point for research, not a definitive classification. Always verify a yacht's suitability for your specific needs.",
       "browseAll": "Browse All Yachts"
+    },
+    "finder": {
+      "heading": "Find Your Perfect Yacht",
+      "intro": "Answer a few questions and we'll match you with the best yachts for your needs.",
+      "stepOf": "Step {current} of {total}",
+      "prioritiesHint": "Select one or more priorities that matter most to you.",
+      "steps": {
+        "experience": "What's your sailing experience?",
+        "intendedUse": "How do you plan to use your yacht?",
+        "crewSize": "How many people will typically be on board?",
+        "budget": "What's your budget range?",
+        "priorities": "What matters most to you?"
+      },
+      "options": {
+        "experience": {
+          "beginner": {
+            "label": "Beginner",
+            "description": "New to sailing or just completed courses"
+          },
+          "intermediate": {
+            "label": "Intermediate",
+            "description": "Several seasons of sailing experience"
+          },
+          "advanced": {
+            "label": "Advanced",
+            "description": "Extensive experience including offshore passages"
+          }
+        },
+        "intendedUse": {
+          "coastal": {
+            "label": "Coastal Cruising",
+            "description": "Day sails and weekend trips along the coast"
+          },
+          "bluewater": {
+            "label": "Bluewater Sailing",
+            "description": "Ocean passages and long-distance voyaging"
+          },
+          "racing": {
+            "label": "Racing",
+            "description": "Club racing and competitive sailing events"
+          },
+          "weekending": {
+            "label": "Weekend Getaways",
+            "description": "Short trips with overnight stays"
+          }
+        },
+        "crewSize": {
+          "solo": {
+            "label": "Solo",
+            "description": "I'll sail mostly alone"
+          },
+          "couple": {
+            "label": "Couple",
+            "description": "Two people most of the time"
+          },
+          "smallGroup": {
+            "label": "Small Group",
+            "description": "3-4 people, family or friends"
+          },
+          "largeGroup": {
+            "label": "Large Group",
+            "description": "5+ people for charters or big groups"
+          }
+        },
+        "budget": {
+          "budget": {
+            "label": "Budget-Friendly",
+            "description": "Smaller, simpler yachts — great value"
+          },
+          "midRange": {
+            "label": "Mid-Range",
+            "description": "Well-equipped yachts in the popular 35-42ft range"
+          },
+          "premium": {
+            "label": "Premium",
+            "description": "Larger, more luxurious yachts"
+          },
+          "noLimit": {
+            "label": "No Limit",
+            "description": "Show me everything regardless of budget"
+          }
+        },
+        "priorities": {
+          "speed": "Speed",
+          "comfort": "Comfort",
+          "safety": "Safety",
+          "value": "Value"
+        }
+      },
+      "nav": {
+        "back": "Back",
+        "next": "Next",
+        "seeResults": "See My Matches",
+        "loading": "Finding matches..."
+      },
+      "results": {
+        "heading": "Your Top Matches",
+        "count": "{count, plural, one {# yacht matches your preferences} other {# yachts match your preferences}}",
+        "noResults": "No yachts matched your criteria. Try adjusting your preferences.",
+        "tryAgain": "Try again with different answers",
+        "startOver": "Start Over"
+      },
+      "breakdown": {
+        "useMatch": "Use Match",
+        "sizeFit": "Size Fit",
+        "experience": "Experience",
+        "priorities": "Priorities"
+      }
     }
   },
   "Search": {
