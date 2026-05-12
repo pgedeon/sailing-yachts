@@ -1,66 +1,9 @@
 import { NextResponse } from "next/server";
 import { db, yachtModels, manufacturers, images } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import { rankSimilarYachts, type YachtForSimilarity } from "@/lib/similarity-score";
 
 export const dynamic = "force-dynamic";
-
-interface SpecRow {
-  id: number;
-  manufacturer: string | null;
-  modelName: string;
-  slug: string | null;
-  year: number;
-  lengthOverall: string | null;
-  beam: string | null;
-  draft: string | null;
-  displacement: string | null;
-  sailAreaMain: string | null;
-  hullMaterial: string | null;
-  rigType: string | null;
-  keelType: string | null;
-  cabins: number | null;
-}
-
-interface ScoredYacht extends SpecRow {
-  score: number;
-  primaryImage: string | null;
-}
-
-/**
- * Weighted Euclidean similarity based on dimensional specs.
- * Weights: LOA 30%, displacement 25%, beam 20%, draft 15%, sail area 10%.
- */
-function computeSimilarity(source: SpecRow, candidates: SpecRow[]): ScoredYacht[] {
-  type DimKey = "lengthOverall" | "beam" | "draft" | "displacement" | "sailAreaMain";
-  const dims: Array<{ key: DimKey; weight: number }> = [
-    { key: "lengthOverall", weight: 0.30 },
-    { key: "displacement", weight: 0.25 },
-    { key: "beam", weight: 0.20 },
-    { key: "draft", weight: 0.15 },
-    { key: "sailAreaMain", weight: 0.10 },
-  ];
-
-  return candidates
-    .map((c) => {
-      let totalWeight = 0;
-      let weightedDist = 0;
-
-      for (const dim of dims) {
-        const sv = source[dim.key] !== null ? parseFloat(source[dim.key]!) : null;
-        const cv = c[dim.key] !== null ? parseFloat(c[dim.key]!) : null;
-        if (sv === null || cv === null || sv === 0) continue;
-        weightedDist += dim.weight * (Math.abs(sv - cv) / sv);
-        totalWeight += dim.weight;
-      }
-
-      if (totalWeight === 0) return null;
-      const score = Math.max(0, 1 - weightedDist / totalWeight);
-      return { ...c, score };
-    })
-    .filter((x): x is ScoredYacht => x !== null && x.score > 0.3)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 5);
-}
 
 export async function GET(
   request: Request,
@@ -81,11 +24,13 @@ export async function GET(
         beam: yachtModels.beam,
         draft: yachtModels.draft,
         displacement: yachtModels.displacement,
+        ballast: yachtModels.ballast,
         sailAreaMain: yachtModels.sailAreaMain,
         hullMaterial: yachtModels.hullMaterial,
         rigType: yachtModels.rigType,
         keelType: yachtModels.keelType,
         cabins: yachtModels.cabins,
+        berths: yachtModels.berths,
       })
       .from(yachtModels)
       .leftJoin(manufacturers, eq(yachtModels.manufacturerId, manufacturers.id))
@@ -96,11 +41,10 @@ export async function GET(
       return NextResponse.json({ error: "Yacht not found" }, { status: 404 });
     }
 
-    const source = sourceResult[0];
+    const source = sourceResult[0] as YachtForSimilarity;
 
-    // Fetch candidate yachts — exclude source, limit to reasonable set
-    // Fetch all yachts (200 is fine for in-memory similarity)
-    const candidates = await db
+    // Fetch all candidate yachts
+    const candidatesRaw = await db
       .select({
         id: yachtModels.id,
         manufacturer: manufacturers.name,
@@ -111,40 +55,59 @@ export async function GET(
         beam: yachtModels.beam,
         draft: yachtModels.draft,
         displacement: yachtModels.displacement,
+        ballast: yachtModels.ballast,
         sailAreaMain: yachtModels.sailAreaMain,
         hullMaterial: yachtModels.hullMaterial,
         rigType: yachtModels.rigType,
         keelType: yachtModels.keelType,
         cabins: yachtModels.cabins,
+        berths: yachtModels.berths,
       })
       .from(yachtModels)
       .leftJoin(manufacturers, eq(yachtModels.manufacturerId, manufacturers.id));
 
-    // Filter out source in JS (avoids ne() issues with Neon HTTP)
-    const filteredCandidates = candidates.filter((c: any) => c.id !== source.id);
+    const candidates = candidatesRaw as YachtForSimilarity[];
 
-    // Compute similarity
-    const similar = computeSimilarity(source, filteredCandidates);
+    // Compute similarity using new weighted algorithm
+    const ranked = rankSimilarYachts(source, candidates);
 
-    // Fetch primary images for similar yachts individually
-    if (similar.length > 0) {
-      for (const yacht of similar) {
+    // Build response with images and factor details
+    const similar = await Promise.all(
+      ranked.map(async (entry) => {
+        let primaryImage: string | null = null;
         try {
           const yachtImages = await db
-            .select({
-              url: images.url,
-              isPrimary: images.isPrimary,
-            })
+            .select({ url: images.url })
             .from(images)
-            .where(eq(images.yachtModelId, yacht.id))
+            .where(eq(images.yachtModelId, entry.yacht.id))
             .limit(1);
-
-          (yacht as any).primaryImage = yachtImages.length > 0 ? yachtImages[0].url : null;
+          primaryImage = yachtImages.length > 0 ? yachtImages[0].url : null;
         } catch {
-          (yacht as any).primaryImage = null;
+          primaryImage = null;
         }
-      }
-    }
+
+        return {
+          id: entry.yacht.id,
+          manufacturer: entry.yacht.manufacturer,
+          modelName: entry.yacht.modelName,
+          slug: entry.yacht.slug,
+          year: entry.yacht.year,
+          lengthOverall: entry.yacht.lengthOverall,
+          beam: entry.yacht.beam,
+          draft: entry.yacht.draft,
+          displacement: entry.yacht.displacement,
+          sailAreaMain: entry.yacht.sailAreaMain,
+          rigType: entry.yacht.rigType,
+          keelType: entry.yacht.keelType,
+          hullMaterial: entry.yacht.hullMaterial,
+          cabins: entry.yacht.cabins,
+          berths: entry.yacht.berths,
+          score: entry.score,
+          factors: entry.factors,
+          primaryImage,
+        };
+      }),
+    );
 
     return NextResponse.json({ similar });
   } catch (error) {
