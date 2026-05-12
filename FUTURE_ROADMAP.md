@@ -57,7 +57,7 @@ The /yachts listing page has basic filter dropdowns (manufacturer, rig type, kee
 
 - ~~**P17.3 — Yacht Finder Wizard:**~~ 5-step wizard at /yachts/finder with weighted scoring algorithm. *(completed 2026-05-11 — PR #271, Issue #270, 23 tests)*
 
-- **P17.4 — "Yachts like this" smart recommendations:** Enhance the similar yachts section on detail pages with a weighted similarity score considering: LOA (±15%), use-case tag match, same rig/keel type, similar displacement/length ratio, price tier. Show match percentage badge. Add "Why recommended?" tooltip explaining the match factors. Tests: similarity scoring unit tests, rendering tests. *(priority: medium)*
+- ~~**P17.4 — "Yachts like this" smart recommendations:**~~ Enhance the similar yachts section on detail pages with a weighted similarity score considering: LOA (±15%), use-case tag match, same rig/keel type, similar displacement/length ratio, price tier. Show match percentage badge. Add "Why recommended?" tooltip explaining the match factors. Tests: similarity scoring unit tests, rendering tests. *(completed 2026-05-12 — PR #273, Issue #272, 14 tests)*/
 
 - **P17.5 — Saved search & alert system enhancement:** Enhance existing alert system to support filter-based alerts (e.g., "notify me when a new 35-40ft bluewater cruiser is added"). Add saved search management page at /account/searches. Show saved searches in user account dashboard. Tests: saved search CRUD tests, alert trigger logic tests. *(priority: medium)*
 
