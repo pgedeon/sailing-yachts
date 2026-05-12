@@ -64,6 +64,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedYacht, setSelectedYacht] = useState<Yacht | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
   // Focus management refs
   const modalRef = useRef<HTMLDivElement>(null);
@@ -322,6 +323,36 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
 
   if (error) return <div className="p-8 text-center text-red-600">{error}</div>;
 
+  const handleSaveSearch = useCallback(async () => {
+    setSaveStatus('saving');
+    try {
+      const params: Record<string, unknown> = {};
+      searchParams.forEach((v, k) => { params[k] = v; });
+      const res = await fetch('/api/user/searches', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: undefined,
+          searchParams: params,
+          resultCount: total,
+          alertEnabled: true,
+        }),
+      });
+      if (res.status === 401) {
+        window.location.href = '/auth/signin';
+        return;
+      }
+      if (res.ok) {
+        setSaveStatus('saved');
+        setTimeout(() => setSaveStatus('idle'), 3000);
+      } else {
+        setSaveStatus('error');
+      }
+    } catch {
+      setSaveStatus('error');
+    }
+  }, [searchParams, total]);
+
   const format = (v: number | null | undefined) => (v != null ? v.toLocaleString() : '—');
 
   const FilterSidebar = () => (
@@ -486,6 +517,25 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
             )}
           </button>
         </div>
+
+        {/* Save Search with Alert */}
+        {activeFilterCount > 0 && (
+          <div className="mt-3 flex items-center gap-3">
+            <button
+              onClick={handleSaveSearch}
+              disabled={saveStatus === 'saving' || saveStatus === 'saved'}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors"
+              style={{
+                backgroundColor: saveStatus === 'saved' ? '#f0fdf4' : saveStatus === 'error' ? '#fef2f2' : 'white',
+                color: saveStatus === 'saved' ? '#15803d' : saveStatus === 'error' ? '#dc2626' : '#374151',
+                borderColor: saveStatus === 'saved' ? '#bbf7d0' : saveStatus === 'error' ? '#fecaca' : '#e5e7eb',
+              }}
+            >
+              {saveStatus === 'saving' ? '⏳ Saving...' : saveStatus === 'saved' ? '✅ Saved with alert' : saveStatus === 'error' ? '❌ Error' : '🔔 Save & Alert'}
+            </button>
+            <span className="text-xs text-gray-500">Get notified when new matching yachts are added</span>
+          </div>
+        )}
 
         {/* Filter Presets */}
         <div className="mb-4 sm:mb-6" role="group" aria-label={t('presets.label')}>

@@ -20,6 +20,7 @@ interface FavoriteItem {
 }
 
 interface SavedSearch {
+  alertEnabled?: boolean;
   id: number;
   name: string;
   searchParams: Record<string, unknown>;
@@ -239,12 +240,40 @@ function SearchesTab() {
     } catch { /* ignore */ }
   }
 
+  async function toggleAlert(id: number, enabled: boolean) {
+    try {
+      const res = await fetch("/api/user/searches", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, alertEnabled: enabled }),
+      });
+      if (res.ok) {
+        setSearches((prev) =>
+          prev.map((s) => (s.id === id ? { ...s, alertEnabled: enabled } : s))
+        );
+      }
+    } catch { /* ignore */ }
+  }
+
   function buildSearchUrl(params: Record<string, unknown>): string {
     const qs = new URLSearchParams();
     for (const [k, v] of Object.entries(params)) {
       if (v != null && v !== "") qs.set(k, String(v));
     }
-    return `/search?${qs.toString()}`;
+    return `/yachts?${qs.toString()}`;
+  }
+
+  function describeSearchParams(params: Record<string, unknown>): string[] {
+    const parts: string[] = [];
+    if (params.query || params.q) parts.push(String(params.query || params.q));
+    if (params.rigType) parts.push(String(params.rigType));
+    if (params.keelType) parts.push(String(params.keelType));
+    if (params.hullMaterial) parts.push(String(params.hullMaterial));
+    if (params.lengthMin || params.lengthMax) parts.push(`${params.lengthMin || "?"}-${params.lengthMax || "?"}m`);
+    if (params.cabinCount) parts.push(`${params.cabinCount} cabins`);
+    if (params.berthCount) parts.push(`${params.berthCount} berths`);
+    if (params.useCase) parts.push(String(params.useCase));
+    return parts;
   }
 
   if (loading) return <LoadingSkeleton />;
@@ -254,39 +283,77 @@ function SearchesTab() {
       <EmptyState
         icon="🔍"
         title="No saved searches"
-        description="Use the search page to find yachts and save your filter combinations."
-        actionLabel="Search Yachts"
-        actionHref="/search"
+        description="Use the yacht listing page to find yachts and save your filter combinations."
+        actionLabel="Browse Yachts"
+        actionHref="/yachts"
       />
     );
   }
 
+  const alertCount = searches.filter((s) => s.alertEnabled).length;
+
   return (
-    <div className="space-y-3">
-      {searches.map((search) => (
-        <div key={search.id} className="border rounded-lg p-4 bg-white shadow-sm flex items-center justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <h3 className="font-medium text-gray-900 truncate">{search.name}</h3>
-            <p className="text-sm text-gray-500 mt-0.5">
-              {search.resultCount != null ? `${search.resultCount} results` : "Results vary"} · Saved {new Date(search.createdAt).toLocaleDateString()}
-            </p>
-          </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Link
-              href={buildSearchUrl(search.searchParams)}
-              className="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
-            >
-              Run Search
-            </Link>
-            <button
-              onClick={() => deleteSearch(search.id)}
-              className="px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
-            >
-              Delete
-            </button>
-          </div>
+    <div>
+      {alertCount > 0 && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800 flex items-center gap-2">
+          <span>🔔</span>
+          <span>{alertCount} saved search{alertCount !== 1 ? "es" : ""} with alerts active — you&apos;ll be notified when new matching yachts are added.</span>
         </div>
-      ))}
+      )}
+      <div className="space-y-3">
+        {searches.map((search) => {
+          const filterTags = describeSearchParams(search.searchParams);
+          return (
+            <div key={search.id} className="border rounded-lg p-4 bg-white shadow-sm">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-medium text-gray-900 truncate">{search.name}</h3>
+                    {search.alertEnabled && (
+                      <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
+                        🔔 Alert on
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-500 mt-0.5">
+                    {search.resultCount != null ? `${search.resultCount} results` : "Results vary"} · Saved {new Date(search.createdAt).toLocaleDateString()}
+                  </p>
+                  {filterTags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {filterTags.map((tag, i) => (
+                        <span key={i} className="inline-block px-2 py-0.5 text-xs bg-gray-100 text-gray-600 rounded">{tag}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <label className="relative inline-flex items-center cursor-pointer" title={search.alertEnabled ? "Disable alert" : "Enable alert for new matches"}>
+                    <input
+                      type="checkbox"
+                      checked={!!search.alertEnabled}
+                      onChange={(e) => toggleAlert(search.id, e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600" />
+                  </label>
+                  <Link
+                    href={buildSearchUrl(search.searchParams)}
+                    className="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                  >
+                    View
+                  </Link>
+                  <button
+                    onClick={() => deleteSearch(search.id)}
+                    className="px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
