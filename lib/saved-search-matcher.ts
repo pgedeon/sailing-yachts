@@ -152,7 +152,7 @@ export function yachtMatchesFilters(yacht: YachtForMatching, filters: SearchFilt
   const yrMin = toNum(filters.yearMin);
   const yrMax = toNum(filters.yearMax);
   if (yrMin != null || yrMax != null) {
-    if (!inRange(yacht.year, yrMin, yrMax)) return false;
+    if (!inRange(yacht.year ?? null, yrMin, yrMax)) return false;
   }
 
   return true;
