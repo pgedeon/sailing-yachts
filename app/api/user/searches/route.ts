@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { name, searchParams, resultCount } = body
+    const { name, searchParams, resultCount, alertEnabled } = body
 
     if (!searchParams || typeof searchParams !== 'object') {
       return NextResponse.json({ error: 'searchParams object required' }, { status: 400 })
@@ -44,12 +44,57 @@ export async function POST(request: NextRequest) {
       name: name || `Search — ${new Date().toLocaleDateString()}`,
       searchParams,
       resultCount: resultCount || null,
+      alertEnabled: typeof alertEnabled === 'boolean' ? alertEnabled : false,
     }).returning({ id: savedSearches.id })
 
     return NextResponse.json({ success: true, id: result[0].id })
   } catch (error) {
     console.error('[searches] POST error:', error)
     return NextResponse.json({ error: 'Failed to save search' }, { status: 500 })
+  }
+}
+
+// PUT /api/user/searches - update a saved search (e.g., toggle alert)
+export async function PUT(request: NextRequest) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  try {
+    const body = await request.json()
+    const { id, name, alertEnabled } = body
+
+    if (!id) {
+      return NextResponse.json({ error: 'id required' }, { status: 400 })
+    }
+
+    const userId = Number(session.user.id)
+
+    // Verify ownership
+    const existing = await db
+      .select()
+      .from(savedSearches)
+      .where(and(eq(savedSearches.id, Number(id)), eq(savedSearches.userId, userId)))
+      .limit(1)
+
+    if (existing.length === 0) {
+      return NextResponse.json({ error: 'Saved search not found' }, { status: 404 })
+    }
+
+    const updates: Record<string, unknown> = { updatedAt: new Date() }
+    if (typeof name === 'string') updates.name = name
+    if (typeof alertEnabled === 'boolean') updates.alertEnabled = alertEnabled
+
+    await db
+      .update(savedSearches)
+      .set(updates)
+      .where(eq(savedSearches.id, Number(id)))
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('[searches] PUT error:', error)
+    return NextResponse.json({ error: 'Failed to update saved search' }, { status: 500 })
   }
 }
 

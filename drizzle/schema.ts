@@ -756,6 +756,7 @@ export const savedSearches = pgTable(
     name: varchar("name", { length: 255 }),
     searchParams: jsonb("search_params").$type<Record<string, unknown>>().notNull(),
     resultCount: integer("result_count"),
+    alertEnabled: boolean("alert_enabled").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
