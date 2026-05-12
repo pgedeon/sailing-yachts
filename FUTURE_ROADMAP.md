@@ -47,7 +47,7 @@ The manufacturers table has columns for country, founding year, website URL, log
 - All new content must be i18n-compatible (descriptions in both en and fr)
 - Use the existing Neon HTTP client pattern for DB updates (no psql/drizzle-kit push)
 
-### Phase 17 — Advanced Yacht Discovery & Smart Recommendations (Priority: High)
+### Phase 17 — Advanced Yacht Discovery & Smart Recommendations (Priority: High) — ✅ COMPLETE
 
 The /yachts listing page has basic filter dropdowns (manufacturer, rig type, keel type, hull material, length range) but lacks the advanced filtering and smart discovery features that serious sailors expect. Adding range sliders, cabin/berth filters, smart recommendation engine, and "yacht finder" wizard would transform the discovery experience and significantly increase engagement and time-on-site.
 
@@ -59,7 +59,7 @@ The /yachts listing page has basic filter dropdowns (manufacturer, rig type, kee
 
 - ~~**P17.4 — "Yachts like this" smart recommendations:**~~ Enhance the similar yachts section on detail pages with a weighted similarity score considering: LOA (±15%), use-case tag match, same rig/keel type, similar displacement/length ratio, price tier. Show match percentage badge. Add "Why recommended?" tooltip explaining the match factors. Tests: similarity scoring unit tests, rendering tests. *(completed 2026-05-12 — PR #273, Issue #272, 14 tests)*/
 
-- **P17.5 — Saved search & alert system enhancement:** Enhance existing alert system to support filter-based alerts (e.g., "notify me when a new 35-40ft bluewater cruiser is added"). Add saved search management page at /account/searches. Show saved searches in user account dashboard. Tests: saved search CRUD tests, alert trigger logic tests. *(priority: medium)*
+- ~~**P17.5 — Saved search & alert system enhancement:** Enhance existing alert system to support filter-based alerts (e.g., "notify me when a new 35-40ft bluewater cruiser is added"). Add saved search management page at /account/searches. Show saved searches in user account dashboard. Tests: saved search CRUD tests, alert trigger logic tests. *(priority: medium)*~~ *(completed 2026-05-12 — PR #275, 31 tests)*
 
 ### Notes
 - All new filters must be i18n-compatible (labels in en + fr)
