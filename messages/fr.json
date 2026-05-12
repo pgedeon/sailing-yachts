@@ -556,7 +556,14 @@
     "guidesRelated": "Guides experts liés à ce yacht.",
     "viewAllGuides": "Voir tous les guides →",
     "relatedArticles": "Articles sur la voile",
-    "minRead": "{minutes} min de lecture"
+    "minRead": "{minutes} min de lecture",
+    "whyRecommended": "Pourquoi cette recommandation ?",
+    "matchFactors": "Facteurs de correspondance",
+    "similarFactors.loa": "Proximité de longueur",
+    "similarFactors.useCase": "Usage similaire",
+    "similarFactors.rigKeel": "Type de gréement et quille",
+    "similarFactors.dlRatio": "Performance (D/L)",
+    "similarFactors.priceTier": "Catégorie de prix"
   },
   "Compare": {
     "heading": "Comparer des yachts",

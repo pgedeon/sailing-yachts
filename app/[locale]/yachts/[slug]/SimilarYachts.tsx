@@ -3,8 +3,16 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Info } from "lucide-react";
 import YachtImage from "@/app/components/yacht/YachtImage";
+
+interface MatchFactor {
+  key: string;
+  label: string;
+  score: number;
+  max: number;
+  detail: string;
+}
 
 interface SimilarYacht {
   id: number;
@@ -16,12 +24,82 @@ interface SimilarYacht {
   beam: string | null;
   draft: string | null;
   displacement: string | null;
+  rigType: string | null;
+  keelType: string | null;
+  cabins: number | null;
+  berths: number | null;
   score: number;
+  factors: MatchFactor[];
   primaryImage: string | null;
 }
 
 interface SimilarYachtsProps {
   slug: string;
+}
+
+function ScoreBadge({ score }: { score: number }) {
+  let bg = "bg-muted text-muted-foreground";
+  if (score >= 80) bg = "bg-emerald-100 text-emerald-800";
+  else if (score >= 60) bg = "bg-sky-100 text-sky-800";
+  else if (score >= 40) bg = "bg-amber-100 text-amber-800";
+  else bg = "bg-orange-100 text-orange-800";
+
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${bg}`}>
+      {score}%
+    </span>
+  );
+}
+
+function FactorBar({ factor, t }: { factor: MatchFactor; t: (key: string) => string }) {
+  const pct = factor.max > 0 ? Math.round((factor.score / factor.max) * 100) : 0;
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center justify-between text-xs">
+        <span className="text-muted-foreground">{t(factor.label)}</span>
+        <span className="font-medium">{pct}%</span>
+      </div>
+      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+        <div
+          className={`h-full rounded-full transition-all ${pct >= 70 ? 'bg-emerald-500' : pct >= 40 ? 'bg-sky-500' : 'bg-amber-500'}`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <p className="text-xs text-muted-foreground leading-tight">{factor.detail}</p>
+    </div>
+  );
+}
+
+function WhyTooltip({ factors, t }: { factors: MatchFactor[]; t: (key: string) => string }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+        onClick={() => setOpen(!open)}
+        onBlur={() => setTimeout(() => setOpen(false), 200)}
+        aria-expanded={open}
+        aria-label={t("whyRecommended")}
+        data-testid="why-recommended-btn"
+      >
+        <Info className="h-3.5 w-3.5" aria-hidden="true" />
+        {t("whyRecommended")}
+      </button>
+      {open && (
+        <div
+          className="absolute z-20 bottom-full mb-2 left-0 w-64 bg-popover border border-border rounded-lg shadow-lg p-3 space-y-3"
+          data-testid="why-tooltip"
+        >
+          <p className="text-xs font-semibold">{t("matchFactors")}</p>
+          {factors.map((f) => (
+            <FactorBar key={f.key} factor={f} t={t} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function SimilarYachts({ slug }: SimilarYachtsProps) {
@@ -87,7 +165,7 @@ export function SimilarYachts({ slug }: SimilarYachtsProps) {
           >
             {/* Image */}
             {yacht.primaryImage ? (
-              <div className="h-36 sm:h-40 bg-muted overflow-hidden">
+              <div className="h-36 sm:h-40 bg-muted overflow-hidden relative">
                 <YachtImage
                   src={yacht.primaryImage}
                   alt={`${yacht.manufacturer} ${yacht.modelName}`}
@@ -95,10 +173,17 @@ export function SimilarYachts({ slug }: SimilarYachtsProps) {
                   className="w-full h-full group-hover:scale-105 transition-transform duration-200"
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   aria-hidden="true" />
+                {/* Score badge overlay */}
+                <div className="absolute top-2 right-2">
+                  <ScoreBadge score={yacht.score} />
+                </div>
               </div>
             ) : (
-              <div className="h-36 sm:h-40 bg-muted flex items-center justify-center text-muted-foreground text-sm">
+              <div className="h-36 sm:h-40 bg-muted flex items-center justify-center text-muted-foreground text-sm relative">
                 {t("noImage")}
+                <div className="absolute top-2 right-2">
+                  <ScoreBadge score={yacht.score} />
+                </div>
               </div>
             )}
 
@@ -127,22 +212,28 @@ export function SimilarYachts({ slug }: SimilarYachtsProps) {
                 )}
               </div>
 
-              {/* Match score */}
+              {/* Match bar + why tooltip */}
               <div className="mt-3 flex items-center gap-2">
                 <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-primary rounded-full transition-all"
-                    style={{ width: `${Math.round(yacht.score * 100)}%` }}
+                    className={`h-full rounded-full transition-all ${yacht.score >= 70 ? 'bg-emerald-500' : yacht.score >= 50 ? 'bg-sky-500' : 'bg-amber-500'}`}
+                    style={{ width: `${yacht.score}%` }}
                   />
                 </div>
                 <span className="text-xs text-muted-foreground whitespace-nowrap">
-                  {t("matchPercent", { percent: Math.round(yacht.score * 100) })}
+                  {t("matchPercent", { percent: yacht.score })}
                 </span>
               </div>
 
-              <div className="mt-2 flex items-center text-xs text-primary font-medium">
-                {t("viewDetails")}
-                <ArrowRight className="h-3 w-3 ml-1 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+              {/* Why recommended tooltip trigger */}
+              <div className="mt-2 flex items-center justify-between">
+                <div onClick={(e) => e.preventDefault()}>
+                  <WhyTooltip factors={yacht.factors} t={t} />
+                </div>
+                <span className="flex items-center text-xs text-primary font-medium">
+                  {t("viewDetails")}
+                  <ArrowRight className="h-3 w-3 ml-1 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+                </span>
               </div>
             </div>
           </Link>

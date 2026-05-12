@@ -556,7 +556,14 @@
     "guidesRelated": "Expert guides related to this yacht.",
     "viewAllGuides": "View all guides →",
     "relatedArticles": "Related Sailing Articles",
-    "minRead": "{minutes} min read"
+    "minRead": "{minutes} min read",
+    "whyRecommended": "Why recommended?",
+    "matchFactors": "Match factors",
+    "similarFactors.loa": "Length proximity",
+    "similarFactors.useCase": "Use-case match",
+    "similarFactors.rigKeel": "Rig & keel type",
+    "similarFactors.dlRatio": "Performance (D/L)",
+    "similarFactors.priceTier": "Price tier"
   },
   "Compare": {
     "heading": "Compare Yachts",
