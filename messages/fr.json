@@ -1153,5 +1153,16 @@
     "glossaryDescription": "Nous n'avons pas pu charger le glossaire nautique. Veuillez réessayer.",
     "glossaryDetailTitle": "Terme non disponible",
     "glossaryDetailDescription": "Ce terme du glossaire n'a pas pu être chargé. Veuillez réessayer."
+  },
+  "NotFound": {
+    "title": "Page introuvable",
+    "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "goHome": "Aller à l'accueil",
+    "popularPages": "Pages populaires",
+    "browseYachts": "Parcourir les yachts",
+    "manufacturers": "Constructeurs",
+    "guides": "Guides de navigation",
+    "compare": "Comparer les yachts",
+    "search": "Recherche"
   }
 }
