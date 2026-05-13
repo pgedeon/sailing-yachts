@@ -1123,5 +1123,35 @@
       "description": "Cette page n'est pas définie dans le système.",
       "homeLink": "Retour à l'accueil"
     }
+  },
+  "Errors": {
+    "genericTitle": "Une erreur est survenue",
+    "genericDescription": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+    "tryAgain": "Réessayer",
+    "goHome": "Aller à l'accueil",
+    "yachtsTitle": "Impossible de charger les yachts",
+    "yachtsDescription": "Nous n'avons pas pu charger la liste des yachts. Veuillez réessayer.",
+    "yachtDetailTitle": "Yacht non disponible",
+    "yachtDetailDescription": "Ce yacht n'a pas pu être chargé. Il a peut-être été supprimé ou il y a un problème temporaire.",
+    "finderTitle": "Erreur du sélecteur de yachts",
+    "finderDescription": "Le sélecteur de yachts a rencontré une erreur. Veuillez réessayer.",
+    "compareTitle": "Comparaison échouée",
+    "compareDescription": "Nous n'avons pas pu charger l'outil de comparaison. Veuillez réessayer.",
+    "compareDetailTitle": "Comparaison non disponible",
+    "compareDetailDescription": "Cette comparaison n'a pas pu être chargée. L'un des yachts n'existe peut-être pas.",
+    "manufacturersTitle": "Impossible de charger les constructeurs",
+    "manufacturersDescription": "Nous n'avons pas pu charger la liste des constructeurs. Veuillez réessayer.",
+    "manufacturerDetailTitle": "Constructeur non disponible",
+    "manufacturerDetailDescription": "Cette page constructeur n'a pas pu être chargée. Veuillez réessayer.",
+    "guidesTitle": "Impossible de charger les guides",
+    "guidesDescription": "Nous n'avons pas pu charger les guides de navigation. Veuillez réessayer.",
+    "guideDetailTitle": "Guide non disponible",
+    "guideDetailDescription": "Ce guide n'a pas pu être chargé. Il a peut-être été déplacé ou supprimé.",
+    "searchTitle": "Erreur de recherche",
+    "searchDescription": "Un problème est survenu lors de la recherche. Veuillez réessayer.",
+    "glossaryTitle": "Impossible de charger le glossaire",
+    "glossaryDescription": "Nous n'avons pas pu charger le glossaire nautique. Veuillez réessayer.",
+    "glossaryDetailTitle": "Terme non disponible",
+    "glossaryDetailDescription": "Ce terme du glossaire n'a pas pu être chargé. Veuillez réessayer."
   }
 }

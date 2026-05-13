@@ -1,34 +1,43 @@
 # Sailing Yachts Builder Session Summary
 
-**Date:** 2026-05-12
-**Issues worked on:** #272 (P17.4 — "Yachts like this" smart recommendations)
+**Date:** 2026-05-13
+**Issues worked on:** #276 (P18.1 — Loading skeletons for all route segments)
 
 ## What was implemented
 
-### P17.4 — Smart Recommendations (Issue #272, PR #273)
-- **Similarity scoring library** (`lib/similarity-score.ts`):
-  - 5-factor weighted scoring (0-100): LOA proximity (25), use-case tag overlap (20), rig & keel match (20), D/L ratio similarity (20), price tier (15)
-  - `scoreSimilarity()` computes per-factor scores with human-readable details
-  - `rankSimilarYachts()` filters (≥15 threshold) and sorts descending, max 6 results
-- **Enhanced similar API** (`app/api/yachts/[slug]/similar/route.ts`):
-  - Uses new scoring algorithm instead of old Euclidean distance
-  - Returns score (0-100) + full factor breakdown per yacht
-  - Fetches images in parallel
-- **Updated SimilarYachts component**:
-  - Color-coded match percentage badge (emerald/sky/amber/orange by score range)
-  - Match progress bar with color coding
-  - "Why recommended?" tooltip with per-factor breakdown bars and detail text
-  - Tooltip opens on click, closes on blur
-- **i18n**: Full en + fr translations for 7 new translation keys
-- **Tests**: 14 unit tests covering scoring, ranking, edge cases, null handling
+### P18.1 — Loading Skeletons (Issue #276, PR #277)
+- **Skeleton component library** (`components/ui/skeleton.tsx`):
+  - 8 reusable variants: Skeleton, SkeletonLine, SkeletonCircle, SkeletonImage, SkeletonCard, SkeletonStat, SkeletonTableRow, SkeletonFilterSection
+  - All use Tailwind `animate-pulse` and `bg-muted`
+  - Uses `cn()` utility for class merging
+  - Configurable dimensions, aspect ratios, line counts
+- **14 `loading.tsx` files** for all major route segments:
+  - `/yachts` — filter sidebar + 3-column yacht card grid + pagination
+  - `/yachts/[slug]` — image + key specs + spec bars + full table + similar yachts
+  - `/yachts/finder` — progress steps + option cards
+  - `/compare` — dual search inputs + table + radar chart
+  - `/compare/[slugA]-vs-[slugB]` — two-column headers + comparison table + charts
+  - `/manufacturers` — 4-column card grid with logos
+  - `/manufacturers/[slug]` — header + fleet chart + yacht lineup
+  - `/guides` — category tabs + article card grid
+  - `/guides/[slug]` — hero image + content paragraphs + related guides
+  - `/search` — search bar + suggestions + results grid
+  - `/glossary` — alphabet nav + term list
+  - `/glossary/[slug]` — definition + related terms
+  - `/account` — stats + favorites + saved searches
+  - `/favorites` — card grid
+- **Phase 18 plan** added to FUTURE_ROADMAP.md (Performance & UX Polish)
+- **52 unit tests** for skeleton logic, file existence, and content validation
 
 ## Build/Test Results
 - **Typecheck**: ✅ Pass
 - **Build**: ✅ Pass
-- **Vitest**: ✅ 14/14 pass (similarity-score)
+- **Lint**: ✅ Pass
+- **Vitest**: ✅ 52/52 pass
 
 ## Deploy Status
-- **PR #273**: ✅ Merged (squash)
+- **PR #277**: ✅ Merged (squash)
+- **CI**: ✅ All checks green (Build, Lint, TypeScript, Performance Budgets)
 - **Vercel**: ✅ Production deployed
 
 ## Live Verification Results
@@ -36,16 +45,23 @@
 - **/yachts**: ✅ OK
 - **/search**: ✅ OK
 - **/compare**: ✅ OK
+- **/manufacturers**: ✅ OK
+- **/guides**: ✅ OK
+- **/glossary**: ✅ OK
 - **/yachts/beneteau-oceanis-40-1**: ✅ OK
+- **/compare/beneteau-oceanis-40-1-vs-jeanneau-sun-odyssey-410**: ✅ OK
+- **/yachts/finder**: ✅ OK
 - **API /api/yachts**: ✅ OK (201 yachts)
-- **API /api/yachts/.../similar**: ✅ OK (scores 0-100, factor breakdowns present)
-- **Browser console**: ✅ No errors
-- **Similar Yachts section**: ✅ Renders with score badges + "Why recommended?" tooltips
+- **Browser console**: ✅ No new errors (pre-existing /fr/auth/signin 404 only)
+- **Page rendering**: ✅ Correct (verified with browser snapshot)
 
-### Example API results (Beneteau Oceanis 40.1):
-1. Jeanneau Sun Odyssey 410 — 100% (4 shared tags, same rig/keel, same D/L, same tier)
-2. X-Yachts X4³ — 97%
-3. Wauquiez PS 42 — 97%
+## Previous phases status
+- Phase 14 (i18n): ✅ COMPLETE
+- Phase 15 (Visualizations): ✅ COMPLETE
+- Phase 16 (Manufacturer Data): ✅ COMPLETE
+- Phase 17 (Discovery & Recommendations): ✅ COMPLETE
+- Phase 18 (Performance & UX Polish): 🔄 In Progress
 
 ## Next Recommended Task
-- **P17.5** — Saved search & alert system enhancement (filter-based alerts, saved search management page)
+- **P18.2** — Error boundaries with retry for all route segments (error.tsx files)
+- **P18.3** — Custom 404/not-found page
