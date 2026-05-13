@@ -1153,5 +1153,16 @@
     "glossaryDescription": "We could not load the nautical glossary. Please try again.",
     "glossaryDetailTitle": "Term not available",
     "glossaryDetailDescription": "This glossary term could not be loaded. Please try again."
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "The page you're looking for doesn't exist or has been moved.",
+    "goHome": "Go to homepage",
+    "popularPages": "Popular pages",
+    "browseYachts": "Browse Yachts",
+    "manufacturers": "Manufacturers",
+    "guides": "Sailing Guides",
+    "compare": "Compare Yachts",
+    "search": "Search"
   }
 }
