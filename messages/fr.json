@@ -1152,7 +1152,11 @@
     "glossaryTitle": "Impossible de charger le glossaire",
     "glossaryDescription": "Nous n'avons pas pu charger le glossaire nautique. Veuillez réessayer.",
     "glossaryDetailTitle": "Terme non disponible",
-    "glossaryDetailDescription": "Ce terme du glossaire n'a pas pu être chargé. Veuillez réessayer."
+    "glossaryDetailDescription": "Ce terme du glossaire n'a pas pu être chargé. Veuillez réessayer.",
+    "accountTitle": "Erreur du compte",
+    "accountDescription": "Impossible de charger votre compte. Veuillez réessayer.",
+    "favoritesTitle": "Erreur des favoris",
+    "favoritesDescription": "Impossible de charger vos favoris. Veuillez réessayer."
   },
   "NotFound": {
     "title": "Page introuvable",
