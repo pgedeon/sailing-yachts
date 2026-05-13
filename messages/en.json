@@ -1123,5 +1123,35 @@
       "description": "This landing page is not defined in the system.",
       "homeLink": "Return to Home"
     }
+  },
+  "Errors": {
+    "genericTitle": "Something went wrong",
+    "genericDescription": "An unexpected error occurred. Please try again.",
+    "tryAgain": "Try again",
+    "goHome": "Go to homepage",
+    "yachtsTitle": "Failed to load yachts",
+    "yachtsDescription": "We could not load the yacht listings. Please try again.",
+    "yachtDetailTitle": "Yacht not available",
+    "yachtDetailDescription": "This yacht could not be loaded. It may have been removed or there was a temporary issue.",
+    "finderTitle": "Yacht Finder error",
+    "finderDescription": "The yacht finder encountered an error. Please try again.",
+    "compareTitle": "Comparison failed",
+    "compareDescription": "We could not load the comparison tool. Please try again.",
+    "compareDetailTitle": "Comparison not available",
+    "compareDetailDescription": "This comparison could not be loaded. One of the yachts may not exist.",
+    "manufacturersTitle": "Failed to load manufacturers",
+    "manufacturersDescription": "We could not load the manufacturer listings. Please try again.",
+    "manufacturerDetailTitle": "Manufacturer not available",
+    "manufacturerDetailDescription": "This manufacturer page could not be loaded. Please try again.",
+    "guidesTitle": "Failed to load guides",
+    "guidesDescription": "We could not load the sailing guides. Please try again.",
+    "guideDetailTitle": "Guide not available",
+    "guideDetailDescription": "This guide could not be loaded. It may have been moved or removed.",
+    "searchTitle": "Search error",
+    "searchDescription": "Something went wrong with search. Please try again.",
+    "glossaryTitle": "Failed to load glossary",
+    "glossaryDescription": "We could not load the nautical glossary. Please try again.",
+    "glossaryDetailTitle": "Term not available",
+    "glossaryDetailDescription": "This glossary term could not be loaded. Please try again."
   }
 }
