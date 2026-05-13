@@ -20,6 +20,8 @@ describe("Error Boundary Files", () => {
     "app/[locale]/search/error.tsx",
     "app/[locale]/glossary/error.tsx",
     "app/[locale]/glossary/[slug]/error.tsx",
+    "app/[locale]/account/error.tsx",
+    "app/[locale]/favorites/error.tsx",
   ];
 
   it.each(errorFiles)("%s exists", (file) => {
@@ -96,6 +98,10 @@ describe("Error i18n Messages", () => {
     "glossaryDescription",
     "glossaryDetailTitle",
     "glossaryDetailDescription",
+    "accountTitle",
+    "accountDescription",
+    "favoritesTitle",
+    "favoritesDescription",
   ];
 
   it("en.json has all error message keys", async () => {

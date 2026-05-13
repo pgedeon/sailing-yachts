@@ -1152,7 +1152,11 @@
     "glossaryTitle": "Failed to load glossary",
     "glossaryDescription": "We could not load the nautical glossary. Please try again.",
     "glossaryDetailTitle": "Term not available",
-    "glossaryDetailDescription": "This glossary term could not be loaded. Please try again."
+    "glossaryDetailDescription": "This glossary term could not be loaded. Please try again.",
+    "accountTitle": "Account error",
+    "accountDescription": "We could not load your account. Please try again.",
+    "favoritesTitle": "Favorites error",
+    "favoritesDescription": "We could not load your favorites. Please try again."
   },
   "NotFound": {
     "title": "Page not found",
