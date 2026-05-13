@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { locales, type Locale } from "@/i18n";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { ClientNav } from "./ClientNav";
+import UXPolish from "@/components/UXPolish";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -111,6 +112,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
           </p>
         </div>
       </footer>
+      <UXPolish />
     </NextIntlClientProvider>
   );
 }

@@ -1164,5 +1164,8 @@
     "guides": "Guides de navigation",
     "compare": "Comparer les yachts",
     "search": "Recherche"
+  },
+  "UI": {
+    "backToTop": "Retour en haut"
   }
 }
