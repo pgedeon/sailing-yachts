@@ -1,5 +1,6 @@
 'use client';
 
+import AnimatedGrid from '@/components/ui/animated-grid';
 import { FavoriteButton } from '@/app/components/FavoriteButton';
 import { PriceTierBadge } from '@/app/components/PriceTierBadge';
 import NewsletterSignup from '@/components/NewsletterSignup';
@@ -593,6 +594,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
             ) : (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" role="region" aria-label="Yacht listings" aria-live="polite">
+                  <AnimatedGrid animationKey={currentKey}>
                   {yachtsWithTags.map(yacht => (
                     <div key={yacht.id} className="border rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow relative">
                       <div className="flex items-start justify-between gap-2">
@@ -642,6 +644,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
                       )}
                     </div>
                   ))}
+                </AnimatedGrid>
                 </div>
 
                 {totalPages > 1 && (
