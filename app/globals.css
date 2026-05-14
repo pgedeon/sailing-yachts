@@ -492,3 +492,59 @@ textarea:focus-visible {
     min-width: 44px;
   }
 }
+
+/* ── P18.5: Page transition & card animations ── */
+
+/* Page fade-in on navigation */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-transition-enter {
+  animation: page-enter 0.25s ease-out both;
+}
+
+/* Yacht card stagger fade-in */
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-animate {
+  animation: card-enter 0.2s ease-out both;
+}
+
+/* Stagger delays for card grid (up to 24 items) */
+.card-stagger-1 { animation-delay: 0.02s; }
+.card-stagger-2 { animation-delay: 0.04s; }
+.card-stagger-3 { animation-delay: 0.06s; }
+.card-stagger-4 { animation-delay: 0.08s; }
+.card-stagger-5 { animation-delay: 0.10s; }
+.card-stagger-6 { animation-delay: 0.12s; }
+.card-stagger-7 { animation-delay: 0.14s; }
+.card-stagger-8 { animation-delay: 0.16s; }
+.card-stagger-9 { animation-delay: 0.18s; }
+.card-stagger-10 { animation-delay: 0.20s; }
+.card-stagger-11 { animation-delay: 0.22s; }
+.card-stagger-12 { animation-delay: 0.24s; }
+
+/* Disable all custom animations when user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .page-transition-enter,
+  .card-animate {
+    animation: none !important;
+  }
+}

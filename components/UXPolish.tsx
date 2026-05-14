@@ -11,6 +11,10 @@ const BackToTop = dynamic(() => import("@/components/ui/back-to-top"), {
   ssr: false,
 });
 
+const PageTransition = dynamic(() => import("@/components/ui/page-transition"), {
+  ssr: false,
+});
+
 /**
  * Client-side UX polish components that mount on every page.
  * Uses dynamic imports to avoid SSR issues and reduce initial bundle.
@@ -20,6 +24,7 @@ export default function UXPolish() {
     <>
       <ScrollProgress />
       <BackToTop />
+      <PageTransition />
     </>
   );
 }
