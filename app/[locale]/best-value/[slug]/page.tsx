@@ -300,9 +300,11 @@ export default async function BestValuePage({
   const pageIntro = t(pageDef.introKey);
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+    { name: "Home", path: "/" },
     { name: "Yachts", path: "/yachts" },
+    
     { name: "Best Value", path: "/best-value" },
-    { name: pageTitle },
+    { name: pageTitle, path: `/best-value/${slug}` },
   ], locale);
 
   const collectionJsonLd = {

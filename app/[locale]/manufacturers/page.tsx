@@ -70,7 +70,7 @@ export default async function ManufacturersPage({ params }: ManufacturersListing
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Home", path: "/" },
-    { name: "Manufacturers" },
+    { name: "Manufacturers", path: "/manufacturers" },
   ], locale);
 
   const collectionJsonLd = generateCollectionPageJsonLd({
