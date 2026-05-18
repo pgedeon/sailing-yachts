@@ -1,8 +1,8 @@
 import { unstable_cache } from "next/cache";
-import { db, manufacturers, manufacturerSpotlights } from "@/lib/db";
+import { db, manufacturers, manufacturerSpotlights, yachtModels } from "@/lib/db";
 import { slugify } from "@/lib/utils/slugify";
 import { SITE_URL, buildSitemapXml, sitemapResponse, SitemapEntry } from "@/lib/sitemap";
-import { eq } from "drizzle-orm";
+import { eq, sql, max } from "drizzle-orm";
 
 export const revalidate = 3600;
 
@@ -11,17 +11,37 @@ const LOCALES = ["en", "fr"] as const;
 async function getManufacturerEntries(): Promise<SitemapEntry[]> {
   return unstable_cache(
     async () => {
+      // Get lastmod per manufacturer based on their most recently updated yacht
+      const lastModRows = await db
+        .select({
+          manufacturerId: manufacturers.id,
+          lastmod: sql<string>`COALESCE(MAX(${yachtModels.updatedAt}), ${manufacturers.createdAt})`,
+        })
+        .from(manufacturers)
+        .leftJoin(yachtModels, eq(yachtModels.manufacturerId, manufacturers.id))
+        .groupBy(manufacturers.id);
+
+      const lastModMap = new Map<number, string>();
+      for (const row of lastModRows) {
+        lastModMap.set(
+          row.manufacturerId,
+          new Date(row.lastmod).toISOString()
+        );
+      }
+
       const mfrs = await db
         .select({
+          id: manufacturers.id,
           name: manufacturers.name,
         })
         .from(manufacturers);
 
       const manufacturerEntries: SitemapEntry[] = mfrs
         .filter((m: { name: string | null }) => m.name !== null)
-        .flatMap((m: { name: string | null }) =>
+        .flatMap((m: { id: number; name: string | null }) =>
           LOCALES.map((locale) => ({
             loc: `${SITE_URL}/${locale}/manufacturers/${slugify(m.name!)}`,
+            lastmod: lastModMap.get(m.id),
             changefreq: "weekly" as const,
             priority: "0.6",
           }))
@@ -49,7 +69,7 @@ async function getManufacturerEntries(): Promise<SitemapEntry[]> {
       return [...manufacturerEntries, ...spotlightEntries];
     },
     ["sitemap-manufacturers"],
-    { tags: ["manufacturers", "manufacturer-spotlights"], revalidate: 3600 }
+    { tags: ["manufacturers", "manufacturer-spotlights", "yachts"], revalidate: 3600 }
   )();
 }
 

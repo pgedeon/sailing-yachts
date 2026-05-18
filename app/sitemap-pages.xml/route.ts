@@ -7,6 +7,9 @@ export const revalidate = 86400;
 const LOCALES = ["en", "fr"] as const;
 
 export async function GET() {
+  // Use current deploy time as lastmod for static pages
+  const deployDate = new Date().toISOString().split("T")[0];
+
   const pages = [
     { path: "/", changefreq: "daily", priority: "1.0" },
     { path: "/yachts", changefreq: "daily", priority: "0.9" },
@@ -28,6 +31,7 @@ export async function GET() {
   const entries: SitemapEntry[] = pages.flatMap((page) =>
     LOCALES.map((locale) => ({
       loc: `${SITE_URL}/${locale}${page.path === "/" ? "" : page.path}`,
+      lastmod: deployDate,
       changefreq: page.changefreq,
       priority: page.priority,
     }))
