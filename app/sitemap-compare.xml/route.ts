@@ -12,7 +12,11 @@ async function getCompareEntries(): Promise<SitemapEntry[]> {
     async () => {
       // Fetch top 50 yachts by ID for comparison pairs
       const topYachts = await db
-        .select({ id: yachtModels.id, slug: yachtModels.slug })
+        .select({
+          id: yachtModels.id,
+          slug: yachtModels.slug,
+          updatedAt: yachtModels.updatedAt,
+        })
         .from(yachtModels)
         .where(isNotNull(yachtModels.slug))
         .limit(50)
@@ -26,10 +30,16 @@ async function getCompareEntries(): Promise<SitemapEntry[]> {
           const yachtB = topYachts[j];
 
           if (yachtA.slug && yachtB.slug) {
+            // Use the most recent updatedAt between the two yachts
+            const dateA = yachtA.updatedAt ? new Date(yachtA.updatedAt).getTime() : 0;
+            const dateB = yachtB.updatedAt ? new Date(yachtB.updatedAt).getTime() : 0;
+            const lastmod = new Date(Math.max(dateA, dateB)).toISOString();
+
             // Generate entries for both locales
             for (const locale of LOCALES) {
               entries.push({
                 loc: `${SITE_URL}/${locale}/compare/${yachtA.slug}-vs-${yachtB.slug}`,
+                lastmod,
                 changefreq: "monthly",
                 priority: "0.5",
               });
