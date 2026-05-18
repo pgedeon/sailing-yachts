@@ -10,9 +10,6 @@ import { generateBreadcrumbJsonLd, getSiteUrl, generateCollectionPageJsonLd, gen
 export const revalidate = 21600;
 
 // Generate static params for all defined landing pages
-export async function generateStaticParams() {
-  return getAllLandingPageSlugs().map((slug) => ({ slug }));
-}
 
 // Generate metadata for each landing page
 export async function generateMetadata({
