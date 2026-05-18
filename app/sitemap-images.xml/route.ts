@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { db, yachtModels, images } from "@/lib/db";
-import { isNotNull, eq, sql } from "drizzle-orm";
+import { isNotNull, eq, and } from "drizzle-orm";
 import { SITE_URL, buildSitemapXml, sitemapResponse, SitemapEntry } from "@/lib/sitemap";
 
 export const revalidate = 3600;
@@ -10,49 +10,49 @@ const LOCALES = ["en", "fr"] as const;
 async function getImageEntries(): Promise<SitemapEntry[]> {
   return unstable_cache(
     async () => {
-      // Join yachts with their images to build the image sitemap
+      // Join yachts with their PRIMARY images only for image sitemap
       const rows = await db
         .select({
           yachtSlug: yachtModels.slug,
+          yachtName: yachtModels.modelName,
           imageUrl: images.url,
-          caption: images.caption,
           altText: images.altText,
+          updatedAt: yachtModels.updatedAt,
         })
         .from(yachtModels)
-        .innerJoin(images, eq(images.yachtModelId, yachtModels.id))
+        .innerJoin(
+          images,
+          and(
+            eq(images.yachtModelId, yachtModels.id),
+            eq(images.isPrimary, true)
+          )
+        )
         .where(isNotNull(yachtModels.slug))
         .orderBy(yachtModels.id);
 
-      // Group by yacht slug
-      const yachtImageMap = new Map<
-        string,
-        Array<{ loc: string; caption?: string; title?: string }>
-      >();
-
+      // Build entries for both locales — one primary image per yacht
+      const entries: SitemapEntry[] = [];
       for (const row of rows) {
         if (!row.yachtSlug) continue;
-        const slug = row.yachtSlug;
 
-        if (!yachtImageMap.has(slug)) {
-          yachtImageMap.set(slug, []);
-        }
+        const imageTitle = row.altText || row.yachtName || undefined;
+        const lastmod = row.updatedAt
+          ? new Date(row.updatedAt).toISOString()
+          : undefined;
 
-        yachtImageMap.get(slug)!.push({
-          loc: row.imageUrl,
-          caption: row.caption || row.altText || undefined,
-          title: row.altText || undefined,
-        });
-      }
-
-      // Build entries for both locales, limiting to 10 images per yacht
-      const entries: SitemapEntry[] = [];
-      for (const [slug, imgs] of yachtImageMap) {
         for (const locale of LOCALES) {
           entries.push({
-            loc: `${SITE_URL}/${locale}/yachts/${slug}`,
+            loc: `${SITE_URL}/${locale}/yachts/${row.yachtSlug}`,
+            lastmod,
             changefreq: "weekly",
             priority: "0.7",
-            images: imgs.slice(0, 10),
+            images: [
+              {
+                loc: row.imageUrl,
+                caption: imageTitle,
+                title: imageTitle,
+              },
+            ],
           });
         }
       }
