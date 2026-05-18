@@ -63,8 +63,8 @@ export default async function GlossaryPage({ params }: GlossaryPageProps) {
   ]);
 
   const breadcrumbItems = [
-    { name: "Home", item: getSiteUrl("/") },
-    { name: "Glossary", item: getSiteUrl("/glossary") },
+    { name: "Home", path: "/" },
+    { name: "Glossary", path: "/glossary" },
   ];
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd(breadcrumbItems);

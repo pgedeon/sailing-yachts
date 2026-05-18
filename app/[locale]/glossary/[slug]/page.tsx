@@ -70,9 +70,9 @@ export default async function GlossaryTermPage({ params }: GlossaryTermPageProps
   const relatedTerms = getRelatedTerms(term);
 
   const breadcrumbItems = [
-    { name: "Home", item: getSiteUrl("/") },
-    { name: "Glossary", item: getSiteUrl("/glossary") },
-    { name: term.term, item: getSiteUrl(`/glossary/${slug}`) },
+    { name: "Home", path: "/" },
+    { name: "Glossary", path: "/glossary" },
+    { name: term.term, path: `/glossary/${slug}` },
   ];
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd(breadcrumbItems);

@@ -136,7 +136,7 @@ export default async function ManufacturerPage({
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Home", path: "/" },
     { name: "Manufacturers", path: "/manufacturers" },
-    { name: manufacturer.name },
+    { name: manufacturer.name, path: `/manufacturers/${slug}` },
   ], locale);
 
   const collectionJsonLd = generateCollectionPageJsonLd({

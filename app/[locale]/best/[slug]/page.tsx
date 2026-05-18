@@ -89,9 +89,11 @@ export default async function LandingPage({
 
   // Generate JSON-LD structured data
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+    { name: "Home", path: "/" },
     { name: "Browse Yachts", path: "/yachts" },
+    
     { name: "Best Yachts", path: "/best" },
-    { name: pageDefinition.title },
+    { name: pageDefinition.title, path: `/best/${slug}` },
   ], locale);
 
   const collectionJsonLd = generateCollectionPageJsonLd({

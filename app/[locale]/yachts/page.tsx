@@ -91,7 +91,7 @@ export default async function YachtsPage({ params, searchParams }: YachtsPagePar
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: "Home", path: "/" },
-    { name: t("heading") },
+    { name: t("heading"), path: "/yachts" },
   ], locale);
 
   const collectionJsonLd = generateCollectionPageJsonLd({

@@ -105,8 +105,9 @@ export default async function CanonicalComparePage({
 
   // Generate JSON-LD structured data
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+    { name: "Home", path: "/" },
     { name: "Compare Yachts", path: "/compare" },
-    { name: `${fullNameA} vs ${fullNameB}` },
+    { name: `${fullNameA} vs ${fullNameB}`, path: `/compare/${slugA}-vs-${slugB}` },
   ], locale);
 
   // Generate individual yacht JSON-LD
