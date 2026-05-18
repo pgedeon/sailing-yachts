@@ -32,12 +32,17 @@ export function buildLocaleAlternates(pathWithoutLocale: string): {
 }
 
 export function buildOgImageUrl(params: {
+  type?: "yacht" | "manufacturer" | "compare" | "guide" | "glossary" | "default";
   title: string;
   description?: string | null;
   length?: number | string | null;
 }): string {
   const searchParams = new URLSearchParams();
   searchParams.set("title", params.title);
+
+  if (params.type && params.type !== "default") {
+    searchParams.set("type", params.type);
+  }
 
   if (params.description) {
     searchParams.set("description", params.description);

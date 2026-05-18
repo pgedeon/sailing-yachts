@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getYachtsBySlugs, generateComparisonIntro, generateComparisonMetadata, getPrimaryImage, type YachtComparisonData } from "@/lib/compare-canonical";
-import { getSiteUrl, generateBreadcrumbJsonLd, generateYachtJsonLd , buildLocaleAlternates } from "@/lib/seo";
+import { getSiteUrl, generateBreadcrumbJsonLd, generateYachtJsonLd, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
 import { PriceTierBadge } from "@/app/components/PriceTierBadge";
 import { calculatePriceTier } from "@/lib/price-tier";
 import { CanonicalCompareClient } from "./CanonicalCompareClient";
@@ -37,11 +37,28 @@ export async function generateMetadata({
       url: getSiteUrl(`/compare/${slugA}-vs-${slugB}`),
       type: "website",
       siteName: "Sailing Yacht Info",
+      images: [{
+        url: buildOgImageUrl({
+          type: "compare",
+          title: `${yachtA.manufacturer} ${yachtA.modelName} vs ${yachtB.manufacturer} ${yachtB.modelName}`,
+          description: "Side-by-side comparison",
+          length: yachtA.lengthOverall ? `${yachtA.lengthOverall.toFixed(1)}m vs ${yachtB.lengthOverall ? yachtB.lengthOverall.toFixed(1) : "?"}m` : undefined,
+        }),
+        width: 1200,
+        height: 630,
+        alt: meta.title,
+      }],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: meta.title,
       description: meta.description,
+      images: [buildOgImageUrl({
+        type: "compare",
+        title: `${yachtA.manufacturer} ${yachtA.modelName} vs ${yachtB.manufacturer} ${yachtB.modelName}`,
+        description: "Side-by-side comparison",
+        length: yachtA.lengthOverall ? `${yachtA.lengthOverall.toFixed(1)}m vs ${yachtB.lengthOverall ? yachtB.lengthOverall.toFixed(1) : "?"}m` : undefined,
+      })],
     },
     alternates: buildLocaleAlternates(`/compare/${slugA}-vs-${slugB}`),
   };

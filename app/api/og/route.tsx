@@ -16,9 +16,24 @@ function trimText(value: string | null, maxLength: number, fallback: string): st
     : normalized;
 }
 
+// Type-specific tag lines shown at the bottom of OG images
+const TYPE_TAGS: Record<string, string[]> = {
+  yacht: ["Specs", "Dimensions", "Comparisons"],
+  manufacturer: ["Models", "Specs", "Fleet Overview"],
+  compare: ["Side-by-Side", "Specs", "Ratios"],
+  guide: ["Buying Guide", "Expert Tips", "Resources"],
+  glossary: ["Terminology", "Definitions", "Reference"],
+  default: ["Specs", "Comparisons", "Reviews"],
+};
+
+function getTags(type: string | null): string[] {
+  return TYPE_TAGS[type ?? ""] ?? TYPE_TAGS.default;
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
 
+  const type = searchParams.get("type") ?? "default";
   const title = trimText(searchParams.get("title"), 64, "Sailing Yacht Specs");
   const description = trimText(
     searchParams.get("description"),
@@ -26,6 +41,7 @@ export async function GET(request: Request) {
     "Manufacturer profile and dimensions",
   );
   const length = trimText(searchParams.get("length"), 24, "Detailed specs");
+  const tags = getTags(type);
 
   return new ImageResponse(
     (
@@ -168,11 +184,12 @@ export async function GET(request: Request) {
           }}
         >
           <div style={{ display: "flex", gap: "18px" }}>
-            <span>Specs</span>
-            <span>•</span>
-            <span>Comparisons</span>
-            <span>•</span>
-            <span>Reviews</span>
+            {tags.map((tag, i) => (
+              <span key={i}>
+                {i > 0 && <span style={{ marginRight: "18px" }}>•</span>}
+                {tag}
+              </span>
+            ))}
           </div>
           <div style={{ fontWeight: 600 }}>info.sailboats.fr</div>
         </div>

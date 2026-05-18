@@ -6,7 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { marked } from "marked";
 
 import { getSpotlightBySlug } from "@/lib/manufacturer-spotlights";
-import { generateBreadcrumbJsonLd, getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -90,13 +90,13 @@ export async function generateMetadata({
       url,
       type: "article",
       siteName: "Sailing Yacht Info",
-      images: [{ url: getSiteUrl("/api/og"), width: 1200, height: 630, alt: title }],
+      images: [{ url: buildOgImageUrl({ type: "manufacturer", title: spotlight.manufacturer.name, description: spotlight.manufacturer.country ?? undefined }), width: 1200, height: 630, alt: title }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [getSiteUrl("/api/og")],
+      images: [buildOgImageUrl({ type: "manufacturer", title: spotlight.manufacturer.name, description: spotlight.manufacturer.country ?? undefined })],
     },
     alternates: buildLocaleAlternates(`/manufacturers/${slug}/spotlight`),
   };
