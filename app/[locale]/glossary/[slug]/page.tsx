@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getTermBySlug, getRelatedTerms } from "@/lib/glossary";
-import { getSiteUrl, generateBreadcrumbJsonLd , buildLocaleAlternates } from "@/lib/seo";
+import { getSiteUrl, generateBreadcrumbJsonLd, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
 
 // ISR: Revalidate glossary term pages every 6 hours
 export const revalidate = 21600;
@@ -45,11 +45,13 @@ export async function generateMetadata({
       url: getSiteUrl(`/glossary/${slug}`),
       type: "website",
       siteName: "Sailing Yacht Info",
+      images: [{ url: buildOgImageUrl({ type: "glossary", title: term.term, description: term.category ?? undefined }), width: 1200, height: 630, alt: term.term }],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: `${term.term} – Sailing Glossary`,
       description,
+      images: [buildOgImageUrl({ type: "glossary", title: term.term, description: term.category ?? undefined })],
     },
     alternates: buildLocaleAlternates(`/glossary/${slug}`),
   };

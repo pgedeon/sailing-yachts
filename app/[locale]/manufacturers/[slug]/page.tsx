@@ -9,6 +9,7 @@ import {
   generateCollectionPageJsonLd,
   getSiteUrl,
   buildLocaleAlternates,
+  buildOgImageUrl,
 } from "@/lib/seo";
 import {
   getManufacturerBySlug,
@@ -97,13 +98,23 @@ export async function generateMetadata({
       url: getSiteUrl(`/manufacturers/${slug}`),
       type: "website",
       siteName: "Sailing Yacht Info",
-      images: [{ url: getSiteUrl("/api/og"), width: 1200, height: 630, alt: title }],
+      images: [{ url: buildOgImageUrl({
+        type: "manufacturer",
+        title: manufacturer.name,
+        description: manufacturer.country ?? undefined,
+        length: manufacturer.foundedYear ? `Est. ${manufacturer.foundedYear}` : undefined,
+      }), width: 1200, height: 630, alt: title }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [getSiteUrl("/api/og")],
+      images: [buildOgImageUrl({
+        type: "manufacturer",
+        title: manufacturer.name,
+        description: manufacturer.country ?? undefined,
+        length: manufacturer.foundedYear ? `Est. ${manufacturer.foundedYear}` : undefined,
+      })],
     },
     alternates: buildLocaleAlternates(`/manufacturers/${slug}`),
   };
