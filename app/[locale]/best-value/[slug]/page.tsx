@@ -82,9 +82,6 @@ export const BEST_VALUE_PAGES: BestValuePageDef[] = [
   },
 ];
 
-export async function generateStaticParams() {
-  return BEST_VALUE_PAGES.map((p) => ({ slug: p.slug }));
-}
 
 export async function generateMetadata({
   params,

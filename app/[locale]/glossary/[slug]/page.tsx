@@ -57,15 +57,6 @@ export async function generateMetadata({
   };
 }
 
-export async function generateStaticParams() {
-  const terms = [
-    "loa", "beam", "draft", "displacement", "ballast", "ballast-ratio",
-    "fin-keel", "wing-keel", "cutter-rig", "sloop-rig", "ketch-rig",
-    "shoal-draft", "lwl", "hull-speed", "cabin", "berth", "head",
-    "bluewater", "coastal-cruiser", "liveaboard",
-  ];
-  return terms.map((slug) => ({ slug }));
-}
 
 export default async function GlossaryTermPage({ params }: GlossaryTermPageProps) {
   const { slug, locale } = await params;
