@@ -101,6 +101,17 @@ export default async function AdminPage() {
               >
                 Manage Subscribers
               </a>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">Completeness Audit</h2>
+              <p className="text-gray-600 mb-4">Analyze yacht spec completeness and identify data gaps.</p>
+              <a
+                href="/admin/completeness"
+                className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
+              >
+                View Audit Report
+              </a>
+            </div>
             </div>
           </div>
         </div>
