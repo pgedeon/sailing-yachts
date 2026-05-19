@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getLocale } from "next-intl/server";
 
 export const metadata: Metadata = {
   title: "Page Not Found",
   robots: { index: false, follow: false },
 };
 
-export default function RootNotFound() {
+export default async function RootNotFound() {
+  const locale = await getLocale();
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body>
         <div className="min-h-screen flex items-center justify-center bg-background px-4">
           <div className="max-w-md w-full text-center space-y-6">

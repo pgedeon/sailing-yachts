@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import WebVitals from "@/components/WebVitals";
 import AuthProvider from "./providers";
 import { getAllFlags } from "@/lib/feature-flags";
+import { getLocale } from "next-intl/server";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -72,19 +73,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Evaluate all flags server-side (no user context at layout level;
-  // pages with user sessions can pass overrides through page props)
+  const locale = await getLocale();
   const featureFlags = getAllFlags();
 
   return (
-    // Note: lang is set dynamically in [locale]/layout.tsx via html tag override
-    // but since this is the root layout, we set a default that the locale layout overrides
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body
         className={cn(inter.variable, "antialiased min-h-screen bg-background")}
       >
