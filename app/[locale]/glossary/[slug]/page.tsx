@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getTermBySlug, getRelatedTerms } from "@/lib/glossary";
+import { getYachtLinksForTerm } from "@/lib/glossary-yacht-links";
 import { getSiteUrl, generateBreadcrumbJsonLd, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
 
 // ISR: Revalidate glossary term pages every 6 hours
@@ -68,6 +69,7 @@ export default async function GlossaryTermPage({ params }: GlossaryTermPageProps
   }
 
   const relatedTerms = getRelatedTerms(term);
+  const yachtLinks = getYachtLinksForTerm(slug, locale);
 
   const breadcrumbItems = [
     { name: "Home", path: "/" },
@@ -123,6 +125,29 @@ export default async function GlossaryTermPage({ params }: GlossaryTermPageProps
             </p>
           </div>
         </section>
+
+        {/* Browse related yachts */}
+        {yachtLinks.length > 0 && (
+          <section className="max-w-5xl mx-auto px-4 py-8 border-t border-gray-200" data-testid="glossary-yacht-links">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              {t("term.browseYachtsTitle")}
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              {yachtLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="inline-flex items-center px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition text-sm"
+                >
+                  {locale === "fr" ? link.labelFr : link.label}
+                  <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Related Terms */}
         {relatedTerms.length > 0 && (
