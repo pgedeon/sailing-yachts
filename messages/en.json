@@ -539,6 +539,17 @@
         "classMax": "Class Max",
         "percentile": "Percentile"
       }
+    },
+    "toc": {
+      "quickFacts": "Quick Facts",
+      "specifications": "Specifications",
+      "performance": "Performance",
+      "recommendation": "Who Is This Boat For?",
+      "reviews": "Reviews",
+      "media": "Media Gallery",
+      "similar": "Similar Yachts",
+      "relatedGuides": "Related Guides",
+      "contact": "Contact & Inquiries"
     }
   },
   "YachtDetailSub": {
@@ -1172,5 +1183,35 @@
   },
   "UI": {
     "backToTop": "Back to top"
+  },
+  "QuickFacts": {
+    "sectionLabel": "Quick Facts",
+    "heading": "At a Glance",
+    "lengthOverall": "Length",
+    "beam": "Beam",
+    "draft": "Draft",
+    "displacement": "Displacement",
+    "ballast": "Ballast",
+    "sailAreaMain": "Sail Area",
+    "rigType": "Rig Type",
+    "cabins": "Cabins",
+    "berths": "Berths",
+    "heads": "Heads",
+    "engineHp": "Engine",
+    "fuelCapacity": "Fuel",
+    "waterCapacity": "Water",
+    "hullMaterial": "Hull",
+    "keelType": "Keel"
+  },
+  "SocialShare": {
+    "share": "Share",
+    "shareOn": "Share on {platform}",
+    "copyLink": "Copy link",
+    "copy": "Copy",
+    "copied": "Copied!"
+  },
+  "TableOfContents": {
+    "label": "Page sections",
+    "heading": "On This Page"
   }
 }
