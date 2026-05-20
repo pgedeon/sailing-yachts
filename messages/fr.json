@@ -539,6 +539,17 @@
         "classMax": "Max catégorie",
         "percentile": "Percentile"
       }
+    },
+    "toc": {
+      "quickFacts": "En bref",
+      "specifications": "Spécifications",
+      "performance": "Performance",
+      "recommendation": "Pour qui ?",
+      "reviews": "Avis",
+      "media": "Galerie média",
+      "similar": "Yachts similaires",
+      "relatedGuides": "Guides associés",
+      "contact": "Contact & demandes"
     }
   },
   "YachtDetailSub": {
@@ -1172,5 +1183,35 @@
   },
   "UI": {
     "backToTop": "Retour en haut"
+  },
+  "QuickFacts": {
+    "sectionLabel": "En bref",
+    "heading": "En un coup d’œil",
+    "lengthOverall": "Longueur",
+    "beam": "Bau",
+    "draft": "Tirant d’eau",
+    "displacement": "Déplacement",
+    "ballast": "Lest",
+    "sailAreaMain": "Surface de voilure",
+    "rigType": "Gréement",
+    "cabins": "Cabines",
+    "berths": "Couchettes",
+    "heads": "Toilettes",
+    "engineHp": "Moteur",
+    "fuelCapacity": "Carburant",
+    "waterCapacity": "Eau",
+    "hullMaterial": "Coque",
+    "keelType": "Quille"
+  },
+  "SocialShare": {
+    "share": "Partager",
+    "shareOn": "Partager sur {platform}",
+    "copyLink": "Copier le lien",
+    "copy": "Copier",
+    "copied": "Copié !"
+  },
+  "TableOfContents": {
+    "label": "Sections de la page",
+    "heading": "Sur cette page"
   }
 }
