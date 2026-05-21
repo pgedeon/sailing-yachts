@@ -43,7 +43,7 @@ export async function GET(
       SELECT ym.id, m.name as manufacturer, ym.model_name as "modelName",
               ym.slug, ym.year, ym.length_overall as "lengthOverall",
               ym.manufacturer_id as "manufacturerId",
-              (SELECT yi.url FROM yacht_images yi WHERE yi.yacht_model_id = ym.id AND yi.is_primary = true LIMIT 1) as "primaryImage"
+              (SELECT yi.url FROM images yi WHERE yi.yacht_model_id = ym.id AND yi.is_primary = true LIMIT 1) as "primaryImage"
        FROM yacht_models ym
        JOIN manufacturers m ON m.id = ym.manufacturer_id
        WHERE ym.id != ${current.id}
