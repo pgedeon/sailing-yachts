@@ -12,12 +12,15 @@ export async function GET(
 
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {
-    return NextResponse.json({ yachts: [] }, { status: 500 });
+    return NextResponse.json(
+      { yachts: [], error: "DATABASE_URL not configured" },
+      { status: 500 },
+    );
   }
 
-  const sql = neon(connectionString);
-
   try {
+    const sql = neon(connectionString);
+
     // Get current yacht info
     const currentRows = await sql`
       SELECT ym.id, ym.length_overall, ym.manufacturer_id, m.name as manufacturer
@@ -31,12 +34,11 @@ export async function GET(
     }
 
     const current = currentRows[0];
-
-    // Get candidate yachts (same-ish size range, excluding current)
     const loa = Number(current.length_overall) || 0;
     const loaMin = Math.max(0, loa - 3);
     const loaMax = loa + 3;
 
+    // Get candidate yachts
     const candidates = await sql`
       SELECT ym.id, m.name as manufacturer, ym.model_name as "modelName",
               ym.slug, ym.year, ym.length_overall as "lengthOverall",
@@ -53,15 +55,20 @@ export async function GET(
     `;
 
     const yachts = buildFallbackAlsoViewed(
-      candidates.map((r: any) => ({
-        ...r,
-        lengthOverall: r.lengthOverall,
-        manufacturerId: r.manufacturerId,
+      candidates.map((r: Record<string, unknown>) => ({
+        id: r.id as number,
+        manufacturer: r.manufacturer as string,
+        modelName: r.modelName as string,
+        slug: r.slug as string,
+        year: r.year as number,
+        lengthOverall: r.lengthOverall as string | number | null,
+        manufacturerId: r.manufacturerId as number | null,
+        primaryImage: r.primaryImage as string | null,
       })),
       {
         id: current.id as number,
-        lengthOverall: current.length_overall as string | number,
-        manufacturerId: current.manufacturer_id as number,
+        lengthOverall: current.length_overall as string | number | null,
+        manufacturerId: current.manufacturer_id as number | null,
         manufacturer: current.manufacturer as string,
       },
       6,
@@ -69,7 +76,11 @@ export async function GET(
 
     return NextResponse.json({ yachts });
   } catch (err) {
-    console.error("Also-viewed API error:", err);
-    return NextResponse.json({ yachts: [] }, { status: 500 });
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("Also-viewed API error:", message);
+    return NextResponse.json(
+      { yachts: [], error: message },
+      { status: 500 },
+    );
   }
 }
