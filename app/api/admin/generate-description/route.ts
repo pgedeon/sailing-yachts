@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { pool } from "@/lib/db";
+import { ensureSchema, pool } from "@/lib/db";
 import {
   generateDescription,
   generateAllStyles,
@@ -7,6 +7,8 @@ import {
   scoreDescription,
   type DescriptionStyle,
 } from "@/lib/description-templates";
+
+export const dynamic = "force-dynamic";
 
 /**
  * GET /api/admin/generate-description?slug=<slug>&style=<style>
@@ -17,6 +19,8 @@ import {
 export async function GET(request: NextRequest) {
   const slug = request.nextUrl.searchParams.get("slug");
   const style = (request.nextUrl.searchParams.get("style") || "balanced") as DescriptionStyle;
+
+  await ensureSchema();
 
   if (slug) {
     // Generate description for a specific yacht
