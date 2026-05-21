@@ -550,7 +550,8 @@
       "similar": "Yachts similaires",
       "relatedGuides": "Guides associés",
       "contact": "Contact & demandes"
-    }
+    },
+    "autoDescriptionBadge": "Généré automatiquement à partir des spécifications"
   },
   "YachtDetailSub": {
     "similarYachts": "Yachts similaires",
@@ -574,7 +575,8 @@
     "similarFactors.useCase": "Usage similaire",
     "similarFactors.rigKeel": "Type de gréement et quille",
     "similarFactors.dlRatio": "Performance (D/L)",
-    "similarFactors.priceTier": "Catégorie de prix"
+    "similarFactors.priceTier": "Catégorie de prix",
+    "usersAlsoViewed": "Les utilisateurs ont aussi consulté"
   },
   "Compare": {
     "heading": "Comparer des yachts",

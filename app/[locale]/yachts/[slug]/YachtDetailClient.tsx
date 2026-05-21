@@ -14,6 +14,7 @@ import { calculatePriceTier } from "@/lib/price-tier";
 import { slugify } from "@/lib/utils/slugify";
 import ManufacturerLogo from "@/components/manufacturer-logo";
 import { SimilarYachts } from "./SimilarYachts";
+import { UsersAlsoViewed } from "./UsersAlsoViewed";
 import { SameSizeAlternatives } from "./SameSizeAlternatives";
 import { RelatedManufacturers } from "./RelatedManufacturers";
 import { RelatedGuides } from "./RelatedGuides";
@@ -29,6 +30,7 @@ import { ReviewSummary } from "@/components/ReviewSummary";
 import { ReviewSubmissionForm } from "@/components/ReviewSubmissionForm";
 import { CorrectionForm } from "@/components/CorrectionForm";
 import QuickFacts from "@/components/QuickFacts";
+import { generateDescription, needsGeneratedDescription, type YachtSpecsForDescription } from "@/lib/description-templates";
 import SocialShareButtons from "@/components/SocialShareButtons";
 import TableOfContents from "@/components/TableOfContents";
 import dynamic from "next/dynamic";
@@ -411,11 +413,51 @@ export default function YachtDetailClient() {
                   {t("builtBy", { manufacturer: yacht.manufacturer })}
                 </p>
               </div>
-              {yacht.description && (
-                <p className="text-muted-foreground mb-4 leading-relaxed text-sm sm:text-base">
-                  {yacht.description}
-                </p>
-              )}
+              {(() => {
+                if (yacht.description && !needsGeneratedDescription(yacht.description)) {
+                  return (
+                    <p className="text-muted-foreground mb-4 leading-relaxed text-sm sm:text-base">
+                      {yacht.description}
+                    </p>
+                  );
+                }
+                // Auto-generate description from specs
+                const specs: YachtSpecsForDescription = {
+                  manufacturer: yacht.manufacturer,
+                  modelName: yacht.modelName,
+                  year: yacht.year,
+                  lengthOverall: yacht.lengthOverall,
+                  beam: yacht.beam,
+                  draft: yacht.draft,
+                  displacement: yacht.displacement,
+                  ballast: yacht.ballast,
+                  sailAreaMain: yacht.sailAreaMain,
+                  rigType: yacht.rigType,
+                  keelType: yacht.keelType,
+                  hullMaterial: yacht.hullMaterial,
+                  cabins: yacht.cabins,
+                  berths: yacht.berths,
+                  heads: yacht.heads,
+                  maxOccupancy: yacht.maxOccupancy,
+                  engineHp: yacht.engineHp,
+                  engineType: yacht.engineType,
+                  fuelCapacity: yacht.fuelCapacity,
+                  waterCapacity: yacht.waterCapacity,
+                  designNotes: yacht.designNotes,
+                };
+                const generated = generateDescription(specs, "balanced");
+                if (!generated) return null;
+                return (
+                  <div className="yacht-auto-description mb-4" data-testid="auto-generated-description">
+                    <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
+                      {generated}
+                    </p>
+                    <p className="text-xs text-muted-foreground/60 mt-1 italic" data-testid="auto-desc-badge">
+                      {t("autoDescriptionBadge")}
+                    </p>
+                  </div>
+                );
+              })()}
 
               {/* Price Range Estimate */}
               <PriceTierDetail info={priceTierInfo} aria-hidden="true" />
@@ -755,6 +797,11 @@ export default function YachtDetailClient() {
                   aria-hidden="true" />
               </div>
             )}
+          </div>
+
+          {/* Users Also Viewed */}
+          <div className="users-also-viewed-section no-print">
+            <UsersAlsoViewed slug={slug} />
           </div>
 
           {/* Best value cross-link */}
