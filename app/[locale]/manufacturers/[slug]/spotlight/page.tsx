@@ -7,6 +7,7 @@ import { marked } from "marked";
 
 import { getSpotlightBySlug } from "@/lib/manufacturer-spotlights";
 import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
+import { localePath } from "@/lib/i18n-paths";
 
 export const revalidate = 3600;
 
@@ -62,10 +63,7 @@ export async function generateMetadata({
   const spotlight = await getSpotlightData(slug);
 
   if (!spotlight) {
-    return {
-      title: t("spotlight.meta.notFoundTitle"),
-      description: t("spotlight.meta.notFoundDescription"),
-    };
+    notFound();
   }
 
   const title = `${spotlight.title} | Sailing Yacht Info`;
@@ -167,14 +165,14 @@ export default async function ManufacturerSpotlightPage({
         <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
-              <Link href="/" className="hover:text-foreground transition-colors">
+              <Link href={localePath(locale, "/")} className="hover:text-foreground transition-colors">
                 {t("spotlight.breadcrumb.home")}
               </Link>
             </li>
             <li aria-hidden="true">/</li>
             <li>
               <Link
-                href="/manufacturers"
+                href={localePath(locale, "/manufacturers")}
                 className="hover:text-foreground transition-colors"
               >
                 {t("spotlight.breadcrumb.manufacturers")}
@@ -183,7 +181,7 @@ export default async function ManufacturerSpotlightPage({
             <li aria-hidden="true">/</li>
             <li>
               <Link
-                href={`/manufacturers/${spotlight.manufacturer.slug}`}
+                href={localePath(locale, `/manufacturers/${spotlight.manufacturer.slug}`)}
                 className="hover:text-foreground transition-colors"
               >
                 {spotlight.manufacturer.name}
@@ -213,13 +211,13 @@ export default async function ManufacturerSpotlightPage({
 
             <div className="flex flex-wrap gap-3">
               <Link
-                href={`/manufacturers/${spotlight.manufacturer.slug}`}
+                href={localePath(locale, `/manufacturers/${spotlight.manufacturer.slug}`)}
                 className="inline-flex items-center rounded-lg border border-sky-200 bg-white px-4 py-2 text-sm font-medium text-sky-700 hover:bg-sky-50 transition-colors"
               >
                 {t("spotlight.backToManufacturer")}
               </Link>
               <Link
-                href={`/yachts?filters[manufacturers]=${spotlight.manufacturerId}`}
+                href={localePath(locale, `/yachts?filters[manufacturers]=${spotlight.manufacturerId}`)}
                 className="inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 transition-colors"
               >
                 {t("spotlight.browseYachts", { name: spotlight.manufacturer.name })}
@@ -306,7 +304,7 @@ export default async function ManufacturerSpotlightPage({
               </p>
             </div>
             <Link
-              href={`/manufacturers/${spotlight.manufacturer.slug}`}
+              href={localePath(locale, `/manufacturers/${spotlight.manufacturer.slug}`)}
               className="text-sm font-medium text-sky-700 hover:text-sky-800 transition-colors"
             >
               {t("spotlight.seeFullLineup")}
@@ -337,14 +335,14 @@ export default async function ManufacturerSpotlightPage({
                   </p>
                   <div className="mt-5 flex flex-wrap gap-3 text-sm">
                     <Link
-                      href={`/yachts/${model.yachtSlug}`}
+                      href={localePath(locale, `/yachts/${model.yachtSlug}`)}
                       className="font-medium text-sky-700 hover:text-sky-800 transition-colors"
                     >
                       {t("spotlight.viewYachtDetails")}
                     </Link>
                     {model.yacht?.manufacturerSlug && (
                       <Link
-                        href={`/manufacturers/${model.yacht.manufacturerSlug}`}
+                        href={localePath(locale, `/manufacturers/${model.yacht.manufacturerSlug}`)}
                         className="font-medium text-muted-foreground hover:text-foreground transition-colors"
                       >
                         {t("spotlight.builderPage")}
@@ -366,13 +364,13 @@ export default async function ManufacturerSpotlightPage({
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link
-              href={`/manufacturers/${spotlight.manufacturer.slug}`}
+              href={localePath(locale, `/manufacturers/${spotlight.manufacturer.slug}`)}
               className="inline-flex items-center rounded-lg border border-sky-200 bg-white px-4 py-2 text-sm font-medium text-sky-700 hover:bg-sky-50 transition-colors"
             >
               {t("spotlight.returnTo", { name: spotlight.manufacturer.name })}
             </Link>
             <Link
-              href={`/yachts?filters[manufacturers]=${spotlight.manufacturerId}`}
+              href={localePath(locale, `/yachts?filters[manufacturers]=${spotlight.manufacturerId}`)}
               className="inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 transition-colors"
             >
               {t("spotlight.viewAllYachts", { name: spotlight.manufacturer.name })}

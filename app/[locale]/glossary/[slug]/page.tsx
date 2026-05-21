@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { getTermBySlug, getRelatedTerms } from "@/lib/glossary";
 import { getYachtLinksForTerm } from "@/lib/glossary-yacht-links";
 import { getSiteUrl, generateBreadcrumbJsonLd, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
+import { localePath } from "@/lib/i18n-paths";
 
 // ISR: Revalidate glossary term pages every 6 hours
 export const revalidate = 21600;
@@ -91,11 +92,11 @@ export default async function GlossaryTermPage({ params }: GlossaryTermPageProps
         <nav className="max-w-5xl mx-auto px-4 py-4" aria-label="Breadcrumb">
           <ol className="flex items-center text-sm text-gray-500">
             <li>
-              <Link href="/" className="hover:text-gray-900">{t("breadcrumb.home")}</Link>
+              <Link href={localePath(locale, "/")} className="hover:text-gray-900">{t("breadcrumb.home")}</Link>
             </li>
             <li className="mx-2">/</li>
             <li>
-              <Link href="/glossary" className="hover:text-gray-900">{t("breadcrumb.glossary")}</Link>
+              <Link href={localePath(locale, "/glossary")} className="hover:text-gray-900">{t("breadcrumb.glossary")}</Link>
             </li>
             <li className="mx-2">/</li>
             <li className="text-gray-900">{term.term}</li>
@@ -157,7 +158,7 @@ export default async function GlossaryTermPage({ params }: GlossaryTermPageProps
               {relatedTerms.map((related) => (
                 <Link
                   key={related.slug}
-                  href={`/glossary/${related.slug}`}
+                  href={localePath(locale, `/glossary/${related.slug}`)}
                   className="group p-4 bg-gray-50 rounded-lg hover:bg-blue-50 hover:border-blue-200 border border-gray-200 transition-all"
                 >
                   <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition">
@@ -183,7 +184,7 @@ export default async function GlossaryTermPage({ params }: GlossaryTermPageProps
               {t("term.exploreMoreDescription")}
             </p>
             <Link
-              href="/glossary"
+              href={localePath(locale, "/glossary")}
               className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
             >
               {t("term.viewAllTerms")}

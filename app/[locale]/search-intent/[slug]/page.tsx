@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getSearchIntentBySlug } from "@/lib/search-intents";
 import { generateBreadcrumbJsonLd, getSiteUrl, generateCollectionPageJsonLd, generateYachtJsonLd, buildLocaleAlternates } from "@/lib/seo";
+import { localePath } from "@/lib/i18n-paths";
 
 // ISR: Revalidate search intent pages every 6 hours
 export const revalidate = 21600;
@@ -82,7 +83,7 @@ export default async function SearchIntentPage({
             {t("notFound.description")}
           </p>
           <Link
-            href="/"
+            href={localePath(locale, "/")}
             className="text-blue-600 hover:underline"
           >
             {t("notFound.homeLink")}
@@ -168,7 +169,7 @@ export default async function SearchIntentPage({
                 {yachts.map((yacht) => (
                   <Link
                     key={yacht.id}
-                    href={`/yachts/${yacht.slug}`}
+                    href={localePath(locale, `/yachts/${yacht.slug}`)}
                     className="block bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg hover:border-blue-200 transition group"
                   >
                     <div className="flex justify-between items-start mb-4">
@@ -234,7 +235,7 @@ export default async function SearchIntentPage({
                     {t("cta.showing", { shown: yachts.length, total: totalCount })}
                   </p>
                   <Link
-                    href="/yachts"
+                    href={localePath(locale, "/yachts")}
                     className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition"
                   >
                     {t("cta.viewAll")}
@@ -251,7 +252,7 @@ export default async function SearchIntentPage({
                   {t("newsletter.description")}
                 </p>
                 <Link
-                  href="/newsletter"
+                  href={localePath(locale, "/newsletter")}
                   className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition"
                 >
                   {t("newsletter.subscribe")}
@@ -267,7 +268,7 @@ export default async function SearchIntentPage({
               <p className="text-gray-600 mb-6">
                 {t("empty.description")}{" "}
                 <Link
-                  href="/yachts"
+                  href={localePath(locale, "/yachts")}
                   className="text-blue-600 hover:underline font-medium"
                 >
                   {t("empty.databaseLink")}
@@ -275,7 +276,7 @@ export default async function SearchIntentPage({
                 {t("empty.descriptionEnd")}
               </p>
               <Link
-                href="/yachts"
+                href={localePath(locale, "/yachts")}
                 className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition"
               >
                 {t("empty.browseAll")}

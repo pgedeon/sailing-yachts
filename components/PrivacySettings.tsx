@@ -1,7 +1,9 @@
 "use client";
 
+import { useLocale } from "next-intl";
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { localePath } from "@/lib/i18n-paths";
 
 interface PrivacySettings {
   analyticsOptOut: boolean;
@@ -12,6 +14,7 @@ interface PrivacySettings {
 }
 
 export default function PrivacySettings() {
+  const locale = useLocale();
   const [settings, setSettings] = useState<PrivacySettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
@@ -390,7 +393,7 @@ export default function PrivacySettings() {
       {/* Legal links */}
       <div className="text-xs text-gray-400 text-center pt-2">
         See our{" "}
-        <Link href="/privacy" className="underline hover:text-gray-600">
+        <Link href={localePath(locale, "/privacy")} className="underline hover:text-gray-600">
           Privacy Policy
         </Link>{" "}
         for full details on data handling.

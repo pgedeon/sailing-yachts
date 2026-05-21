@@ -16,6 +16,7 @@ import {
 import { getYachtDetailData, getPrimaryImage } from "@/lib/yachts";
 import { getPriceSummary } from "@/lib/price-data";
 import { calculateCompletenessScore, shouldNoindex } from "@/lib/completeness";
+import { localePath } from "@/lib/i18n-paths";
 import YachtDetailClient from "./YachtDetailClient";
 
 // ISR: Revalidate yacht detail pages every hour
@@ -154,7 +155,7 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
         <p className="mt-2 text-muted-foreground">
           {t("notFound.description")}
         </p>
-        <a href="/yachts" className="mt-4 inline-block text-primary underline">
+        <a href={localePath(locale, "/yachts")} className="mt-4 inline-block text-primary underline">
           {t("notFound.browseAll")}
         </a>
       </div>

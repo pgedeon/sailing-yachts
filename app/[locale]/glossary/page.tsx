@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getAllGlossaryTerms, getGlossaryCategories } from "@/lib/glossary";
 import { getSiteUrl, generateBreadcrumbJsonLd, generateCollectionPageJsonLd , buildLocaleAlternates } from "@/lib/seo";
+import { localePath } from "@/lib/i18n-paths";
 
 // ISR: Revalidate glossary every 6 hours
 export const revalidate = 21600;
@@ -108,7 +109,7 @@ export default async function GlossaryPage({ params }: GlossaryPageProps) {
           <div className="max-w-5xl mx-auto">
             <nav className="flex flex-wrap gap-2 justify-center" aria-label="Filter by category">
               <Link
-                href="/glossary"
+                href={localePath(locale, "/glossary")}
                 className="px-4 py-2 rounded-full bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition"
               >
                 {t("filterAll", { count: terms.length })}
@@ -146,7 +147,7 @@ export default async function GlossaryPage({ params }: GlossaryPageProps) {
                     {categoryTerms.map((term) => (
                       <Link
                         key={term.slug}
-                        href={`/glossary/${term.slug}`}
+                        href={localePath(locale, `/glossary/${term.slug}`)}
                         className="group p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-400 hover:shadow-md transition-all"
                       >
                         <div className="flex items-start justify-between">
@@ -182,13 +183,13 @@ export default async function GlossaryPage({ params }: GlossaryPageProps) {
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link
-                href="/guides"
+                href={localePath(locale, "/guides")}
                 className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
               >
                 {t("cta.browseGuides")}
               </Link>
               <Link
-                href="/yachts"
+                href={localePath(locale, "/yachts")}
                 className="px-6 py-3 bg-white text-gray-900 font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition"
               >
                 {t("cta.browseYachts")}

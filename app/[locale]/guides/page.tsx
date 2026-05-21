@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { getAllPublishedArticles, getAllCategories, getBuyingGuideArticles } from "@/lib/articles";
 import { getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
 import { BUYING_GUIDE_TEMPLATES, type GuideType } from "@/lib/buying-guides";
+import { localePath } from "@/lib/i18n-paths";
 
 // ISR: Revalidate guides hub every hour
 export const revalidate = 3600;
@@ -163,7 +164,7 @@ export default async function GuidesPage({ params }: GuidesPageProps) {
                   <ul className="space-y-2">
                     <li>
                       <Link
-                        href="/guides"
+                        href={localePath(locale, "/guides")}
                         className="block px-3 py-2 rounded-md text-blue-600 hover:bg-blue-50 transition"
                       >
                         {t("sidebar.allGuides", { count: articles.length })}
@@ -172,9 +173,9 @@ export default async function GuidesPage({ params }: GuidesPageProps) {
                     {categories.map((cat) => (
                       <li key={cat.name}>
                         <Link
-                          href={`/guides?category=${encodeURIComponent(
+                          href={localePath(locale, `/guides?category=${encodeURIComponent(
                             cat.name,
-                          )}`}
+                          )}`)}
                           className="block px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition"
                         >
                           {formatCategoryName(cat.name)} ({cat.count})
@@ -198,7 +199,7 @@ export default async function GuidesPage({ params }: GuidesPageProps) {
                   {t("sidebar.getNewGuidesDescription")}
                 </p>
                 <Link
-                  href="/newsletter"
+                  href={localePath(locale, "/newsletter")}
                   className="inline-block bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition"
                 >
                   {t("sidebar.subscribe")}
@@ -224,7 +225,7 @@ export default async function GuidesPage({ params }: GuidesPageProps) {
                           {guides.map((guide) => (
                             <Link
                               key={guide.id}
-                              href={`/guides/${guide.slug}`}
+                              href={localePath(locale, `/guides/${guide.slug}`)}
                               className="block p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-md transition group"
                             >
                               <div className="flex items-start gap-3">
@@ -277,7 +278,7 @@ export default async function GuidesPage({ params }: GuidesPageProps) {
                       .map((article) => (
                         <Link
                           key={article.id}
-                          href={`/guides/${article.slug}`}
+                          href={localePath(locale, `/guides/${article.slug}`)}
                           className="block bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg hover:border-blue-200 transition group"
                         >
                           {article.featuredImage && (
@@ -347,7 +348,7 @@ export default async function GuidesPage({ params }: GuidesPageProps) {
                       {t("cta.exploreDescription")}
                     </p>
                     <Link
-                      href="/yachts"
+                      href={localePath(locale, "/yachts")}
                       className="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-blue-50 transition"
                     >
                       {t("cta.browseYachts")}
@@ -364,7 +365,7 @@ export default async function GuidesPage({ params }: GuidesPageProps) {
                     {t("empty.moreComingDescription")}
                   </p>
                   <Link
-                    href="/yachts"
+                    href={localePath(locale, "/yachts")}
                     className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition"
                   >
                     {t("cta.browseYachts")}
@@ -380,7 +381,7 @@ export default async function GuidesPage({ params }: GuidesPageProps) {
                     {t("empty.comingSoonDescription")}
                   </p>
                   <Link
-                    href="/yachts"
+                    href={localePath(locale, "/yachts")}
                     className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition"
                   >
                     {t("cta.browseYachts")}

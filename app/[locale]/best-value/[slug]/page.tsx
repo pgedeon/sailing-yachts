@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { pool } from "@/lib/db";
 import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates } from "@/lib/seo";
+import { localePath } from "@/lib/i18n-paths";
 
 // ISR: Revalidate every 6 hours
 export const revalidate = 21600;
@@ -287,7 +288,7 @@ export default async function BestValuePage({
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
             {t("detail.notFoundTitle")}
           </h1>
-          <Link href="/" className="text-blue-600 hover:underline">
+          <Link href={localePath(locale, "/")} className="text-blue-600 hover:underline">
             {t("detail.notFoundHomeLink")}
           </Link>
         </div>
@@ -378,7 +379,7 @@ export default async function BestValuePage({
               {yachts.map((yacht, index) => (
                 <Link
                   key={yacht.id}
-                  href={`/yachts/${yacht.slug}`}
+                  href={localePath(locale, `/yachts/${yacht.slug}`)}
                   data-testid={`best-value-yacht-${index + 1}`}
                   className="block bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg hover:border-emerald-200 transition group"
                 >
@@ -548,7 +549,7 @@ export default async function BestValuePage({
               <p className="text-gray-600 mb-6">
                 {t("detail.noYachts.description")}{" "}
                 <Link
-                  href="/yachts"
+                  href={localePath(locale, "/yachts")}
                   className="text-blue-600 hover:underline font-medium"
                 >
                   {t("detail.noYachts.databaseLink")}

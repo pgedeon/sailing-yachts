@@ -1,7 +1,9 @@
 "use client";
 
+import { useLocale } from "next-intl";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { localePath } from "@/lib/i18n-paths";
 
 interface Yacht {
   id: number;
@@ -35,6 +37,7 @@ export default function BuyingGuideYachtList({
   description,
   showAllLink = true,
 }: BuyingGuideYachtListProps) {
+  const locale = useLocale();
   const [yachts, setYachts] = useState<Yacht[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -123,7 +126,7 @@ export default function BuyingGuideYachtList({
         {yachts.map((yacht) => (
           <Link
             key={yacht.id}
-            href={`/yachts/${yacht.slug}`}
+            href={localePath(locale, `/yachts/${yacht.slug}`)}
             className="block hover:bg-amber-50/40 transition-colors duration-200 p-5 group"
           >
             <div className="flex flex-col sm:flex-row gap-4">
@@ -181,7 +184,7 @@ export default function BuyingGuideYachtList({
       {showAllLink && total > yachts.length && (
         <div className="p-4 bg-slate-50/50 border-t border-slate-100 text-center">
           <Link
-            href="/yachts"
+            href={localePath(locale, "/yachts")}
             className="text-amber-700 hover:text-amber-800 text-sm font-medium transition"
           >
             Browse all {total} matching yachts →

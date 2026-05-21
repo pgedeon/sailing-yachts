@@ -11,6 +11,7 @@ import { getSiteUrl, generateBreadcrumbJsonLd , buildLocaleAlternates } from "@/
 import NewsletterSignup from "@/components/NewsletterSignup";
 import BuyingGuideYachtList from "@/components/BuyingGuideYachtList";
 import { getTemplateById } from "@/lib/buying-guides";
+import { localePath } from "@/lib/i18n-paths";
 
 export const revalidate = 3600;
 
@@ -231,11 +232,11 @@ export default async function GuideArticlePage({ params }: PageProps) {
         {/* Breadcrumb */}
         <nav className="bg-slate-900 border-b border-slate-700/50 py-3 px-4">
           <div className="max-w-5xl mx-auto flex items-center gap-2 text-sm">
-            <Link href="/" className="text-amber-300/80 hover:text-amber-200 transition">
+            <Link href={localePath(locale, "/")} className="text-amber-300/80 hover:text-amber-200 transition">
               {t("article.breadcrumb.home")}
             </Link>
             <span className="text-slate-600">/</span>
-            <Link href="/guides" className="text-amber-300/80 hover:text-amber-200 transition">
+            <Link href={localePath(locale, "/guides")} className="text-amber-300/80 hover:text-amber-200 transition">
               {t("article.breadcrumb.guides")}
             </Link>
             <span className="text-slate-600">/</span>
@@ -412,7 +413,7 @@ export default async function GuideArticlePage({ params }: PageProps) {
                     {t("article.browseCta.description")}
                   </p>
                   <Link
-                    href="/yachts"
+                    href={localePath(locale, "/yachts")}
                     className="inline-block bg-white text-amber-700 px-8 py-3.5 rounded-xl font-semibold hover:bg-amber-50 transition shadow-lg"
                   >
                     {t("article.browseCta.browseYachts")}
@@ -434,7 +435,7 @@ export default async function GuideArticlePage({ params }: PageProps) {
                 {relatedArticles.map((related) => (
                   <Link
                     key={related.id}
-                    href={`/guides/${related.slug}`}
+                    href={localePath(locale, `/guides/${related.slug}`)}
                     className="block bg-white rounded-xl border border-slate-200 p-6 hover:border-amber-300 hover:shadow-xl transition-all duration-300 group"
                   >
                     {related.category && (

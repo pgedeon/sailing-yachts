@@ -5,6 +5,7 @@ import Link from "next/link";
 import AlertPreferences from "@/components/AlertPreferences";
 import PushNotificationSettings from "@/components/PushNotificationSettings";
 import PrivacySettings from "@/components/PrivacySettings";
+import { useLocale } from "next-intl";
 
 // Types
 interface FavoriteItem {
@@ -38,6 +39,7 @@ interface SavedComparison {
 type Tab = "favorites" | "searches" | "comparisons" | "alerts" | "push" | "privacy";
 
 export default function AccountDashboard() {
+  const locale = useLocale();
   const [activeTab, setActiveTab] = useState<Tab>("favorites");
   const [session, setSession] = useState<{ user: { id: string; name?: string | null; email?: string | null } } | null>(null);
   const [loadingAuth, setLoadingAuth] = useState(true);
@@ -191,7 +193,7 @@ function FavoritesTab() {
         {favorites.map((fav) => (
           <div key={fav.id} className="border rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between gap-2">
-              <Link href={`/yachts/${fav.slug}`} className="font-bold text-lg leading-tight hover:text-blue-600 transition-colors">
+              <Link href={localePath(locale, `/yachts/${fav.slug}`)} className="font-bold text-lg leading-tight hover:text-blue-600 transition-colors">
                 {fav.manufacturerName} {fav.modelName}
               </Link>
               <button
@@ -206,7 +208,7 @@ function FavoritesTab() {
             {fav.lengthOverall && (
               <p className="text-sm text-gray-500 mt-1">{fav.lengthOverall}m {fav.rigType || ""}</p>
             )}
-            <Link href={`/yachts/${fav.slug}`} className="mt-2 inline-block text-blue-600 hover:underline text-sm">
+            <Link href={localePath(locale, `/yachts/${fav.slug}`)} className="mt-2 inline-block text-blue-600 hover:underline text-sm">
               View Details →
             </Link>
           </div>
@@ -408,7 +410,7 @@ function ComparisonsTab() {
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             <Link
-              href={`/compare?ids=${comp.yachtIds.join(",")}`}
+              href={localePath(locale, `/compare?ids=${comp.yachtIds.join(",")}`)}
               className="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
             >
               View
@@ -558,7 +560,7 @@ function DashboardRecommendations() {
             {compareAgain.slice(0, 3).map((comp) => (
               <Link
                 key={comp.id}
-                href={`/compare?ids=${comp.yachtIds.join(",")}`}
+                href={localePath(locale, `/compare?ids=${comp.yachtIds.join(",")}`)}
                 className="flex items-center justify-between border border-gray-200 rounded-lg p-3 hover:border-blue-300 hover:shadow-sm transition"
                 data-testid="dashboard-compare-again"
               >

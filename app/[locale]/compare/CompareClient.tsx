@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale} from "next-intl";
 import { PriceTierBadge } from "@/app/components/PriceTierBadge";
 import { calculatePriceTier } from "@/lib/price-tier";
 import Link from "next/link";
@@ -19,6 +19,7 @@ const ComparisonBarCharts = dynamic(
   { ssr: false, loading: () => null },
 );
 import {
+import { localePath } from "@/lib/i18n-paths";
   getSavedComparisons,
   saveComparison,
   deleteComparison,
@@ -133,6 +134,7 @@ const YACHT_COLORS = [
 ];
 
 export function CompareClient({ initialIds }: CompareClientProps) {
+  const locale = useLocale();
   const t = useTranslations("Compare");
 
   // Build SPEC_GROUPS with translated labels at render time
@@ -761,7 +763,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                   <th className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-40 sticky left-0 bg-gray-50 z-10">{t("table.spec")}</th>
                   {yachts.map((yacht, i) => (
                     <th key={yacht.id} className="px-5 py-3 text-left min-w-[160px]">
-                      <Link href={`/yachts/${yacht.slug}`} className="hover:underline">
+                      <Link href={localePath(locale, `/yachts/${yacht.slug}`)} className="hover:underline">
                         <span className="inline-flex items-center gap-1.5">
                           <span className={`w-2.5 h-2.5 rounded-full ${YACHT_COLORS[i]?.dot}`} />
                           <span className="font-semibold text-gray-800">{yacht.manufacturer} {yacht.modelName}</span>
@@ -945,7 +947,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
           />
         </div>
       )}
-        <Link href="/yachts" className="text-blue-600 hover:underline text-sm">{t("backToBrowse")}</Link>
+        <Link href={localePath(locale, "/yachts")} className="text-blue-600 hover:underline text-sm">{t("backToBrowse")}</Link>
       </div>
     </div>
   );

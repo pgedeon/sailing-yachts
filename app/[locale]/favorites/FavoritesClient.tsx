@@ -1,8 +1,10 @@
 "use client";
 
+import { useLocale } from "next-intl";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useFavorites } from "@/lib/useFavorites";
+import { localePath } from "@/lib/i18n-paths";
 
 interface YachtSummary {
   id: number;
@@ -18,6 +20,7 @@ interface YachtSummary {
 }
 
 export default function FavoritesClient() {
+  const locale = useLocale();
   const { favorites, toggleFavorite, clearAll, count } = useFavorites();
   const [yachts, setYachts] = useState<YachtSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -139,7 +142,7 @@ export default function FavoritesClient() {
             quick access.
           </p>
           <Link
-            href="/yachts"
+            href={localePath(locale, "/yachts")}
             className="inline-flex items-center px-5 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
           >
             Browse Yachts
@@ -168,7 +171,7 @@ export default function FavoritesClient() {
               >
                 <div className="flex items-start justify-between gap-2">
                   <Link
-                    href={`/yachts/${yacht.slug}`}
+                    href={localePath(locale, `/yachts/${yacht.slug}`)}
                     className="font-bold text-lg leading-tight hover:text-blue-600 transition-colors"
                   >
                     {yacht.manufacturer} {yacht.modelName}
@@ -218,7 +221,7 @@ export default function FavoritesClient() {
                   </div>
                 </dl>
                 <Link
-                  href={`/yachts/${yacht.slug}`}
+                  href={localePath(locale, `/yachts/${yacht.slug}`)}
                   className="mt-3 inline-block text-blue-600 hover:underline text-sm font-medium"
                 >
                   View Details →

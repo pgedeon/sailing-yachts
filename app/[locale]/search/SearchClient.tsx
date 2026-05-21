@@ -364,7 +364,7 @@ export function SearchClient() {
               {results.map((yacht) => (
                 <Link
                   key={yacht.id}
-                  href={yacht.slug ? "/yachts/" + yacht.slug : "/yachts"}
+                  href={localePath(locale, yacht.slug ? `/yachts/${yacht.slug}` : "/yachts")}
                   className="block border border-border rounded-lg p-5 hover:border-primary/50 hover:shadow-sm transition-all bg-white"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">

@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { getLandingPageYachts } from "@/lib/landing-pages";
 import { getLandingPageBySlug, getAllLandingPageSlugs } from "@/data/landing-pages";
 import { generateBreadcrumbJsonLd, getSiteUrl, generateCollectionPageJsonLd, generateYachtJsonLd, buildLocaleAlternates } from "@/lib/seo";
+import { localePath } from "@/lib/i18n-paths";
 
 // ISR: Revalidate landing pages every 6 hours
 export const revalidate = 21600;
@@ -74,7 +75,7 @@ export default async function LandingPage({
             {t("notFound.description")}
           </p>
           <Link
-            href="/"
+            href={localePath(locale, "/")}
             className="text-blue-600 hover:underline"
           >
             {t("notFound.homeLink")}
@@ -160,7 +161,7 @@ export default async function LandingPage({
                 {yachts.map((yacht) => (
                   <Link
                     key={yacht.id}
-                    href={`/yachts/${yacht.slug}`}
+                    href={localePath(locale, `/yachts/${yacht.slug}`)}
                     className="block bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg hover:border-blue-200 transition group"
                   >
                     <div className="flex justify-between items-start mb-4">
@@ -261,7 +262,7 @@ export default async function LandingPage({
               <p className="text-gray-600 mb-6">
                 {t("empty.description")}{" "}
                 <Link
-                  href="/yachts"
+                  href={localePath(locale, "/yachts")}
                   className="text-blue-600 hover:underline font-medium"
                 >
                   {t("empty.databaseLink")}

@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { ArrowRight, Eye } from "lucide-react";
 import YachtImage from "@/app/components/yacht/YachtImage";
+import { useLocale } from "next-intl";
 
 interface AlsoViewedYacht {
   id: number;
@@ -22,6 +23,7 @@ interface UsersAlsoViewedProps {
 }
 
 export function UsersAlsoViewed({ slug }: UsersAlsoViewedProps) {
+  const locale = useLocale();
   const t = useTranslations("YachtDetailSub");
   const [yachts, setYachts] = useState<AlsoViewedYacht[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,7 +74,7 @@ export function UsersAlsoViewed({ slug }: UsersAlsoViewedProps) {
         {yachts.map((yacht) => (
           <Link
             key={yacht.id}
-            href={`/yachts/${yacht.slug}`}
+            href={localePath(locale, `/yachts/${yacht.slug}`)}
             className="flex-shrink-0 w-40 sm:w-48 group"
             data-testid="also-viewed-card"
           >

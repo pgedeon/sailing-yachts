@@ -20,6 +20,7 @@ import { getCountryFlag } from "@/lib/utils/country-flags";
 import { getSpotlightByManufacturerId } from "@/lib/manufacturer-spotlights";
 import { ManufacturerComparisons } from "./ManufacturerComparisons";
 import ManufacturerLogo from "@/components/manufacturer-logo";
+import { localePath } from "@/lib/i18n-paths";
 import dynamic from "next/dynamic";
 
 const ManufacturerFleetChart = dynamic(() => import("@/components/manufacturer-fleet-chart"), { ssr: false });
@@ -67,10 +68,7 @@ export async function generateMetadata({
   const data = await getManufacturerData(slug);
 
   if (!data || !data.manufacturer) {
-    return {
-      title: t("meta.notFoundTitle"),
-      description: t("meta.notFoundDescription"),
-    };
+    notFound();
   }
 
   const manufacturer = data.manufacturer;
@@ -179,14 +177,14 @@ export default async function ManufacturerPage({
         <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
-              <Link href="/" className="hover:text-foreground transition-colors">
+              <Link href={localePath(locale, "/")} className="hover:text-foreground transition-colors">
                 {t("breadcrumb.home")}
               </Link>
             </li>
             <li aria-hidden="true">/</li>
             <li>
               <Link
-                href="/manufacturers"
+                href={localePath(locale, "/manufacturers")}
                 className="hover:text-foreground transition-colors"
               >
                 {t("breadcrumb.manufacturers")}
@@ -270,7 +268,7 @@ export default async function ManufacturerPage({
               </div>
 
               <Link
-                href={`/manufacturers/${manufacturer.slug}/spotlight`}
+                href={localePath(locale, `/manufacturers/${manufacturer.slug}/spotlight`)}
                 className="inline-flex items-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-700 transition-colors"
               >
                 {t("detail.spotlight.openSpotlight")}
@@ -284,19 +282,19 @@ export default async function ManufacturerPage({
         <section className="mt-10 sm:mt-12 bg-muted/30 rounded-xl p-6">
           <h2 className="text-lg font-semibold mb-4">{t("detail.browseBySize.title", { name: manufacturer.name })}</h2>
           <div className="flex flex-wrap gap-3">
-            <Link href="/yachts?minLength=0&maxLength=30" className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
+            <Link href={localePath(locale, "/yachts?minLength=0&maxLength=30")} className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
               {t("detail.browseBySize.under30")}
             </Link>
-            <Link href="/yachts?minLength=30&maxLength=35" className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
+            <Link href={localePath(locale, "/yachts?minLength=30&maxLength=35")} className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
               {t("detail.browseBySize.range3035")}
             </Link>
-            <Link href="/yachts?minLength=35&maxLength=40" className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
+            <Link href={localePath(locale, "/yachts?minLength=35&maxLength=40")} className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
               {t("detail.browseBySize.range3540")}
             </Link>
-            <Link href="/yachts?minLength=40&maxLength=50" className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
+            <Link href={localePath(locale, "/yachts?minLength=40&maxLength=50")} className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
               {t("detail.browseBySize.range4050")}
             </Link>
-            <Link href="/yachts?minLength=50" className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
+            <Link href={localePath(locale, "/yachts?minLength=50")} className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
               {t("detail.browseBySize.over50")}
             </Link>
           </div>
@@ -391,7 +389,7 @@ export default async function ManufacturerPage({
                   return (
                     <Link
                       key={yacht.id}
-                      href={`/yachts/${yacht.slug}`}
+                      href={localePath(locale, `/yachts/${yacht.slug}`)}
                       className="rounded-xl border border-border bg-card overflow-hidden shadow-sm hover:shadow-md hover:border-sky-200 transition-all"
                     >
                       {cardContent}
@@ -449,7 +447,7 @@ export default async function ManufacturerPage({
               {related.map((rel) => (
                 <Link
                   key={rel.id}
-                  href={`/manufacturers/${rel.slug}`}
+                  href={localePath(locale, `/manufacturers/${rel.slug}`)}
                   className="rounded-xl border border-border bg-card p-4 hover:border-sky-200 hover:shadow-sm transition-all text-center"
                 >
                   <div className="flex justify-center"><ManufacturerLogo name={rel.name} logoUrl={rel.logoUrl} size={36} /></div>

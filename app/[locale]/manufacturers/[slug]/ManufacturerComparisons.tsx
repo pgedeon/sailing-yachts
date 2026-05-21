@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Scale } from "lucide-react";
+import { useLocale } from "next-intl";
 
 /**
  * Manufacturer Comparisons - Internal Linking Module
@@ -19,6 +20,7 @@ export function ManufacturerComparisons({
   manufacturerName,
   yachts,
 }: ManufacturerComparisonsProps) {
+  const locale = useLocale();
   const t = useTranslations("Manufacturers");
 
   // Only show if there are at least 2 yachts to compare
@@ -51,7 +53,7 @@ export function ManufacturerComparisons({
         {comparisonPairs.map(({ yachtA, yachtB }, idx) => (
           <a
             key={idx}
-            href={`/compare?ids=${yachtA.id},${yachtB.id}`}
+            href={localePath(locale, `/compare?ids=${yachtA.id},${yachtB.id}`)}
             className="block p-3 rounded-lg border border-amber-100 bg-white/80 hover:bg-white hover:shadow-sm transition-all"
           >
             <div className="flex items-center justify-between">

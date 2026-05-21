@@ -14,6 +14,7 @@ import {
   getPartnerOffersByManufacturerId,
 } from "@/lib/partner-offers";
 import { getManufacturerBySlug } from "@/lib/manufacturers";
+import { localePath } from "@/lib/i18n-paths";
 
 // ISR: Revalidate partner pages every 6 hours
 export const revalidate = 21600;
@@ -46,10 +47,7 @@ export async function generateMetadata({
   const data = await getPartnerPageData(slug);
 
   if (!data || !data.manufacturer) {
-    return {
-      title: t("partners.meta.notFoundTitle"),
-      description: t("partners.meta.notFoundDescription"),
-    };
+    notFound();
   }
 
   const manufacturer = data.manufacturer;
@@ -153,14 +151,14 @@ export default async function PartnersPage({
         <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
-              <Link href="/" className="hover:text-foreground transition-colors">
+              <Link href={localePath(locale, "/")} className="hover:text-foreground transition-colors">
                 {t("partners.breadcrumb.home")}
               </Link>
             </li>
             <li aria-hidden="true">/</li>
             <li>
               <Link
-                href="/manufacturers"
+                href={localePath(locale, "/manufacturers")}
                 className="hover:text-foreground transition-colors"
               >
                 {t("partners.breadcrumb.manufacturers")}
@@ -169,7 +167,7 @@ export default async function PartnersPage({
             <li aria-hidden="true">/</li>
             <li>
               <Link
-                href={`/manufacturers/${slug}`}
+                href={localePath(locale, `/manufacturers/${slug}`)}
                 className="hover:text-foreground transition-colors"
               >
                 {manufacturer.name}
@@ -240,31 +238,31 @@ export default async function PartnersPage({
               <h2 className="text-lg font-semibold mb-4">{t("partners.filters.title")}</h2>
               <div className="flex flex-wrap gap-3">
                 <Link
-                  href={`/manufacturers/${slug}/partners?type=all`}
+                  href={localePath(locale, `/manufacturers/${slug}/partners?type=all`)}
                   className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors"
                 >
                   {t("partners.filters.all")}
                 </Link>
                 <Link
-                  href={`/manufacturers/${slug}/partners?type=dealer`}
+                  href={localePath(locale, `/manufacturers/${slug}/partners?type=dealer`)}
                   className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors"
                 >
                   {t("partners.filters.dealersSales")}
                 </Link>
                 <Link
-                  href={`/manufacturers/${slug}/partners?type=service`}
+                  href={localePath(locale, `/manufacturers/${slug}/partners?type=service`)}
                   className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors"
                 >
                   {t("partners.filters.serviceCenters")}
                 </Link>
                 <Link
-                  href={`/manufacturers/${slug}/partners?type=broker`}
+                  href={localePath(locale, `/manufacturers/${slug}/partners?type=broker`)}
                   className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors"
                 >
                   {t("partners.filters.brokers")}
                 </Link>
                 <Link
-                  href={`/manufacturers/${slug}/partners?type=parts`}
+                  href={localePath(locale, `/manufacturers/${slug}/partners?type=parts`)}
                   className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors"
                 >
                   {t("partners.filters.partsChandlery")}

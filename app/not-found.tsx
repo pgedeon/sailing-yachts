@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { localePath } from "@/lib/i18n-paths";
 import { getLocale } from "next-intl/server";
 
 export const metadata: Metadata = {
@@ -24,13 +25,13 @@ export default async function RootNotFound() {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
-                href="/"
+                href={localePath(locale, "/")}
                 className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
               >
                 Go to homepage
               </Link>
               <Link
-                href="/yachts"
+                href={localePath(locale, "/yachts")}
                 className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent transition-colors"
               >
                 Browse yachts

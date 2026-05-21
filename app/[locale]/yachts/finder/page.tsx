@@ -144,7 +144,7 @@ function ResultCard({ yacht }: { yacht: ScoredYacht }) {
       <div className="flex items-start justify-between gap-2">
         <h3 className="font-bold text-lg leading-tight">
           {yacht.slug ? (
-            <a href={`/yachts/${yacht.slug}`} className="hover:text-blue-600 transition-colors">
+            <a href={localePath(locale, `/yachts/${yacht.slug}`)} className="hover:text-blue-600 transition-colors">
               {yacht.manufacturer} {yacht.modelName}
             </a>
           ) : (

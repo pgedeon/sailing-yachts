@@ -4,6 +4,7 @@ import { getSiteUrl, buildLocaleAlternates } from '@/lib/seo';
 import { USE_CASE_TAG_IDS, USE_CASE_TAG_META, assignUseCaseTags, type UseCaseTagId } from '@/lib/use-case-tags';
 import { UseCaseBadge } from '@/components/use-case-badge';
 import { pool } from '@/lib/db';
+import { localePath } from "@/lib/i18n-paths";
 
 export const revalidate = 3600;
 
@@ -87,7 +88,7 @@ export default async function UseCaseTagsPage({ params }: { params: Promise<{ lo
             {t('useCaseTagsPage.disclaimer', { total: totalYachts })}
           </p>
           <a
-            href="/yachts"
+            href={localePath(locale, "/yachts")}
             className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
             {t('useCaseTagsPage.browseAll')}

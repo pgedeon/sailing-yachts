@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { pool } from "@/lib/db";
 import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates } from "@/lib/seo";
+import { localePath } from "@/lib/i18n-paths";
 
 // ISR: Revalidate every 6 hours
 export const revalidate = 21600;
@@ -210,7 +211,7 @@ export default async function CheaperAlternativesPage({
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
             {t("meta.notFoundTitle")}
           </h1>
-          <Link href="/" className="text-blue-600 hover:underline">
+          <Link href={localePath(locale, "/")} className="text-blue-600 hover:underline">
             {t("meta.notFoundHomeLink")}
           </Link>
         </div>
@@ -272,7 +273,7 @@ export default async function CheaperAlternativesPage({
               {alternatives.map((yacht) => (
                 <Link
                   key={yacht.id}
-                  href={`/yachts/${yacht.slug}`}
+                  href={localePath(locale, `/yachts/${yacht.slug}`)}
                   className="block bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg hover:border-amber-200 transition group"
                 >
                   <div className="flex justify-between items-start mb-4">
@@ -352,7 +353,7 @@ export default async function CheaperAlternativesPage({
               <p className="text-gray-600 mb-6">
                 {t("empty.description")}{" "}
                 <Link
-                  href="/yachts"
+                  href={localePath(locale, "/yachts")}
                   className="text-blue-600 hover:underline font-medium"
                 >
                   {t("empty.databaseLink")}
@@ -365,7 +366,7 @@ export default async function CheaperAlternativesPage({
           {/* Back to source yacht */}
           <div className="mt-12 text-center">
             <Link
-              href={`/yachts/${sourceYacht.slug}`}
+              href={localePath(locale, `/yachts/${sourceYacht.slug}`)}
               className="inline-flex items-center gap-2 text-blue-600 hover:underline"
             >
               <svg

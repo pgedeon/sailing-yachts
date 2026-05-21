@@ -1,6 +1,8 @@
 "use client";
 
+import { useLocale } from "next-intl";
 import React from "react";
+import { localePath } from "@/lib/i18n-paths";
 
 interface GlossaryLinkerProps {
   children: React.ReactNode;
@@ -24,6 +26,7 @@ export function GlossaryLinker({
   excludeTerms = [],
   className = "",
 }: GlossaryLinkerProps) {
+  const locale = useLocale();
   const [linkedContent, setLinkedContent] = React.useState<React.ReactNode>(null);
 
   React.useEffect(() => {
@@ -126,7 +129,7 @@ export function GlossaryLinker({
             newResult.push(
               <a
                 key={`link-${linkedCount}-${termInfo.slug}`}
-                href={`/glossary/${termInfo.slug}`}
+                href={localePath(locale, `/glossary/${termInfo.slug}`)}
                 className="glossary-link text-blue-600 hover:text-blue-800 underline decoration-dotted underline-offset-2"
                 title={`Learn more about ${termInfo.term}`}
               >

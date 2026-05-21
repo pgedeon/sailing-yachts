@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { ArrowRight, Info } from "lucide-react";
 import YachtImage from "@/app/components/yacht/YachtImage";
+import { useLocale } from "next-intl";
 
 interface MatchFactor {
   key: string;
@@ -38,6 +39,7 @@ interface SimilarYachtsProps {
 }
 
 function ScoreBadge({ score }: { score: number }) {
+  const locale = useLocale();
   let bg = "bg-muted text-muted-foreground";
   if (score >= 80) bg = "bg-emerald-100 text-emerald-800";
   else if (score >= 60) bg = "bg-sky-100 text-sky-800";
@@ -159,7 +161,7 @@ export function SimilarYachts({ slug }: SimilarYachtsProps) {
         {yachts.map((yacht) => (
           <Link
             key={yacht.id}
-            href={`/yachts/${yacht.slug}`}
+            href={localePath(locale, `/yachts/${yacht.slug}`)}
             className="group block bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
             data-testid="similar-yacht-card"
           >

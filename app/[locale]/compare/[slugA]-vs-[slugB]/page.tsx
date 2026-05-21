@@ -5,6 +5,7 @@ import { getYachtsBySlugs, generateComparisonIntro, generateComparisonMetadata, 
 import { getSiteUrl, generateBreadcrumbJsonLd, generateYachtJsonLd, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
 import { PriceTierBadge } from "@/app/components/PriceTierBadge";
 import { calculatePriceTier } from "@/lib/price-tier";
+import { localePath } from "@/lib/i18n-paths";
 import { CanonicalCompareClient } from "./CanonicalCompareClient";
 
 // ISR: Revalidate comparison pages every 6 hours
@@ -19,10 +20,7 @@ export async function generateMetadata({
   const { yachtA, yachtB } = await getYachtsBySlugs(slugA, slugB);
 
   if (!yachtA || !yachtB) {
-    return {
-      title: "Yacht Comparison Not Found",
-      description: "The yachts you're looking for could not be found.",
-    };
+    notFound();
   }
 
   const meta = generateComparisonMetadata(yachtA, yachtB);
@@ -73,24 +71,7 @@ export default async function CanonicalComparePage({
   const { yachtA, yachtB } = await getYachtsBySlugs(slugA, slugB);
 
   if (!yachtA || !yachtB) {
-    return (
-      <main className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
-            Yacht Comparison Not Found
-          </h1>
-          <p className="text-gray-600 mb-6">
-            One or both yachts could not be found in our database.
-          </p>
-          <Link
-            href="/compare"
-            className="text-blue-600 hover:underline"
-          >
-            Try a different comparison
-          </Link>
-        </div>
-      </main>
-    );
+    notFound();
   }
 
   const intro = generateComparisonIntro(yachtA, yachtB);
@@ -173,13 +154,13 @@ export default async function CanonicalComparePage({
           </p>
           <div className="flex justify-center gap-4">
             <Link
-              href={`/yachts/${yachtA.slug}`}
+              href={localePath(locale, `/yachts/${yachtA.slug}`)}
               className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
             >
               View {fullNameA}
             </Link>
             <Link
-              href={`/yachts/${yachtB.slug}`}
+              href={localePath(locale, `/yachts/${yachtB.slug}`)}
               className="px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-medium"
             >
               View {fullNameB}
@@ -201,7 +182,7 @@ export default async function CanonicalComparePage({
                     </th>
                     <th className="px-6 py-4 text-left min-w-[200px]">
                       <Link
-                        href={`/yachts/${yachtA.slug}`}
+                        href={localePath(locale, `/yachts/${yachtA.slug}`)}
                         className="font-semibold text-blue-600 hover:underline"
                       >
                         {fullNameA}
@@ -212,7 +193,7 @@ export default async function CanonicalComparePage({
                     </th>
                     <th className="px-6 py-4 text-left min-w-[200px]">
                       <Link
-                        href={`/yachts/${yachtB.slug}`}
+                        href={localePath(locale, `/yachts/${yachtB.slug}`)}
                         className="font-semibold text-emerald-700 hover:underline"
                       >
                         {fullNameB}
@@ -524,7 +505,7 @@ export default async function CanonicalComparePage({
             {/* Footer */}
             <div className="px-6 py-4 bg-gray-50 border-t text-xs text-gray-600">
               Compare more yachts with our{" "}
-              <Link href="/compare" className="text-blue-600 hover:underline font-medium">
+              <Link href={localePath(locale, "/compare")} className="text-blue-600 hover:underline font-medium">
                 comparison tool
               </Link>
               . Data sourced from manufacturer specifications.
@@ -544,7 +525,7 @@ export default async function CanonicalComparePage({
                     `View detailed specifications for ${fullNameA}.`}
                 </p>
                 <Link
-                  href={`/yachts/${yachtA.slug}`}
+                  href={localePath(locale, `/yachts/${yachtA.slug}`)}
                   className="inline-flex items-center gap-2 text-blue-600 hover:underline font-medium"
                 >
                   View Full Details
@@ -570,7 +551,7 @@ export default async function CanonicalComparePage({
                     `View detailed specifications for ${fullNameB}.`}
                 </p>
                 <Link
-                  href={`/yachts/${yachtB.slug}`}
+                  href={localePath(locale, `/yachts/${yachtB.slug}`)}
                   className="inline-flex items-center gap-2 text-emerald-700 hover:underline font-medium"
                 >
                   View Full Details
@@ -594,7 +575,7 @@ export default async function CanonicalComparePage({
 
           <div className="mt-8 text-center">
             <Link
-              href="/compare"
+              href={localePath(locale, "/compare")}
               className="text-blue-600 hover:underline text-sm"
             >
               ← Back to comparison tool

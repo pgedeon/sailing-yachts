@@ -1,5 +1,4 @@
-import { db, yachtModels, manufacturers, images } from "@/lib/db";
-import { eq, or, and } from "drizzle-orm";
+import { pool } from "@/lib/db";
 import { unstable_cache } from "next/cache";
 
 export interface YachtComparisonData {
@@ -34,45 +33,28 @@ async function getYachtsBySlugsUncached(
   slugA: string,
   slugB: string
 ): Promise<{ yachtA: YachtComparisonData | null; yachtB: YachtComparisonData | null }> {
-  // Query yacht models with slugs
-  const yachtData = await db
-    .select({
-      id: yachtModels.id,
-      manufacturer: manufacturers.name,
-      modelName: yachtModels.modelName,
-      year: yachtModels.year,
-      slug: yachtModels.slug,
-      lengthOverall: yachtModels.lengthOverall,
-      beam: yachtModels.beam,
-      draft: yachtModels.draft,
-      displacement: yachtModels.displacement,
-      ballast: yachtModels.ballast,
-      sailAreaMain: yachtModels.sailAreaMain,
-      rigType: yachtModels.rigType,
-      keelType: yachtModels.keelType,
-      hullMaterial: yachtModels.hullMaterial,
-      cabins: yachtModels.cabins,
-      berths: yachtModels.berths,
-      heads: yachtModels.heads,
-      maxOccupancy: yachtModels.maxOccupancy,
-      engineHp: yachtModels.engineHp,
-      engineType: yachtModels.engineType,
-      fuelCapacity: yachtModels.fuelCapacity,
-      waterCapacity: yachtModels.waterCapacity,
-      designNotes: yachtModels.designNotes,
-      description: yachtModels.description,
-    })
-    .from(yachtModels)
-    .leftJoin(manufacturers, eq(yachtModels.manufacturerId, manufacturers.id))
-    .where(or(eq(yachtModels.slug, slugA), eq(yachtModels.slug, slugB)));
+  const result = await pool.query(
+    `SELECT
+      ym.id, ym.model_name AS "modelName", ym.year, ym.slug,
+      ym.length_overall AS "lengthOverall", ym.beam, ym.draft,
+      ym.displacement, ym.ballast, ym.sail_area_main AS "sailAreaMain",
+      ym.rig_type AS "rigType", ym.keel_type AS "keelType",
+      ym.hull_material AS "hullMaterial",
+      ym.cabins, ym.berths, ym.heads, ym.max_occupancy AS "maxOccupancy",
+      ym.engine_hp AS "engineHp", ym.engine_type AS "engineType",
+      ym.fuel_capacity AS "fuelCapacity", ym.water_capacity AS "waterCapacity",
+      ym.design_notes AS "designNotes", ym.description,
+      m.name AS manufacturer
+    FROM yacht_models ym
+    LEFT JOIN manufacturers m ON ym.manufacturer_id = m.id
+    WHERE ym.slug = $1 OR ym.slug = $2`,
+    [slugA, slugB]
+  );
 
-  console.log(`[canonical-compare] Query returned ${yachtData.length} yachts for slugs: ${slugA}, ${slugB}`);
-  if (yachtData.length > 0) {
-    console.log(`[canonical-compare] First yacht slug: ${yachtData[0].slug}, manufacturer: ${yachtData[0].manufacturer}`);
-  }
+  console.log(`[canonical-compare] Query returned ${result.rows.length} yachts for slugs: ${slugA}, ${slugB}`);
 
-  const yachtA = yachtData.find((y: YachtComparisonData) => y.slug === slugA) || null;
-  const yachtB = yachtData.find((y: YachtComparisonData) => y.slug === slugB) || null;
+  const yachtA = result.rows.find((y: any) => y.slug === slugA) || null;
+  const yachtB = result.rows.find((y: any) => y.slug === slugB) || null;
 
   console.log(`[canonical-compare] yachtA found: ${!!yachtA}, yachtB found: ${!!yachtB}`);
 
@@ -93,18 +75,15 @@ export async function getYachtsBySlugs(
 export async function getPrimaryImage(slug: string): Promise<string | null> {
   return unstable_cache(
     async () => {
-      const result = await db
-        .select({ url: images.url })
-        .from(images)
-        .where(
-          and(
-            eq(images.yachtModelId, db.select({ id: yachtModels.id }).from(yachtModels).where(eq(yachtModels.slug, slug))),
-            eq(images.isPrimary, true)
-          )
-        )
-        .limit(1);
+      const result = await pool.query(
+        `SELECT i.url FROM images i
+         JOIN yacht_models ym ON i.yacht_model_id = ym.id
+         WHERE ym.slug = $1 AND i.is_primary = true
+         LIMIT 1`,
+        [slug]
+      );
 
-      return result[0]?.url || null;
+      return result.rows[0]?.url || null;
     },
     [`primary-image-${slug}`],
     { tags: ["images"], revalidate: 3600 }

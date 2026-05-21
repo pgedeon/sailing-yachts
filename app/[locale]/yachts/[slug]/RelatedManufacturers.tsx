@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import ArrowRight from "@/app/components/icons/ArrowRight";
+import { useLocale } from "next-intl";
 
 interface RelatedYacht {
   id: number;
@@ -28,6 +29,7 @@ export function RelatedManufacturers({
   currentYachtId,
   limit = 3,
 }: RelatedManufacturersProps) {
+  const locale = useLocale();
   const t = useTranslations("YachtDetailSub");
   const [yachts, setYachts] = useState<RelatedYacht[]>([]);
   const [loading, setLoading] = useState(true);
@@ -85,7 +87,7 @@ export function RelatedManufacturers({
         {yachts.map((yacht) => (
           <Link
             key={yacht.id}
-            href={`/yachts/${yacht.slug}`}
+            href={localePath(locale, `/yachts/${yacht.slug}`)}
             className="group block bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
             data-testid="related-manufacturer-yacht-card"
           >

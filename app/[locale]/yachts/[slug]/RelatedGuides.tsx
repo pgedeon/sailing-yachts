@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale} from "next-intl";
 import { BookOpen, ExternalLink } from "lucide-react";
+import { localePath } from "@/lib/i18n-paths";
 
 interface RelatedGuide {
   id: number;
@@ -25,6 +26,7 @@ export function RelatedGuides({
   lengthOverall,
   rigType,
 }: RelatedGuidesProps) {
+  const locale = useLocale();
   const t = useTranslations("YachtDetailSub");
   const [guides, setGuides] = useState<RelatedGuide[]>([]);
   const [loading, setLoading] = useState(true);
@@ -85,7 +87,7 @@ export function RelatedGuides({
           {t("guidesFallback")}
         </p>
         <a
-          href="/guides"
+          href={localePath(locale, "/guides")}
           className="inline-flex items-center gap-2 text-sm font-medium text-sky-700 hover:text-sky-900 transition"
         >
           {t("browseAllGuides")}
@@ -113,7 +115,7 @@ export function RelatedGuides({
         {guides.map((guide) => (
           <a
             key={guide.id}
-            href={`/guides/${guide.slug}`}
+            href={localePath(locale, `/guides/${guide.slug}`)}
             className="block p-3 rounded-lg border border-sky-100 bg-white/80 hover:bg-white hover:shadow-sm transition-all"
           >
             <div className="flex items-center justify-between gap-2">
@@ -145,7 +147,7 @@ export function RelatedGuides({
         ))}
       </div>
       <a
-        href="/guides"
+        href={localePath(locale, "/guides")}
         className="inline-flex items-center gap-1 text-xs text-sky-600 hover:text-sky-800 mt-4 transition"
       >
         {t("viewAllGuides")}

@@ -600,7 +600,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
                       <div className="flex items-start justify-between gap-2">
                         <h3 className="font-bold text-lg leading-tight">
                           {yacht.slug ? (
-                            <a href={`/yachts/${yacht.slug}`} className="hover:text-blue-600 transition-colors">
+                            <a href={localePath(locale, `/yachts/${yacht.slug}`)} className="hover:text-blue-600 transition-colors">
                               {yacht.manufacturer} {yacht.modelName}
                             </a>
                           ) : (
@@ -638,7 +638,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
                         <div className="flex justify-between py-0.5"><dt className="text-gray-500">{t('specs.hull')}</dt><dd className="font-medium">{yacht.hullMaterial ?? '—'}</dd></div>
                       </dl>
                       {yacht.slug && (
-                        <a href={`/yachts/${yacht.slug}`} className="mt-3 text-blue-600 hover:underline text-sm font-medium inline-block">
+                        <a href={localePath(locale, `/yachts/${yacht.slug}`)} className="mt-3 text-blue-600 hover:underline text-sm font-medium inline-block">
                           {t('viewDetails')}
                         </a>
                       )}
@@ -718,7 +718,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
             {selectedYacht.slug && (
               <div className="mt-4 pt-4 border-t">
                 <a
-                  href={`/yachts/${selectedYacht.slug}`}
+                  href={localePath(locale, `/yachts/${selectedYacht.slug}`)}
                   className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium text-sm"
                 >
                   {t('viewFullSpec')}

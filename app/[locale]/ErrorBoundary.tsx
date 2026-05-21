@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale} from "next-intl";
 import { captureError } from "@/lib/sentry";
+import { localePath } from "@/lib/i18n-paths";
 
 interface ErrorBoundaryProps {
   error: Error & { digest?: string };
@@ -29,6 +30,7 @@ export default function ErrorBoundary({
   backLabel,
   backHref,
 }: ErrorBoundaryProps) {
+  const locale = useLocale();
   const t = useTranslations("Errors");
 
   useEffect(() => {
@@ -107,7 +109,7 @@ export default function ErrorBoundary({
           )}
 
           <a
-            href="/"
+            href={localePath(locale, "/")}
             className="inline-flex items-center justify-center text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             {t("goHome")}

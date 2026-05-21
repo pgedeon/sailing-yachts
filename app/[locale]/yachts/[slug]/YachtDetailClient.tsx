@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale} from "next-intl";
 import Link from "next/link";
 import { LeadForm } from "@/app/components/LeadForm";
 import { Button } from "@/components/ui/button";
@@ -34,6 +34,7 @@ import { generateDescription, needsGeneratedDescription, type YachtSpecsForDescr
 import SocialShareButtons from "@/components/SocialShareButtons";
 import TableOfContents from "@/components/TableOfContents";
 import dynamic from "next/dynamic";
+import { localePath } from "@/lib/i18n-paths";
 
 const SpecBarsChart = dynamic(
   () => import("@/components/spec-bars-chart").then((m) => ({ default: m.SpecBarsChart })),
@@ -137,6 +138,7 @@ const GROUP_ICONS: Record<string, React.ReactNode> = {
 };
 
 export default function YachtDetailClient() {
+  const locale = useLocale();
   const params = useParams();
   const slug = params.slug as string;
   const t = useTranslations("YachtDetail");
@@ -312,7 +314,7 @@ export default function YachtDetailClient() {
       <nav aria-label="Breadcrumb" className="mb-4 sm:mb-6 no-print">
         <ol className="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
           <li>
-            <Link href="/" className="hover:text-foreground transition-colors">
+            <Link href={localePath(locale, "/")} className="hover:text-foreground transition-colors">
               {t("breadcrumb.home")}
             </Link>
           </li>
@@ -320,7 +322,7 @@ export default function YachtDetailClient() {
             <ChevronRight className="h-4 w-4" aria-hidden="true" />
           </li>
           <li>
-            <Link href="/yachts" className="hover:text-foreground transition-colors">
+            <Link href={localePath(locale, "/yachts")} className="hover:text-foreground transition-colors">
               {t("breadcrumb.yachts")}
             </Link>
           </li>
@@ -329,7 +331,7 @@ export default function YachtDetailClient() {
           </li>
           <li>
             <Link
-              href={`/manufacturers/${slugify(yacht.manufacturer)}`}
+              href={localePath(locale, `/manufacturers/${slugify(yacht.manufacturer)}`)}
               className="hover:text-foreground transition-colors"
             >
               {yacht.manufacturer}
@@ -347,7 +349,7 @@ export default function YachtDetailClient() {
       {/* Back link + Print button + Share buttons */}
       <div className="mb-4 sm:mb-6 flex items-center justify-between flex-wrap gap-2">
         <Button asChild variant="ghost" size="sm" className="no-print">
-          <Link href="/yachts">
+          <Link href={localePath(locale, "/yachts")}>
             <ChevronLeft className="h-4 w-4 mr-1" aria-hidden="true" />
             {t("backToBrowse")}
           </Link>
@@ -867,7 +869,7 @@ export default function YachtDetailClient() {
           {/* Compare Button */}
           <div className="compare-button-section mt-10 sm:mt-12 text-center no-print">
             <Button asChild size="lg">
-              <Link href={`/compare?ids=${yacht.id}`}>{t("compare")}</Link>
+              <Link href={localePath(locale, `/compare?ids=${yacht.id}`)}>{t("compare")}</Link>
             </Button>
           </div>
         </div>

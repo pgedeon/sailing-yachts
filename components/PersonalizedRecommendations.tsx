@@ -1,8 +1,10 @@
 "use client";
 
+import { useLocale } from "next-intl";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import YachtImage from "@/app/components/yacht/YachtImage";
+import { localePath } from "@/lib/i18n-paths";
 
 interface RecommendedYacht {
   id: number;
@@ -31,6 +33,7 @@ interface Recommendations {
  * Falls back to nothing for guest users.
  */
 export function PersonalizedRecommendations() {
+  const locale = useLocale();
   const [data, setData] = useState<Recommendations | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -119,7 +122,7 @@ function YachtRecommendationCard({
 
   return (
     <Link
-      href={`/yachts/${yacht.slug}`}
+      href={localePath(locale, `/yachts/${yacht.slug}`)}
       className="group block bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg hover:border-blue-200 transition"
       data-testid="recommendation-card"
     >
