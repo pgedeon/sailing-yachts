@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { pool } from "@/lib/db";
+import { ensureSchema, pool } from "@/lib/db";
 import { buildFallbackAlsoViewed } from "@/lib/also-viewed";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(
   request: NextRequest,
@@ -10,6 +12,8 @@ export async function GET(
 
   const client = await pool.connect();
   try {
+    await ensureSchema();
+
     // Get current yacht info
     const currentResult = await client.query(
       `SELECT ym.id, ym.length_overall, ym.manufacturer_id, m.name as manufacturer
