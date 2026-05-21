@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import ArrowRight from "@/app/components/icons/ArrowRight";
 import { useLocale } from "next-intl";
+import { localePath } from "@/lib/i18n-paths";
 
 interface SameSizeYacht {
   id: number;

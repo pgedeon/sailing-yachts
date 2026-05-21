@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowRight, Eye } from "lucide-react";
 import YachtImage from "@/app/components/yacht/YachtImage";
 import { useLocale } from "next-intl";
+import { localePath } from "@/lib/i18n-paths";
 
 interface AlsoViewedYacht {
   id: number;

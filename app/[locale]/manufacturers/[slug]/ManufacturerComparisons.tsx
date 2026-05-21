@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Scale } from "lucide-react";
 import { useLocale } from "next-intl";
+import { localePath } from "@/lib/i18n-paths";
 
 /**
  * Manufacturer Comparisons - Internal Linking Module

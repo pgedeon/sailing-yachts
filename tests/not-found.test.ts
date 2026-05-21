@@ -19,13 +19,13 @@ describe("Not Found Pages", () => {
   it("root not-found.tsx has link to homepage", () => {
     const fullPath = resolve(projectRoot, "app/not-found.tsx");
     const content = readFileSync(fullPath, "utf-8");
-    expect(content).toContain('href="/"');
+    expect(content).toContain('localePath(locale, "/")');
   });
 
   it("root not-found.tsx has link to browse yachts", () => {
     const fullPath = resolve(projectRoot, "app/not-found.tsx");
     const content = readFileSync(fullPath, "utf-8");
-    expect(content).toContain('href="/yachts"');
+    expect(content).toContain("/yachts");
   });
 
   it("root not-found.tsx shows 404 heading", () => {

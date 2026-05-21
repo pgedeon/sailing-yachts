@@ -6,6 +6,7 @@ import AlertPreferences from "@/components/AlertPreferences";
 import PushNotificationSettings from "@/components/PushNotificationSettings";
 import PrivacySettings from "@/components/PrivacySettings";
 import { useLocale } from "next-intl";
+import { localePath } from "@/lib/i18n-paths";
 
 // Types
 interface FavoriteItem {
@@ -138,6 +139,7 @@ export default function AccountDashboard() {
 
 // === Favorites Tab ===
 function FavoritesTab() {
+  const locale = useLocale();
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -362,6 +364,7 @@ function SearchesTab() {
 
 // === Comparisons Tab ===
 function ComparisonsTab() {
+  const locale = useLocale();
   const [comparisons, setComparisons] = useState<SavedComparison[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -485,6 +488,7 @@ interface CompareAgainItem {
 }
 
 function DashboardRecommendations() {
+  const locale = useLocale();
   const [similar, setSimilar] = useState<RecommendationItem[]>([]);
   const [compareAgain, setCompareAgain] = useState<CompareAgainItem[]>([]);
   const [loading, setLoading] = useState(true);
