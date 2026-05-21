@@ -550,7 +550,8 @@
       "similar": "Similar Yachts",
       "relatedGuides": "Related Guides",
       "contact": "Contact & Inquiries"
-    }
+    },
+    "autoDescriptionBadge": "Auto-generated from specifications"
   },
   "YachtDetailSub": {
     "similarYachts": "Similar Yachts",
@@ -574,7 +575,8 @@
     "similarFactors.useCase": "Use-case match",
     "similarFactors.rigKeel": "Rig & keel type",
     "similarFactors.dlRatio": "Performance (D/L)",
-    "similarFactors.priceTier": "Price tier"
+    "similarFactors.priceTier": "Price tier",
+    "usersAlsoViewed": "Users Also Viewed"
   },
   "Compare": {
     "heading": "Compare Yachts",
