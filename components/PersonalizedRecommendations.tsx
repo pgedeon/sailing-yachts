@@ -114,6 +114,7 @@ function YachtRecommendationCard({
   yacht: RecommendedYacht;
   variant?: "similar" | "new";
 }) {
+  const locale = useLocale();
   const formatNum = (val: string | null, decimals = 1) => {
     if (!val) return null;
     const n = parseFloat(val);

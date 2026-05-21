@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { localePath } from "@/lib/i18n-paths";
 
 interface SearchResult {
   id: number;
@@ -33,6 +34,7 @@ interface AutocompleteSuggestion {
 
 export function SearchClient() {
   const t = useTranslations("Search");
+  const locale = useLocale();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [total, setTotal] = useState(0);

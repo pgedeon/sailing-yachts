@@ -30,24 +30,18 @@
 - ~~**P17.4 — "Yachts like this" smart recommendations**~~ *(completed 2026-05-12 — PR #273, Issue #272, 14 tests)*
 - ~~**P17.5 — Saved search & alert system enhancement**~~ *(completed 2026-05-12 — PR #275, 31 tests)*
 
-### Phase 18 — Performance & UX Polish (Priority: High)
+### Phase 18 — Performance & UX Polish (Priority: High) — ✅ COMPLETE
 
-The site has rich content and features but lacks several Next.js UX best practices: no loading skeletons (loading.tsx), no error boundaries (error.tsx), no custom not-found pages, and no streaming optimization. These gaps hurt perceived performance (LCP/FCP) and user experience when things go wrong. Adding proper loading states, error recovery, and polish transforms the site from "functional" to "professional-grade".
-
-- **P18.1 — Loading skeletons for all route segments:** Add `loading.tsx` files for all major route segments (`/yachts`, `/yachts/[slug]`, `/compare`, `/compare/[slugA]-vs-[slugB]`, `/manufacturers`, `/manufacturers/[slug]`, `/guides`, `/guides/[slug]`, `/search`, `/glossary`, `/glossary/[slug]`). Each skeleton should match the page layout with animated pulse placeholders. Create a shared `Skeleton` component in `components/ui/skeleton.tsx`. Tests: verify loading.tsx files render without errors, snapshot tests for skeleton layout. *(priority: critical — directly impacts perceived LCP and FCP)*
-
-- **P18.2 — Error boundaries with retry for all route segments:** Add `error.tsx` files for all major route segments with user-friendly error messages, retry button, and link back to home. Include error illustration/icon. Log errors to Sentry (already integrated). i18n-compatible error messages. Tests: verify error boundaries catch errors and display retry UI. *(priority: high — prevents white-screen-of-death)*
-
-- **P18.3 — Custom 404/not-found page:** Add `not-found.tsx` at the app root and `[locale]` level with helpful navigation (search bar, popular yachts, browse manufacturers), branded illustration, and proper SEO meta (noindex). Tests: verify 404 renders for invalid routes. *(priority: high — reduces bounce on broken links)*
-
-- **P18.4 — Scroll progress indicator & back-to-top button:** Add a subtle scroll progress bar at the top of content pages (yacht detail, guides, compare). Add a floating "back to top" button that appears after scrolling 300px. Both should be client components with smooth animations. i18n-compatible aria labels. Tests: rendering tests for both components. *(priority: medium — UX polish)*
-
-- **P18.5 — Page transition animations:** Add subtle fade transitions between route changes using Next.js App Router conventions. Animate filter changes on /yachts page (fade in/out of yacht cards). Keep animations lightweight (CSS transitions, no heavy libraries). Respect prefers-reduced-motion. Tests: verify animations don't block content rendering. *(priority: medium — perceived speed)*
+- ~~**P18.1 — Loading skeletons for all route segments**~~ *(completed 2026-05-21 — 14 loading.tsx files, Skeleton component, 52 tests)*
+- ~~**P18.2 — Error boundaries with retry for all route segments**~~ *(completed 2026-05-21 — 14 error.tsx files, shared ErrorBoundary component, 48 tests)*
+- ~~**P18.3 — Custom 404/not-found page**~~ *(completed 2026-05-21 — root + locale not-found.tsx, i18n, 13 tests)*
+- ~~**P18.4 — Scroll progress indicator & back-to-top button**~~ *(completed 2026-05-21 — ScrollProgress + BackToTop components, 24 tests)*
+- ~~**P18.5 — Page transition animations**~~ *(completed 2026-05-21 — PageTransition (View Transitions API) + AnimatedGrid, 30 tests)*
 
 ### Notes
-- All loading skeletons must match the actual page layout — not generic spinners
-- Error boundaries must be i18n-compatible (error messages in en + fr)
-- Use `suspense` boundaries strategically to stream content progressively
-- Skeletons should use the same Tailwind classes as real content for layout stability (CLS prevention)
-- All animations must respect `prefers-reduced-motion` media query
-- Keep JS bundle impact minimal — use CSS animations where possible
+- All loading skeletons match the actual page layout — not generic spinners
+- Error boundaries are i18n-compatible (error messages in en + fr)
+- Uses `suspense` boundaries strategically to stream content progressively
+- Skeletons use the same Tailwind classes as real content for layout stability (CLS prevention)
+- All animations respect `prefers-reduced-motion` media query
+- JS bundle impact kept minimal — CSS animations used where possible

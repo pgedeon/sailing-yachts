@@ -18,8 +18,8 @@ const ComparisonBarCharts = dynamic(
   () => import("@/components/comparison-bar-charts").then(m => ({ default: m.ComparisonBarCharts })),
   { ssr: false, loading: () => null },
 );
-import {
 import { localePath } from "@/lib/i18n-paths";
+import {
   getSavedComparisons,
   saveComparison,
   deleteComparison,

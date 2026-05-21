@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
+import { localePath } from "@/lib/i18n-paths";
 import { assignUseCaseTags, type UseCaseTagId } from '@/lib/use-case-tags';
 import {
   rankYachts,
@@ -137,6 +138,7 @@ function ScoreBar({ label, value, max }: { label: string; value: number; max: nu
 
 function ResultCard({ yacht }: { yacht: ScoredYacht }) {
   const format = (v: number | null | undefined) => (v != null ? v.toLocaleString() : '—');
+  const locale = useLocale();
   const pt = useTranslations('Yachts');
 
   return (
@@ -199,6 +201,7 @@ function ResultCard({ yacht }: { yacht: ScoredYacht }) {
 
 export default function FinderPage() {
   const t = useTranslations('Yachts');
+  const locale = useLocale();
 
   const [step, setStep] = useState(0);
   const [results, setResults] = useState<ScoredYacht[]>([]);

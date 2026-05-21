@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowRight, Info } from "lucide-react";
 import YachtImage from "@/app/components/yacht/YachtImage";
 import { useLocale } from "next-intl";
+import { localePath } from "@/lib/i18n-paths";
 
 interface MatchFactor {
   key: string;
@@ -107,6 +108,7 @@ function WhyTooltip({ factors, t }: { factors: MatchFactor[]; t: (key: string) =
 export function SimilarYachts({ slug }: SimilarYachtsProps) {
   const t = useTranslations("YachtDetailSub");
   const [yachts, setYachts] = useState<SimilarYacht[]>([]);
+  const locale = useLocale();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 

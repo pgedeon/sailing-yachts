@@ -13,7 +13,9 @@ import { assignUseCaseTags, USE_CASE_TAG_IDS, type UseCaseTagId } from '@/lib/us
 import { UseCaseBadgeGroup } from '@/components/use-case-badge';
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
+import { localePath } from "@/lib/i18n-paths";
+
 import dynamic from 'next/dynamic';
 const LengthDistributionChart = dynamic(() => import('@/components/length-distribution-chart'), { ssr: false, loading: () => null });
 const RangeSlider = dynamic(() => import('@/app/components/RangeSlider'), { ssr: false, loading: () => null });
@@ -46,6 +48,7 @@ interface YachtsClientProps {
 export default function YachtsClient({ initialData, filterOptions: initialFilterOptions }: YachtsClientProps) {
   const searchParams = useSearchParams();
   const t = useTranslations('Yachts');
+  const locale = useLocale();
 
   // Initialize from SSR data if available
   const [manufacturers, setManufacturers] = useState<Array<{ id: number; name: string }>>(
