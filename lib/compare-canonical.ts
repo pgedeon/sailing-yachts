@@ -1,4 +1,5 @@
-import { neon } from "@neondatabase/serverless";
+import { db, yachtModels, manufacturers, images } from "@/lib/db";
+import { eq, or, and, sql } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
 
 export interface YachtComparisonData {
@@ -29,55 +30,83 @@ export interface YachtComparisonData {
   primaryImageUrl: string | null;
 }
 
-function getSql() {
-  const connectionString = process.env.DATABASE_URL;
-  if (!connectionString) {
-    throw new Error("DATABASE_URL is not set");
-  }
-  return neon(connectionString);
+/**
+ * Normalize a value that may be a string (Neon HTTP decimal columns) to a number.
+ */
+function toNum(val: unknown): number | null {
+  if (val == null) return null;
+  const n = Number(val);
+  return isNaN(n) ? null : n;
 }
 
 async function getYachtsBySlugsUncached(
   slugA: string,
   slugB: string
 ): Promise<{ yachtA: YachtComparisonData | null; yachtB: YachtComparisonData | null }> {
-  const sql = getSql();
-
-  const rows = await sql`
-    SELECT
-      ym.id, ym.model_name AS "modelName", ym.year, ym.slug,
-      ym.length_overall AS "lengthOverall", ym.beam, ym.draft,
-      ym.displacement, ym.ballast, ym.sail_area_main AS "sailAreaMain",
-      ym.rig_type AS "rigType", ym.keel_type AS "keelType",
-      ym.hull_material AS "hullMaterial",
-      ym.cabins, ym.berths, ym.heads, ym.max_occupancy AS "maxOccupancy",
-      ym.engine_hp AS "engineHp", ym.engine_type AS "engineType",
-      ym.fuel_capacity AS "fuelCapacity", ym.water_capacity AS "waterCapacity",
-      ym.design_notes AS "designNotes", ym.description,
-      m.name AS manufacturer
-    FROM yacht_models ym
-    LEFT JOIN manufacturers m ON ym.manufacturer_id = m.id
-    WHERE ym.slug = ${slugA} OR ym.slug = ${slugB}
-  `;
+  const rows = await db
+    .select({
+      id: yachtModels.id,
+      modelName: yachtModels.modelName,
+      year: yachtModels.year,
+      slug: yachtModels.slug,
+      lengthOverall: yachtModels.lengthOverall,
+      beam: yachtModels.beam,
+      draft: yachtModels.draft,
+      displacement: yachtModels.displacement,
+      ballast: yachtModels.ballast,
+      sailAreaMain: yachtModels.sailAreaMain,
+      rigType: yachtModels.rigType,
+      keelType: yachtModels.keelType,
+      hullMaterial: yachtModels.hullMaterial,
+      cabins: yachtModels.cabins,
+      berths: yachtModels.berths,
+      heads: yachtModels.heads,
+      maxOccupancy: yachtModels.maxOccupancy,
+      engineHp: yachtModels.engineHp,
+      engineType: yachtModels.engineType,
+      fuelCapacity: yachtModels.fuelCapacity,
+      waterCapacity: yachtModels.waterCapacity,
+      designNotes: yachtModels.designNotes,
+      description: yachtModels.description,
+      manufacturer: manufacturers.name,
+    })
+    .from(yachtModels)
+    .leftJoin(manufacturers, eq(yachtModels.manufacturerId, manufacturers.id))
+    .where(or(eq(yachtModels.slug, slugA), eq(yachtModels.slug, slugB)));
 
   console.log(`[canonical-compare] Query returned ${rows.length} yachts for slugs: ${slugA}, ${slugB}`);
 
   // Normalize numeric fields from string (Neon HTTP returns decimal columns as strings)
-  const normalized = rows.map((row: any) => ({
-    ...row,
-    lengthOverall: row.lengthOverall != null ? Number(row.lengthOverall) : null,
-    beam: row.beam != null ? Number(row.beam) : null,
-    draft: row.draft != null ? Number(row.draft) : null,
-    displacement: row.displacement != null ? Number(row.displacement) : null,
-    ballast: row.ballast != null ? Number(row.ballast) : null,
-    sailAreaMain: row.sailAreaMain != null ? Number(row.sailAreaMain) : null,
-    engineHp: row.engineHp != null ? Number(row.engineHp) : null,
-    fuelCapacity: row.fuelCapacity != null ? Number(row.fuelCapacity) : null,
-    waterCapacity: row.waterCapacity != null ? Number(row.waterCapacity) : null,
+  const normalized: YachtComparisonData[] = rows.map((row: Record<string, unknown>) => ({
+    id: row.id as number,
+    modelName: row.modelName as string,
+    year: row.year as number | null,
+    slug: row.slug as string | null,
+    lengthOverall: toNum(row.lengthOverall),
+    beam: toNum(row.beam),
+    draft: toNum(row.draft),
+    displacement: toNum(row.displacement),
+    ballast: toNum(row.ballast),
+    sailAreaMain: toNum(row.sailAreaMain),
+    rigType: row.rigType as string | null,
+    keelType: row.keelType as string | null,
+    hullMaterial: row.hullMaterial as string | null,
+    cabins: row.cabins as number | null,
+    berths: row.berths as number | null,
+    heads: row.heads as number | null,
+    maxOccupancy: row.maxOccupancy as number | null,
+    engineHp: toNum(row.engineHp),
+    engineType: row.engineType as string | null,
+    fuelCapacity: toNum(row.fuelCapacity),
+    waterCapacity: toNum(row.waterCapacity),
+    designNotes: row.designNotes as string | null,
+    description: row.description as string | null,
+    primaryImageUrl: null,
+    manufacturer: row.manufacturer as string,
   }));
 
-  const yachtA = normalized.find((y: any) => y.slug === slugA) || null;
-  const yachtB = normalized.find((y: any) => y.slug === slugB) || null;
+  const yachtA = normalized.find((y) => y.slug === slugA) || null;
+  const yachtB = normalized.find((y) => y.slug === slugB) || null;
 
   console.log(`[canonical-compare] yachtA found: ${!!yachtA}, yachtB found: ${!!yachtB}`);
 
@@ -98,13 +127,13 @@ export async function getYachtsBySlugs(
 export async function getPrimaryImage(slug: string): Promise<string | null> {
   return unstable_cache(
     async () => {
-      const sql = getSql();
-      const rows = await sql`
-        SELECT i.url FROM images i
-        JOIN yacht_models ym ON i.yacht_model_id = ym.id
-        WHERE ym.slug = ${slug} AND i.is_primary = true
-        LIMIT 1
-      `;
+      const rows = await db
+        .select({ url: images.url })
+        .from(images)
+        .innerJoin(yachtModels, eq(images.yachtModelId, yachtModels.id))
+        .where(and(eq(yachtModels.slug, slug), sql`${images.isPrimary} = true`))
+        .limit(1);
+
       return rows[0]?.url || null;
     },
     [`primary-image-${slug}`],
