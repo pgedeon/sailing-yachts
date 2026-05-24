@@ -119,7 +119,7 @@ export async function getYachtsBySlugs(
 ): Promise<{ yachtA: YachtComparisonData | null; yachtB: YachtComparisonData | null }> {
   return unstable_cache(
     async () => getYachtsBySlugsUncached(slugA, slugB),
-    [`compare-canonical-${slugA}-${slugB}`],
+    [`compare-v2-${slugA}-${slugB}`],
     { tags: ["yachts"], revalidate: 3600 }
   )();
 }
@@ -136,7 +136,7 @@ export async function getPrimaryImage(slug: string): Promise<string | null> {
 
       return rows[0]?.url || null;
     },
-    [`primary-image-${slug}`],
+    [`primary-image-v2-${slug}`],
     { tags: ["images"], revalidate: 3600 }
   )();
 }
