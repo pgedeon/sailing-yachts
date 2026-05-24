@@ -8,8 +8,8 @@ import { calculatePriceTier } from "@/lib/price-tier";
 import { localePath } from "@/lib/i18n-paths";
 import { CanonicalCompareClient } from "./CanonicalCompareClient";
 
-// ISR: Revalidate comparison pages every 6 hours
-export const revalidate = 21600;
+// Force dynamic rendering
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
