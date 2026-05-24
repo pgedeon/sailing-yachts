@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getYachtsBySlugs, generateComparisonIntro, generateComparisonMetadata, getPrimaryImage, type YachtComparisonData } from "@/lib/compare-canonical";
-import { getSiteUrl, generateBreadcrumbJsonLd, generateYachtJsonLd, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
+import { getSiteUrl, generateBreadcrumbJsonLd, generateYachtJsonLd, generateComparePageJsonLd, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
 import { PriceTierBadge } from "@/app/components/PriceTierBadge";
 import { calculatePriceTier } from "@/lib/price-tier";
 import { localePath } from "@/lib/i18n-paths";
@@ -122,12 +122,27 @@ export default async function CanonicalComparePage({
     primaryImage: primaryImageUrlB ?? undefined,
   };
 
+  // Generate compare page structured data (ItemList with both products)
+  const comparePageJsonLd = generateComparePageJsonLd({
+    yachtA: yachtALdData,
+    yachtB: yachtBLdData,
+    slugA,
+    slugB,
+    locale,
+  });
+
   return (
     <>
       {/* Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(comparePageJsonLd),
+        }}
       />
       <script
         type="application/ld+json"
