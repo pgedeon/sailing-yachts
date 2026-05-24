@@ -792,3 +792,91 @@ export function generateDigitalDocumentJsonLd(params: {
     ...(params.encodingFormat ? { encodingFormat: params.encodingFormat } : {}),
   };
 }
+
+/* ------------------------------------------------------------------ */
+/*  Compare Page Structured Data (P20.1)                             */
+/* ------------------------------------------------------------------ */
+
+export interface JsonLdComparePage {
+  "@context": "https://schema.org";
+  "@type": "WebPage";
+  name: string;
+  description?: string;
+  url: string;
+  mainEntity: {
+    "@type": "ItemList";
+    name: string;
+    numberOfItems: number;
+    itemListElement: Array<{
+      "@type": "ListItem";
+      position: number;
+      name: string;
+      url: string;
+      item: JsonLdProduct;
+    }>;
+  };
+  about?: Array<{
+    "@type": "Product";
+    name: string;
+  }>;
+}
+
+/**
+ * Generate structured data for a yacht comparison page.
+ * Uses WebPage + ItemList schema to tell search engines this is a comparison
+ * of two products, with full Product schema for each yacht inline.
+ */
+export function generateComparePageJsonLd(params: {
+  yachtA: Parameters<typeof generateYachtJsonLd>[0];
+  yachtB: Parameters<typeof generateYachtJsonLd>[0];
+  slugA: string;
+  slugB: string;
+  locale?: string;
+}): JsonLdComparePage {
+  const locale = params.locale || "en";
+  const fullNameA = `${params.yachtA.manufacturer} ${params.yachtA.modelName}`;
+  const fullNameB = `${params.yachtB.manufacturer} ${params.yachtB.modelName}`;
+  const comparePath = `/compare/${params.slugA}-vs-${params.slugB}`;
+  const compareUrl = getSiteUrl(`/${locale}${comparePath}`);
+
+  const productA = generateYachtJsonLd(params.yachtA, locale);
+  const productB = generateYachtJsonLd(params.yachtB, locale);
+
+  const descriptions: Record<string, string> = {
+    en: `Side-by-side comparison of ${fullNameA} and ${fullNameB} sailing yachts with detailed specifications.`,
+    fr: `Comparaison côte à côte des voiliers ${fullNameA} et ${fullNameB} avec spécifications détaillées.`,
+  };
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: `${fullNameA} vs ${fullNameB} — Sailing Yacht Comparison`,
+    description: descriptions[locale] || descriptions.en,
+    url: compareUrl,
+    mainEntity: {
+      "@type": "ItemList",
+      name: `${fullNameA} vs ${fullNameB}`,
+      numberOfItems: 2,
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: fullNameA,
+          url: getSiteUrl(`/${locale}/yachts/${params.slugA}`),
+          item: productA,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: fullNameB,
+          url: getSiteUrl(`/${locale}/yachts/${params.slugB}`),
+          item: productB,
+        },
+      ],
+    },
+    about: [
+      { "@type": "Product", name: fullNameA },
+      { "@type": "Product", name: fullNameB },
+    ],
+  };
+}
