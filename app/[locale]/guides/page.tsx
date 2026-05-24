@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getAllPublishedArticles, getAllCategories, getBuyingGuideArticles } from "@/lib/articles";
-import { getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
+import { getSiteUrl , buildLocaleAlternates , buildOgImageUrl } from "@/lib/seo";
 import { BUYING_GUIDE_TEMPLATES, type GuideType } from "@/lib/buying-guides";
 import { localePath } from "@/lib/i18n-paths";
 
@@ -36,6 +36,7 @@ export async function generateMetadata({
       url: getSiteUrl("/guides"),
       type: "website",
       siteName: "Sailing Yacht Info",
+      images: [{ url: buildOgImageUrl({ type: "guide", title: t("meta.title"), description: t("meta.description") }), width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary",

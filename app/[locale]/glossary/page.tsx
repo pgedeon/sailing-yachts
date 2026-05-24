@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getAllGlossaryTerms, getGlossaryCategories } from "@/lib/glossary";
-import { getSiteUrl, generateBreadcrumbJsonLd, generateCollectionPageJsonLd , buildLocaleAlternates } from "@/lib/seo";
+import { getSiteUrl, generateBreadcrumbJsonLd, generateCollectionPageJsonLd , buildLocaleAlternates , buildOgImageUrl } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths";
 
 // ISR: Revalidate glossary every 6 hours
@@ -44,6 +44,7 @@ export async function generateMetadata({
       url: getSiteUrl("/glossary"),
       type: "website",
       siteName: "Sailing Yacht Info",
+      images: [{ url: buildOgImageUrl({ type: "glossary", title: t("meta.title") }), width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary",

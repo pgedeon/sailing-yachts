@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getSiteUrl, buildLocaleAlternates } from "@/lib/seo";
+import { buildOgImageUrl } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -11,9 +12,24 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "BestValue" });
 
+  const ogImage = buildOgImageUrl({ type: "default", title: t("meta.title"), description: t("meta.description") });
   return {
     title: t("meta.title"),
     description: t("meta.description"),
+    openGraph: {
+      title: t("meta.title"),
+      description: t("meta.description"),
+      url: getSiteUrl("/best-value"),
+      type: "website",
+      siteName: "Sailing Yacht Info",
+      images: [{ url: ogImage, width: 1200, height: 630, alt: t("meta.title") }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t("meta.title"),
+      description: t("meta.description"),
+      images: [ogImage],
+    },
     alternates: buildLocaleAlternates("/best-value"),
   };
 }

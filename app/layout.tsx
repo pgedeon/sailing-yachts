@@ -57,12 +57,21 @@ export const metadata: Metadata = {
     title: "Sailing Yacht Info — Specs, Comparison & Reviews",
     description:
       "Comprehensive database of sailing yacht specifications with advanced search and comparison tools.",
+    images: [
+      {
+        url: `${siteUrl}/api/og?type=default&title=Sailing%20Yacht%20Info&description=Specs%20%26%20Comparison`,
+        width: 1200,
+        height: 630,
+        alt: "Sailing Yacht Info",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Sailing Yacht Info — Specs, Comparison & Reviews",
     description:
       "Comprehensive database of sailing yacht specifications with advanced search and comparison tools.",
+    images: [`${siteUrl}/api/og?type=default&title=Sailing%20Yacht%20Info&description=Specs%20%26%20Comparison`],
   },
   alternates: {
     canonical: siteUrl,

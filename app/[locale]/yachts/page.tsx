@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { generateBreadcrumbJsonLd, generateCollectionPageJsonLd, getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, generateCollectionPageJsonLd, getSiteUrl , buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
 const YachtsClient = dynamic(() => import("./YachtsClient"), { ssr: false, loading: () => null });
@@ -54,9 +54,25 @@ export async function generateMetadata({ params, searchParams }: YachtsPageParam
   const canonicalPath = generateYachtsPageCanonical(normalizedParams);
   const canonicalUrl = getSiteUrl(canonicalPath);
 
+  const ogImage = buildOgImageUrl({ type: "default", title: t("meta.title"), description: t("meta.description") });
+
   return {
     title: t("meta.title"),
     description: t("meta.description"),
+    openGraph: {
+      title: t("meta.title"),
+      description: t("meta.description"),
+      url: canonicalUrl,
+      type: "website",
+      siteName: "Sailing Yacht Info",
+      images: [{ url: ogImage, width: 1200, height: 630, alt: t("meta.title") }],
+    },
+    twitter: {
+      card: "summary_large_image" as const,
+      title: t("meta.title"),
+      description: t("meta.description"),
+      images: [ogImage],
+    },
     alternates: buildLocaleAlternates("/yachts"),
     robots: noindex
       ? { index: false, follow: false }

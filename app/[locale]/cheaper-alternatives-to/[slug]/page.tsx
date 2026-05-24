@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { pool } from "@/lib/db";
-import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates , buildOgImageUrl } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths";
 
 // ISR: Revalidate every 6 hours
@@ -73,6 +73,7 @@ export async function generateMetadata({
       url: getSiteUrl(`/cheaper-alternatives-to/${slug}`),
       type: "website",
       siteName: "Sailing Yacht Info",
+      images: [{ url: buildOgImageUrl({ type: "default", title: title, description: desc }), width: 1200, height: 630 }],
     },
     alternates: buildLocaleAlternates(`/cheaper-alternatives-to/${slug}`),
   };
