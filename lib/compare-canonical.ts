@@ -1,6 +1,5 @@
 import { db, yachtModels, manufacturers, images } from "@/lib/db";
 import { eq, or, and, sql } from "drizzle-orm";
-import { unstable_cache } from "next/cache";
 
 export interface YachtComparisonData {
   id: number;
@@ -117,28 +116,18 @@ export async function getYachtsBySlugs(
   slugA: string,
   slugB: string
 ): Promise<{ yachtA: YachtComparisonData | null; yachtB: YachtComparisonData | null }> {
-  return unstable_cache(
-    async () => getYachtsBySlugsUncached(slugA, slugB),
-    [`compare-v2-${slugA}-${slugB}`],
-    { tags: ["yachts"], revalidate: 3600 }
-  )();
+  return getYachtsBySlugsUncached(slugA, slugB);
 }
 
 export async function getPrimaryImage(slug: string): Promise<string | null> {
-  return unstable_cache(
-    async () => {
-      const rows = await db
-        .select({ url: images.url })
-        .from(images)
-        .innerJoin(yachtModels, eq(images.yachtModelId, yachtModels.id))
-        .where(and(eq(yachtModels.slug, slug), sql`${images.isPrimary} = true`))
-        .limit(1);
+  const rows = await db
+    .select({ url: images.url })
+    .from(images)
+    .innerJoin(yachtModels, eq(images.yachtModelId, yachtModels.id))
+    .where(and(eq(yachtModels.slug, slug), sql`${images.isPrimary} = true`))
+    .limit(1);
 
-      return rows[0]?.url || null;
-    },
-    [`primary-image-v2-${slug}`],
-    { tags: ["images"], revalidate: 3600 }
-  )();
+  return rows[0]?.url || null;
 }
 
 export function generateComparisonIntro(yachtA: YachtComparisonData, yachtB: YachtComparisonData): string {
