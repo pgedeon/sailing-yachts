@@ -1,4 +1,4 @@
-import { pool } from "@/lib/db";
+import { neon } from "@neondatabase/serverless";
 import { unstable_cache } from "next/cache";
 
 export interface YachtComparisonData {
@@ -29,12 +29,22 @@ export interface YachtComparisonData {
   primaryImageUrl: string | null;
 }
 
+function getSql() {
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    throw new Error("DATABASE_URL is not set");
+  }
+  return neon(connectionString);
+}
+
 async function getYachtsBySlugsUncached(
   slugA: string,
   slugB: string
 ): Promise<{ yachtA: YachtComparisonData | null; yachtB: YachtComparisonData | null }> {
-  const result = await pool.query(
-    `SELECT
+  const sql = getSql();
+
+  const rows = await sql`
+    SELECT
       ym.id, ym.model_name AS "modelName", ym.year, ym.slug,
       ym.length_overall AS "lengthOverall", ym.beam, ym.draft,
       ym.displacement, ym.ballast, ym.sail_area_main AS "sailAreaMain",
@@ -47,14 +57,27 @@ async function getYachtsBySlugsUncached(
       m.name AS manufacturer
     FROM yacht_models ym
     LEFT JOIN manufacturers m ON ym.manufacturer_id = m.id
-    WHERE ym.slug = $1 OR ym.slug = $2`,
-    [slugA, slugB]
-  );
+    WHERE ym.slug = ${slugA} OR ym.slug = ${slugB}
+  `;
 
-  console.log(`[canonical-compare] Query returned ${result.rows.length} yachts for slugs: ${slugA}, ${slugB}`);
+  console.log(`[canonical-compare] Query returned ${rows.length} yachts for slugs: ${slugA}, ${slugB}`);
 
-  const yachtA = result.rows.find((y: any) => y.slug === slugA) || null;
-  const yachtB = result.rows.find((y: any) => y.slug === slugB) || null;
+  // Normalize numeric fields from string (Neon HTTP returns decimal columns as strings)
+  const normalized = rows.map((row: any) => ({
+    ...row,
+    lengthOverall: row.lengthOverall != null ? Number(row.lengthOverall) : null,
+    beam: row.beam != null ? Number(row.beam) : null,
+    draft: row.draft != null ? Number(row.draft) : null,
+    displacement: row.displacement != null ? Number(row.displacement) : null,
+    ballast: row.ballast != null ? Number(row.ballast) : null,
+    sailAreaMain: row.sailAreaMain != null ? Number(row.sailAreaMain) : null,
+    engineHp: row.engineHp != null ? Number(row.engineHp) : null,
+    fuelCapacity: row.fuelCapacity != null ? Number(row.fuelCapacity) : null,
+    waterCapacity: row.waterCapacity != null ? Number(row.waterCapacity) : null,
+  }));
+
+  const yachtA = normalized.find((y: any) => y.slug === slugA) || null;
+  const yachtB = normalized.find((y: any) => y.slug === slugB) || null;
 
   console.log(`[canonical-compare] yachtA found: ${!!yachtA}, yachtB found: ${!!yachtB}`);
 
@@ -75,15 +98,14 @@ export async function getYachtsBySlugs(
 export async function getPrimaryImage(slug: string): Promise<string | null> {
   return unstable_cache(
     async () => {
-      const result = await pool.query(
-        `SELECT i.url FROM images i
-         JOIN yacht_models ym ON i.yacht_model_id = ym.id
-         WHERE ym.slug = $1 AND i.is_primary = true
-         LIMIT 1`,
-        [slug]
-      );
-
-      return result.rows[0]?.url || null;
+      const sql = getSql();
+      const rows = await sql`
+        SELECT i.url FROM images i
+        JOIN yacht_models ym ON i.yacht_model_id = ym.id
+        WHERE ym.slug = ${slug} AND i.is_primary = true
+        LIMIT 1
+      `;
+      return rows[0]?.url || null;
     },
     [`primary-image-${slug}`],
     { tags: ["images"], revalidate: 3600 }
