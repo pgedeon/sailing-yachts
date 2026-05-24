@@ -4,7 +4,7 @@ import { unstable_cache } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { getLandingPageYachts } from "@/lib/landing-pages";
 import { getLandingPageBySlug, getAllLandingPageSlugs } from "@/data/landing-pages";
-import { generateBreadcrumbJsonLd, getSiteUrl, generateCollectionPageJsonLd, generateYachtJsonLd, buildLocaleAlternates } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, getSiteUrl, generateCollectionPageJsonLd, generateYachtJsonLd, buildLocaleAlternates , buildOgImageUrl } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths";
 
 // ISR: Revalidate landing pages every 6 hours
@@ -44,6 +44,7 @@ export async function generateMetadata({
       url: getSiteUrl(`/${locale}/best/${slug}`),
       type: "website",
       siteName: "Sailing Yacht Info",
+      images: [{ url: buildOgImageUrl({ type: "default", title: pageDefinition.title, description: pageDefinition.metaDescription }), width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary",

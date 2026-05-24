@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import { getSiteUrl, buildLocaleAlternates } from '@/lib/seo';
+import { getSiteUrl, buildLocaleAlternates, buildOgImageUrl } from '@/lib/seo';
 import { USE_CASE_TAG_IDS, USE_CASE_TAG_META, assignUseCaseTags, type UseCaseTagId } from '@/lib/use-case-tags';
 import { UseCaseBadge } from '@/components/use-case-badge';
 import { pool } from '@/lib/db';
@@ -12,9 +12,24 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'Yachts' });
 
+  const ogImage = buildOgImageUrl({ type: "default", title: t('useCaseTagsPage.meta.title'), description: t('useCaseTagsPage.meta.description') });
   return {
     title: t('useCaseTagsPage.meta.title'),
     description: t('useCaseTagsPage.meta.description'),
+    openGraph: {
+      title: t('useCaseTagsPage.meta.title'),
+      description: t('useCaseTagsPage.meta.description'),
+      url: getSiteUrl('/yachts/tags'),
+      type: "website",
+      siteName: "Sailing Yacht Info",
+      images: [{ url: ogImage, width: 1200, height: 630, alt: t('useCaseTagsPage.meta.title') }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t('useCaseTagsPage.meta.title'),
+      description: t('useCaseTagsPage.meta.description'),
+      images: [ogImage],
+    },
     alternates: buildLocaleAlternates('/yachts/tags'),
   };
 }

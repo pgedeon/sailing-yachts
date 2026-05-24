@@ -145,3 +145,72 @@ test.describe("SEO — Sitemap & Robots", () => {
     expect(body).toContain("Sitemap:");
   });
 });
+
+test.describe("SEO — Open Graph Images", () => {
+  test("homepage has og:image", async ({ page }) => {
+    await page.goto("/");
+    const ogImage = await page
+      .locator('meta[property="og:image"]')
+      .getAttribute("content");
+    expect(ogImage).toContain("/api/og");
+
+    const twitterImage = await page
+      .locator('meta[name="twitter:image"]')
+      .getAttribute("content");
+    expect(twitterImage).toContain("/api/og");
+  });
+
+  test("yachts listing has og:image", async ({ page }) => {
+    await page.goto("/yachts");
+    const ogImage = await page
+      .locator('meta[property="og:image"]')
+      .getAttribute("content");
+    expect(ogImage).toContain("/api/og");
+
+    const card = await page
+      .locator('meta[name="twitter:card"]')
+      .getAttribute("content");
+    expect(card).toBe("summary_large_image");
+  });
+
+  test("compare page has og:image", async ({ page }) => {
+    await page.goto("/compare");
+    const ogImage = await page
+      .locator('meta[property="og:image"]')
+      .getAttribute("content");
+    expect(ogImage).toContain("/api/og");
+    expect(ogImage).toContain("compare");
+  });
+
+  test("search page has og:image", async ({ page }) => {
+    await page.goto("/search");
+    const ogImage = await page
+      .locator('meta[property="og:image"]')
+      .getAttribute("content");
+    expect(ogImage).toContain("/api/og");
+  });
+
+  test("guides page has og:image", async ({ page }) => {
+    await page.goto("/guides");
+    const ogImage = await page
+      .locator('meta[property="og:image"]')
+      .getAttribute("content");
+    expect(ogImage).toContain("/api/og");
+  });
+
+  test("glossary page has og:image", async ({ page }) => {
+    await page.goto("/glossary");
+    const ogImage = await page
+      .locator('meta[property="og:image"]')
+      .getAttribute("content");
+    expect(ogImage).toContain("/api/og");
+  });
+
+  test("manufacturers listing has og:image", async ({ page }) => {
+    await page.goto("/manufacturers");
+    const ogImage = await page
+      .locator('meta[property="og:image"]')
+      .getAttribute("content");
+    expect(ogImage).toBeTruthy();
+  });
+});

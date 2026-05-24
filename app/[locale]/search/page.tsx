@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { generateBreadcrumbJsonLd, getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
 import dynamic from "next/dynamic";
 const SearchClient = dynamic(() => import("./SearchClient").then(m => ({ default: m.SearchClient })), { ssr: false, loading: () => null });
 import { shouldNoindexSearchPage } from "@/lib/thin-page-governance";
@@ -23,6 +23,12 @@ export async function generateMetadata({ params }: SearchPageProps): Promise<Met
     description: t("meta.description"),
     alternates: buildLocaleAlternates("/search"),
     openGraph: {
+      title: t("meta.title"),
+      description: t("meta.description"),
+      images: [{ url: buildOgImageUrl({ type: "default", title: t("meta.title"), description: "Search yachts" }), width: 1200, height: 630, alt: t("meta.title") }],
+    },
+    twitter: {
+      card: "summary_large_image",
       title: t("meta.title"),
       description: t("meta.description"),
     },

@@ -462,9 +462,17 @@ export function generateYachtsListMetadata(page = 1): Metadata {
       url: getSiteUrl("/yachts"),
       type: "website",
       siteName: SITE_NAME,
+      images: [
+        {
+          url: buildOgImageUrl({ type: "default", title: "Sailing Yachts", description: "Browse & Compare" }),
+          width: 1200,
+          height: 630,
+          alt: "Browse Sailing Yachts",
+        },
+      ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title,
       description: desc,
     },
@@ -496,9 +504,17 @@ export function generateCompareMetadata(ids: number[]): Metadata {
       url: getSiteUrl("/compare"),
       type: "website",
       siteName: SITE_NAME,
+      images: [
+        {
+          url: buildOgImageUrl({ type: "compare", title: ids.length > 0 ? `Compare ${ids.length} Yachts` : "Compare Yachts", description: "Side by Side" }),
+          width: 1200,
+          height: 630,
+          alt: "Compare Yachts Side by Side",
+        },
+      ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title,
       description: desc,
     },

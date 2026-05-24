@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getSearchIntentBySlug } from "@/lib/search-intents";
-import { generateBreadcrumbJsonLd, getSiteUrl, generateCollectionPageJsonLd, generateYachtJsonLd, buildLocaleAlternates } from "@/lib/seo";
+import { generateBreadcrumbJsonLd, getSiteUrl, generateCollectionPageJsonLd, generateYachtJsonLd, buildLocaleAlternates , buildOgImageUrl } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths";
 
 // ISR: Revalidate search intent pages every 6 hours
@@ -47,6 +47,7 @@ export async function generateMetadata({
       url: getSiteUrl(`/${locale}/search-intent/${slug}`),
       type: "website",
       siteName: "Sailing Yacht Info",
+      images: [{ url: buildOgImageUrl({ type: "default", title: intent.title }), width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary",
