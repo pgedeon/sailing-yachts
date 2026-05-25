@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getSizeCategoryHubData } from "@/lib/size-category-hub";
-import { getSizeCategorySlugs } from "@/lib/size-categories";
+
 import {
   getSiteUrl,
   generateBreadcrumbJsonLd,
@@ -14,16 +14,9 @@ import {
 import { localePath } from "@/lib/i18n-paths";
 import { SizeCategoryHubClient } from "./SizeCategoryHubClient";
 
-// Revalidate every 60 minutes
-export const revalidate = 3600;
-
-/**
- * Generate static params for all size categories that have yachts.
- */
-export async function generateStaticParams() {
-  const slugs = getSizeCategorySlugs();
-  return slugs.map((sizeCategory) => ({ sizeCategory }));
-}
+// Force dynamic rendering — DB queries must run at request time
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function generateMetadata({
   params,
