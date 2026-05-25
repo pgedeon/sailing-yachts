@@ -11,12 +11,63 @@ import { CanonicalCompareClient } from "./CanonicalCompareClient";
 // Force dynamic rendering
 export const dynamic = "force-dynamic";
 
+/**
+ * Next.js treats [slugA]-vs-[slugB] as a SINGLE dynamic segment named
+ * "slugA]-vs-[slugB" (it does NOT split into two separate params).
+ * We receive the full URL segment (e.g. "beneteau-oceanis-40-1-vs-jeanneau-sun-odyssey-410")
+ * and split on "-vs-" to extract both yacht slugs.
+ */
+function parseCompareParams(
+  rawParams: Record<string, string | undefined>
+): { slugA: string; slugB: string } | null {
+  // Try the combined key that Next.js generates for [slugA]-vs-[slugB]
+  const combinedKeys = Object.keys(rawParams).filter(
+    (k) => k.includes("slugA") || k.includes("slugB") || k.includes("vs")
+  );
+
+  for (const key of combinedKeys) {
+    const value = rawParams[key];
+    if (value && value.includes("-vs-")) {
+      const idx = value.indexOf("-vs-");
+      return {
+        slugA: value.substring(0, idx),
+        slugB: value.substring(idx + 4), // skip "-vs-"
+      };
+    }
+  }
+
+  // Fallback: try individual keys (won't work but kept for type compat)
+  if (rawParams.slugA && rawParams.slugB) {
+    return { slugA: rawParams.slugA, slugB: rawParams.slugB };
+  }
+
+  // Last resort: try every value that contains "-vs-"
+  for (const value of Object.values(rawParams)) {
+    if (value && value.includes("-vs-")) {
+      const idx = value.indexOf("-vs-");
+      return {
+        slugA: value.substring(0, idx),
+        slugB: value.substring(idx + 4),
+      };
+    }
+  }
+
+  return null;
+}
+
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slugA: string; slugB: string; locale: string }>;
+  params: Promise<Record<string, string | undefined>>;
 }): Promise<Metadata> {
-  const { slugA, slugB, locale } = await params;
+  const rawParams = await params;
+  const parsed = parseCompareParams(rawParams);
+
+  if (!parsed) {
+    notFound();
+  }
+
+  const { slugA, slugB } = parsed;
   const { yachtA, yachtB } = await getYachtsBySlugs(slugA, slugB);
 
   if (!yachtA || !yachtB) {
@@ -65,15 +116,23 @@ export async function generateMetadata({
 export default async function CanonicalComparePage({
   params,
 }: {
-  params: Promise<{ slugA: string; slugB: string; locale: string }>;
+  params: Promise<Record<string, string | undefined>>;
 }) {
-  const { slugA, slugB, locale } = await params;
+  const rawParams = await params;
+  const parsed = parseCompareParams(rawParams);
+
+  if (!parsed) {
+    notFound();
+  }
+
+  const { slugA, slugB } = parsed;
   const { yachtA, yachtB } = await getYachtsBySlugs(slugA, slugB);
 
   if (!yachtA || !yachtB) {
     notFound();
   }
 
+  const locale = rawParams.locale || "en";
   const intro = generateComparisonIntro(yachtA, yachtB);
   const fullNameA = `${yachtA.manufacturer} ${yachtA.modelName}`;
   const fullNameB = `${yachtB.manufacturer} ${yachtB.modelName}`;
@@ -323,7 +382,7 @@ export default async function CanonicalComparePage({
                   {/* Rigging & Sails */}
                   <tr className="bg-slate-50">
                     <td colSpan={3} className="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                      Rigging & Sails
+                      Rigging &amp; Sails
                     </td>
                   </tr>
                   <tr className="hover:bg-gray-50/50 transition-colors">
