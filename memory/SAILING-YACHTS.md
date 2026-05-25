@@ -1,67 +1,59 @@
 # Sailing Yachts Builder Session Summary
 
-**Date:** 2026-05-13
-**Issues worked on:** #276 (P18.1 — Loading skeletons for all route segments)
+**Date:** 2026-05-25 (evening session)
+**Session type:** Automated feature rollout loop (cron)
 
-## What was implemented
+## Issues Worked On
 
-### P18.1 — Loading Skeletons (Issue #276, PR #277)
-- **Skeleton component library** (`components/ui/skeleton.tsx`):
-  - 8 reusable variants: Skeleton, SkeletonLine, SkeletonCircle, SkeletonImage, SkeletonCard, SkeletonStat, SkeletonTableRow, SkeletonFilterSection
-  - All use Tailwind `animate-pulse` and `bg-muted`
-  - Uses `cn()` utility for class merging
-  - Configurable dimensions, aspect ratios, line counts
-- **14 `loading.tsx` files** for all major route segments:
-  - `/yachts` — filter sidebar + 3-column yacht card grid + pagination
-  - `/yachts/[slug]` — image + key specs + spec bars + full table + similar yachts
-  - `/yachts/finder` — progress steps + option cards
-  - `/compare` — dual search inputs + table + radar chart
-  - `/compare/[slugA]-vs-[slugB]` — two-column headers + comparison table + charts
-  - `/manufacturers` — 4-column card grid with logos
-  - `/manufacturers/[slug]` — header + fleet chart + yacht lineup
-  - `/guides` — category tabs + article card grid
-  - `/guides/[slug]` — hero image + content paragraphs + related guides
-  - `/search` — search bar + suggestions + results grid
-  - `/glossary` — alphabet nav + term list
-  - `/glossary/[slug]` — definition + related terms
-  - `/account` — stats + favorites + saved searches
-  - `/favorites` — card grid
-- **Phase 18 plan** added to FUTURE_ROADMAP.md (Performance & UX Polish)
-- **52 unit tests** for skeleton logic, file existence, and content validation
+### P19.2 — Size Category Hub Pages (Issue #329, PRs #330, #331, #332)
+- **Route:** `/yachts/by-size/[sizeCategory]` — 6 hub pages
+- **Size categories:** under-30ft, 30-35ft, 35-40ft, 40-45ft, 45-50ft, over-50ft
+- **Features:** Yacht grid across all manufacturers, sidebar (other sizes + top manufacturers), full SEO (OG images, JSON-LD BreadcrumbList/CollectionPage/ItemList), i18n (en+fr), loading skeleton, error boundary
+- **8 new unit tests** for hub page logic
+- **Issues found & fixed:**
+  - Initial SSG approach caused 404 (DB not available at build time) → switched to dynamic rendering
+  - N+1 DB queries per manufacturer caused 500 → optimized with GROUP BY
 
 ## Build/Test Results
-- **Typecheck**: ✅ Pass
-- **Build**: ✅ Pass
-- **Lint**: ✅ Pass
-- **Vitest**: ✅ 52/52 pass
+- **Typecheck:** ✅ Pass
+- **Build:** ✅ Pass
+- **Vitest:** ✅ 1303/1303 (8 new hub tests)
 
 ## Deploy Status
-- **PR #277**: ✅ Merged (squash)
-- **CI**: ✅ All checks green (Build, Lint, TypeScript, Performance Budgets)
-- **Vercel**: ✅ Production deployed
+- **PR #330** (initial SSG): ❌ 404 on live
+- **PR #331** (dynamic rendering): ❌ 500 (N+1 queries)
+- **PR #332** (GROUP BY optimization): ✅ Merged, deployed, verified
 
 ## Live Verification Results
 - **/**: ✅ OK
 - **/yachts**: ✅ OK
 - **/search**: ✅ OK
 - **/compare**: ✅ OK
-- **/manufacturers**: ✅ OK
-- **/guides**: ✅ OK
-- **/glossary**: ✅ OK
-- **/yachts/beneteau-oceanis-40-1**: ✅ OK
-- **/compare/beneteau-oceanis-40-1-vs-jeanneau-sun-odyssey-410**: ✅ OK
-- **/yachts/finder**: ✅ OK
-- **API /api/yachts**: ✅ OK (201 yachts)
-- **Browser console**: ✅ No new errors (pre-existing /fr/auth/signin 404 only)
-- **Page rendering**: ✅ Correct (verified with browser snapshot)
+- **/api/yachts**: ✅ OK (243 yachts)
+- **/yachts/by-size/under-30ft**: ✅ OK
+- **/yachts/by-size/30-35ft**: ✅ OK
+- **/yachts/by-size/35-40ft**: ✅ OK
+- **/yachts/by-size/40-45ft**: ✅ OK (verified cross-links to manufacturer+size pages)
+- **/yachts/by-size/45-50ft**: ✅ OK
+- **/yachts/by-size/over-50ft**: ✅ OK
+- **/manufacturers/beneteau/40-45ft**: ✅ OK (still works)
+- **French locale (/fr/yachts/by-size/40-45ft)**: ✅ OK
 
-## Previous phases status
-- Phase 14 (i18n): ✅ COMPLETE
-- Phase 15 (Visualizations): ✅ COMPLETE
-- Phase 16 (Manufacturer Data): ✅ COMPLETE
-- Phase 17 (Discovery & Recommendations): ✅ COMPLETE
-- Phase 18 (Performance & UX Polish): 🔄 In Progress
+## Phase Status
+- Phase 14–18: ✅ COMPLETE
+- Phase 19 (Programmatic SEO Landing Pages): 🔄 ACTIVE
+  - P19.1: ✅ COMPLETE (manufacturer+size category pages)
+  - P19.2: ✅ COMPLETE (size category hub pages)
+  - P19.3–P19.5: 🔲 TODO
+- Phase 20–27: 🔲 PLANNED
 
-## Next Recommended Task
-- **P18.2** — Error boundaries with retry for all route segments (error.tsx files)
-- **P18.3** — Custom 404/not-found page
+## Technical Notes
+- Size category hub pages must be dynamic (`export const dynamic = "force-dynamic"`) — DB queries fail at build time
+- Use GROUP BY instead of N+1 queries for manufacturer counts — avoids Neon HTTP timeout
+- Hub pages cross-link to manufacturer+size sub-pages via sidebar
+- `buildOgImageUrl` type param `default` works for hub pages
+
+## Next Recommended Tasks
+- **P19.3** — Use-case landing pages (`/yachts/[useCase]`) — e.g., bluewater-cruising, racing, family-cruising
+- **P19.4** — Sitemap integration for programmatic pages
+- **P19.5** — Internal linking mesh
