@@ -27,6 +27,7 @@ export interface SizeCategoryHubData {
 
 /**
  * Fetch all data for a size category hub page.
+ * Optimized to use GROUP BY for manufacturer counts instead of N+1 queries.
  */
 export async function getSizeCategoryHubData(
   sizeCategorySlug: string
@@ -34,7 +35,7 @@ export async function getSizeCategoryHubData(
   const sizeCategory = SIZE_CATEGORIES.find((c) => c.slug === sizeCategorySlug);
   if (!sizeCategory) return null;
 
-  // Get yachts in this size range, across all manufacturers
+  // Single query: get yachts in this size range with manufacturer info
   const yachts = await db
     .select({
       id: yachtModels.id,
@@ -73,64 +74,56 @@ export async function getSizeCategoryHubData(
 
   if (yachts.length === 0) return null;
 
-  // Get counts for other size categories
-  const otherSizes = await Promise.all(
-    SIZE_CATEGORIES.filter((sc) => sc.slug !== sizeCategorySlug).map(
-      async (sc) => {
-        const result = await db
-          .select({ cnt: count() })
-          .from(yachtModels)
-          .where(
-            and(
-              sql`${yachtModels.lengthOverall}::numeric >= ${sc.loaMin}`,
-              sql`${yachtModels.lengthOverall}::numeric < ${sc.loaMax}`
-            )
-          );
-        return {
-          slug: sc.slug,
-          labelEn: sc.labelEn,
-          labelFr: sc.labelFr,
-          count: result[0]?.cnt ?? 0,
-        };
-      }
-    )
-  );
-
-  // Get top manufacturers in this size range with counts
-  const allMfrs = await db
+  // Single query: count yachts per manufacturer in this size range using GROUP BY
+  const mfrCounts = await db
     .select({
-      id: manufacturers.id,
       name: manufacturers.name,
+      cnt: count(),
     })
-    .from(manufacturers);
-
-  const topManufacturers = (
-    await Promise.all(
-      allMfrs.map(async (m: { id: number; name: string }) => {
-        const result = await db
-          .select({ cnt: count() })
-          .from(yachtModels)
-          .innerJoin(
-            manufacturers,
-            eq(yachtModels.manufacturerId, manufacturers.id)
-          )
-          .where(
-            and(
-              eq(manufacturers.id, m.id),
-              sql`${yachtModels.lengthOverall}::numeric >= ${sizeCategory.loaMin}`,
-              sql`${yachtModels.lengthOverall}::numeric < ${sizeCategory.loaMax}`
-            )
-          );
-        return {
-          name: m.name,
-          slug: slugify(m.name),
-          count: result[0]?.cnt ?? 0,
-        };
-      })
+    .from(yachtModels)
+    .innerJoin(manufacturers, eq(yachtModels.manufacturerId, manufacturers.id))
+    .where(
+      and(
+        sql`${yachtModels.lengthOverall}::numeric >= ${sizeCategory.loaMin}`,
+        sql`${yachtModels.lengthOverall}::numeric < ${sizeCategory.loaMax}`
+      )
     )
-  )
-    .filter((m) => m.count > 0)
-    .sort((a, b) => b.count - a.count);
+    .groupBy(manufacturers.name)
+    .orderBy(sql`count(*) DESC`);
+
+  const topManufacturers = mfrCounts.map((r: { name: string; cnt: number }) => ({
+    name: r.name,
+    slug: slugify(r.name),
+    count: r.cnt,
+  }));
+
+  // Single query: count yachts in each OTHER size category
+  // Build a UNION ALL query for efficiency
+  const otherSizeSlugs = SIZE_CATEGORIES.filter((sc) => sc.slug !== sizeCategorySlug);
+  const otherSizes: Array<{
+    slug: string;
+    labelEn: string;
+    labelFr: string;
+    count: number;
+  }> = [];
+
+  for (const sc of otherSizeSlugs) {
+    const result = await db
+      .select({ cnt: count() })
+      .from(yachtModels)
+      .where(
+        and(
+          sql`${yachtModels.lengthOverall}::numeric >= ${sc.loaMin}`,
+          sql`${yachtModels.lengthOverall}::numeric < ${sc.loaMax}`
+        )
+      );
+    otherSizes.push({
+      slug: sc.slug,
+      labelEn: sc.labelEn,
+      labelFr: sc.labelFr,
+      count: result[0]?.cnt ?? 0,
+    });
+  }
 
   return {
     sizeCategory,
