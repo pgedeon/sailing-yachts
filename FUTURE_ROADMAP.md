@@ -45,3 +45,35 @@
 - Skeletons use the same Tailwind classes as real content for layout stability (CLS prevention)
 - All animations respect `prefers-reduced-motion` media query
 - JS bundle impact kept minimal — CSS animations used where possible
+
+### Phase 19 — Programmatic SEO Landing Pages (Priority: High) — 🔄 ACTIVE
+
+- **P19.1 — Manufacturer+size category landing pages** — Route `/yachts/[manufacturer]/[sizeCategory]` (e.g., `/yachts/beneteau/40ft`) with SEO metadata, filtered yacht grid, breadcrumbs, JSON-LD. Size categories: under-30ft, 30-35ft, 35-40ft, 40-45ft, 45-50ft, over-50ft.
+- **P19.2 — Size category hub pages** — Route `/yachts/by-size/[sizeCategory]` aggregating all manufacturers for a size range. Internal links to manufacturer+size sub-pages.
+- **P19.3 — Use-case landing pages** — Route `/yachts/[useCase]` (e.g., `/yachts/bluewater-cruising`, `/yachts/racing`, `/yachts/family-cruising`) with curated yacht selections, guide links, and SEO content.
+- **P19.4 — Sitemap integration for programmatic pages** — Add all generated landing pages to sitemap-yachts.xml with proper `<lastmod>`, `<changefreq>`, and `<priority>` values.
+- **P19.5 — Internal linking mesh** — Cross-link from yacht detail pages to their manufacturer+size and use-case pages. Add "Related Categories" section on manufacturer detail pages.
+
+### Phase 20 — Content Enrichment & Authority Building (Priority: Medium) — 🔲 PLANNED
+
+- **P20.1 — Auto-generated yacht summary descriptions** — LLM-powered one-paragraph summaries for yachts missing descriptions, stored in DB, with human review queue.
+- **P20.2 — Spec glossary tooltips on yacht detail** — Hover/click tooltips on spec labels (LOA, SA/D, D/L ratio) linking to glossary terms.
+- **P20.3 — Manufacturer comparison pages** — `/compare-manufacturers/[slugA]-vs-[slugB]` comparing fleet size, price range, popular models.
+- **P20.4 — "Best [year] [size] sailboats" editorial pages** — Curated editorial pages combining guide content with yacht data.
+- **P20.5 — Video embed support for yacht pages** — YouTube/Vimeo embeds in yacht detail pages, with VideoObject schema.
+
+### Phase 21 — Data Quality & Coverage (Priority: Medium) — 🔲 PLANNED
+
+- **P21.1 — Data completeness scoring & reporting** — Admin dashboard showing completeness % per yacht, missing fields highlighted.
+- **P21.2 — Automated data enrichment pipeline** — Scrape/ingest specs from public sources (sailboatdata.com, boat-specs.com) with deduplication.
+- **P21.3 — Image coverage improvement** — Auto-fetch manufacturer press images, ensure every yacht has at least one image.
+- **P21.4 — Price data aggregation** — Aggregate new/used price data from listing sites (yachtworld.com, boats.com) with attribution.
+- **P21.5 — Year/model variant tracking** — Support multiple year variants per model (e.g., Oceanis 40.1 2019 vs 2023).
+
+### Phase 22 — Performance & Technical Excellence (Priority: Low) — 🔲 PLANNED
+
+- **P22.1 — Edge runtime for API routes** — Migrate read-only API routes to Next.js Edge runtime for lower latency.
+- **P22.2 — Image CDN optimization** — Set up proper image transformation pipeline with blurhash placeholders.
+- **P22.3 — Incremental Static Regeneration audit** — Review ISR cache settings, add revalidate timers to high-traffic pages.
+- **P22.4 — Bundle size optimization** — Audit client-side JS, code-split heavy components, lazy-load charts.
+- **P22.5 — Core Web Vitals monitoring** — Set up real-user monitoring (RUM) for LCP, FID, CLS with alerting.
