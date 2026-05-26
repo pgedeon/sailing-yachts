@@ -13,6 +13,7 @@ import {
 } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths";
 import { SizeCategoryHubClient } from "./SizeCategoryHubClient";
+import { USE_CASES } from "@/lib/use-case-meta";
 
 // Force dynamic rendering — DB queries must run at request time
 export const dynamic = "force-dynamic";
@@ -263,6 +264,26 @@ export default async function SizeCategoryHubPage({
                 </ul>
               </div>
             )}
+
+            {/* Related Use Cases */}
+            <div className="bg-white rounded-lg border border-gray-200 p-4 mt-4">
+              <h3 className="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wider">
+                {locale === "fr" ? "Cas d\'utilisation" : "Use Cases"}
+              </h3>
+              <ul className="space-y-2">
+                {USE_CASES.map((uc) => (
+                  <li key={uc.slug}>
+                    <Link
+                      href={localePath(locale, `/yachts/for/${uc.slug}`)}
+                      className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 transition-colors"
+                    >
+                      <span>{uc.emoji}</span>
+                      <span>{locale === "fr" ? uc.labelFr : uc.labelEn}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </aside>
 
           {/* Yacht Grid */}

@@ -17,6 +17,7 @@ import { SimilarYachts } from "./SimilarYachts";
 import { UsersAlsoViewed } from "./UsersAlsoViewed";
 import { SameSizeAlternatives } from "./SameSizeAlternatives";
 import { RelatedManufacturers } from "./RelatedManufacturers";
+import { RelatedCategories } from "./RelatedCategories";
 import { RelatedGuides } from "./RelatedGuides";
 import { RelatedArticles } from "./RelatedArticles";
 import AffiliateRecommendations from "@/app/components/AffiliateRecommendations";
@@ -799,6 +800,22 @@ export default function YachtDetailClient() {
                   aria-hidden="true" />
               </div>
             )}
+
+            {/* Related Categories (size, use-case links) */}
+            <RelatedCategories
+              manufacturer={yacht.manufacturer}
+              lengthOverall={yacht.lengthOverall}
+              displacement={yacht.displacement}
+              sailAreaMain={yacht.sailAreaMain}
+              beam={yacht.beam}
+              draft={yacht.draft}
+              ballast={yacht.ballast}
+              hullMaterial={yacht.hullMaterial}
+              cabins={yacht.cabins}
+              berths={yacht.berths}
+              rigType={yacht.rigType}
+              keelType={yacht.keelType}
+            />
           </div>
 
           {/* Users Also Viewed */}

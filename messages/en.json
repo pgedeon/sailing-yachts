@@ -1215,5 +1215,8 @@
   "TableOfContents": {
     "label": "Page sections",
     "heading": "On This Page"
+  },
+  "RelatedCategories": {
+    "title": "Related Categories"
   }
 }

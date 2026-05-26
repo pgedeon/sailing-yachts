@@ -52,7 +52,7 @@
 - **P19.2 — Size category hub pages** *(completed 2026-05-25 — PR #330-#332, Issue #329, 8 tests)* — Route `/yachts/by-size/[sizeCategory]` aggregating all manufacturers for a size range. Internal links to manufacturer+size sub-pages.
 - **P19.3 — Use-case landing pages** *(completed 2026-05-26 — PR #334, Issue #333, 10 tests)* — Route `/yachts/[useCase]` (e.g., `/yachts/bluewater-cruising`, `/yachts/racing`, `/yachts/family-cruising`) with curated yacht selections, guide links, and SEO content.
 - **P19.4 — Sitemap integration for programmatic pages** *(completed 2026-05-26 — Issue #335)* — Add all generated landing pages to sitemap-programmatic.xml with proper `<lastmod>`, `<changefreq>`, and `<priority>` values.
-- **P19.5 — Internal linking mesh** — Cross-link from yacht detail pages to their manufacturer+size and use-case pages. Add "Related Categories" section on manufacturer detail pages.
+- **P19.5 — Internal linking mesh** *(completed 2026-05-26 — Issue #337)* — Cross-link from yacht detail pages to manufacturer+size, size hub, and use-case pages. Add "Related Categories" section on manufacturer detail and size hub pages.
 
 ### Phase 20 — Content Enrichment & Authority Building (Priority: Medium) — 🔲 PLANNED
 
