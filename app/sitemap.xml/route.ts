@@ -1,30 +1,22 @@
 import { unstable_cache } from "next/cache";
-import { db, yachtModels } from "@/lib/db";
-import { sql } from "drizzle-orm";
 import {
   SITE_URL,
   buildSitemapIndexXml,
   sitemapResponse,
 } from "@/lib/sitemap";
 
-// ISR: Revalidate sitemap index every hour
+export const dynamic = "force-dynamic";
 export const revalidate = 3600;
-
-async function getLastMod(): Promise<string> {
-  const result = await db
-    .select({ maxUpdate: sql<string>`COALESCE(MAX(${yachtModels.updatedAt}), NOW())` })
-    .from(yachtModels);
-  return new Date(result[0]?.maxUpdate || Date.now()).toISOString();
-}
 
 export async function GET() {
   try {
-    const lastmod = await getLastMod();
+    const lastmod = new Date().toISOString();
 
     const sitemaps = [
       { loc: `${SITE_URL}/sitemap-pages.xml`, lastmod },
       { loc: `${SITE_URL}/sitemap-yachts.xml`, lastmod },
       { loc: `${SITE_URL}/sitemap-manufacturers.xml`, lastmod },
+      { loc: `${SITE_URL}/sitemap-programmatic.xml`, lastmod },
       { loc: `${SITE_URL}/sitemap-guides.xml`, lastmod },
       { loc: `${SITE_URL}/sitemap-compare.xml`, lastmod },
       { loc: `${SITE_URL}/sitemap-images.xml`, lastmod },

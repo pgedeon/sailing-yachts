@@ -6,6 +6,8 @@ import { buildSafeQuery } from "@/lib/build-safe";
 // ISR: Revalidate feed every hour
 export const revalidate = 3600;
 
+export const dynamic = "force-dynamic";
+
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://info.sailboats.fr";
 
