@@ -18,12 +18,13 @@ test.describe("Split Sitemap System", () => {
     expect(xml).toContain("/sitemap-pages.xml");
     expect(xml).toContain("/sitemap-yachts.xml");
     expect(xml).toContain("/sitemap-manufacturers.xml");
+    expect(xml).toContain("/sitemap-programmatic.xml");
     expect(xml).toContain("/sitemap-compare.xml");
     expect(xml).toContain("/sitemap-images.xml");
 
     // Each sub-sitemap should have a <sitemap> wrapper with <loc>
     const sitemapCount = (xml.match(/<sitemap>/g) || []).length;
-    expect(sitemapCount).toBe(5);
+    expect(sitemapCount).toBe(7);
   });
 
   test("sitemap-pages.xml should list static pages", async ({ request }) => {
@@ -74,6 +75,34 @@ test.describe("Split Sitemap System", () => {
     // Should have multiple manufacturer entries
     const urlCount = (xml.match(/<url>/g) || []).length;
     expect(urlCount).toBeGreaterThan(5);
+  });
+
+  test("sitemap-programmatic.xml should list programmatic SEO pages", async ({ request }) => {
+    const resp = await request.get(`${BASE}/sitemap-programmatic.xml`);
+    expect(resp.status()).toBe(200);
+    expect(resp.headers()["content-type"]).toContain("xml");
+
+    const xml = await resp.text();
+
+    expect(xml).toContain("<urlset");
+    expect(xml).toContain("</urlset>");
+
+    // Must contain use-case pages
+    expect(xml).toContain("/yachts/for/");
+    // Must contain size category hub pages
+    expect(xml).toContain("/yachts/by-size/");
+    // Must contain manufacturer+size pages
+    expect(xml).toContain("/manufacturers/");
+
+    // Should have priority on entries
+    expect(xml).toContain("<priority>");
+
+    // Should have entries for both locales
+    expect(xml).toContain("/en/");
+    expect(xml).toContain("/fr/");
+
+    const urlCount = (xml.match(/<url>/g) || []).length;
+    expect(urlCount).toBeGreaterThan(10);
   });
 
   test("sitemap-compare.xml should list comparison pages", async ({ request }) => {
@@ -163,6 +192,10 @@ test.describe("Sitemap XML Validity", () => {
 
   test("sitemap-manufacturers.xml has valid XML structure", async ({ request }) => {
     await validateXmlStructure(request, `${BASE}/sitemap-manufacturers.xml`);
+  });
+
+  test("sitemap-programmatic.xml has valid XML structure", async ({ request }) => {
+    await validateXmlStructure(request, `${BASE}/sitemap-programmatic.xml`);
   });
 
   test("sitemap-compare.xml has valid XML structure", async ({ request }) => {

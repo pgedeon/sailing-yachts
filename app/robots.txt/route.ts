@@ -11,6 +11,7 @@ Allow: /
 Sitemap: ${SITE_URL}/sitemap.xml
 Sitemap: ${SITE_URL}/sitemap-yachts.xml
 Sitemap: ${SITE_URL}/sitemap-manufacturers.xml
+Sitemap: ${SITE_URL}/sitemap-programmatic.xml
 Sitemap: ${SITE_URL}/sitemap-guides.xml
 Sitemap: ${SITE_URL}/sitemap-compare.xml
 Sitemap: ${SITE_URL}/sitemap-images.xml
