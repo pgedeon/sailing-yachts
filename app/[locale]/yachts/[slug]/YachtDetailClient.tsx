@@ -20,6 +20,7 @@ import { RelatedManufacturers } from "./RelatedManufacturers";
 import { RelatedCategories } from "./RelatedCategories";
 import { RelatedGuides } from "./RelatedGuides";
 import { RelatedArticles } from "./RelatedArticles";
+import { SpecTooltip } from "./SpecTooltip";
 import AffiliateRecommendations from "@/app/components/AffiliateRecommendations";
 import YachtImage from "@/app/components/yacht/YachtImage";
 import { getAffiliateRecommendations } from "@/lib/affiliate-recommendations";
@@ -543,7 +544,7 @@ export default function YachtDetailClient() {
                         className="spec-item bg-card border border-border rounded-lg p-3 hover:border-primary/30 transition-colors"
                       >
                         <div className="text-xs sm:text-sm text-muted-foreground truncate">
-                          {spec.category}
+                          <SpecTooltip label={spec.category} />
                         </div>
                         <div className="text-base sm:text-lg font-semibold mt-1 truncate">
                           {formatSpecValue(spec.value, spec.unit)}
