@@ -19,6 +19,7 @@ import {
 import { getCountryFlag } from "@/lib/utils/country-flags";
 import { getSpotlightByManufacturerId } from "@/lib/manufacturer-spotlights";
 import { ManufacturerComparisons } from "./ManufacturerComparisons";
+import { SIZE_CATEGORIES } from "@/lib/size-categories";
 import ManufacturerLogo from "@/components/manufacturer-logo";
 import { localePath } from "@/lib/i18n-paths";
 import dynamic from "next/dynamic";
@@ -278,25 +279,19 @@ export default async function ManufacturerPage({
         )}
 
 
-        {/* Cross-linking: Browse by Size */}
+        {/* Cross-linking: Browse by Size — links to manufacturer+size category pages */}
         <section className="mt-10 sm:mt-12 bg-muted/30 rounded-xl p-6">
           <h2 className="text-lg font-semibold mb-4">{t("detail.browseBySize.title", { name: manufacturer.name })}</h2>
           <div className="flex flex-wrap gap-3">
-            <Link href={localePath(locale, "/yachts?minLength=0&maxLength=30")} className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
-              {t("detail.browseBySize.under30")}
-            </Link>
-            <Link href={localePath(locale, "/yachts?minLength=30&maxLength=35")} className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
-              {t("detail.browseBySize.range3035")}
-            </Link>
-            <Link href={localePath(locale, "/yachts?minLength=35&maxLength=40")} className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
-              {t("detail.browseBySize.range3540")}
-            </Link>
-            <Link href={localePath(locale, "/yachts?minLength=40&maxLength=50")} className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
-              {t("detail.browseBySize.range4050")}
-            </Link>
-            <Link href={localePath(locale, "/yachts?minLength=50")} className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors">
-              {t("detail.browseBySize.over50")}
-            </Link>
+            {SIZE_CATEGORIES.map((sc) => (
+              <Link
+                key={sc.slug}
+                href={localePath(locale, `/manufacturers/${slug}/${sc.slug}`)}
+                className="inline-flex items-center rounded-full bg-background border border-border px-4 py-2 text-sm hover:bg-accent transition-colors"
+              >
+                {locale === "fr" ? sc.labelFr : sc.labelEn}
+              </Link>
+            ))}
           </div>
         </section>
 
