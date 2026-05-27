@@ -40,20 +40,25 @@ export async function getManufacturerCompareData(
   slugA: string,
   slugB: string,
 ): Promise<{ mfrA: ManufacturerCompareStats; mfrB: ManufacturerCompareStats } | null> {
-  // Get all manufacturers
-  const allMfrs = await db.select().from(manufacturers);
+  try {
+    // Get all manufacturers
+    const allMfrs = await db.select().from(manufacturers);
 
-  const mfrA = allMfrs.find((m: any) => slugify(m.name) === slugA);
-  const mfrB = allMfrs.find((m: any) => slugify(m.name) === slugB);
+    const mfrARow = allMfrs.find((m: any) => slugify(m.name) === slugA);
+    const mfrBRow = allMfrs.find((m: any) => slugify(m.name) === slugB);
 
-  if (!mfrA || !mfrB) return null;
+    if (!mfrARow || !mfrBRow) return null;
 
-  const [statsA, statsB] = await Promise.all([
-    getStatsForManufacturer(mfrA),
-    getStatsForManufacturer(mfrB),
-  ]);
+    const [statsA, statsB] = await Promise.all([
+      getStatsForManufacturer(mfrARow),
+      getStatsForManufacturer(mfrBRow),
+    ]);
 
-  return { mfrA: statsA, mfrB: statsB };
+    return { mfrA: statsA, mfrB: statsB };
+  } catch (error) {
+    console.error("[manufacturer-compare] DB query failed:", error);
+    return null;
+  }
 }
 
 async function getStatsForManufacturer(mfr: any): Promise<ManufacturerCompareStats> {
