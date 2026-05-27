@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { unstable_cache } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { getManufacturerCompareData } from "@/lib/manufacturer-compare";
 import {
@@ -12,7 +13,8 @@ import {
 import { localePath } from "@/lib/i18n-paths";
 import { ManufacturerCompareClient } from "./ManufacturerCompareClient";
 
-export const dynamic = "force-dynamic";
+// ISR: Revalidate every hour
+export const revalidate = 3600;
 
 function parseCompareParams(
   rawParams: Record<string, string | undefined>,
@@ -29,6 +31,20 @@ function parseCompareParams(
   return null;
 }
 
+async function getCachedCompareData(slugA: string, slugB: string) {
+  return unstable_cache(
+    async () => {
+      try {
+        return await getManufacturerCompareData(slugA, slugB);
+      } catch {
+        return null;
+      }
+    },
+    [`mfr-compare:${slugA}-vs-${slugB}`],
+    { tags: [`mfr-compare:${slugA}-vs-${slugB}`, "manufacturers"], revalidate: 3600 },
+  )();
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -38,7 +54,7 @@ export async function generateMetadata({
   const parsed = parseCompareParams(rawParams);
   if (!parsed) notFound();
 
-  const data = await getManufacturerCompareData(parsed.slugA, parsed.slugB);
+  const data = await getCachedCompareData(parsed.slugA, parsed.slugB);
   if (!data) notFound();
 
   const title = `${data.mfrA.name} vs ${data.mfrB.name} — Manufacturer Comparison`;
@@ -88,11 +104,10 @@ export default async function ManufacturerComparePage({
   const parsed = parseCompareParams(rawParams);
   if (!parsed) notFound();
 
-  const data = await getManufacturerCompareData(parsed.slugA, parsed.slugB);
+  const data = await getCachedCompareData(parsed.slugA, parsed.slugB);
   if (!data) notFound();
 
-  const { locale: localePromise } = { locale: (await params).locale ?? "en" };
-  const locale = localePromise as string;
+  const locale = (await params).locale ?? "en";
   const t = await getTranslations({ locale, namespace: "ManufacturerCompare" });
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd(
