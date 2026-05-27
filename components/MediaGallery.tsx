@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import {
   Image as ImageIcon,
   PlayCircle,
@@ -16,6 +17,7 @@ import {
   Download,
   Video,
 } from "lucide-react";
+import VideoEmbed from "@/components/VideoEmbed";
 
 export interface MediaAsset {
   id: number;
@@ -40,17 +42,6 @@ interface MediaGalleryProps {
 
 type TabKey = "photos" | "videos" | "brochures" | "more";
 
-const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
-  { key: "photos", label: "Photos", icon: <ImageIcon className="h-4 w-4"  aria-hidden="true" /> },
-  { key: "videos", label: "Videos", icon: <PlayCircle className="h-4 w-4"  aria-hidden="true" /> },
-  {
-    key: "brochures",
-    label: "Brochures & Plans",
-    icon: <FileText className="h-4 w-4"  aria-hidden="true" />,
-  },
-  { key: "more", label: "More", icon: <Box className="h-4 w-4"  aria-hidden="true" /> },
-];
-
 function groupByType(assets: MediaAsset[]) {
   const groups: Record<string, MediaAsset[]> = {};
   for (const a of assets) {
@@ -69,6 +60,7 @@ function formatFileSize(bytes: number | null): string {
 }
 
 export default function MediaGallery({ mediaAssets }: MediaGalleryProps) {
+  const t = useTranslations("MediaGallery");
   const [activeTab, setActiveTab] = useState<TabKey>("photos");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
@@ -97,6 +89,13 @@ export default function MediaGallery({ mediaAssets }: MediaGalleryProps) {
     more: more.length,
   };
 
+  const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
+    { key: "photos", label: t("tabs.photos"), icon: <ImageIcon className="h-4 w-4" aria-hidden="true" /> },
+    { key: "videos", label: t("tabs.videos"), icon: <PlayCircle className="h-4 w-4" aria-hidden="true" /> },
+    { key: "brochures", label: t("tabs.brochures"), icon: <FileText className="h-4 w-4" aria-hidden="true" /> },
+    { key: "more", label: t("tabs.more"), icon: <Box className="h-4 w-4" aria-hidden="true" /> },
+  ];
+
   const currentLightboxPhotos = photos;
   const currentPhoto =
     lightboxIndex !== null ? currentLightboxPhotos[lightboxIndex] : null;
@@ -109,7 +108,7 @@ export default function MediaGallery({ mediaAssets }: MediaGalleryProps) {
   // Tab keyboard navigation handler
   const handleTabKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      const currentIndex = availableTabs.findIndex((t) => t.key === activeTab);
+      const currentIndex = availableTabs.findIndex((tb) => tb.key === activeTab);
       if (currentIndex === -1) return;
 
       if (e.key === "ArrowRight" || e.key === "ArrowDown") {
@@ -165,7 +164,7 @@ export default function MediaGallery({ mediaAssets }: MediaGalleryProps) {
 
   return (
     <section className="mt-10 sm:mt-12" data-testid="media-gallery">
-      <h2 className="text-lg sm:text-xl font-bold mb-4">Media Gallery</h2>
+      <h2 className="text-lg sm:text-xl font-bold mb-4">{t("heading")}</h2>
 
       {/* Tabs with keyboard navigation */}
       <div
@@ -212,11 +211,12 @@ export default function MediaGallery({ mediaAssets }: MediaGalleryProps) {
           <PhotoGrid
             photos={photos}
             onPhotoClick={(idx) => setLightboxIndex(idx)}
+            primaryLabel={t("primary")}
           />
         )}
-        {activeTab === "videos" && <VideoList videos={videos}  aria-hidden="true" />}
-        {activeTab === "brochures" && <BrochureList items={brochures}  aria-hidden="true" />}
-        {activeTab === "more" && <MoreList items={more}  aria-hidden="true" />}
+        {activeTab === "videos" && <VideoList videos={videos} />}
+        {activeTab === "brochures" && <BrochureList items={brochures} />}
+        {activeTab === "more" && <MoreList items={more} />}
       </div>
 
       {/* Lightbox */}
@@ -227,14 +227,14 @@ export default function MediaGallery({ mediaAssets }: MediaGalleryProps) {
           data-testid="lightbox"
           role="dialog"
           aria-modal="true"
-          aria-label="Photo lightbox"
+          aria-label={t("lightbox.label")}
         >
           <button
             className="absolute top-4 right-4 text-white hover:text-gray-300"
             onClick={closeLightbox}
-            aria-label="Close lightbox"
+            aria-label={t("lightbox.close")}
           >
-            <X className="h-8 w-8"  aria-hidden="true" />
+            <X className="h-8 w-8" aria-hidden="true" />
           </button>
           {lightboxIndex != null && lightboxIndex > 0 && (
             <button
@@ -243,9 +243,9 @@ export default function MediaGallery({ mediaAssets }: MediaGalleryProps) {
                 e.stopPropagation();
                 setLightboxIndex(lightboxIndex! - 1);
               }}
-              aria-label="Previous photo"
+              aria-label={t("lightbox.previous")}
             >
-              <ChevronLeft className="h-10 w-10"  aria-hidden="true" />
+              <ChevronLeft className="h-10 w-10" aria-hidden="true" />
             </button>
           )}
           {lightboxIndex != null && lightboxIndex < currentLightboxPhotos.length - 1 && (
@@ -255,9 +255,9 @@ export default function MediaGallery({ mediaAssets }: MediaGalleryProps) {
                 e.stopPropagation();
                 setLightboxIndex(lightboxIndex! + 1);
               }}
-              aria-label="Next photo"
+              aria-label={t("lightbox.next")}
             >
-              <ChevronRight className="h-10 w-10"  aria-hidden="true" />
+              <ChevronRight className="h-10 w-10" aria-hidden="true" />
             </button>
           )}
           <div
@@ -271,7 +271,7 @@ export default function MediaGallery({ mediaAssets }: MediaGalleryProps) {
                 currentPhoto.altText ||
                 currentPhoto.title ||
                 currentPhoto.caption ||
-                "Yacht photo"
+                t("photoAlt")
               }
               className="max-w-full max-h-[80vh] object-contain rounded-lg"
             />
@@ -292,14 +292,18 @@ export default function MediaGallery({ mediaAssets }: MediaGalleryProps) {
 function PhotoGrid({
   photos,
   onPhotoClick,
+  primaryLabel,
 }: {
   photos: MediaAsset[];
   onPhotoClick: (idx: number) => void;
+  primaryLabel: string;
 }) {
+  const t = useTranslations("MediaGallery");
+
   if (photos.length === 0) {
     return (
       <p className="text-muted-foreground text-sm" data-testid="no-photos">
-        No photos available yet
+        {t("empty.photos")}
       </p>
     );
   }
@@ -317,14 +321,14 @@ function PhotoGrid({
           <img
             src={photo.thumbnailUrl || photo.url || ""}
             alt={
-              photo.altText || photo.title || photo.caption || "Yacht photo"
+              photo.altText || photo.title || photo.caption || t("photoAlt")
             }
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
             loading="lazy"
           />
           {photo.isPrimary && (
             <span className="absolute top-1 left-1 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded-full">
-              Primary
+              {primaryLabel}
             </span>
           )}
           {photo.title && (
@@ -341,10 +345,12 @@ function PhotoGrid({
 }
 
 function VideoList({ videos }: { videos: MediaAsset[] }) {
+  const t = useTranslations("MediaGallery");
+
   if (videos.length === 0) {
     return (
       <p className="text-muted-foreground text-sm" data-testid="no-videos">
-        No videos available yet
+        {t("empty.videos")}
       </p>
     );
   }
@@ -358,21 +364,19 @@ function VideoList({ videos }: { videos: MediaAsset[] }) {
           data-testid="media-video-card"
         >
           {video.embedUrl ? (
-            <div className="aspect-video">
-              <iframe
-                src={video.embedUrl}
-                title={video.title || "Video"}
-                className="w-full h-full"
-                allowFullScreen
-                loading="lazy"
-              />
-            </div>
+            <VideoEmbed
+              embedUrl={video.embedUrl}
+              thumbnailUrl={video.thumbnailUrl}
+              title={video.title || t("videoDefaultTitle")}
+              altText={video.altText}
+              playLabel={t("playVideo")}
+            />
           ) : video.thumbnailUrl ? (
             <div className="aspect-video relative bg-muted">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={video.thumbnailUrl}
-                alt={video.altText || video.title || "Video thumbnail"}
+                alt={video.altText || video.title || t("videoThumbnail")}
                 className="w-full h-full object-cover"
                 loading="lazy"
               />
@@ -383,17 +387,18 @@ function VideoList({ videos }: { videos: MediaAsset[] }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-black/50 rounded-full p-3 hover:bg-black/70 transition-colors"
+                    aria-label={t("watchOnPlatform")}
                   >
-                    <PlayCircle className="h-10 w-10 text-white"  aria-hidden="true" />
+                    <PlayCircle className="h-10 w-10 text-white" aria-hidden="true" />
                   </a>
                 ) : (
-                  <Video className="h-10 w-10 text-white/50"  aria-hidden="true" />
+                  <Video className="h-10 w-10 text-white/50" aria-hidden="true" />
                 )}
               </div>
             </div>
           ) : (
             <div className="aspect-video bg-muted flex items-center justify-center">
-              <Video className="h-10 w-10 text-muted-foreground"  aria-hidden="true" />
+              <Video className="h-10 w-10 text-muted-foreground" aria-hidden="true" />
             </div>
           )}
           <div className="p-3">
@@ -413,27 +418,26 @@ function VideoList({ videos }: { videos: MediaAsset[] }) {
 }
 
 function BrochureList({ items }: { items: MediaAsset[] }) {
+  const t = useTranslations("MediaGallery");
+
   if (items.length === 0) {
     return (
-      <p
-        className="text-muted-foreground text-sm"
-        data-testid="no-brochures"
-      >
-        No brochures or plans available yet
+      <p className="text-muted-foreground text-sm" data-testid="no-brochures">
+        {t("empty.brochures")}
       </p>
     );
   }
 
   const typeIcons: Record<string, React.ReactNode> = {
-    brochure: <FileText className="h-6 w-6"  aria-hidden="true" />,
-    deck_plan: <Map className="h-6 w-6"  aria-hidden="true" />,
-    interior_layout: <Layout className="h-6 w-6"  aria-hidden="true" />,
+    brochure: <FileText className="h-6 w-6" aria-hidden="true" />,
+    deck_plan: <Map className="h-6 w-6" aria-hidden="true" />,
+    interior_layout: <Layout className="h-6 w-6" aria-hidden="true" />,
   };
 
   const typeLabels: Record<string, string> = {
-    brochure: "Brochure",
-    deck_plan: "Deck Plan",
-    interior_layout: "Interior Layout",
+    brochure: t("typeLabels.brochure"),
+    deck_plan: t("typeLabels.deckPlan"),
+    interior_layout: t("typeLabels.interiorLayout"),
   };
 
   return (
@@ -445,7 +449,7 @@ function BrochureList({ items }: { items: MediaAsset[] }) {
           data-testid="media-brochure-card"
         >
           <div className="shrink-0 text-primary">
-            {typeIcons[item.mediaType] || <FileText className="h-6 w-6"  aria-hidden="true" />}
+            {typeIcons[item.mediaType] || <FileText className="h-6 w-6" aria-hidden="true" />}
           </div>
           <div className="min-w-0 flex-1">
             <h4 className="font-medium text-sm truncate">
@@ -469,8 +473,8 @@ function BrochureList({ items }: { items: MediaAsset[] }) {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-2"
               >
-                <Download className="h-3 w-3"  aria-hidden="true" />
-                Download
+                <Download className="h-3 w-3" aria-hidden="true" />
+                {t("download")}
               </a>
             )}
             {item.sourceUrl && !item.url && (
@@ -480,8 +484,8 @@ function BrochureList({ items }: { items: MediaAsset[] }) {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-2"
               >
-                <ExternalLink className="h-3 w-3"  aria-hidden="true" />
-                View Source
+                <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                {t("viewSource")}
               </a>
             )}
           </div>
@@ -492,10 +496,12 @@ function BrochureList({ items }: { items: MediaAsset[] }) {
 }
 
 function MoreList({ items }: { items: MediaAsset[] }) {
+  const t = useTranslations("MediaGallery");
+
   if (items.length === 0) {
     return (
       <p className="text-muted-foreground text-sm" data-testid="no-more">
-        No 360° tours or 3D models available yet
+        {t("empty.more")}
       </p>
     );
   }
@@ -521,14 +527,14 @@ function MoreList({ items }: { items: MediaAsset[] }) {
           ) : (
             <div className="aspect-video bg-muted flex flex-col items-center justify-center gap-2">
               {item.mediaType === "360_tour" ? (
-                <RotateCcw className="h-8 w-8 text-muted-foreground"  aria-hidden="true" />
+                <RotateCcw className="h-8 w-8 text-muted-foreground" aria-hidden="true" />
               ) : (
-                <Box className="h-8 w-8 text-muted-foreground"  aria-hidden="true" />
+                <Box className="h-8 w-8 text-muted-foreground" aria-hidden="true" />
               )}
               <span className="text-sm text-muted-foreground">
                 {item.mediaType === "360_tour"
-                  ? "360° Tour"
-                  : "3D Model Viewer"}
+                  ? t("tour360")
+                  : t("model3d")}
               </span>
             </div>
           )}
@@ -536,8 +542,8 @@ function MoreList({ items }: { items: MediaAsset[] }) {
             <h4 className="font-medium text-sm">
               {item.title ||
                 (item.mediaType === "360_tour"
-                  ? "360° Virtual Tour"
-                  : "3D Model")}
+                  ? t("tour360Title")
+                  : t("model3dTitle"))}
             </h4>
             {item.caption && (
               <p className="text-xs text-muted-foreground mt-1">
@@ -551,8 +557,8 @@ function MoreList({ items }: { items: MediaAsset[] }) {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-2"
               >
-                <ExternalLink className="h-3 w-3"  aria-hidden="true" />
-                Open
+                <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                {t("open")}
               </a>
             )}
           </div>

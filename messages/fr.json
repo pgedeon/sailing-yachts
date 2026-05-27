@@ -1238,5 +1238,44 @@
     "noModels": "Aucun modèle trouvé.",
     "visitWebsite": "Visiter le site",
     "allManufacturers": "Tous les constructeurs"
+  },
+  "MediaGallery": {
+    "heading": "Galerie média",
+    "tabs": {
+      "photos": "Photos",
+      "videos": "Vidéos",
+      "brochures": "Brochures & Plans",
+      "more": "Plus"
+    },
+    "primary": "Principal",
+    "photoAlt": "Photo de voilier",
+    "playVideo": "Lire la vidéo",
+    "videoDefaultTitle": "Vidéo",
+    "videoThumbnail": "Vignette vidéo",
+    "watchOnPlatform": "Regarder sur la plateforme",
+    "download": "Télécharger",
+    "viewSource": "Voir la source",
+    "open": "Ouvrir",
+    "tour360": "Visite 360°",
+    "tour360Title": "Visite virtuelle 360°",
+    "model3d": "Visualiseur 3D",
+    "model3dTitle": "Modèle 3D",
+    "typeLabels": {
+      "brochure": "Brochure",
+      "deckPlan": "Plan de pont",
+      "interiorLayout": "Agencement intérieur"
+    },
+    "empty": {
+      "photos": "Aucune photo disponible",
+      "videos": "Aucune vidéo disponible",
+      "brochures": "Aucune brochure ou plan disponible",
+      "more": "Aucune visite 360° ou modèle 3D disponible"
+    },
+    "lightbox": {
+      "label": "Visionneuse de photos",
+      "close": "Fermer la visionneuse",
+      "previous": "Photo précédente",
+      "next": "Photo suivante"
+    }
   }
 }

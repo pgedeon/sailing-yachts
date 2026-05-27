@@ -1238,5 +1238,44 @@
     "noModels": "No models found.",
     "visitWebsite": "Visit website",
     "allManufacturers": "Browse all manufacturers"
+  },
+  "MediaGallery": {
+    "heading": "Media Gallery",
+    "tabs": {
+      "photos": "Photos",
+      "videos": "Videos",
+      "brochures": "Brochures & Plans",
+      "more": "More"
+    },
+    "primary": "Primary",
+    "photoAlt": "Yacht photo",
+    "playVideo": "Play video",
+    "videoDefaultTitle": "Video",
+    "videoThumbnail": "Video thumbnail",
+    "watchOnPlatform": "Watch on platform",
+    "download": "Download",
+    "viewSource": "View Source",
+    "open": "Open",
+    "tour360": "360° Tour",
+    "tour360Title": "360° Virtual Tour",
+    "model3d": "3D Model Viewer",
+    "model3dTitle": "3D Model",
+    "typeLabels": {
+      "brochure": "Brochure",
+      "deckPlan": "Deck Plan",
+      "interiorLayout": "Interior Layout"
+    },
+    "empty": {
+      "photos": "No photos available yet",
+      "videos": "No videos available yet",
+      "brochures": "No brochures or plans available yet",
+      "more": "No 360° tours or 3D models available yet"
+    },
+    "lightbox": {
+      "label": "Photo lightbox",
+      "close": "Close lightbox",
+      "previous": "Previous photo",
+      "next": "Next photo"
+    }
   }
 }
