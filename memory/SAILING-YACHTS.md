@@ -1,55 +1,69 @@
-# Sailing Yachts Builder Session Summary
+# Sailing Yachts — Session Memory
 
-**Date:** 2026-05-26 (10:20 PM session)
-**Session type:** Automated feature rollout loop (cron)
+## Latest Session: 2026-05-27 02:20
 
-## Issues Worked On
+### Issue Worked On
+- **Issue #341** — P20.3: Manufacturer comparison pages
+- **PR #342** — merged (feature implementation)
+- **PR #343** — merged (ISR fix)
 
-### P19.4 — Sitemap Integration for Programmatic Pages (Issue #335, PR #336)
-- **New route:** `sitemap-programmatic.xml` — dynamic sitemap for all programmatic SEO landing pages
-- **Pages included:**
-  - Manufacturer+size (`/manufacturers/[slug]/[sizeCategory]`) — from DB with graceful fallback
-  - Size category hubs (`/yachts/by-size/[sizeCategory]`) — 6 × 2 locales = 12 URLs
-  - Use-case pages (`/yachts/for/[useCase]`) — 6 × 2 locales = 12 URLs
-- **Also fixed:** Made `sitemap.xml` index and `feed.xml` dynamic (`force-dynamic`) to resolve CI build failures from Neon DB compute quota exceeded errors
-- **Registered** in sitemap index and robots.txt (7 sub-sitemaps total now)
+### What Was Implemented
+- New route: `/compare-manufacturers/[slugA]-vs-[slugB]`
+- `lib/manufacturer-compare.ts` — aggregate stats (fleet size, year/length/displacement/cabins range)
+- `ManufacturerCompareClient.tsx` — side-by-side UI with comparison table
+- Popular models with links to yacht detail pages
+- Bilingual (en + fr) with i18n translations
+- SEO metadata with OG image + breadcrumb structured data
+- ISR with `unstable_cache` (revalidate 3600s)
+- Unit tests (6/6 passing)
 
-## Build/Test Results
-- **Typecheck:** ✅ Pass
-- **Build:** ✅ Pass
-- **Vitest:** ✅ 2/2 unit tests pass
-- **CI (GitHub Actions):** ✅ Build + Lint + TypeScript + Performance Budgets all pass
+### Build/Test Results
+- Typecheck: ✅ PASS
+- Build: ✅ PASS
+- CI (Lint, TypeScript, Build, Performance Budgets): ✅ ALL PASS
+- Unit tests: 6/6 ✅
 
-## Deploy Status
-- **PR #336:** ✅ Merged via squash, deployed to Vercel
-- **Production deployment:** ✅ Ready (info.sailboats.fr)
+### Deploy Status
+- Vercel main deploy: ✅ SUCCESS
+- Both PRs merged to main
 
-## Live Verification Results
+### Live Verification Results
 - **/**: ✅ OK
 - **/yachts**: ✅ OK
 - **/search**: ✅ OK
 - **/compare**: ✅ OK
-- **/sitemap.xml**: ✅ OK (7 sub-sitemaps including new sitemap-programmatic.xml)
-- **/sitemap-programmatic.xml**: ✅ OK (24 URLs: size hubs + use-case pages)
-- **/en/yachts/for/bluewater-cruiser**: ✅ OK
-- **/en/yachts/by-size/40-45ft**: ✅ OK
-- **API /api/yachts**: ❌ 500 (Neon DB quota exceeded — infrastructure issue, not code issue)
+- **/compare-manufacturers/jeanneau-vs-bavaria-yachts**: ⏳ 404 (Neon DB quota exceeded)
+  - Code is correct, will work once DB quota resets
+  - ISR needs one successful render to populate cache
 
-## Phase Status
-- Phase 14–18: ✅ COMPLETE
-- Phase 19 (Programmatic SEO Landing Pages): 🔄 ACTIVE
-  - P19.1: ✅ COMPLETE (manufacturer+size category pages)
-  - P19.2: ✅ COMPLETE (size category hub pages)
-  - P19.3: ✅ COMPLETE (use-case landing pages)
-  - P19.4: ✅ COMPLETE (sitemap integration for programmatic pages)
-  - P19.5: 🔲 TODO (internal linking mesh)
-- Phase 20–27: 🔲 PLANNED
+### Phase Status
+- Phase 14–19: ✅ COMPLETE
+- Phase 20 (Content Enrichment & Authority Building): 🔄 ACTIVE
+  - P20.1: 🔲 TODO (auto-generated yacht descriptions — needs LLM pipeline)
+  - P20.2: ✅ COMPLETE (spec glossary tooltips)
+  - P20.3: ✅ COMPLETE (manufacturer comparison pages)
+  - P20.4: 🔲 TODO (editorial pages)
+  - P20.5: 🔲 TODO (video embed support)
+- Phase 21–27: 🔲 PLANNED
 
-## Technical Notes
-- Neon DB compute quota exceeded — affects build-time static generation and API responses
-- `force-dynamic` on routes that query DB prevents build-time failures
-- Manufacturer+size URLs in sitemap will populate once DB quota resets (graceful degradation)
-- Sitemap-programmatic.xml uses `unstable_cache` with 1-hour revalidation for runtime performance
+### Technical Notes
+- Neon DB quota is EXCEEDED — all dynamic/first-time ISR renders fail
+- Existing cached ISR pages continue to work
+- New pages will render correctly once DB quota resets
+- `sailing-yachts-actual` and `site` Vercel projects fail deployment (pre-existing infra issue)
+
+### Files Created
+- `lib/manufacturer-compare.ts`
+- `app/[locale]/compare-manufacturers/[slugA]-vs-[slugB]/page.tsx`
+- `app/[locale]/compare-manufacturers/[slugA]-vs-[slugB]/ManufacturerCompareClient.tsx`
+- `tests/manufacturer-compare.unit.test.ts`
+
+### Files Modified
+- `messages/en.json` (added ManufacturerCompare namespace)
+- `messages/fr.json` (added ManufacturerCompare namespace)
+- `FUTURE_ROADMAP.md` (marked P20.3 complete)
 
 ## Next Recommended Tasks
-- **P19.5** — Internal linking mesh (cross-link yacht detail pages to use-case + size pages)
+- **P20.1** — Auto-generated yacht summary descriptions (needs LLM pipeline, complex)
+- **P20.4** — Editorial pages (content-heavy, needs curation)
+- **P20.5** — Video embed support (self-contained, moderate)

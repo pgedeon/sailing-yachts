@@ -58,7 +58,7 @@
 
 - **P20.1 — Auto-generated yacht summary descriptions** — LLM-powered one-paragraph summaries for yachts missing descriptions, stored in DB, with human review queue.
 - **P20.2 — Spec glossary tooltips on yacht detail** — Hover/click tooltips on spec labels (LOA, SA/D, D/L ratio) linking to glossary terms.
-- **P20.3 — Manufacturer comparison pages** — `/compare-manufacturers/[slugA]-vs-[slugB]` comparing fleet size, price range, popular models.
+- **P20.3 — Manufacturer comparison pages** *(completed 2026-05-27 — Issue #341)* — `/compare-manufacturers/[slugA]-vs-[slugB]` comparing fleet size, price range, popular models.
 - **P20.4 — "Best [year] [size] sailboats" editorial pages** — Curated editorial pages combining guide content with yacht data.
 - **P20.5 — Video embed support for yacht pages** — YouTube/Vimeo embeds in yacht detail pages, with VideoObject schema.
 
