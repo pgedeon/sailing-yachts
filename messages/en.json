@@ -1218,5 +1218,25 @@
   },
   "RelatedCategories": {
     "title": "Related Categories"
+  },
+  "ManufacturerCompare": {
+    "breadcrumb": {
+      "home": "Home",
+      "manufacturers": "Manufacturers"
+    },
+    "subtitle": "Side-by-side comparison of {a} and {b} — fleet size, yacht ranges, and popular models",
+    "fleetSize": "Fleet Size",
+    "yearRange": "Year Range",
+    "lengthRange": "Length Range",
+    "avgLength": "Avg. Length",
+    "displacementRange": "Displacement Range",
+    "cabinsRange": "Cabins Range",
+    "country": "Country",
+    "founded": "Founded",
+    "statsComparison": "Stats Comparison",
+    "popularModels": "Popular {name} Models",
+    "noModels": "No models found.",
+    "visitWebsite": "Visit website",
+    "allManufacturers": "Browse all manufacturers"
   }
 }

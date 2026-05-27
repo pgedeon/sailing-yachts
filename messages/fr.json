@@ -1218,5 +1218,25 @@
   },
   "RelatedCategories": {
     "title": "Catégories associées"
+  },
+  "ManufacturerCompare": {
+    "breadcrumb": {
+      "home": "Accueil",
+      "manufacturers": "Constructeurs"
+    },
+    "subtitle": "Comparaison côte à côte de {a} et {b} — taille de flotte, gammes et modèles populaires",
+    "fleetSize": "Taille de la flotte",
+    "yearRange": "Années",
+    "lengthRange": "Gamme de longueurs",
+    "avgLength": "Longueur moy.",
+    "displacementRange": "Déplacement",
+    "cabinsRange": "Cabines",
+    "country": "Pays",
+    "founded": "Fondé",
+    "statsComparison": "Comparaison des statistiques",
+    "popularModels": "Modèles {name} populaires",
+    "noModels": "Aucun modèle trouvé.",
+    "visitWebsite": "Visiter le site",
+    "allManufacturers": "Tous les constructeurs"
   }
 }
