@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { unstable_cache } from "next/cache";
 import { getSizeCategoryHubData } from "@/lib/size-category-hub";
 
 import {
@@ -15,9 +16,14 @@ import { localePath } from "@/lib/i18n-paths";
 import { SizeCategoryHubClient } from "./SizeCategoryHubClient";
 import { USE_CASES } from "@/lib/use-case-meta";
 
-// Force dynamic rendering — DB queries must run at request time
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// ISR: cache for 1 hour, invalidate via tags when admin updates yacht data
+export const revalidate = 3600;
+
+const getCachedSizeCategoryHubData = unstable_cache(
+  async (sizeCategorySlug: string) => getSizeCategoryHubData(sizeCategorySlug),
+  ["size-category-hub"],
+  { tags: ["yachts", "manufacturers"] }
+);
 
 export async function generateMetadata({
   params,
@@ -29,7 +35,7 @@ export async function generateMetadata({
   if (!sizeCategory) notFound();
 
   const locale = rawParams.locale || "en";
-  const data = await getSizeCategoryHubData(sizeCategory);
+  const data = await getCachedSizeCategoryHubData(sizeCategory);
   if (!data) notFound();
 
   const sizeLabel =
@@ -83,7 +89,7 @@ export default async function SizeCategoryHubPage({
   if (!sizeCategory) notFound();
 
   const locale = rawParams.locale || "en";
-  const data = await getSizeCategoryHubData(sizeCategory);
+  const data = await getCachedSizeCategoryHubData(sizeCategory);
   if (!data) notFound();
 
   const sizeLabel =

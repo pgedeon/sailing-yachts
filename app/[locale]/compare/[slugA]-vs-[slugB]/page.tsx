@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { unstable_cache } from "next/cache";
 import { getYachtsBySlugs, generateComparisonIntro, generateComparisonMetadata, getPrimaryImage, type YachtComparisonData } from "@/lib/compare-canonical";
 import { getSiteUrl, generateBreadcrumbJsonLd, generateYachtJsonLd, generateComparePageJsonLd, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
 import { PriceTierBadge } from "@/app/components/PriceTierBadge";
@@ -8,8 +9,14 @@ import { calculatePriceTier } from "@/lib/price-tier";
 import { localePath } from "@/lib/i18n-paths";
 import { CanonicalCompareClient } from "./CanonicalCompareClient";
 
-// Force dynamic rendering
-export const dynamic = "force-dynamic";
+const getCachedYachtsBySlugs = unstable_cache(
+  async (slugA: string, slugB: string) => getYachtsBySlugs(slugA, slugB),
+  ["compare-yachts"],
+  { tags: ["yachts", "manufacturers"] }
+);
+
+// ISR: cache for 1 hour, invalidate via tags when admin updates yacht data
+export const revalidate = 3600;
 
 /**
  * Next.js treats [slugA]-vs-[slugB] as a SINGLE dynamic segment named
@@ -68,7 +75,7 @@ export async function generateMetadata({
   }
 
   const { slugA, slugB } = parsed;
-  const { yachtA, yachtB } = await getYachtsBySlugs(slugA, slugB);
+  const { yachtA, yachtB } = await getCachedYachtsBySlugs(slugA, slugB);
 
   if (!yachtA || !yachtB) {
     notFound();
@@ -126,7 +133,7 @@ export default async function CanonicalComparePage({
   }
 
   const { slugA, slugB } = parsed;
-  const { yachtA, yachtB } = await getYachtsBySlugs(slugA, slugB);
+  const { yachtA, yachtB } = await getCachedYachtsBySlugs(slugA, slugB);
 
   if (!yachtA || !yachtB) {
     notFound();
