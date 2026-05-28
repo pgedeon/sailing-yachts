@@ -32,7 +32,7 @@ export function buildLocaleAlternates(pathWithoutLocale: string): {
 }
 
 export function buildOgImageUrl(params: {
-  type?: "yacht" | "manufacturer" | "compare" | "guide" | "glossary" | "default";
+  type?: "yacht" | "manufacturer" | "compare" | "guide" | "glossary" | "editorial" | "default";
   title: string;
   description?: string | null;
   length?: number | string | null;
@@ -878,5 +878,37 @@ export function generateComparePageJsonLd(params: {
       { "@type": "Product", name: fullNameA },
       { "@type": "Product", name: fullNameB },
     ],
+  };
+}
+
+export function generateArticleJsonLd(params: {
+  headline: string;
+  description: string;
+  url: string;
+  datePublished: string;
+  dateModified: string;
+  authorName: string;
+}): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: params.headline,
+    description: params.description,
+    url: params.url,
+    datePublished: params.datePublished,
+    dateModified: params.dateModified,
+    author: {
+      "@type": "Organization",
+      name: params.authorName,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Sailing Yacht Info",
+      url: getSiteUrl("/"),
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": params.url,
+    },
   };
 }
