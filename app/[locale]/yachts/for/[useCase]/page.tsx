@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { unstable_cache } from "next/cache";
 import { getUseCaseLandingData, USE_CASES } from "@/lib/use-case-landing";
 
 import {
@@ -14,9 +15,14 @@ import {
 import { localePath } from "@/lib/i18n-paths";
 import { UseCaseLandingClient } from "./UseCaseLandingClient";
 
-// Force dynamic rendering — DB queries must run at request time
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// ISR: cache for 1 hour, invalidate via tags when admin updates yacht data
+export const revalidate = 3600;
+
+const getCachedUseCaseLandingData = unstable_cache(
+  async (useCaseSlug: string) => getUseCaseLandingData(useCaseSlug),
+  ["use-case-landing"],
+  { tags: ["yachts", "manufacturers"] }
+);
 
 export async function generateMetadata({
   params,
@@ -28,7 +34,7 @@ export async function generateMetadata({
   if (!useCaseSlug) notFound();
 
   const locale = rawParams.locale || "en";
-  const data = await getUseCaseLandingData(useCaseSlug);
+  const data = await getCachedUseCaseLandingData(useCaseSlug);
   if (!data) notFound();
 
   const useCaseLabel =
@@ -82,7 +88,7 @@ export default async function UseCaseLandingPage({
   if (!useCaseSlug) notFound();
 
   const locale = rawParams.locale || "en";
-  const data = await getUseCaseLandingData(useCaseSlug);
+  const data = await getCachedUseCaseLandingData(useCaseSlug);
   if (!data) notFound();
 
   const useCaseLabel =
