@@ -74,6 +74,6 @@
 
 - **P22.1 — Edge runtime for API routes** — Migrate read-only API routes to Next.js Edge runtime for lower latency.
 - **P22.2 — Image CDN optimization** — Set up proper image transformation pipeline with blurhash placeholders.
-- **P22.3 — Incremental Static Regeneration audit** — Review ISR cache settings, add revalidate timers to high-traffic pages.
+- **P22.3 — Incremental Static Regeneration audit *(completed 2026-05-28 — Issue #348, PR #349)* — Enabled ISR (1h cache) for by-size, use-case, and compare pages with cache tags.
 - **P22.4 — Bundle size optimization** — Audit client-side JS, code-split heavy components, lazy-load charts.
 - **P22.5 — Core Web Vitals monitoring** — Set up real-user monitoring (RUM) for LCP, FID, CLS with alerting.

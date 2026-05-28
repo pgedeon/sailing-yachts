@@ -1,6 +1,69 @@
 # Sailing Yachts — Session Memory
 
-## Latest Session: 2026-05-28 02:20
+## Latest Session: 2026-05-28 22:20
+
+### Issue Worked On
+- **Issue #348** — P22.3: ISR cache audit — enable ISR for by-size, use-case, and compare pages
+- **PR #349** — merged (squash)
+
+### What Was Implemented
+- Converted 3 page types from `force-dynamic` + `revalidate = 0` to ISR with `revalidate = 3600`:
+  - `/yachts/by-size/[sizeCategory]` — Size category hub pages
+  - `/yachts/for/[useCase]` — Use-case landing pages
+  - `/compare/[slugA]-vs-[slugB]` — Yacht comparison pages
+- Wrapped data fetching with `unstable_cache()` + cache tags `["yachts", "manufacturers"]`
+- Admin mutations already call `revalidateTag()` on data changes — cached pages auto-invalidate
+
+### Build/Test Results
+- Typecheck: ✅ PASS
+- Build: ✅ PASS
+- CI (Lint, TypeScript, Build, Performance Budgets): ✅ ALL PASS
+
+### Deploy Status
+- PR merged to main
+- Vercel – sailing-yachts: ✅ deployed
+
+### Live Verification Results
+- **/**: ✅ OK
+- **/yachts**: ✅ OK
+- **/search**: ✅ OK
+- **/compare**: ✅ OK
+- **/yachts/by-size/35-40ft**: ✅ OK
+- **/yachts/for/bluewater-cruiser**: ✅ OK
+- **/compare/beneteau-oceanis-40-1-vs-jeanneau-sun-odyssey-410**: ✅ OK
+- **/api/yachts**: ⚠️ Neon DB quota exceeded (pre-existing)
+
+### Phase Status
+- Phase 14–19: ✅ COMPLETE
+- Phase 20 (Content Enrichment): 🔄 ACTIVE
+  - P20.1: 🔲 TODO (auto-generated yacht descriptions — needs LLM pipeline)
+  - P20.2: ✅ COMPLETE
+  - P20.3: ✅ COMPLETE
+  - P20.4: ✅ COMPLETE
+  - P20.5: ✅ COMPLETE
+- Phase 21 (Data Quality): 🔲 PLANNED
+- Phase 22 (Performance): 🔄 ACTIVE
+  - P22.1: 🔲 TODO (Edge runtime for API routes — most routes use `pool`/pg which isn't edge-compatible, need to convert to drizzle first)
+  - P22.2: 🔲 TODO (Image CDN optimization)
+  - P22.3: ✅ COMPLETE (ISR audit — Issue #348, PR #349)
+  - P22.4: 🔲 TODO (Bundle size optimization)
+  - P22.5: 🔲 TODO (Core Web Vitals monitoring)
+- Phase 23–27: 🔲 PLANNED
+
+### Technical Notes
+- Neon DB quota STILL EXCEEDED — all dynamic/first-time ISR renders fail for uncached pages
+- Existing cached ISR pages continue to work
+- Most API routes use `pool` (pg/Pool) which is NOT edge-runtime compatible
+- Routes using `db` (drizzle/neon-http) ARE edge-compatible
+- `sailing-yachts-actual` and `site` Vercel projects fail deployment (pre-existing)
+
+### Next Recommended Tasks
+1. **P22.4 — Bundle size optimization**: Audit client JS, code-split heavy components
+2. **P22.1 — Edge runtime**: Convert key public API routes from `pool` to `db` (drizzle), then add `export const runtime = 'edge'`
+3. **P21.1 — Data completeness scoring**: Admin dashboard for data quality
+4. **P20.1 — Auto-generated descriptions**: Needs LLM pipeline design (complex, may need user input)
+
+## Previous Session: 2026-05-28 02:20
 
 ### Issue Worked On
 - **Issue #346** — P20.4: Best [year] [size] sailboats editorial pages
@@ -8,76 +71,15 @@
 
 ### What Was Implemented
 - New editorial route `/yachts/best/[year]/[sizeCategory]` (e.g., `/yachts/best/2026/40-45ft`)
-- Data layer `lib/best-year-size-landing.ts`:
-  - `getBestYearSizePageData()` — fetches yachts filtered by size range, sorted by year
-  - Top manufacturers, other sizes, other years for sidebar navigation
-  - Editorial content per size category (en + fr intro + conclusion)
-  - `getBestYearSizeStaticParams()` for all year+size combos
-- `BestYearSizeClient` — ranked yacht cards with gold rank badges, key specs, tags
-- Full page with hero section, editorial intro, ranked list, sidebar, conclusion, CTAs
-- JSON-LD: BreadcrumbList, Article, ItemList schemas
-- `generateArticleJsonLd()` added to `lib/seo.ts`
-- `editorial` OG image type added to `buildOgImageUrl`
-- Loading skeleton and error boundary
-- i18n: `BestYearSize` namespace (en + fr) in messages
-- Sitemap integration: all year+size combos in `sitemap-programmatic.xml` (priority 0.8)
-- Supported years: 2024, 2025, 2026
-- All 6 size categories from `lib/size-categories.ts`
-
-### Also Done
-- Marked P19.1 as complete in FUTURE_ROADMAP.md (was already implemented at `/manufacturers/[slug]/[sizeCategory]`)
-
-### Build/Test Results
-- Typecheck: ✅ PASS
-- Build: ✅ PASS
-- CI (Lint, TypeScript, Build, Performance Budgets): ✅ ALL PASS
-- Unit tests: 13/13 ✅
+- Data layer `lib/best-year-size-landing.ts` with editorial content, rankings, sidebar
+- `BestYearSizeClient` with ranked yacht cards, gold rank badges
+- JSON-LD schemas, OG images, sitemap integration, i18n (en + fr)
+- Loading skeleton, error boundary, 13 unit tests
 
 ### Deploy Status
-- PR merged to main
-- Vercel main deploy: in progress
+- PR merged to main, Vercel deployed
 
-### Live Verification Results
-- **/**: ✅ OK
-- **/yachts**: ✅ OK
-- **/search**: ✅ OK
-- **/compare**: ✅ OK
-- **/yachts/beneteau-oceanis-40-1**: ✅ OK (ISR cached)
-- **/yachts/best/2026/40-45ft**: ⚠️ 404 (Neon DB quota exceeded — new ISR pages can't render until quota resets)
-- **/api/yachts**: ⚠️ Neon DB quota exceeded (pre-existing)
-
-### Phase Status
-- Phase 14–19: ✅ COMPLETE
-- Phase 20 (Content Enrichment & Authority Building): 🔄 ACTIVE
-  - P20.1: 🔲 TODO (auto-generated yacht descriptions — needs LLM pipeline)
-  - P20.2: ✅ COMPLETE (spec glossary tooltips)
-  - P20.3: ✅ COMPLETE (manufacturer comparison pages)
-  - P20.4: ✅ COMPLETE (editorial "Best [year] [size]" pages — Issue #346, PR #347)
-  - P20.5: ✅ COMPLETE (video embed support)
-- Phase 21–27: 🔲 PLANNED
-
-### Technical Notes
-- Neon DB quota EXCEEDED — all dynamic/first-time ISR renders fail
-- New editorial pages will work once quota resets (code is correct, CI passes)
-- Existing cached ISR pages continue to work
-- `sailing-yachts-actual` and `site` Vercel projects fail deployment (pre-existing)
-
-### Files Created
-- `lib/best-year-size-landing.ts` (data layer + editorial content)
-- `app/[locale]/yachts/best/[year]/[sizeCategory]/page.tsx` (server page)
-- `app/[locale]/yachts/best/[year]/[sizeCategory]/BestYearSizeClient.tsx` (client component)
-- `app/[locale]/yachts/best/[year]/[sizeCategory]/loading.tsx` (skeleton)
-- `app/[locale]/yachts/best/[year]/[sizeCategory]/error.tsx` (error boundary)
-- `tests/best-year-size.unit.test.ts` (13 tests)
-
-### Files Modified
-- `lib/seo.ts` (added `generateArticleJsonLd`, `editorial` OG type)
-- `app/sitemap-programmatic.xml/route.ts` (added editorial page entries)
-- `messages/en.json` (BestYearSize namespace)
-- `messages/fr.json` (BestYearSize namespace)
-- `FUTURE_ROADMAP.md` (marked P19.1 + P20.4 complete)
-
-## Next Recommended Tasks
-- **P20.1** — Auto-generated yacht summary descriptions (needs LLM pipeline, complex)
-- **P21.1** — Data completeness scoring & reporting (self-contained, moderate)
-- **P22.1** — Edge runtime for API routes (technical, moderate)
+### Live Verification
+- Core pages: ✅ OK
+- Editorial pages: ⚠️ 404 (Neon DB quota exceeded)
+- API: ⚠️ Neon DB quota exceeded
