@@ -8,6 +8,7 @@ import {
 import { USE_CASES } from "@/lib/use-case-landing";
 import { SIZE_CATEGORIES } from "@/lib/size-categories";
 import { getManufacturerSizeCombinations } from "@/lib/manufacturer-size-landing";
+import { EDITORIAL_YEARS } from "@/lib/best-year-size-landing";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 3600;
@@ -58,6 +59,21 @@ async function getProgrammaticEntries(): Promise<SitemapEntry[]> {
             changefreq: "weekly",
             priority: "0.7",
           });
+        }
+      }
+
+
+      // 4. Best [year] [size] editorial pages (/yachts/best/[year]/[sizeCategory])
+      for (const year of EDITORIAL_YEARS) {
+        for (const sc of SIZE_CATEGORIES) {
+          for (const locale of LOCALES) {
+            entries.push({
+              loc: `${SITE_URL}/${locale}/yachts/best/${year}/${sc.slug}`,
+              lastmod: now,
+              changefreq: "monthly",
+              priority: "0.8",
+            });
+          }
         }
       }
 

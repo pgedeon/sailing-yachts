@@ -1277,5 +1277,15 @@
       "previous": "Photo précédente",
       "next": "Photo suivante"
     }
+  },
+  "BestYearSize": {
+    "loa": "Longueur hors tout",
+    "beam": "Bau",
+    "cabins": "Cabines",
+    "berths": "Couchettes",
+    "displacement": "Déplacement",
+    "showingCount": "{count} voiliers évalués",
+    "noYachtsFound": "Aucun voilier trouvé dans cette catégorie de taille.",
+    "editorialDisclaimer": "Les classements sont basés sur la revue éditoriale des modèles {year}. Les spécifications peuvent varier selon l'année et la région."
   }
 }

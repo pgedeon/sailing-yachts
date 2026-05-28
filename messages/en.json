@@ -1277,5 +1277,15 @@
       "previous": "Previous photo",
       "next": "Next photo"
     }
+  },
+  "BestYearSize": {
+    "loa": "LOA",
+    "beam": "Beam",
+    "cabins": "Cabins",
+    "berths": "Berths",
+    "displacement": "Displacement",
+    "showingCount": "{count} yachts reviewed",
+    "noYachtsFound": "No yachts found in this size category.",
+    "editorialDisclaimer": "Rankings are based on editorial review of {year} models. Specifications may vary by year and region."
   }
 }
