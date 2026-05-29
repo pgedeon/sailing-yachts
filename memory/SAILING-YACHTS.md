@@ -1,23 +1,34 @@
 # Sailing Yachts — Session Memory
 
-## Latest Session: 2026-05-28 22:20
+## Latest Session: 2026-05-29 02:20
 
 ### Issue Worked On
-- **Issue #348** — P22.3: ISR cache audit — enable ISR for by-size, use-case, and compare pages
-- **PR #349** — merged (squash)
+- **Issue #350** — P22.4: Bundle size optimization — lazy-load heavy client components
+- **PR #351** — merged (squash)
 
 ### What Was Implemented
-- Converted 3 page types from `force-dynamic` + `revalidate = 0` to ISR with `revalidate = 3600`:
-  - `/yachts/by-size/[sizeCategory]` — Size category hub pages
-  - `/yachts/for/[useCase]` — Use-case landing pages
-  - `/compare/[slugA]-vs-[slugB]` — Yacht comparison pages
-- Wrapped data fetching with `unstable_cache()` + cache tags `["yachts", "manufacturers"]`
-- Admin mutations already call `revalidateTag()` on data changes — cached pages auto-invalidate
+- Converted 15 below-the-fold components in YachtDetailClient to `dynamic()` lazy-loading:
+  MediaGallery, LeadForm, ReviewSummary, ReviewSubmissionForm, CorrectionForm,
+  SimilarYachts, UsersAlsoViewed, SameSizeAlternatives, RelatedManufacturers,
+  RelatedCategories, RelatedGuides, RelatedArticles, SocialShareButtons,
+  SourceProvenance, AffiliateRecommendations
+- Lazy-loaded 4 components in CompareClient (CompareMonetization, LeadForm, CompareExport, BuyerChecklist)
+- Lazy-loaded ManufacturerComparisons in manufacturer detail page
+- Added loading skeletons for all lazy-loaded components
+- Kept critical above-fold imports static (QuickFacts, SpecTooltip, TableOfContents, CompletenessBadge, YachtImage)
 
 ### Build/Test Results
 - Typecheck: ✅ PASS
 - Build: ✅ PASS
-- CI (Lint, TypeScript, Build, Performance Budgets): ✅ ALL PASS
+- Tests: ✅ 38 new unit tests (bundle-optimization.test.ts) — all pass
+
+### Bundle Size Results
+| Route | Before | After | Change |
+|-------|--------|-------|--------|
+| `/yachts/[slug]` First Load | 164 kB | 146 kB | −11% |
+| `/compare` First Load | 150 kB | 119 kB | −21% |
+| `/yachts/[slug]` page chunk raw | 120 kB | 66 kB | −45% |
+| `/compare/[A]-vs-[B]` First Load | 108 kB | 99 kB | −8% |
 
 ### Deploy Status
 - PR merged to main
@@ -26,11 +37,9 @@
 ### Live Verification Results
 - **/**: ✅ OK
 - **/yachts**: ✅ OK
-- **/search**: ✅ OK
 - **/compare**: ✅ OK
-- **/yachts/by-size/35-40ft**: ✅ OK
-- **/yachts/for/bluewater-cruiser**: ✅ OK
-- **/compare/beneteau-oceanis-40-1-vs-jeanneau-sun-odyssey-410**: ✅ OK
+- **/yachts/beneteau-oceanis-40-1**: ✅ OK
+- **/manufacturers/beneteau**: ✅ OK
 - **/api/yachts**: ⚠️ Neon DB quota exceeded (pre-existing)
 
 ### Phase Status
@@ -45,41 +54,20 @@
 - Phase 22 (Performance): 🔄 ACTIVE
   - P22.1: 🔲 TODO (Edge runtime for API routes — most routes use `pool`/pg which isn't edge-compatible, need to convert to drizzle first)
   - P22.2: 🔲 TODO (Image CDN optimization)
-  - P22.3: ✅ COMPLETE (ISR audit — Issue #348, PR #349)
-  - P22.4: 🔲 TODO (Bundle size optimization)
+  - P22.3: ✅ COMPLETE (ISR audit)
+  - P22.4: ✅ COMPLETE (Bundle size optimization)
   - P22.5: 🔲 TODO (Core Web Vitals monitoring)
 - Phase 23–27: 🔲 PLANNED
 
 ### Technical Notes
 - Neon DB quota STILL EXCEEDED — all dynamic/first-time ISR renders fail for uncached pages
-- Existing cached ISR pages continue to work
-- Most API routes use `pool` (pg/Pool) which is NOT edge-runtime compatible
-- Routes using `db` (drizzle/neon-http) ARE edge-compatible
-- `sailing-yachts-actual` and `site` Vercel projects fail deployment (pre-existing)
+- Shared JS baseline: 88.1 kB (React 53.6 kB + Next.js 31.9 kB — standard)
+- Manufacturer detail page 111 kB is from Recharts (inherent to the fleet chart feature)
+- Recharts chunks: 132 (324 kB) + 8942 (45 kB) — already dynamically loaded
+- All chart components use `dynamic()` with `ssr: false`
 
 ### Next Recommended Tasks
-1. **P22.4 — Bundle size optimization**: Audit client JS, code-split heavy components
+1. **P22.2 — Image CDN optimization**: Set up blurhash placeholders and image transformation pipeline
 2. **P22.1 — Edge runtime**: Convert key public API routes from `pool` to `db` (drizzle), then add `export const runtime = 'edge'`
 3. **P21.1 — Data completeness scoring**: Admin dashboard for data quality
 4. **P20.1 — Auto-generated descriptions**: Needs LLM pipeline design (complex, may need user input)
-
-## Previous Session: 2026-05-28 02:20
-
-### Issue Worked On
-- **Issue #346** — P20.4: Best [year] [size] sailboats editorial pages
-- **PR #347** — merged (squash)
-
-### What Was Implemented
-- New editorial route `/yachts/best/[year]/[sizeCategory]` (e.g., `/yachts/best/2026/40-45ft`)
-- Data layer `lib/best-year-size-landing.ts` with editorial content, rankings, sidebar
-- `BestYearSizeClient` with ranked yacht cards, gold rank badges
-- JSON-LD schemas, OG images, sitemap integration, i18n (en + fr)
-- Loading skeleton, error boundary, 13 unit tests
-
-### Deploy Status
-- PR merged to main, Vercel deployed
-
-### Live Verification
-- Core pages: ✅ OK
-- Editorial pages: ⚠️ 404 (Neon DB quota exceeded)
-- API: ⚠️ Neon DB quota exceeded

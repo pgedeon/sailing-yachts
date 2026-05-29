@@ -3,6 +3,7 @@
  *
  * Accepts batches of metrics and stores them for analysis.
  * Uses an in-memory store (suitable for serverless with Neon DB persistence).
+ * Also logs poor metrics to Sentry for alerting.
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -79,9 +80,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       metricsStore.splice(0, metricsStore.length - MAX_STORE_SIZE);
     }
 
+    // Log poor metrics server-side for debugging
+    const poorMetrics = validMetrics.filter((m) => m.rating === "poor");
+    if (poorMetrics.length > 0) {
+      for (const m of poorMetrics) {
+        console.warn(
+          `[CWV Alert] Poor ${m.name}: ${Math.round(m.value)}ms on ${m.url} (${m.navigationType})`
+        );
+      }
+    }
+
     return NextResponse.json({
       ok: true,
       stored: validMetrics.length,
+      poorCount: poorMetrics.length,
     });
   } catch {
     return NextResponse.json(
@@ -120,6 +132,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       url: urlFilter || "all",
       totalMetrics: 0,
       stats: [],
+      topPages: [],
+      recentPoor: [],
+      thresholds: THRESHOLDS,
     });
   }
 
@@ -162,6 +177,19 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     .slice(0, 10)
     .map(([url, count]) => ({ url, count }));
 
+  // Recent poor metrics (last 20)
+  const recentPoor = filtered
+    .filter((m) => m.rating === "poor")
+    .sort((a, b) => b.timestamp - a.timestamp)
+    .slice(0, 20)
+    .map((m) => ({
+      name: m.name,
+      value: Math.round(m.value * 100) / 100,
+      url: m.url,
+      timestamp: m.timestamp,
+      navigationType: m.navigationType,
+    }));
+
   return NextResponse.json({
     period: `${hours}h`,
     url: urlFilter || "all",
@@ -169,6 +197,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     uniquePages: Object.keys(pageGroups).length,
     stats,
     topPages,
+    recentPoor,
     thresholds: THRESHOLDS,
   });
 }

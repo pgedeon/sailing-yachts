@@ -123,6 +123,17 @@ export default async function AdminPage() {
                 View Validation Report
               </a>
             </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">Web Vitals</h2>
+              <p className="text-gray-600 mb-4">Monitor real-user Core Web Vitals (LCP, INP, CLS) and performance metrics.</p>
+              <a
+                href="/admin/vitals"
+                className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
+              >
+                View Vitals Dashboard
+              </a>
+            </div>
             </div>
           </div>
         </div>
