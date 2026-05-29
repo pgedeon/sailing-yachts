@@ -1,73 +1,73 @@
 # Sailing Yachts — Session Memory
 
-## Latest Session: 2026-05-29 02:20
+## Latest Session: 2026-05-29 22:30
 
 ### Issue Worked On
-- **Issue #350** — P22.4: Bundle size optimization — lazy-load heavy client components
-- **PR #351** — merged (squash)
+- **Issue #352** — P22.5: Core Web Vitals monitoring — admin dashboard + Sentry integration
+- **PR #353** — merged (squash)
 
 ### What Was Implemented
-- Converted 15 below-the-fold components in YachtDetailClient to `dynamic()` lazy-loading:
-  MediaGallery, LeadForm, ReviewSummary, ReviewSubmissionForm, CorrectionForm,
-  SimilarYachts, UsersAlsoViewed, SameSizeAlternatives, RelatedManufacturers,
-  RelatedCategories, RelatedGuides, RelatedArticles, SocialShareButtons,
-  SourceProvenance, AffiliateRecommendations
-- Lazy-loaded 4 components in CompareClient (CompareMonetization, LeadForm, CompareExport, BuyerChecklist)
-- Lazy-loaded ManufacturerComparisons in manufacturer detail page
-- Added loading skeletons for all lazy-loaded components
-- Kept critical above-fold imports static (QuickFacts, SpecTooltip, TableOfContents, CompletenessBadge, YachtImage)
+1. **Admin Vitals Dashboard** (`/admin/vitals`) — Full real-time CWV visualization:
+   - Core Web Vitals cards (LCP, INP, CLS) with p75 values, color-coded rating badges, distribution bars, percentile breakdowns
+   - Other metrics (TTFB, FCP) with stats tables
+   - Top pages by metric count with one-click filtering
+   - Recent poor metrics feed
+   - Google's CWV thresholds reference table
+   - Auto-refresh (30s), configurable time range (1h–7d), URL filtering
+   - Auth-gated (admin role required)
+
+2. **Sentry Integration** in `lib/web-vitals.ts`:
+   - CWV breadcrumbs sent to Sentry for every metric
+   - Poor metrics captured as Sentry events for alerting
+   - Dynamic import to avoid bundling Sentry when not configured
+
+3. **API Enhancement** (`/api/vitals`):
+   - POST now returns `poorCount` in response
+   - Server-side logging of poor metrics: `[CWV Alert] Poor LCP: 5000ms on /yachts`
+   - GET now returns `recentPoor` array with last 20 poor metrics
+
+4. **Admin Index** — Added Web Vitals card to admin dashboard homepage
 
 ### Build/Test Results
 - Typecheck: ✅ PASS
 - Build: ✅ PASS
-- Tests: ✅ 38 new unit tests (bundle-optimization.test.ts) — all pass
-
-### Bundle Size Results
-| Route | Before | After | Change |
-|-------|--------|-------|--------|
-| `/yachts/[slug]` First Load | 164 kB | 146 kB | −11% |
-| `/compare` First Load | 150 kB | 119 kB | −21% |
-| `/yachts/[slug]` page chunk raw | 120 kB | 66 kB | −45% |
-| `/compare/[A]-vs-[B]` First Load | 108 kB | 99 kB | −8% |
+- Tests: ✅ 13 unit tests (web-vitals.test.ts) — all pass
 
 ### Deploy Status
 - PR merged to main
-- Vercel – sailing-yachts: ✅ deployed
+- Vercel – sailing-yachts: ✅ deployed (commit 42351c5)
 
 ### Live Verification Results
 - **/**: ✅ OK
 - **/yachts**: ✅ OK
+- **/search**: ✅ OK
 - **/compare**: ✅ OK
-- **/yachts/beneteau-oceanis-40-1**: ✅ OK
-- **/manufacturers/beneteau**: ✅ OK
-- **/api/yachts**: ⚠️ Neon DB quota exceeded (pre-existing)
+- **/admin/vitals**: ✅ OK (redirects to login for unauthenticated, loads for admin)
+- **/admin**: ✅ OK
+- **/api/vitals**: ✅ OK (returns valid JSON with stats structure)
 
 ### Phase Status
 - Phase 14–19: ✅ COMPLETE
 - Phase 20 (Content Enrichment): 🔄 ACTIVE
   - P20.1: 🔲 TODO (auto-generated yacht descriptions — needs LLM pipeline)
-  - P20.2: ✅ COMPLETE
-  - P20.3: ✅ COMPLETE
-  - P20.4: ✅ COMPLETE
-  - P20.5: ✅ COMPLETE
+  - P20.2–P20.5: ✅ COMPLETE
 - Phase 21 (Data Quality): 🔲 PLANNED
 - Phase 22 (Performance): 🔄 ACTIVE
-  - P22.1: 🔲 TODO (Edge runtime for API routes — most routes use `pool`/pg which isn't edge-compatible, need to convert to drizzle first)
+  - P22.1: 🔲 TODO (Edge runtime for API routes)
   - P22.2: 🔲 TODO (Image CDN optimization)
   - P22.3: ✅ COMPLETE (ISR audit)
   - P22.4: ✅ COMPLETE (Bundle size optimization)
-  - P22.5: 🔲 TODO (Core Web Vitals monitoring)
+  - P22.5: ✅ COMPLETE (Core Web Vitals monitoring)
 - Phase 23–27: 🔲 PLANNED
 
 ### Technical Notes
 - Neon DB quota STILL EXCEEDED — all dynamic/first-time ISR renders fail for uncached pages
-- Shared JS baseline: 88.1 kB (React 53.6 kB + Next.js 31.9 kB — standard)
-- Manufacturer detail page 111 kB is from Recharts (inherent to the fleet chart feature)
-- Recharts chunks: 132 (324 kB) + 8942 (45 kB) — already dynamically loaded
-- All chart components use `dynamic()` with `ssr: false`
+- CWV data is in-memory only — resets on cold starts; for persistence, need Neon DB table (blocked by quota)
+- Sentry CWV integration uses breadcrumbs + captureMessage for poor metrics
+- Admin vitals dashboard is a client component that fetches from /api/vitals
 
 ### Next Recommended Tasks
-1. **P22.2 — Image CDN optimization**: Set up blurhash placeholders and image transformation pipeline
-2. **P22.1 — Edge runtime**: Convert key public API routes from `pool` to `db` (drizzle), then add `export const runtime = 'edge'`
-3. **P21.1 — Data completeness scoring**: Admin dashboard for data quality
+1. **P22.2 — Image CDN optimization**: Convert ManufacturerLogo to next/image, add blurhash generation
+2. **P22.1 — Edge runtime**: Convert key public API routes from pool to db (drizzle)
+3. **P21.1 — Data completeness scoring**: Admin dashboard for data quality (read-only, no DB writes needed for display)
 4. **P20.1 — Auto-generated descriptions**: Needs LLM pipeline design (complex, may need user input)
