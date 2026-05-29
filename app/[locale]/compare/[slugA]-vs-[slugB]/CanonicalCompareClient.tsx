@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import type { YachtComparisonData } from "@/lib/compare-canonical";
-import { CompareMonetization } from "@/app/components/CompareMonetization";
+// Lazy-loaded for bundle optimization (P22.4)
 
 const ComparisonRadarChart = dynamic(
   () => import("@/components/comparison-radar-chart").then(m => ({ default: m.ComparisonRadarChart })),
@@ -13,6 +13,9 @@ const ComparisonBarCharts = dynamic(
   () => import("@/components/comparison-bar-charts").then(m => ({ default: m.ComparisonBarCharts })),
   { ssr: false, loading: () => null },
 );
+const CompareMonetization = dynamic(() => import("@/app/components/CompareMonetization").then(m => ({ default: m.CompareMonetization })), {
+  ssr: false, loading: () => null,
+});
 
 interface CanonicalCompareClientProps {
   yachtA: YachtComparisonData;

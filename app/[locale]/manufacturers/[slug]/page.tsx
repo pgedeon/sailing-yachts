@@ -18,11 +18,14 @@ import {
 } from "@/lib/manufacturers";
 import { getCountryFlag } from "@/lib/utils/country-flags";
 import { getSpotlightByManufacturerId } from "@/lib/manufacturer-spotlights";
-import { ManufacturerComparisons } from "./ManufacturerComparisons";
+
 import { SIZE_CATEGORIES } from "@/lib/size-categories";
 import ManufacturerLogo from "@/components/manufacturer-logo";
 import { localePath } from "@/lib/i18n-paths";
 import dynamic from "next/dynamic";
+
+// Lazy-loaded for bundle optimization (P22.4)
+const ManufacturerComparisons = dynamic(() => import("./ManufacturerComparisons").then(m => ({ default: m.ManufacturerComparisons })), { ssr: false, loading: () => <div className="h-32 animate-pulse bg-muted rounded-xl" /> });
 
 const ManufacturerFleetChart = dynamic(() => import("@/components/manufacturer-fleet-chart"), { ssr: false });
 

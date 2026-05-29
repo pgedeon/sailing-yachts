@@ -5,10 +5,10 @@ import { useTranslations, useLocale} from "next-intl";
 import { PriceTierBadge } from "@/app/components/PriceTierBadge";
 import { calculatePriceTier } from "@/lib/price-tier";
 import Link from "next/link";
-import { CompareMonetization } from "@/app/components/CompareMonetization";
-import { LeadForm } from "@/app/components/LeadForm";
-import { CompareExport } from "@/app/components/CompareExport";
-import { BuyerChecklist } from "@/app/components/BuyerChecklist";
+// Lazy-loaded for bundle optimization (P22.4)
+// Lazy-loaded for bundle optimization (P22.4)
+// Lazy-loaded for bundle optimization (P22.4)
+// Lazy-loaded for bundle optimization (P22.4)
 import dynamic from "next/dynamic";
 const ComparisonRadarChart = dynamic(
   () => import("@/components/comparison-radar-chart").then(m => ({ default: m.ComparisonRadarChart })),
@@ -18,6 +18,18 @@ const ComparisonBarCharts = dynamic(
   () => import("@/components/comparison-bar-charts").then(m => ({ default: m.ComparisonBarCharts })),
   { ssr: false, loading: () => null },
 );
+const CompareMonetization = dynamic(() => import("@/app/components/CompareMonetization").then(m => ({ default: m.CompareMonetization })), {
+  ssr: false, loading: () => null,
+});
+const LeadForm = dynamic(() => import("@/app/components/LeadForm").then(m => ({ default: m.LeadForm })), {
+  ssr: false, loading: () => <div className="h-64 animate-pulse bg-muted rounded-lg" />,
+});
+const CompareExport = dynamic(() => import("@/app/components/CompareExport").then(m => ({ default: m.CompareExport })), {
+  ssr: false, loading: () => null,
+});
+const BuyerChecklist = dynamic(() => import("@/app/components/BuyerChecklist").then(m => ({ default: m.BuyerChecklist })), {
+  ssr: false, loading: () => null,
+});
 import { localePath } from "@/lib/i18n-paths";
 import {
   getSavedComparisons,

@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations, useLocale} from "next-intl";
 import Link from "next/link";
-import { LeadForm } from "@/app/components/LeadForm";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Ruler, Wind, Home, Wrench, Star, Printer } from "lucide-react";
 import { FavoriteButton } from "@/app/components/FavoriteButton";
@@ -13,31 +12,78 @@ import { PriceInsightBlock } from "@/app/components/PriceInsightBlock";
 import { calculatePriceTier } from "@/lib/price-tier";
 import { slugify } from "@/lib/utils/slugify";
 import ManufacturerLogo from "@/components/manufacturer-logo";
-import { SimilarYachts } from "./SimilarYachts";
-import { UsersAlsoViewed } from "./UsersAlsoViewed";
-import { SameSizeAlternatives } from "./SameSizeAlternatives";
-import { RelatedManufacturers } from "./RelatedManufacturers";
-import { RelatedCategories } from "./RelatedCategories";
-import { RelatedGuides } from "./RelatedGuides";
-import { RelatedArticles } from "./RelatedArticles";
 import { SpecTooltip } from "./SpecTooltip";
-import AffiliateRecommendations from "@/app/components/AffiliateRecommendations";
 import YachtImage from "@/app/components/yacht/YachtImage";
 import { getAffiliateRecommendations } from "@/lib/affiliate-recommendations";
 import CompletenessBadge from "@/components/CompletenessBadge";
-import MediaGallery from "@/components/MediaGallery";
-import { calculateCompletenessScore } from "@/lib/completeness";
-import SourceProvenance from "@/components/SourceProvenance";
-import { ReviewSummary } from "@/components/ReviewSummary";
-import { ReviewSubmissionForm } from "@/components/ReviewSubmissionForm";
-import { CorrectionForm } from "@/components/CorrectionForm";
 import QuickFacts from "@/components/QuickFacts";
 import { generateDescription, needsGeneratedDescription, type YachtSpecsForDescription } from "@/lib/description-templates";
-import SocialShareButtons from "@/components/SocialShareButtons";
 import TableOfContents from "@/components/TableOfContents";
 import dynamic from "next/dynamic";
 import { localePath } from "@/lib/i18n-paths";
+import { calculateCompletenessScore } from "@/lib/completeness";
 
+// Lazy-loaded below-the-fold components for bundle optimization (P22.4)
+const SocialShareButtons = dynamic(() => import("@/components/SocialShareButtons").then(m => ({ default: m.default })), {
+  ssr: false,
+  loading: () => <div className="h-8 w-32 animate-pulse bg-muted rounded" />,
+});
+const MediaGallery = dynamic(() => import("@/components/MediaGallery").then(m => ({ default: m.default })), {
+  ssr: false,
+  loading: () => <div className="h-64 animate-pulse bg-muted rounded-lg" />,
+});
+const SourceProvenance = dynamic(() => import("@/components/SourceProvenance").then(m => ({ default: m.default })), {
+  ssr: false,
+  loading: () => <div className="h-20 animate-pulse bg-muted rounded-lg" />,
+});
+const CorrectionForm = dynamic(() => import("@/components/CorrectionForm").then((m) => ({ default: m.CorrectionForm })), {
+  ssr: false,
+  loading: () => <div className="h-48 animate-pulse bg-muted rounded-lg" />,
+});
+const ReviewSummary = dynamic(() => import("@/components/ReviewSummary").then((m) => ({ default: m.ReviewSummary })), {
+  ssr: false,
+  loading: () => <div className="h-32 animate-pulse bg-muted rounded-lg" />,
+});
+const ReviewSubmissionForm = dynamic(() => import("@/components/ReviewSubmissionForm").then((m) => ({ default: m.ReviewSubmissionForm })), {
+  ssr: false,
+  loading: () => <div className="h-48 animate-pulse bg-muted rounded-lg" />,
+});
+const LeadForm = dynamic(() => import("@/app/components/LeadForm").then((m) => ({ default: m.LeadForm })), {
+  ssr: false,
+  loading: () => <div className="h-64 animate-pulse bg-muted rounded-lg" />,
+});
+const AffiliateRecommendations = dynamic(() => import("@/app/components/AffiliateRecommendations").then(m => ({ default: m.default })), {
+  ssr: false,
+  loading: () => <div className="h-32 animate-pulse bg-muted rounded-lg" />,
+});
+const SimilarYachts = dynamic(() => import("./SimilarYachts").then((m) => ({ default: m.SimilarYachts })), {
+  ssr: false,
+  loading: () => <div className="h-48 animate-pulse bg-muted rounded-lg" />,
+});
+const UsersAlsoViewed = dynamic(() => import("./UsersAlsoViewed").then((m) => ({ default: m.UsersAlsoViewed })), {
+  ssr: false,
+  loading: () => <div className="h-48 animate-pulse bg-muted rounded-lg" />,
+});
+const SameSizeAlternatives = dynamic(() => import("./SameSizeAlternatives").then((m) => ({ default: m.SameSizeAlternatives })), {
+  ssr: false,
+  loading: () => <div className="h-48 animate-pulse bg-muted rounded-lg" />,
+});
+const RelatedManufacturers = dynamic(() => import("./RelatedManufacturers").then((m) => ({ default: m.RelatedManufacturers })), {
+  ssr: false,
+  loading: () => <div className="h-48 animate-pulse bg-muted rounded-lg" />,
+});
+const RelatedCategories = dynamic(() => import("./RelatedCategories").then((m) => ({ default: m.RelatedCategories })), {
+  ssr: false,
+  loading: () => <div className="h-32 animate-pulse bg-muted rounded-lg" />,
+});
+const RelatedGuides = dynamic(() => import("./RelatedGuides").then((m) => ({ default: m.RelatedGuides })), {
+  ssr: false,
+  loading: () => <div className="h-32 animate-pulse bg-muted rounded-lg" />,
+});
+const RelatedArticles = dynamic(() => import("./RelatedArticles").then((m) => ({ default: m.RelatedArticles })), {
+  ssr: false,
+  loading: () => <div className="h-32 animate-pulse bg-muted rounded-lg" />,
+});
 const SpecBarsChart = dynamic(
   () => import("@/components/spec-bars-chart").then((m) => ({ default: m.SpecBarsChart })),
   { ssr: false, loading: () => null },
