@@ -58,6 +58,7 @@ const imageRemotePatterns = [
 
   // CMS / CDN
   { protocol: "https", hostname: "a.storyblok.com" },
+  { protocol: "https", hostname: "img.youtube.com" },
   { protocol: "https", hostname: "cdn.prod.website-files.com" },
   { protocol: "https", hostname: "vz-b5717c1c-a70.b-cdn.net" },
   { protocol: "https", hostname: "www.yachtbroker-charters.com" },

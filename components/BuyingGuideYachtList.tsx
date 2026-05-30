@@ -2,8 +2,10 @@
 
 import { useLocale } from "next-intl";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { localePath } from "@/lib/i18n-paths";
+import { SHIMMER_BLUR } from "@/lib/image-utils";
 
 interface Yacht {
   id: number;
@@ -132,10 +134,14 @@ export default function BuyingGuideYachtList({
             <div className="flex flex-col sm:flex-row gap-4">
               {yacht.primaryImageUrl ? (
                 <div className="w-full sm:w-28 h-20 bg-slate-100 rounded-xl overflow-hidden flex-shrink-0">
-                  <img
+                  <Image
                     src={yacht.primaryImageUrl}
                     alt={`${yacht.manufacturer} ${yacht.modelName}`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    fill
+                    sizes="(max-width: 640px) 100vw, 112px"
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    placeholder="blur"
+                    blurDataURL={SHIMMER_BLUR}
                   />
                 </div>
               ) : (

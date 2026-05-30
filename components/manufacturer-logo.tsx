@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
+import { SHIMMER_BLUR } from "@/lib/image-utils";
 
 interface ManufacturerLogoProps {
   name: string;
@@ -20,6 +22,7 @@ export default function ManufacturerLogo({
   size = 40,
   className = "",
 }: ManufacturerLogoProps) {
+  const [imgError, setImgError] = useState(false);
   const initial = name.charAt(0).toUpperCase();
   // Deterministic color from name
   const hue = hashStringToHue(name);
@@ -30,35 +33,28 @@ export default function ManufacturerLogo({
         className={`relative shrink-0 overflow-hidden rounded-lg bg-gray-50 ${className}`}
         style={{ width: size, height: size }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={logoUrl}
-          alt={`${name} logo`}
-          width={size}
-          height={size}
-          className="h-full w-full object-contain p-1"
-          loading="lazy"
-          onError={(e) => {
-            // Replace with fallback on error
-            const target = e.currentTarget;
-            const fallback = target.nextElementSibling as HTMLElement;
-            if (fallback) {
-              target.style.display = "none";
-              fallback.style.display = "flex";
-            }
-          }}
-        />
-        {/* Hidden fallback, shown on img error */}
-        <div
-          className="absolute inset-0 items-center justify-center text-white font-bold"
-          style={{
-            display: "none",
-            backgroundColor: `hsl(${hue}, 55%, 45%)`,
-            fontSize: size * 0.45,
-          }}
-        >
-          {initial}
-        </div>
+        {!imgError ? (
+          <Image
+            src={logoUrl}
+            alt={`${name} logo`}
+            width={size}
+            height={size}
+            className="h-full w-full object-contain p-1"
+            placeholder="blur"
+            blurDataURL={SHIMMER_BLUR}
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div
+            className="absolute inset-0 flex items-center justify-center text-white font-bold"
+            style={{
+              backgroundColor: `hsl(${hue}, 55%, 45%)`,
+              fontSize: size * 0.45,
+            }}
+          >
+            {initial}
+          </div>
+        )}
       </div>
     );
   }

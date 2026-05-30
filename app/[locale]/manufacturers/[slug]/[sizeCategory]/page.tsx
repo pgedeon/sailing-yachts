@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getManufacturerSizePageData } from "@/lib/manufacturer-size-landing";
+import { SHIMMER_BLUR } from "@/lib/image-utils";
 import { getSizeCategory } from "@/lib/size-categories";
 import {
   getSiteUrl,
@@ -209,10 +211,14 @@ export default async function ManufacturerSizePage({
       <section className="bg-gradient-to-b from-sky-50 to-white py-12 px-4">
         <div className="max-w-5xl mx-auto text-center">
           {data.manufacturer.logoUrl && (
-            <img
+            <Image
               src={data.manufacturer.logoUrl}
               alt={`${data.manufacturer.name} logo`}
+              width={120}
+              height={48}
               className="h-12 mx-auto mb-4 object-contain"
+              placeholder="blur"
+              blurDataURL={SHIMMER_BLUR}
             />
           )}
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">

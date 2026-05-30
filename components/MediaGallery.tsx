@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import {
   Image as ImageIcon,
@@ -18,6 +19,7 @@ import {
   Video,
 } from "lucide-react";
 import VideoEmbed from "@/components/VideoEmbed";
+import { SHIMMER_BLUR } from "@/lib/image-utils";
 
 export interface MediaAsset {
   id: number;
@@ -264,8 +266,7 @@ export default function MediaGallery({ mediaAssets }: MediaGalleryProps) {
             className="max-w-4xl max-h-[80vh] relative"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={currentPhoto.url || currentPhoto.thumbnailUrl || ""}
               alt={
                 currentPhoto.altText ||
@@ -273,7 +274,12 @@ export default function MediaGallery({ mediaAssets }: MediaGalleryProps) {
                 currentPhoto.caption ||
                 t("photoAlt")
               }
+              width={1200}
+              height={800}
               className="max-w-full max-h-[80vh] object-contain rounded-lg"
+              placeholder="blur"
+              blurDataURL={SHIMMER_BLUR}
+              unoptimized
             />
             {(currentPhoto.title || currentPhoto.caption) && (
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 rounded-b-lg">
@@ -317,14 +323,16 @@ function PhotoGrid({
           className="relative aspect-[4/3] rounded-lg overflow-hidden bg-muted group cursor-pointer border border-border hover:border-primary transition-colors"
           data-testid="media-photo-thumb"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={photo.thumbnailUrl || photo.url || ""}
             alt={
               photo.altText || photo.title || photo.caption || t("photoAlt")
             }
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-            loading="lazy"
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-200"
+            placeholder="blur"
+            blurDataURL={SHIMMER_BLUR}
           />
           {photo.isPrimary && (
             <span className="absolute top-1 left-1 bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded-full">
@@ -373,12 +381,14 @@ function VideoList({ videos }: { videos: MediaAsset[] }) {
             />
           ) : video.thumbnailUrl ? (
             <div className="aspect-video relative bg-muted">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={video.thumbnailUrl}
                 alt={video.altText || video.title || t("videoThumbnail")}
-                className="w-full h-full object-cover"
-                loading="lazy"
+                fill
+                sizes="(max-width: 640px) 100vw, 50vw"
+                className="object-cover"
+                placeholder="blur"
+                blurDataURL={SHIMMER_BLUR}
               />
               <div className="absolute inset-0 flex items-center justify-center">
                 {video.url ? (

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { pool } from "@/lib/db";
 import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates , buildOgImageUrl } from "@/lib/seo";
-import { localePath } from "@/lib/i18n-paths";
+import { localePath } from "@/lib/i18n-paths"
+import { SHIMMER_BLUR } from "@/lib/image-utils";
 
 // ISR: Revalidate every 6 hours
 export const revalidate = 21600;
@@ -402,12 +404,14 @@ export default async function BestValuePage({
                       </div>
                       {yacht.primaryImageUrl ? (
                         <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-                          <img
+                          <Image
                             src={yacht.primaryImageUrl}
                             alt={`${yacht.manufacturer} ${yacht.modelName}`}
-                            className="w-full h-full object-cover"
                             width={64}
                             height={64}
+                            className="object-cover"
+                            placeholder="blur"
+                            blurDataURL={SHIMMER_BLUR}
                           />
                         </div>
                       ) : (

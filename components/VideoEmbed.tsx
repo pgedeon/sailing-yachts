@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Image from "next/image";
 import { PlayCircle, ExternalLink } from "lucide-react";
+import { SHIMMER_BLUR } from "@/lib/image-utils";
 
 interface VideoEmbedProps {
   embedUrl: string;
@@ -57,12 +59,14 @@ export default function VideoEmbed({
       data-testid="video-embed-thumbnail"
     >
       {derivedThumbnail ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <Image
           src={derivedThumbnail}
           alt={altText || title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-          loading="lazy"
+          fill
+          sizes="(max-width: 768px) 100vw, 800px"
+          className="object-cover group-hover:scale-105 transition-transform duration-200"
+          placeholder="blur"
+          blurDataURL={SHIMMER_BLUR}
         />
       ) : (
         <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">

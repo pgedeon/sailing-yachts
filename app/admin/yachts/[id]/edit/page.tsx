@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import Image from 'next/image'
 import Link from 'next/link'
 
 interface YachtData {
@@ -708,14 +709,12 @@ export default function EditYachtPage() {
                     {images.map((image, index) => (
                       <div key={image.id} className="border border-gray-200 rounded-md overflow-hidden">
                         <div className="relative">
-                          <img
+                          <Image
                             src={image.url}
                             alt={image.altText || `Yacht image ${index + 1}`}
+                            width={400}
+                            height={192}
                             className="w-full h-48 object-cover"
-                            onError={(e) => {
-                              // Fallback to placeholder if image fails to load
-                              e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzAwMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkeD0iMCUiIGZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiPkhvbWU8L3RleHQ+PC9zdmc+'
-                            }}
                           />
                           {image.isPrimary && (
                             <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">

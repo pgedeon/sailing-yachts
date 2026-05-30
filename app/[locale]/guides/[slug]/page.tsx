@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { marked } from "marked";
@@ -12,6 +13,7 @@ import NewsletterSignup from "@/components/NewsletterSignup";
 import BuyingGuideYachtList from "@/components/BuyingGuideYachtList";
 import { getTemplateById } from "@/lib/buying-guides";
 import { localePath } from "@/lib/i18n-paths";
+import { SHIMMER_BLUR } from "@/lib/image-utils";
 
 export const revalidate = 3600;
 
@@ -342,10 +344,14 @@ export default async function GuideArticlePage({ params }: PageProps) {
             >
               {article.featuredImage && (
                 <div className="mb-8 aspect-video bg-slate-100 rounded-xl overflow-hidden shadow-lg">
-                  <img
+                  <Image
                     src={article.featuredImage}
                     alt={article.title}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 800px"
+                    className="object-cover"
+                    placeholder="blur"
+                    blurDataURL={SHIMMER_BLUR}
                   />
                 </div>
               )}

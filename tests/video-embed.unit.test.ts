@@ -52,9 +52,10 @@ describe("VideoEmbed component", () => {
     expect(content).toContain("aspect-video");
   });
 
-  it("lazy-loads thumbnail images", () => {
+  it("uses Next.js Image for thumbnail optimization", () => {
     const content = fs.readFileSync(filePath, "utf-8");
-    expect(content).toContain('loading="lazy"');
+    expect(content).toContain("import Image from");
+    expect(content).toContain('placeholder="blur"');
   });
 });
 
