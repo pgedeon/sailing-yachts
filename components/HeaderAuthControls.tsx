@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import Link from "next/link"
 import { signOut } from "next-auth/react"
 import { useCallback, useEffect, useState } from "react"
@@ -161,9 +162,11 @@ export default function HeaderAuthControls({ mobile = false }: HeaderAuthControl
 function Avatar({ session }: { session: SessionState }) {
   if (session?.user?.image) {
     return (
-      <img
+      <Image
         src={session.user.image}
         alt={getDisplayName(session)}
+        width={36}
+        height={36}
         className="h-9 w-9 rounded-full object-cover"
       />
     )

@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 import Link from "next/link";
 import ArrowRight from "@/app/components/icons/ArrowRight";
 import { useLocale } from "next-intl";
 import { localePath } from "@/lib/i18n-paths";
+import { SHIMMER_BLUR } from "@/lib/image-utils";
 
 interface RelatedYacht {
   id: number;
@@ -95,10 +97,14 @@ export function RelatedManufacturers({
             {/* Image */}
             {yacht.primaryImage ? (
               <div className="h-36 sm:h-40 bg-muted overflow-hidden">
-                <img
+                <Image
                   src={yacht.primaryImage}
                   alt={`${yacht.manufacturer} ${yacht.modelName}`}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-200"
+                  placeholder="blur"
+                  blurDataURL={SHIMMER_BLUR}
                 />
               </div>
             ) : (

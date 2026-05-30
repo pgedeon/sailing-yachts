@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getAllPublishedArticles, getAllCategories, getBuyingGuideArticles } from "@/lib/articles";
 import { getSiteUrl , buildLocaleAlternates , buildOgImageUrl } from "@/lib/seo";
 import { BUYING_GUIDE_TEMPLATES, type GuideType } from "@/lib/buying-guides";
 import { localePath } from "@/lib/i18n-paths";
+import { SHIMMER_BLUR } from "@/lib/image-utils";
 
 // ISR: Revalidate guides hub every hour
 export const revalidate = 3600;
@@ -284,10 +286,14 @@ export default async function GuidesPage({ params }: GuidesPageProps) {
                         >
                           {article.featuredImage && (
                             <div className="mb-4 aspect-video bg-gray-100 rounded-lg overflow-hidden">
-                              <img
+                              <Image
                                 src={article.featuredImage}
                                 alt={article.title}
-                                className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                                fill
+                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                className="object-cover group-hover:scale-105 transition duration-300"
+                                placeholder="blur"
+                                blurDataURL={SHIMMER_BLUR}
                               />
                             </div>
                           )}

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { unstable_cache } from "next/cache";
+import { SHIMMER_BLUR } from "@/lib/image-utils";
 import { getTranslations } from "next-intl/server";
 
 import {
@@ -319,10 +321,14 @@ export default async function ManufacturerPage({
                   <>
                     <div className="aspect-[16/9] bg-muted">
                       {yacht.primaryImage ? (
-                        <img
+                        <Image
                           src={yacht.primaryImage}
                           alt={`${manufacturer.name} ${yacht.modelName}`}
-                          className="h-full w-full object-cover"
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                          className="object-cover"
+                          placeholder="blur"
+                          blurDataURL={SHIMMER_BLUR}
                         />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-sky-100 to-cyan-50 text-sm font-medium text-sky-700">
