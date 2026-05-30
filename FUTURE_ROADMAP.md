@@ -73,7 +73,7 @@
 ### Phase 22 — Performance & Technical Excellence (Priority: Low) — 🔲 PLANNED
 
 - **P22.1 — Edge runtime for API routes** — Migrate read-only API routes to Next.js Edge runtime for lower latency.
-- **P22.2 — Image CDN optimization** — Set up proper image transformation pipeline with blurhash placeholders.
+- **P22.2 — Image CDN optimization** *(completed 2026-05-30 — Issue #354, PR #355, 20 files)* — Converted all raw <img> to next/image with blur placeholders, shared image-utils, AVIF/WebP optimization.
 - **P22.3 — Incremental Static Regeneration audit *(completed 2026-05-28 — Issue #348, PR #349)* — Enabled ISR (1h cache) for by-size, use-case, and compare pages with cache tags.
 - **P22.4 — Bundle size optimization** *(completed 2026-05-29 — Issue #350, PR #351, 38 tests)* — Lazy-loaded 15+ below-the-fold components, reducing /yachts/[slug] First Load by 11%, /compare by 21%.
 - **P22.5 — Core Web Vitals monitoring** *(completed 2026-05-29 — Issue #352, PR #353, 13 tests)* — Admin dashboard at /admin/vitals with real-time CWV stats, Sentry integration for poor metric alerting, server-side poor metric logging.
