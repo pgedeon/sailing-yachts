@@ -68,7 +68,7 @@
 - **P21.2 — Automated data enrichment pipeline** — Scrape/ingest specs from public sources (sailboatdata.com, boat-specs.com) with deduplication.
 - **P21.3 — Image coverage improvement** — Auto-fetch manufacturer press images, ensure every yacht has at least one image.
 - **P21.4 — Price data aggregation** — Aggregate new/used price data from listing sites (yachtworld.com, boats.com) with attribution.
-- **P21.5 — Year/model variant tracking** — Support multiple year variants per model (e.g., Oceanis 40.1 2019 vs 2023).
+- **P21.5 — Year/model variant tracking** *(completed 2026-05-31 — Issue #360, PR #361, 4 tests)* — VariantSelector component + Edge API endpoint for same-model-different-year variants on yacht detail page.
 
 ### Phase 22 — Performance & Technical Excellence (Priority: Low) — 🔲 PLANNED
 
