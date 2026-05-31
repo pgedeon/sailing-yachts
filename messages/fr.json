@@ -551,7 +551,8 @@
       "relatedGuides": "Guides associés",
       "contact": "Contact & demandes"
     },
-    "autoDescriptionBadge": "Généré automatiquement à partir des spécifications"
+    "autoDescriptionBadge": "Généré automatiquement à partir des spécifications",
+    "yearVariants": "Variantes par année"
   },
   "YachtDetailSub": {
     "similarYachts": "Yachts similaires",

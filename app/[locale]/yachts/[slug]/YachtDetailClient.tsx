@@ -89,6 +89,10 @@ const SpecBarsChart = dynamic(
   { ssr: false, loading: () => null },
 );
 
+const VariantSelector = dynamic(() => import("./VariantSelector").then((m) => ({ default: m.default })), {
+  ssr: false,
+  loading: () => null,
+});
 interface SpecGroup {
   [group: string]: Array<{
     category: string;
@@ -196,6 +200,7 @@ export default function YachtDetailClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>("");
+  const [variants, setVariants] = useState<Array<import("./VariantSelector").YachtVariant>>([]);
 
   // Translation-aware GROUP_LABELS
   const GROUP_LABELS: Record<string, string> = {
@@ -281,6 +286,19 @@ export default function YachtDetailClient() {
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [slug, t]);
+
+  useEffect(() => {
+    if (!slug) return;
+    fetch(`/api/yachts/${slug}/variants`)
+      .then((r) => {
+        if (!r.ok) return null;
+        return r.json();
+      })
+      .then((data) => {
+        if (data?.variants) setVariants(data.variants);
+      })
+      .catch(() => {}); // silent fail — variants are non-critical
+  }, [slug]);
 
   const handlePrint = () => {
     window.print();
@@ -515,6 +533,12 @@ export default function YachtDetailClient() {
               {/* Real price data from DB */}
               <PriceInsightBlock yachtId={yacht.id} modelName={yacht.modelName} aria-hidden="true" />
 
+              {/* Year Variants */}
+              {variants.length > 0 && (
+                <div className="mt-4">
+                  <VariantSelector variants={variants} currentYear={yacht.year} />
+                </div>
+              )}
               {/* Admin links */}
               {yacht.adminLinks && yacht.adminLinks.length > 0 && (
                 <div className="admin-links flex flex-wrap gap-2 sm:gap-3 mt-4 no-print">

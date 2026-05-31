@@ -339,3 +339,37 @@ export async function getPrimaryImage(slug: string): Promise<string | null> {
   const primaryImage = yachtImages.find((img: typeof images.$inferSelect) => img.isPrimary) || yachtImages[0];
   return primaryImage?.url || null;
 }
+
+/**
+ * Get year variants for a yacht model — other models from the same manufacturer
+ * with the same base model name but different years.
+ */
+export interface YachtVariant {
+  id: number;
+  slug: string | null;
+  modelName: string;
+  year: number;
+  lengthOverall: string | null;
+  cabins: number | null;
+  displacement: string | null;
+}
+
+export async function getYachtVariants(yachtId: number, manufacturerId: number, modelName: string): Promise<YachtVariant[]> {
+  const variants = await db
+    .select({
+      id: yachtModels.id,
+      slug: yachtModels.slug,
+      modelName: yachtModels.modelName,
+      year: yachtModels.year,
+      lengthOverall: yachtModels.lengthOverall,
+      cabins: yachtModels.cabins,
+      displacement: yachtModels.displacement,
+    })
+    .from(yachtModels)
+    .where(
+      sql`${yachtModels.manufacturerId} = ${manufacturerId} AND ${yachtModels.modelName} = ${modelName} AND ${yachtModels.id} != ${yachtId}`
+    )
+    .orderBy(desc(yachtModels.year));
+
+  return variants;
+}
