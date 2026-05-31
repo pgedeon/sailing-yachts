@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { pool } from '@/lib/db';
+import { edgePool } from '@/lib/edge-pool';
 
+export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
@@ -19,7 +20,7 @@ export async function GET(request: Request) {
     const prefixLike = `${escapedQ}%`;
 
     if (mode === 'autocomplete') {
-      const result = await pool.query(
+      const result = await edgePool.query(
         `SELECT y.id, y.model_name, y.slug, y.length_overall, y.year, m.name AS manufacturer_name
          FROM yacht_models y LEFT JOIN manufacturers m ON y.manufacturer_id = m.id
          WHERE (y.model_name ILIKE $1 OR m.name ILIKE $1 OR CONCAT(m.name, ' ', y.model_name) ILIKE $1)
@@ -46,14 +47,14 @@ export async function GET(request: Request) {
 
     // Full search — run count + data in parallel
     const [countResult, dataResult] = await Promise.all([
-      pool.query(
+      edgePool.query(
         `SELECT COUNT(*) as total FROM yacht_models y LEFT JOIN manufacturers m ON y.manufacturer_id = m.id
          WHERE (y.model_name ILIKE $1 OR m.name ILIKE $1 OR CONCAT(m.name, ' ', y.model_name) ILIKE $1
            OR y.rig_type ILIKE $1 OR y.keel_type ILIKE $1 OR y.hull_material ILIKE $1
            OR y.design_notes ILIKE $1 OR y.description ILIKE $1)`,
         [like],
       ),
-      pool.query(
+      edgePool.query(
         `SELECT y.id, y.model_name, y.year, y.slug, y.length_overall, y.beam, y.draft,
            y.displacement, y.ballast, y.sail_area_main, y.rig_type, y.keel_type, y.hull_material,
            y.cabins, y.berths, y.heads, y.max_occupancy, y.engine_hp, y.engine_type,

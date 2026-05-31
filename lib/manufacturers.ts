@@ -1,6 +1,6 @@
 import { asc, count, desc, eq, inArray } from "drizzle-orm";
 
-import { db, images, manufacturers, yachtModels } from "@/lib/db";
+import { db, images, manufacturers, yachtModels } from "@/lib/db-edge";
 import { slugify } from "@/lib/utils/slugify";
 
 export interface ManufacturerSummary {

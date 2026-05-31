@@ -1,4 +1,4 @@
-import { db, yachtModels, manufacturers, images, reviews, specValues, specCategories, mediaAssets } from "@/lib/db";
+import { db, yachtModels, manufacturers, images, reviews, specValues, specCategories, mediaAssets } from "@/lib/db-edge";
 import { eq, inArray, desc, asc, sql, count, isNotNull } from "drizzle-orm";
 
 export interface YachtDetailData {

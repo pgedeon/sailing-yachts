@@ -1,7 +1,7 @@
-import { recordCompareUsage } from "@/lib/faq-harvesting";
 import { NextResponse } from "next/server";
-import { pool } from "@/lib/db";
+import { edgePool } from "@/lib/edge-pool";
 
+export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 interface SpecValue {
@@ -70,7 +70,7 @@ export async function GET(request: Request) {
       LEFT JOIN manufacturers m ON y.manufacturer_id = m.id
       WHERE y.id IN (${placeholders})
     `;
-    const yachtResult = await pool.query(yachtQuery, ids);
+    const yachtResult = await edgePool.query(yachtQuery, ids);
     const rows = yachtResult.rows as any[];
 
     if (rows.length === 0) {
@@ -94,7 +94,7 @@ export async function GET(request: Request) {
       WHERE sv.yacht_model_id IN (${specPlaceholders})
       ORDER BY sc.category_group, sc.name
     `;
-    const specResult = await pool.query(specQuery, ids);
+    const specResult = await edgePool.query(specQuery, ids);
     const specRows = specResult.rows as any[];
 
     // Group specs by yacht id
@@ -149,16 +149,16 @@ export async function GET(request: Request) {
       reviews: [],
     }));
 
-    // Track compare usage for FAQ harvesting (P7.6)
-    if (yachts.length >= 2 && yachts[0].slug && yachts[1].slug) {
-      recordCompareUsage(yachts[0].slug, yachts[1].slug).catch(() => {});
-    }
+    // Note: recordCompareUsage (FAQ harvesting) uses pg Pool which is
+    // incompatible with Edge runtime. It's tracked via the Node.js
+    // admin routes instead.
+
     return NextResponse.json({ yachts });
   } catch (error: any) {
     console.error('Compare API error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch compare data', details: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

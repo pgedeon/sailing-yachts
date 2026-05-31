@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
-import { pool } from '@/lib/db';
+import { edgePool } from '@/lib/edge-pool';
 import { cached, CACHE_TTL, CACHE_TAGS } from '@/lib/api-cache';
 import { assignUseCaseTags, type UseCaseTagId } from '@/lib/use-case-tags';
 
+export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 // ─── Lightweight field sets ──────────────────────────────────────────
@@ -15,7 +16,7 @@ const TAG_FIELDS = 'y.id, y.model_name, y.slug, y.year, y.length_overall, y.beam
 // ─── Cached: distinct filter options (changes rarely) ────────────────
 const getCachedFilterOptions = cached(
   async () => {
-    const result = await pool.query(
+    const result = await edgePool.query(
       `SELECT DISTINCT rig_type, keel_type, hull_material FROM yacht_models WHERE rig_type IS NOT NULL OR keel_type IS NOT NULL OR hull_material IS NOT NULL`
     );
     return {
@@ -131,7 +132,7 @@ export async function GET(request: Request) {
       // Fetch all rows matching other criteria (no LIMIT/OFFSET)
       const fields = TAG_FIELDS;
       const [dataResult, distinct] = await Promise.all([
-        pool.query(
+        edgePool.query(
           `SELECT ${fields} FROM yacht_models y LEFT JOIN manufacturers m ON y.manufacturer_id = m.id ${whereClause} ORDER BY y.${safeSort} ${sortOrder}`,
           params,
         ),
@@ -187,8 +188,8 @@ export async function GET(request: Request) {
 
     // Run count + data + filter options in parallel
     const [countResult, dataResult, distinct] = await Promise.all([
-      pool.query(`SELECT COUNT(*)::int as count FROM yacht_models y ${whereClause}`, params),
-      pool.query(
+      edgePool.query(`SELECT COUNT(*)::int as count FROM yacht_models y ${whereClause}`, params),
+      edgePool.query(
         `SELECT ${fields} FROM yacht_models y LEFT JOIN manufacturers m ON y.manufacturer_id = m.id ${whereClause} ORDER BY y.${safeSort} ${sortOrder} LIMIT $${paramIdx.value++} OFFSET $${paramIdx.value++}`,
         [...params, limit, offset],
       ),
