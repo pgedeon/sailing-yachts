@@ -56,15 +56,15 @@
 
 ### Phase 20 — Content Enrichment & Authority Building (Priority: Medium) — 🔲 PLANNED
 
-- **P20.1 — Auto-generated yacht summary descriptions** — LLM-powered one-paragraph summaries for yachts missing descriptions, stored in DB, with human review queue.
-- **P20.2 — Spec glossary tooltips on yacht detail** — Hover/click tooltips on spec labels (LOA, SA/D, D/L ratio) linking to glossary terms.
+- **P20.1 — Auto-generated yacht summary descriptions** *(needs LLM pipeline design)* — LLM-powered one-paragraph summaries for yachts missing descriptions, stored in DB, with human review queue.
+- **P20.2 — Spec glossary tooltips on yacht detail** *(completed 2026-05-30 — Issue #356, PR #357, 12 tests)* — Enhanced SpecTooltip with keyboard a11y, shared data module, additional spec labels (Sail Area Main/Jib, Engine Type, Max Occupancy), i18n (en+fr), focus-visible ring, aria-describedby/expanded.
 - **P20.3 — Manufacturer comparison pages** *(completed 2026-05-27 — Issue #341)* — `/compare-manufacturers/[slugA]-vs-[slugB]` comparing fleet size, price range, popular models.
 - **P20.4 — "Best [year] [size] sailboats" editorial pages** *(completed 2026-05-28 — Issue #346, PR #347, 13 tests)* — Curated editorial pages combining guide content with yacht data.
 - **P20.5 — Video embed support for yacht pages** *(completed 2026-05-27 — Issue #344, PR #345, 31 tests)* — Click-to-play VideoEmbed component with i18n, YouTube thumbnail derivation, autoplay on click. MediaGallery fully i18n'd (en + fr).
 
 ### Phase 21 — Data Quality & Coverage (Priority: Medium) — 🔲 PLANNED
 
-- **P21.1 — Data completeness scoring & reporting** — Admin dashboard showing completeness % per yacht, missing fields highlighted.
+- **P21.1 — Data completeness scoring - **P21.1 — Data completeness scoring & reporting** — Admin dashboard showing completeness % per yacht, missing fields highlighted. reporting** *(completed — pre-existing implementation)* — Admin dashboard at /admin/completeness showing completeness % per yacht, missing fields highlighted, score distribution, category completion rates, and yachts needing attention table. API at /api/admin/completeness.
 - **P21.2 — Automated data enrichment pipeline** — Scrape/ingest specs from public sources (sailboatdata.com, boat-specs.com) with deduplication.
 - **P21.3 — Image coverage improvement** — Auto-fetch manufacturer press images, ensure every yacht has at least one image.
 - **P21.4 — Price data aggregation** — Aggregate new/used price data from listing sites (yachtworld.com, boats.com) with attribution.
@@ -72,7 +72,7 @@
 
 ### Phase 22 — Performance & Technical Excellence (Priority: Low) — 🔲 PLANNED
 
-- **P22.1 — Edge runtime for API routes** — Migrate read-only API routes to Next.js Edge runtime for lower latency.
+- **P22.1 — Edge runtime for API routes** *(completed 2026-05-31 — Issue #358, PR #359, 11 tests)* — Created db-edge.ts (Edge-safe Drizzle module), edge-pool.ts (Neon HTTP Pool wrapper). Migrated 6 public API routes (yachts, yachts/[slug], manufacturers, manufacturers/[slug], search, compare) to Edge runtime. Eliminated pg dependency from Edge bundle. All admin routes remain on Node.js runtime.
 - **P22.2 — Image CDN optimization** *(completed 2026-05-30 — Issue #354, PR #355, 20 files)* — Converted all raw <img> to next/image with blur placeholders, shared image-utils, AVIF/WebP optimization.
 - **P22.3 — Incremental Static Regeneration audit *(completed 2026-05-28 — Issue #348, PR #349)* — Enabled ISR (1h cache) for by-size, use-case, and compare pages with cache tags.
 - **P22.4 — Bundle size optimization** *(completed 2026-05-29 — Issue #350, PR #351, 38 tests)* — Lazy-loaded 15+ below-the-fold components, reducing /yachts/[slug] First Load by 11%, /compare by 21%.
