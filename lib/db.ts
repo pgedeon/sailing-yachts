@@ -1,41 +1,31 @@
-import { drizzle } from "drizzle-orm/neon-http";
-import { neon } from "@neondatabase/serverless";
+/**
+ * Full database module (Node.js runtime only).
+ * Re-exports Edge-safe `db` + schema from db-edge.ts,
+ * plus `pool` (pg) and `ensureSchema` which require Node.js runtime.
+ *
+ * IMPORTANT: Do NOT import this from Edge runtime routes.
+ * Use `import { db } from '@/lib/db-edge'` instead.
+ */
 import { Pool } from "pg";
-import * as schema from "../drizzle/schema";
 
-let dbInstance: ReturnType<typeof drizzle> | null = null;
+// Re-export everything Edge-safe
+export { db, getDb } from "./db-edge";
+export * from "../drizzle/schema";
+
 let poolInstance: Pool | null = null;
-let schemaPromise: Promise<void> | null = null;
 
 function getDatabaseUrl() {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {
-    // During build time (e.g., Vercel preview builds), DATABASE_URL may not be available
-    // This is okay for build - runtime will have DATABASE_URL
     return null;
   }
   return connectionString;
-  return connectionString;
-}
-
-function getDb() {
-  if (!dbInstance) {
-    const connectionString = getDatabaseUrl();
-    if (!connectionString) {
-      // During build, return null - will be resolved at runtime
-      return null as any;
-    }
-    const sql = neon(connectionString);
-    dbInstance = drizzle(sql, { schema });
-  }
-  return dbInstance;
 }
 
 function getPool() {
   if (!poolInstance) {
     const connectionString = getDatabaseUrl();
     if (!connectionString) {
-      // During build, return null - will be resolved at runtime
       return null as any;
     }
     poolInstance = new Pool({
@@ -47,22 +37,6 @@ function getPool() {
   }
   return poolInstance;
 }
-
-// Proxy that forwards both methods and properties
-export const db = new Proxy({}, {
-  get(_, prop: string | symbol) {
-    if (typeof prop === "symbol") return undefined;
-    const instance = getDb() as any;
-    if (!instance) {
-      throw new Error("Cannot access database during build (DATABASE_URL is not set)");
-    }
-    const value = instance[prop];
-    if (typeof value === "function") {
-      return (...args: any[]) => value.apply(instance, args);
-    }
-    return value;
-  },
-}) as any;
 
 export const pool = new Proxy({}, {
   get(_, prop: string | symbol) {
@@ -295,9 +269,3 @@ export async function ensureSchema() {
     client.release();
   }
 }
-
-// Export getDb for direct usage in serverless functions where proxy may cause issues
-export { getDb };
-
-// Re-export all tables and schemas for direct imports
-export * from "../drizzle/schema";

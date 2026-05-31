@@ -1,17 +1,8 @@
 import { NextResponse } from "next/server";
 import { unstable_cache } from "next/cache";
-import { revalidateTag } from "next/cache";
 import {
-  db,
-  yachtModels,
-  manufacturers,
-  specValues,
-  specCategories,
-  images,
-  reviews,
-  pool,
-} from "@/lib/db";
-import { eq } from "drizzle-orm";
+  edgePool,
+} from "@/lib/edge-pool";
 import { getYachtDetailData } from "@/lib/yachts";
 
 // Drizzle's `numeric` type returns strings from PostgreSQL.
@@ -24,6 +15,7 @@ function toNum(v: string | number | null): number | null {
 
 // ISR: Revalidate public API responses every 5 minutes for stale-while-revalidate
 export const revalidate = 300;
+export const runtime = "edge";
 
 export async function GET(
   request: Request,
@@ -56,8 +48,8 @@ export async function GET(
           });
         }
 
-        // Fetch media assets (P10.2)
-        const mediaResult = await pool.query(
+        // Fetch media assets using Edge-compatible pool
+        const mediaResult = await edgePool.query(
           `SELECT id, media_type, title, description, url, embed_url, thumbnail_url,
                   source_url, file_format, file_size, caption, alt_text, is_primary, sort_order
            FROM media_assets

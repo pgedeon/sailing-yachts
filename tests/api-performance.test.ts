@@ -6,10 +6,17 @@ vi.mock('next/cache', () => ({
   revalidateTag: vi.fn(),
 }));
 
-// Mock pg Pool
+// Mock Edge-compatible pool (used by migrated routes)
 const mockQuery = vi.fn();
-vi.mock('@/lib/db', () => ({
-  pool: { query: (...args: any[]) => mockQuery(...args) },
+vi.mock('@/lib/edge-pool', () => ({
+  edgePool: { query: (...args: any[]) => mockQuery(...args) },
+}));
+
+// Mock api-cache to bypass caching layer in tests
+vi.mock('@/lib/api-cache', () => ({
+  cached: (fn: any) => fn,
+  CACHE_TTL: { FILTER_OPTIONS: 300 },
+  CACHE_TAGS: { FILTER_OPTIONS: 'filter-options', YACHTS: 'yachts' },
 }));
 
 import { GET as yachtsGET } from '../app/api/yachts/route';
