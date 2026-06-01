@@ -919,3 +919,54 @@ export const auditLogs = pgTable(
 
 export const insertAuditLogSchema = createInsertSchema(auditLogs);
 export const selectAuditLogSchema = createSelectSchema(auditLogs);
+
+// P21.2: Data enrichment pipeline tables
+export const enrichmentSources = pgTable(
+  "enrichment_sources",
+  {
+    id: serial("id").primaryKey(),
+    name: varchar("name", { length: 100 }).notNull().unique(),
+    baseUrl: varchar("base_url", { length: 500 }).notNull(),
+    enabled: boolean("enabled").default(true),
+    rateLimitMs: integer("rate_limit_ms").default(2000),
+    lastRunAt: timestamp("last_run_at", { withTimezone: true }),
+    totalFetched: integer("total_fetched").default(0),
+    totalUpdated: integer("total_updated").default(0),
+    totalErrors: integer("total_errors").default(0),
+    config: jsonb("config").$type<Record<string, unknown>>().default({}),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => ({
+    idxName: uniqueIndex("idx_enrichment_sources_name").on(table.name),
+  }),
+);
+
+export const enrichmentLogs = pgTable(
+  "enrichment_logs",
+  {
+    id: serial("id").primaryKey(),
+    sourceId: integer("source_id")
+      .notNull()
+      .references(() => enrichmentSources.id, { onDelete: "cascade" }),
+    yachtModelId: integer("yacht_model_id")
+      .references(() => yachtModels.id, { onDelete: "set null" }),
+    status: varchar("status", { length: 20 }).notNull().default("pending"),
+    fieldsUpdated: jsonb("fields_updated").$type<string[]>(),
+    oldValues: jsonb("old_values").$type<Record<string, unknown>>(),
+    newValues: jsonb("new_values").$type<Record<string, unknown>>(),
+    confidence: integer("confidence").default(50),
+    errorMessage: text("error_message"),
+    startedAt: timestamp("started_at", { withTimezone: true }).defaultNow(),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+  },
+  (table) => ({
+    idxSource: index("idx_enrichment_logs_source").on(table.sourceId),
+    idxYacht: index("idx_enrichment_logs_yacht").on(table.yachtModelId),
+    idxStatus: index("idx_enrichment_logs_status").on(table.status),
+  }),
+);
+
+export const insertEnrichmentSourceSchema = createInsertSchema(enrichmentSources);
+export const selectEnrichmentSourceSchema = createSelectSchema(enrichmentSources);
+export const insertEnrichmentLogSchema = createInsertSchema(enrichmentLogs);
+export const selectEnrichmentLogSchema = createSelectSchema(enrichmentLogs);
