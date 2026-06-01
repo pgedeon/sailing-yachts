@@ -5,7 +5,7 @@
  * fetches from external sources, normalizes, deduplicates, and applies updates.
  */
 
-import { pool } from '@/lib/db'
+import { pool, ensureSchema } from '@/lib/db'
 import {
   fetchBoatSpecs,
   searchBoatSpecs,
@@ -405,6 +405,7 @@ export async function getEnrichmentStatus(): Promise<{
   }>
   fieldCoverage: Record<string, { total: number; filled: number; percentage: number }>
 }> {
+  await ensureSchema()
   // Get sources
   const sourcesResult = await pool.query(
     `SELECT id, name, enabled, last_run_at, total_fetched, total_updated, total_errors
