@@ -146,6 +146,16 @@ export default async function AdminPage() {
                 View Vitals Dashboard
               </a>
             </div>
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">Auto Descriptions</h2>
+              <p className="text-gray-600 mb-4">Generate and review auto-generated yacht descriptions from spec data.</p>
+              <a
+                href="/admin/descriptions"
+                className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
+              >
+                Manage Descriptions
+              </a>
+            </div>
           </div>
         </div>
       </div>

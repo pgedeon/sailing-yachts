@@ -78,6 +78,9 @@ export const yachtModels = pgTable(
     // Metadata
     designNotes: text("design_notes"),
     description: text("description"),
+    descriptionSource: varchar("description_source", { length: 20 }).default("manual"),
+    descriptionStatus: varchar("description_status", { length: 20 }).default("approved"),
+    descriptionGeneratedAt: timestamp("description_generated_at", { withTimezone: true }),
     sourceUrl: varchar("source_url", { length: 500 }),
     sourceAttribution: text("source_attribution"),
     adminLinks:
