@@ -67,7 +67,7 @@
 - **P21.1 — Data completeness scoring - **P21.1 — Data completeness scoring & reporting** — Admin dashboard showing completeness % per yacht, missing fields highlighted. reporting** *(completed — pre-existing implementation)* — Admin dashboard at /admin/completeness showing completeness % per yacht, missing fields highlighted, score distribution, category completion rates, and yachts needing attention table. API at /api/admin/completeness.
 - **P21.2 — Automated data enrichment pipeline** *(completed 2026-06-01 — Issue #364, PR #367
 - **P21.3 — Image coverage improvement** *(completed 2026-06-01 — Issue #362, PR #363)* — Image coverage audit infrastructure with admin dashboard at /admin/image-coverage and API at /api/admin/image-coverage. Identifies yachts missing images with manufacturer-level coverage stats.
-- **P21.4 — Price data aggregation** — Aggregate new/used price data from listing sites (yachtworld.com, boats.com) with attribution.
+- **P21.4 — Price data aggregation** *(completed 2026-06-02 — Issue #371, PR #372, 16 tests)* — Price estimation engine based on yacht specs (length, displacement, age, manufacturer premium). Admin dashboard at /admin/prices/aggregate. Public API at /api/prices/estimate. Extensible provider architecture for future data sources.
 - **P21.5 — Year/model variant tracking** *(completed 2026-05-31 — Issue #360, PR #361, 4 tests)* — VariantSelector component + Edge API endpoint for same-model-different-year variants on yacht detail page.
 
 ### Phase 22 — Performance & Technical Excellence (Priority: Low) — 🔲 PLANNED
