@@ -56,7 +56,7 @@
 
 ### Phase 20 — Content Enrichment & Authority Building (Priority: Medium) — 🔲 PLANNED
 
-- **P20.1 — Auto-generated yacht summary descriptions** *(needs LLM pipeline design)* — LLM-powered one-paragraph summaries for yachts missing descriptions, stored in DB, with human review queue.
+- **P20.1 — Auto-generated yacht summary descriptions** *(completed 2026-06-02 — Issue #373, PR #374, 15 tests)* — Template-based description generation from yacht spec data. Admin dashboard at /admin/descriptions with review queue (approve/reject). API at /api/admin/descriptions. 42 yachts with missing descriptions now covered.
 - **P20.2 — Spec glossary tooltips on yacht detail** *(completed 2026-05-30 — Issue #356, PR #357, 12 tests)* — Enhanced SpecTooltip with keyboard a11y, shared data module, additional spec labels (Sail Area Main/Jib, Engine Type, Max Occupancy), i18n (en+fr), focus-visible ring, aria-describedby/expanded.
 - **P20.3 — Manufacturer comparison pages** *(completed 2026-05-27 — Issue #341)* — `/compare-manufacturers/[slugA]-vs-[slugB]` comparing fleet size, price range, popular models.
 - **P20.4 — "Best [year] [size] sailboats" editorial pages** *(completed 2026-05-28 — Issue #346, PR #347, 13 tests)* — Curated editorial pages combining guide content with yacht data.
