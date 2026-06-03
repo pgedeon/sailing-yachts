@@ -81,7 +81,7 @@
 ### Phase 23 — Social Engagement & Virality (Priority: Medium) — 🔲 ACTIVE
 
 - **P23.1 — Yacht rating system with star ratings** — ✅ Add 5-star rating to yacht detail pages.
-- **P23.2 — Comparison sharing with persistent URLs** — Generate shareable comparison URLs (e.g., /compare/beneteau-oceanis-40-1-vs-bavaria-c42). Save comparison configurations server-side. OG images for shared comparisons. Social meta tags for comparison pages.
+- **P23.2 — Comparison sharing with persistent URLs** *(completed 2026-06-03 — Issue #377, PR #378, 19 tests)* — Generate shareable comparison URLs (e.g., /compare/beneteau-oceanis-40-1-vs-bavaria-c42). Save comparison configurations server-side. OG images for shared comparisons. Social meta tags for comparison pages.
 - **P23.3 — "Email this yacht" feature** — Send yacht details via email to a friend. Simple form with recipient email, optional message. Server-side email template with yacht specs and image. Rate-limited to prevent abuse.
 - **P23.4 — Embeddable yacht comparison widget** — JavaScript embed widget for external sites (blogs, forums). Configurable yacht selection, compact vs full layout. Generated at /embed/compare with iframe support. CDN-optimized, minimal footprint.
 - **P23.5 — Yacht of the week / featured rotation** — Admin-configurable featured yacht shown on homepage. Weekly rotation with manual override. Newsletter integration to announce featured yacht. Landing page at /yacht-of-the-week.
