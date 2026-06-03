@@ -20,71 +20,76 @@ import { USE_CASES } from "@/lib/use-case-landing";
 import { EDITORIAL_YEARS } from "@/lib/best-year-size-landing";
 import { getAllGlossaryTerms } from "@/lib/glossary";
 import { locales } from "@/i18n";
+import { slugify } from "@/lib/utils/slugify";
+
+type SlugParam = { slug: string };
+type ComparisonParam = { slugA: string; slugB: string };
 
 // ─── Internal helpers ─────────────────────────────────────────────
 
 /** Wrap any params array with locale variants */
-function withLocales<T extends {}>(params: T[]): Array<T & { locale: string }> {
-  return locales.flatMap((locale) =>
-    params.map((p) => ({ ...p, locale }))
+function withLocales<T extends Record<string, string>>(params: T[]): Array<T & { locale: string }> {
+  return locales.flatMap((locale: string) =>
+    params.map((p: T) => ({ ...p, locale }))
   );
 }
 
 /** Safe query wrapper — returns [] on build errors (e.g. no DATABASE_URL) */
-async function safeQuery<T>(fn: () => Promise<T>): Promise<T> {
-  try { return await fn(); } catch { return [] as unknown as T; }
+async function safeQuery<T>(fn: () => Promise<T[]>): Promise<T[]> {
+  try { return await fn(); } catch { return [] as T[]; }
 }
 
 // ─── DB-backed slug fetchers ─────────────────────────────────────
 
-async function fetchYachtSlugs() {
+async function fetchYachtSlugs(): Promise<SlugParam[]> {
   const rows = await db
     .select({ slug: yachtModels.slug })
     .from(yachtModels)
     .where(sql`${yachtModels.slug} IS NOT NULL`);
-  return rows.map((r) => ({ slug: r.slug }));
+  return rows.map((r: { slug: string | null }) => r.slug).filter(Boolean).map((slug: string) => ({ slug }));
 }
 
-async function fetchManufacturerSlugs() {
+async function fetchManufacturerSlugs(): Promise<SlugParam[]> {
   const rows = await db
-    .select({ slug: manufacturers.slug })
-    .from(manufacturers)
-    .where(sql`${manufacturers.slug} IS NOT NULL`);
-  return rows.map((r) => ({ slug: r.slug }));
+    .select({ name: manufacturers.name })
+    .from(manufacturers);
+  return rows
+    .filter((r: { name: string | null }) => r.name)
+    .map((r: { name: string }) => ({ slug: slugify(r.name) }));
 }
 
-async function fetchGuideSlugs() {
+async function fetchGuideSlugs(): Promise<SlugParam[]> {
   const rows = await db
     .select({ slug: articles.slug })
     .from(articles)
     .where(and(eq(articles.isPublished, true), sql`${articles.slug} IS NOT NULL`));
-  return rows.map((r) => ({ slug: r.slug }));
+  return rows.map((r: { slug: string | null }) => r.slug).filter(Boolean).map((slug: string) => ({ slug }));
 }
 
-async function fetchSearchIntentSlugs() {
+async function fetchSearchIntentSlugs(): Promise<SlugParam[]> {
   const rows = await db
     .select({ slug: searchIntents.slug })
     .from(searchIntents)
     .where(and(eq(searchIntents.isPublished, true), sql`${searchIntents.slug} IS NOT NULL`));
-  return rows.map((r) => ({ slug: r.slug }));
+  return rows.map((r: { slug: string | null }) => r.slug).filter(Boolean).map((slug: string) => ({ slug }));
 }
 
-async function fetchSpotlightSlugs() {
+async function fetchSpotlightSlugs(): Promise<SlugParam[]> {
   const rows = await db
     .select({ slug: manufacturerSpotlights.slug })
     .from(manufacturerSpotlights)
     .where(and(eq(manufacturerSpotlights.isPublished, true), sql`${manufacturerSpotlights.slug} IS NOT NULL`));
-  return rows.map((r) => ({ slug: r.slug }));
+  return rows.map((r: { slug: string | null }) => r.slug).filter(Boolean).map((slug: string) => ({ slug }));
 }
 
-async function fetchComparisonSlugs(limit: number = 30) {
+async function fetchComparisonSlugs(limit: number = 30): Promise<ComparisonParam[]> {
   const rows = await db
     .select({ slug: yachtModels.slug })
     .from(yachtModels)
     .where(sql`${yachtModels.slug} IS NOT NULL`)
     .limit(limit);
-  const slugs = rows.map((r) => r.slug);
-  const comparisons: Array<{ slugA: string; slugB: string }> = [];
+  const slugs: string[] = rows.map((r: { slug: string | null }) => r.slug).filter(Boolean) as string[];
+  const comparisons: ComparisonParam[] = [];
   for (let i = 0; i < Math.min(slugs.length, 25); i++) {
     for (let j = i + 1; j < Math.min(slugs.length, 25); j++) {
       comparisons.push({ slugA: slugs[i], slugB: slugs[j] });
@@ -93,14 +98,15 @@ async function fetchComparisonSlugs(limit: number = 30) {
   return comparisons;
 }
 
-async function fetchManufacturerComparisonSlugs() {
+async function fetchManufacturerComparisonSlugs(): Promise<ComparisonParam[]> {
   const rows = await db
-    .select({ slug: manufacturers.slug })
+    .select({ name: manufacturers.name })
     .from(manufacturers)
-    .where(sql`${manufacturers.slug} IS NOT NULL`)
     .limit(20);
-  const slugs = rows.map((r) => r.slug);
-  const comparisons: Array<{ slugA: string; slugB: string }> = [];
+  const slugs: string[] = rows
+    .filter((r: { name: string | null }) => r.name)
+    .map((r: { name: string }) => slugify(r.name));
+  const comparisons: ComparisonParam[] = [];
   for (let i = 0; i < Math.min(slugs.length, 15); i++) {
     for (let j = i + 1; j < Math.min(slugs.length, 15); j++) {
       comparisons.push({ slugA: slugs[i], slugB: slugs[j] });
@@ -195,12 +201,12 @@ export function getBestValueParams() {
 
 /** /cheaper-alternatives-to/[slug] */
 export async function getCheaperAlternativeParams() {
-  return withLocales(await safeQuery(async () => {
+  return withLocales(await safeQuery(async (): Promise<SlugParam[]> => {
     const rows = await db
       .select({ slug: yachtModels.slug })
       .from(yachtModels)
       .where(sql`${yachtModels.slug} IS NOT NULL`)
       .limit(30);
-    return rows.map((r) => ({ slug: r.slug }));
+    return rows.map((r: { slug: string | null }) => r.slug).filter(Boolean).map((slug: string) => ({ slug }));
   }));
 }

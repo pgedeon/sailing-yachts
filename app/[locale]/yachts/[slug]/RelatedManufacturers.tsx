@@ -96,7 +96,7 @@ export function RelatedManufacturers({
           >
             {/* Image */}
             {yacht.primaryImage ? (
-              <div className="h-36 sm:h-40 bg-muted overflow-hidden">
+              <div className="h-36 sm:h-40 bg-muted overflow-hidden relative">
                 <Image
                   src={yacht.primaryImage}
                   alt={`${yacht.manufacturer} ${yacht.modelName}`}
