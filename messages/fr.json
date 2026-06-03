@@ -669,6 +669,21 @@
       "ratioSADExplain": "Surface voilure/Déplacement — plus élevé = plus de puissance vélique ( ≈ 16–20 typique, > 22 performance )",
       "ratioBallastExplain": "Quille/Déplacement — plus élevé = plus raide, plus résistant à la gîte",
       "dataTableToggle": "Afficher le tableau de données"
+    },
+    "sharedComparison": {
+      "title": "Comparaison partagée",
+      "description": "Comparaison côte à côte de {count} voiliers",
+      "ogTitle": "Comparaison de voiliers",
+      "subtitle": "Une comparaison partagée de {count} yachts",
+      "views": "{count, plural, one {1 vue} other {# vues}}",
+      "shareUrl": "Lien partageable :",
+      "creating": "Création du lien...",
+      "errorTitle": "Une erreur est survenue",
+      "errorMessage": "Impossible de charger cette comparaison partagée. Le lien est peut-être invalide ou expiré.",
+      "tryAgain": "Réessayer",
+      "newComparison": "Nouvelle comparaison",
+      "createOwn": "Créer votre propre comparaison",
+      "sharedOn": "Partagée le {date}"
     }
   },
   "Manufacturers": {

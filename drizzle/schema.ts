@@ -1003,3 +1003,23 @@ export const yachtRatings = pgTable(
 
 export const insertYachtRatingSchema = createInsertSchema(yachtRatings);
 export const selectYachtRatingSchema = createSelectSchema(yachtRatings);
+
+// P23.2: Shared comparisons for persistent sharing URLs
+export const sharedComparisons = pgTable(
+  "shared_comparisons",
+  {
+    id: serial("id").primaryKey(),
+    shareId: varchar("share_id", { length: 12 }).notNull().unique(),
+    yachtIds: jsonb("yacht_ids").$type<number[]>().notNull(),
+    title: varchar("title", { length: 500 }),
+    viewCount: integer("view_count").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxShareId: uniqueIndex("idx_shared_comparisons_share_id").on(table.shareId),
+    idxCreatedAt: index("idx_shared_comparisons_created_at").on(table.createdAt),
+  }),
+);
+
+export const insertSharedComparisonSchema = createInsertSchema(sharedComparisons);
+export const selectSharedComparisonSchema = createSelectSchema(sharedComparisons);

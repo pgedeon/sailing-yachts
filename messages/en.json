@@ -669,6 +669,21 @@
       "ratioSADExplain": "Sail Area/Displacement — higher = more sail power ( ≈ 16–20 typical, > 22 performance )",
       "ratioBallastExplain": "Ballast/Displacement — higher = stiffer, more resistant to heeling",
       "dataTableToggle": "Show data table"
+    },
+    "sharedComparison": {
+      "title": "Shared Comparison",
+      "description": "Side-by-side comparison of {count} sailing yachts",
+      "ogTitle": "Sailing Yacht Comparison",
+      "subtitle": "A shared comparison of {count} yachts",
+      "views": "{count, plural, one {1 view} other {# views}}",
+      "shareUrl": "Shareable link:",
+      "creating": "Creating link...",
+      "errorTitle": "Something went wrong",
+      "errorMessage": "We couldn't load this shared comparison. The link may be invalid or expired.",
+      "tryAgain": "Try Again",
+      "newComparison": "New Comparison",
+      "createOwn": "Create your own comparison",
+      "sharedOn": "Shared on {date}"
     }
   },
   "Manufacturers": {
