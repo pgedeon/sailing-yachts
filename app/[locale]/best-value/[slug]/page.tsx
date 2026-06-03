@@ -5,10 +5,14 @@ import { getTranslations } from "next-intl/server";
 import { pool } from "@/lib/db";
 import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates , buildOgImageUrl } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths"
-import { SHIMMER_BLUR } from "@/lib/image-utils";
+import { SHIMMER_BLUR } from "@/lib/image-utils";import { getBestValueParams } from "@/lib/static-params";
+
 
 // ISR: Revalidate every 6 hours
 export const revalidate = 21600;
+
+export async function generateStaticParams() { return getBestValueParams(); }
+
 
 interface BestValueYacht {
   id: number;

@@ -7,9 +7,13 @@ import { marked } from "marked";
 
 import { getSpotlightBySlug } from "@/lib/manufacturer-spotlights";
 import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
-import { localePath } from "@/lib/i18n-paths";
+import { localePath } from "@/lib/i18n-paths";import { getSpotlightParams } from "@/lib/static-params";
+
 
 export const revalidate = 3600;
+
+export async function generateStaticParams() { return getSpotlightParams(); }
+
 
 interface ManufacturerSpotlightPageProps {
   params: Promise<{ slug: string; locale: string }>;

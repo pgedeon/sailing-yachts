@@ -13,10 +13,14 @@ import {
   buildOgImageUrl,
 } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths";
-import { UseCaseLandingClient } from "./UseCaseLandingClient";
+import { UseCaseLandingClient } from "./UseCaseLandingClient";import { getUseCaseParams } from "@/lib/static-params";
+
 
 // ISR: cache for 1 hour, invalidate via tags when admin updates yacht data
 export const revalidate = 3600;
+
+export async function generateStaticParams() { return getUseCaseParams(); }
+
 
 const getCachedUseCaseLandingData = unstable_cache(
   async (useCaseSlug: string) => getUseCaseLandingData(useCaseSlug),

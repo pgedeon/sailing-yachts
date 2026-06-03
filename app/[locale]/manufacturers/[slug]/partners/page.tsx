@@ -14,10 +14,14 @@ import {
   getPartnerOffersByManufacturerId,
 } from "@/lib/partner-offers";
 import { getManufacturerBySlug } from "@/lib/manufacturers";
-import { localePath } from "@/lib/i18n-paths";
+import { localePath } from "@/lib/i18n-paths";import { getPartnersParams } from "@/lib/static-params";
+
 
 // ISR: Revalidate partner pages every 6 hours
 export const revalidate = 21600;
+
+export async function generateStaticParams() { return getPartnersParams(); }
+
 
 // Cache partner offers query with tag for invalidation
 async function getPartnerPageData(slug: string) {

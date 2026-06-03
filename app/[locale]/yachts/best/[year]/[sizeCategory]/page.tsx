@@ -22,15 +22,10 @@ import { BestYearSizeClient } from "./BestYearSizeClient";
 // ISR: revalidate editorial pages every 6 hours
 export const revalidate = 21600;
 
+import { getBestYearSizeParams } from "@/lib/static-params";
+
 export async function generateStaticParams() {
-  return EDITORIAL_YEARS.flatMap((year) =>
-    ["under-30ft", "30-35ft", "35-40ft", "40-45ft", "45-50ft", "over-50ft"].map(
-      (sizeCategory) => ({
-        year: String(year),
-        sizeCategory,
-      })
-    )
-  );
+  return getBestYearSizeParams();
 }
 
 export async function generateMetadata({

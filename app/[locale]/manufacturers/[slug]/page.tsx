@@ -24,7 +24,8 @@ import { getSpotlightByManufacturerId } from "@/lib/manufacturer-spotlights";
 import { SIZE_CATEGORIES } from "@/lib/size-categories";
 import ManufacturerLogo from "@/components/manufacturer-logo";
 import { localePath } from "@/lib/i18n-paths";
-import dynamic from "next/dynamic";
+import dynamic from "next/dynamic";import { getManufacturerParams } from "@/lib/static-params";
+
 
 // Lazy-loaded for bundle optimization (P22.4)
 const ManufacturerComparisons = dynamic(() => import("./ManufacturerComparisons").then(m => ({ default: m.ManufacturerComparisons })), { ssr: false, loading: () => <div className="h-32 animate-pulse bg-muted rounded-xl" /> });
@@ -33,6 +34,9 @@ const ManufacturerFleetChart = dynamic(() => import("@/components/manufacturer-f
 
 // ISR: Revalidate manufacturer detail pages every hour
 export const revalidate = 3600;
+
+export async function generateStaticParams() { return getManufacturerParams(); }
+
 
 // Cache manufacturer data query with tag for invalidation
 async function getManufacturerData(slug: string) {

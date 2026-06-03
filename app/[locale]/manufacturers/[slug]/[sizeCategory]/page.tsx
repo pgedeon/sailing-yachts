@@ -14,10 +14,14 @@ import {
   buildOgImageUrl,
 } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths";
-import { ManufacturerSizeClient } from "./ManufacturerSizeClient";
+import { ManufacturerSizeClient } from "./ManufacturerSizeClient";import { getManufacturerSizeParams } from "@/lib/static-params";
+
 
 // Revalidate every 60 minutes
 export const revalidate = 3600;
+
+export async function generateStaticParams() { return getManufacturerSizeParams(); }
+
 
 /**
  * Parse params — Next.js may pass combined or individual param keys.

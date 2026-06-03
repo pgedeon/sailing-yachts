@@ -17,10 +17,14 @@ import { getYachtDetailData, getPrimaryImage } from "@/lib/yachts";
 import { getPriceSummary } from "@/lib/price-data";
 import { calculateCompletenessScore, shouldNoindex } from "@/lib/completeness";
 import { localePath } from "@/lib/i18n-paths";
-import YachtDetailClient from "./YachtDetailClient";
+import YachtDetailClient from "./YachtDetailClient";import { getYachtParams } from "@/lib/static-params";
+
 
 // ISR: Revalidate yacht detail pages every hour
 export const revalidate = 3600;
+
+export async function generateStaticParams() { return getYachtParams(); }
+
 
 // Cache yacht detail data query with tag for invalidation
 async function getYachtData(slug: string) {

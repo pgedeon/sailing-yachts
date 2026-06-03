@@ -15,7 +15,6 @@ import { ManufacturerCompareClient } from "./ManufacturerCompareClient";
 
 // ISR: Revalidate every hour
 export const revalidate = 3600;
-
 function parseCompareParams(
   rawParams: Record<string, string | undefined>,
 ): { slugA: string; slugB: string } | null {

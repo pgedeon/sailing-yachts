@@ -5,10 +5,14 @@ import { getTranslations } from "next-intl/server";
 import { getSearchIntentBySlug } from "@/lib/search-intents";
 import { generateBreadcrumbJsonLd, getSiteUrl, generateCollectionPageJsonLd, generateYachtJsonLd, buildLocaleAlternates , buildOgImageUrl } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths"
-import { SHIMMER_BLUR } from "@/lib/image-utils";
+import { SHIMMER_BLUR } from "@/lib/image-utils";import { getSearchIntentParams } from "@/lib/static-params";
+
 
 // ISR: Revalidate search intent pages every 6 hours
 export const revalidate = 21600;
+
+export async function generateStaticParams() { return getSearchIntentParams(); }
+
 // Use dynamicParams to allow any slug at runtime
 export const dynamicParams = true;
 

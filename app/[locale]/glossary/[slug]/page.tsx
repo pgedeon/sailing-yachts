@@ -5,10 +5,14 @@ import { getTranslations } from "next-intl/server";
 import { getTermBySlug, getRelatedTerms } from "@/lib/glossary";
 import { getYachtLinksForTerm } from "@/lib/glossary-yacht-links";
 import { getSiteUrl, generateBreadcrumbJsonLd, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
-import { localePath } from "@/lib/i18n-paths";
+import { localePath } from "@/lib/i18n-paths";import { getGlossaryParams } from "@/lib/static-params";
+
 
 // ISR: Revalidate glossary term pages every 6 hours
 export const revalidate = 21600;
+
+export async function generateStaticParams() { return getGlossaryParams(); }
+
 
 interface GlossaryTermPageProps {
   params: Promise<{ slug: string; locale: string }>;

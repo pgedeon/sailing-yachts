@@ -14,10 +14,14 @@ import {
 } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths";
 import { SizeCategoryHubClient } from "./SizeCategoryHubClient";
-import { USE_CASES } from "@/lib/use-case-meta";
+import { USE_CASES } from "@/lib/use-case-meta";import { getSizeCategoryParams } from "@/lib/static-params";
+
 
 // ISR: cache for 1 hour, invalidate via tags when admin updates yacht data
 export const revalidate = 3600;
+
+export async function generateStaticParams() { return getSizeCategoryParams(); }
+
 
 const getCachedSizeCategoryHubData = unstable_cache(
   async (sizeCategorySlug: string) => getSizeCategoryHubData(sizeCategorySlug),

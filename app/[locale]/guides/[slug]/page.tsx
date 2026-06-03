@@ -13,9 +13,13 @@ import NewsletterSignup from "@/components/NewsletterSignup";
 import BuyingGuideYachtList from "@/components/BuyingGuideYachtList";
 import { getTemplateById } from "@/lib/buying-guides";
 import { localePath } from "@/lib/i18n-paths";
-import { SHIMMER_BLUR } from "@/lib/image-utils";
+import { SHIMMER_BLUR } from "@/lib/image-utils";import { getGuideParams } from "@/lib/static-params";
+
 
 export const revalidate = 3600;
+
+export async function generateStaticParams() { return getGuideParams(); }
+
 
 interface Heading {
   id: string;

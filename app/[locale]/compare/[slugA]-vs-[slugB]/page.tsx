@@ -17,7 +17,6 @@ const getCachedYachtsBySlugs = unstable_cache(
 
 // ISR: cache for 1 hour, invalidate via tags when admin updates yacht data
 export const revalidate = 3600;
-
 /**
  * Next.js treats [slugA]-vs-[slugB] as a SINGLE dynamic segment named
  * "slugA]-vs-[slugB" (it does NOT split into two separate params).
