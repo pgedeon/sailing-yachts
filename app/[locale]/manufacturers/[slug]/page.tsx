@@ -323,7 +323,7 @@ export default async function ManufacturerPage({
               {yachts.map((yacht) => {
                 const cardContent = (
                   <>
-                    <div className="aspect-[16/9] bg-muted">
+                    <div className="relative overflow-hidden aspect-[16/9] bg-muted">
                       {yacht.primaryImage ? (
                         <Image
                           src={yacht.primaryImage}
