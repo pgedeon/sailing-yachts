@@ -1288,5 +1288,16 @@
     "showingCount": "{count} yachts reviewed",
     "noYachtsFound": "No yachts found in this size category.",
     "editorialDisclaimer": "Rankings are based on editorial review of {year} models. Specifications may vary by year and region."
+  },
+  "Ratings": {
+    "rateThisYacht": "Rate this yacht",
+    "starCount": "{count, plural, one {# star} other {# stars}}",
+    "ratingLabel": "{average} out of 5 · {count, plural, one {# rating} other {# ratings}}",
+    "noRatings": "No ratings yet",
+    "ratingCount": "{count, plural, one {# rating} other {# ratings}}",
+    "yourRating": "Your rating",
+    "submitError": "Failed to submit rating",
+    "distribution": "Rating distribution",
+    "thanksForRating": "Thanks for rating!"
   }
 }

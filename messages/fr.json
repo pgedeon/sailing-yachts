@@ -1288,5 +1288,16 @@
     "showingCount": "{count} voiliers évalués",
     "noYachtsFound": "Aucun voilier trouvé dans cette catégorie de taille.",
     "editorialDisclaimer": "Les classements sont basés sur la revue éditoriale des modèles {year}. Les spécifications peuvent varier selon l'année et la région."
+  },
+  "Ratings": {
+    "rateThisYacht": "Notez ce voilier",
+    "starCount": "{count, plural, one {# étoile} other {# étoiles}}",
+    "ratingLabel": "{average} sur 5 · {count, plural, one {# note} other {# notes}}",
+    "noRatings": "Pas encore de notes",
+    "ratingCount": "{count, plural, one {# note} other {# notes}}",
+    "yourRating": "Votre note",
+    "submitError": "Échec de l'envoi de la note",
+    "distribution": "Répartition des notes",
+    "thanksForRating": "Merci pour votre note !"
   }
 }

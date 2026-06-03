@@ -48,6 +48,10 @@ const ReviewSubmissionForm = dynamic(() => import("@/components/ReviewSubmission
   ssr: false,
   loading: () => <div className="h-48 animate-pulse bg-muted rounded-lg" />,
 });
+const YachtRatingWidget = dynamic(() => import("@/components/YachtRatingWidget").then(m => ({ default: m.YachtRatingWidget })), {
+  ssr: false,
+  loading: () => <div className="h-24 animate-pulse bg-muted rounded-lg" />,
+});
 const LeadForm = dynamic(() => import("@/app/components/LeadForm").then((m) => ({ default: m.LeadForm })), {
   ssr: false,
   loading: () => <div className="h-64 animate-pulse bg-muted rounded-lg" />,
@@ -568,6 +572,17 @@ export default function YachtDetailClient() {
             </div>
           </div>
 
+
+          {/* P23.1: Rating Widget */}
+          <div id="ratings" className="mb-6 border-b pb-6 no-print">
+            <YachtRatingWidget
+              slug={yacht.slug}
+              initialAverage={0}
+              initialCount={0}
+              initialDistribution={{1:0,2:0,3:0,4:0,5:0}}
+              userRating={null}
+            />
+          </div>
           {/* Quick Facts Summary */}
           <div id="quick-facts">
             <QuickFacts

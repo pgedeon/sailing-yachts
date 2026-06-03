@@ -54,7 +54,7 @@
 - **P19.4 — Sitemap integration for programmatic pages** *(completed 2026-05-26 — Issue #335)* — Add all generated landing pages to sitemap-programmatic.xml with proper `<lastmod>`, `<changefreq>`, and `<priority>` values.
 - **P19.5 — Internal linking mesh** *(completed 2026-05-26 — Issue #337)* — Cross-link from yacht detail pages to manufacturer+size, size hub, and use-case pages. Add "Related Categories" section on manufacturer detail and size hub pages.
 
-### Phase 20 — Content Enrichment & Authority Building (Priority: Medium) — 🔲 PLANNED
+### Phase 20 — Content Enrichment & Authority Building (Priority: Medium) — ✅ COMPLETE
 
 - **P20.1 — Auto-generated yacht summary descriptions** *(completed 2026-06-02 — Issue #373, PR #374, 15 tests)* — Template-based description generation from yacht spec data. Admin dashboard at /admin/descriptions with review queue (approve/reject). API at /api/admin/descriptions. 42 yachts with missing descriptions now covered.
 - **P20.2 — Spec glossary tooltips on yacht detail** *(completed 2026-05-30 — Issue #356, PR #357, 12 tests)* — Enhanced SpecTooltip with keyboard a11y, shared data module, additional spec labels (Sail Area Main/Jib, Engine Type, Max Occupancy), i18n (en+fr), focus-visible ring, aria-describedby/expanded.
@@ -62,7 +62,7 @@
 - **P20.4 — "Best [year] [size] sailboats" editorial pages** *(completed 2026-05-28 — Issue #346, PR #347, 13 tests)* — Curated editorial pages combining guide content with yacht data.
 - **P20.5 — Video embed support for yacht pages** *(completed 2026-05-27 — Issue #344, PR #345, 31 tests)* — Click-to-play VideoEmbed component with i18n, YouTube thumbnail derivation, autoplay on click. MediaGallery fully i18n'd (en + fr).
 
-### Phase 21 — Data Quality & Coverage (Priority: Medium) — 🔲 PLANNED
+### Phase 21 — Data Quality & Coverage (Priority: Medium) — ✅ COMPLETE
 
 - **P21.1 — Data completeness scoring - **P21.1 — Data completeness scoring & reporting** — Admin dashboard showing completeness % per yacht, missing fields highlighted. reporting** *(completed — pre-existing implementation)* — Admin dashboard at /admin/completeness showing completeness % per yacht, missing fields highlighted, score distribution, category completion rates, and yachts needing attention table. API at /api/admin/completeness.
 - **P21.2 — Automated data enrichment pipeline** *(completed 2026-06-01 — Issue #364, PR #367
@@ -70,10 +70,50 @@
 - **P21.4 — Price data aggregation** *(completed 2026-06-02 — Issue #371, PR #372, 16 tests)* — Price estimation engine based on yacht specs (length, displacement, age, manufacturer premium). Admin dashboard at /admin/prices/aggregate. Public API at /api/prices/estimate. Extensible provider architecture for future data sources.
 - **P21.5 — Year/model variant tracking** *(completed 2026-05-31 — Issue #360, PR #361, 4 tests)* — VariantSelector component + Edge API endpoint for same-model-different-year variants on yacht detail page.
 
-### Phase 22 — Performance & Technical Excellence (Priority: Low) — 🔲 PLANNED
+### Phase 22 — Performance & Technical Excellence (Priority: Low) — ✅ COMPLETE
 
 - **P22.1 — Edge runtime for API routes** *(completed 2026-05-31 — Issue #358, PR #359, 11 tests)* — Created db-edge.ts (Edge-safe Drizzle module), edge-pool.ts (Neon HTTP Pool wrapper). Migrated 6 public API routes (yachts, yachts/[slug], manufacturers, manufacturers/[slug], search, compare) to Edge runtime. Eliminated pg dependency from Edge bundle. All admin routes remain on Node.js runtime.
 - **P22.2 — Image CDN optimization** *(completed 2026-05-30 — Issue #354, PR #355, 20 files)* — Converted all raw <img> to next/image with blur placeholders, shared image-utils, AVIF/WebP optimization.
 - **P22.3 — Incremental Static Regeneration audit *(completed 2026-05-28 — Issue #348, PR #349)* — Enabled ISR (1h cache) for by-size, use-case, and compare pages with cache tags.
 - **P22.4 — Bundle size optimization** *(completed 2026-05-29 — Issue #350, PR #351, 38 tests)* — Lazy-loaded 15+ below-the-fold components, reducing /yachts/[slug] First Load by 11%, /compare by 21%.
 - **P22.5 — Core Web Vitals monitoring** *(completed 2026-05-29 — Issue #352, PR #353, 13 tests)* — Admin dashboard at /admin/vitals with real-time CWV stats, Sentry integration for poor metric alerting, server-side poor metric logging.
+
+### Phase 23 — Social Engagement & Virality (Priority: Medium) — 🔲 ACTIVE
+
+- **P23.1 — Yacht rating system with star ratings** — Add 5-star rating to yacht detail pages. Aggregate user ratings, show average + count. API endpoint for submitting ratings. Ratings stored in DB with yacht_id, user_id, score. Display on listing cards and detail pages. Prevent duplicate ratings per user.
+- **P23.2 — Comparison sharing with persistent URLs** — Generate shareable comparison URLs (e.g., /compare/beneteau-oceanis-40-1-vs-bavaria-c42). Save comparison configurations server-side. OG images for shared comparisons. Social meta tags for comparison pages.
+- **P23.3 — "Email this yacht" feature** — Send yacht details via email to a friend. Simple form with recipient email, optional message. Server-side email template with yacht specs and image. Rate-limited to prevent abuse.
+- **P23.4 — Embeddable yacht comparison widget** — JavaScript embed widget for external sites (blogs, forums). Configurable yacht selection, compact vs full layout. Generated at /embed/compare with iframe support. CDN-optimized, minimal footprint.
+- **P23.5 — Yacht of the week / featured rotation** — Admin-configurable featured yacht shown on homepage. Weekly rotation with manual override. Newsletter integration to announce featured yacht. Landing page at /yacht-of-the-week.
+
+### Phase 24 — Advanced Analytics & Intelligence (Priority: Medium) — 🔲 PLANNED
+
+- **P24.1 — User behavior tracking dashboard** — Admin dashboard showing page views, popular yachts, search trends, comparison patterns. Aggregate anonymized analytics. Charts for daily/weekly/monthly trends.
+- **P24.2 — A/B testing framework** — Implement server-side A/B test assignment (infrastructure exists in ab-testing.ts). Admin dashboard for managing experiments. Statistical significance calculator. Feature flag integration.
+- **P24.3 — Conversion funnel tracking** — Track user journey from landing → search → detail → compare → lead. Identify drop-off points. Admin funnel visualization.
+- **P24.4 — Search intent analysis dashboard** — Analyze search queries, zero-result searches, popular filters. Surface content gaps. Admin dashboard with search analytics.
+- **P24.5 — Competitive positioning matrix** — Auto-generate competitive positioning analysis for each manufacturer. Market segment coverage visualization. Price positioning charts.
+
+### Phase 25 — Content Expansion (Priority: Medium) — 🔲 PLANNED
+
+- **P25.1 — Sailing guides CMS** — Full CMS for creating/editing sailing guides. Rich text editor, image upload, SEO fields. Category tagging, related yacht linking. Author attribution.
+- **P25.2 — Yacht review aggregation** — Aggregate reviews from external sources. Schema for review source, rating, URL. Display aggregated scores on yacht detail. Admin review management.
+- **P25.3 — Interactive sailing quiz** — "Which yacht is right for you?" personality-style quiz. Result leads to yacht finder recommendations. Shareable results. Lead capture integration.
+- **P25.4 — Multilingual content pipeline** — Auto-translate guides and descriptions to French. Translation queue with human review. Translation memory for consistency.
+- **P25.5 — Dynamic FAQ generation** — Auto-generate FAQs from yacht data patterns. Schema markup for FAQ rich results. Crawlable FAQ pages per manufacturer/size category.
+
+### Phase 26 — Monetization & Revenue (Priority: Medium) — 🔲 PLANNED
+
+- **P26.1 — Premium listing tier for manufacturers** — Enhanced manufacturer profiles with video, documents, verified badge. Admin interface for managing premium tier. Feature gating logic.
+- **P26.2 — Lead scoring & qualification** — Score incoming leads based on behavior signals. Priority routing for high-value leads. Admin lead management dashboard enhancement.
+- **P26.3 — Affiliate link optimization engine** — A/B test affiliate link placement. Revenue tracking per placement. Auto-rotate best-performing partners.
+- **P26.4 — Premium comparison reports (PDF)** — Generate downloadable PDF comparison reports. Branded with site identity. Lead gate for download. Server-side PDF generation.
+- **P26.5 — Newsletter monetization** — Sponsored content slots in newsletter. Open/click rate optimization. Subscriber segmentation for targeted sends.
+
+### Phase 27 — Technical Debt & Platform Hardening (Priority: Low) — 🔲 PLANNED
+
+- **P27.1 — Database query optimization audit** — Analyze slow queries, add missing indexes. Query plan analysis for critical paths. Connection pool tuning.
+- **P27.2 — API rate limiting & security hardening** — Implement per-IP and per-user rate limiting. Input validation audit. CORS policy review.
+- **P27.3 — Test coverage improvement** — Target 90%+ coverage for critical paths. Integration test suite for API routes. E2E test suite with Playwright.
+- **P27.4 — CI/CD pipeline enhancement** — Automated dependency updates. Security scanning in CI. Performance regression detection.
+- **P27.5 — Documentation & developer experience** — API documentation refresh. Component storybook. Contributing guide. Architecture decision records.
