@@ -23,10 +23,10 @@ function revalidateSpotlightTags(spotlight: Pick<ManufacturerSpotlight, 'slug' |
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
 
-  const { id } = await params
+  const { id } = params
   const spotlightId = parseId(id)
   if (!spotlightId) {
     return NextResponse.json({ error: 'Invalid spotlight id' }, { status: 400 })
@@ -52,10 +52,10 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
 
-  const { id } = await params
+  const { id } = params
   const spotlightId = parseId(id)
   if (!spotlightId) {
     return NextResponse.json({ error: 'Invalid spotlight id' }, { status: 400 })
@@ -102,10 +102,10 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
 
-  const { id } = await params
+  const { id } = params
   const spotlightId = parseId(id)
   if (!spotlightId) {
     return NextResponse.json({ error: 'Invalid spotlight id' }, { status: 400 })

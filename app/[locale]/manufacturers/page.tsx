@@ -59,11 +59,11 @@ export const metadata: Metadata = {
 };
 
 interface ManufacturersListingPageProps {
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
 }
 
 export default async function ManufacturersPage({ params }: ManufacturersListingPageProps) {
-  const { locale } = await params;
+  const { locale } = params;
   const t = await getTranslations({ locale, namespace: "Manufacturers" });
 
   const manufacturers = await getManufacturers();

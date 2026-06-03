@@ -1,3 +1,4 @@
+import { SHIMMER_BLUR } from "@/lib/image-utils";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,12 +14,9 @@ import NewsletterSignup from "@/components/NewsletterSignup";
 import BuyingGuideYachtList from "@/components/BuyingGuideYachtList";
 import { getTemplateById } from "@/lib/buying-guides";
 import { localePath } from "@/lib/i18n-paths";
-import { SHIMMER_BLUR } from "@/lib/image-utils";import { getGuideParams } from "@/lib/static-params";
 
 
-export const revalidate = 3600;
 
-export async function generateStaticParams() { return getGuideParams(); }
 
 
 interface Heading {
@@ -95,11 +93,11 @@ function countWords(text: string): number {
 }
 
 interface PageProps {
-  params: Promise<{ slug: string; locale: string }>;
+  params: { slug: string; locale: string };
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug } = params;
   const article = await getArticleBySlug(slug);
   if (!article) {
     return { title: "Article Not Found" };
@@ -132,7 +130,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function GuideArticlePage({ params }: PageProps) {
-  const { slug, locale } = await params;
+  const { slug, locale } = params;
   const t = await getTranslations({ locale, namespace: "Guides" });
 
   const article = await getArticleBySlug(slug);

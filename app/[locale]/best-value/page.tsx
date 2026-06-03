@@ -7,9 +7,9 @@ import { buildOgImageUrl } from "@/lib/seo";
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
 }): Promise<Metadata> {
-  const { locale } = await params;
+  const { locale } = params;
   const t = await getTranslations({ locale, namespace: "BestValue" });
 
   const ogImage = buildOgImageUrl({ type: "default", title: t("meta.title"), description: t("meta.description") });
@@ -56,9 +56,9 @@ const BEST_VALUE_CATEGORIES = [
 export default async function BestValueIndexPage({
   params,
 }: {
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
 }) {
-  const { locale } = await params;
+  const { locale } = params;
   const t = await getTranslations({ locale, namespace: "BestValue" });
 
   return (

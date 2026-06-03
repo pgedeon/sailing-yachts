@@ -1,3 +1,4 @@
+import { SHIMMER_BLUR } from "@/lib/image-utils";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -5,13 +6,10 @@ import { getTranslations } from "next-intl/server";
 import { pool } from "@/lib/db";
 import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates , buildOgImageUrl } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths"
-import { SHIMMER_BLUR } from "@/lib/image-utils";import { getBestValueParams } from "@/lib/static-params";
 
 
 // ISR: Revalidate every 6 hours
-export const revalidate = 21600;
 
-export async function generateStaticParams() { return getBestValueParams(); }
 
 
 interface BestValueYacht {
@@ -93,9 +91,9 @@ export const BEST_VALUE_PAGES: BestValuePageDef[] = [
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string; locale: string }>;
+  params: { slug: string; locale: string };
 }): Promise<Metadata> {
-  const { slug, locale } = await params;
+  const { slug, locale } = params;
   const pageDef = BEST_VALUE_PAGES.find((p) => p.slug === slug);
   const t = await getTranslations({ locale, namespace: "BestValue" });
 
@@ -282,9 +280,9 @@ function formatPrice(
 export default async function BestValuePage({
   params,
 }: {
-  params: Promise<{ slug: string; locale: string }>;
+  params: { slug: string; locale: string };
 }) {
-  const { slug, locale } = await params;
+  const { slug, locale } = params;
   const t = await getTranslations({ locale, namespace: "BestValue" });
   const pageDef = BEST_VALUE_PAGES.find((p) => p.slug === slug);
 

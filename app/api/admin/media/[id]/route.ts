@@ -12,14 +12,14 @@ function toNum(v: string | number | null | undefined): number | null {
 /** GET /api/admin/media/[id] — get single media asset */
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: { id: string } },
 ) {
   const cookieStore = cookies()
 
 
   try {
     await ensureSchema()
-    const { id: idParam } = await params
+    const { id: idParam } = params
     const id = parseInt(idParam, 10)
 
     if (isNaN(id)) {
@@ -67,14 +67,14 @@ export async function GET(
 /** PATCH /api/admin/media/[id] — update media asset */
 export async function PATCH(
   request: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: { id: string } },
 ) {
   const cookieStore = cookies()
 
 
   try {
     await ensureSchema()
-    const { id: idParam } = await params
+    const { id: idParam } = params
     const id = parseInt(idParam, 10)
 
     if (isNaN(id)) {
@@ -152,14 +152,14 @@ export async function PATCH(
 /** DELETE /api/admin/media/[id] — delete media asset */
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: { id: string } },
 ) {
   const cookieStore = cookies()
 
 
   try {
     await ensureSchema()
-    const { id: idParam } = await params
+    const { id: idParam } = params
     const id = parseInt(idParam, 10)
 
     if (isNaN(id)) {

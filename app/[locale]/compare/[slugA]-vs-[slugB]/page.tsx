@@ -64,9 +64,9 @@ function parseCompareParams(
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<Record<string, string | undefined>>;
+  params: Record<string, string | undefined>;
 }): Promise<Metadata> {
-  const rawParams = await params;
+  const rawParams = params;
   const parsed = parseCompareParams(rawParams);
 
   if (!parsed) {
@@ -122,9 +122,9 @@ export async function generateMetadata({
 export default async function CanonicalComparePage({
   params,
 }: {
-  params: Promise<Record<string, string | undefined>>;
+  params: Record<string, string | undefined>;
 }) {
-  const rawParams = await params;
+  const rawParams = params;
   const parsed = parseCompareParams(rawParams);
 
   if (!parsed) {

@@ -9,13 +9,13 @@ import { localePath } from "@/lib/i18n-paths";
 export const revalidate = 21600;
 
 interface GlossaryPageProps {
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
 }
 
 export async function generateMetadata({
   params,
 }: GlossaryPageProps): Promise<Metadata> {
-  const { locale } = await params;
+  const { locale } = params;
   const t = await getTranslations({ locale, namespace: "Glossary" });
   const terms = getAllGlossaryTerms();
   const categories = getGlossaryCategories();
@@ -56,7 +56,7 @@ export async function generateMetadata({
 }
 
 export default async function GlossaryPage({ params }: GlossaryPageProps) {
-  const { locale } = await params;
+  const { locale } = params;
   const t = await getTranslations({ locale, namespace: "Glossary" });
 
   const [terms, categories] = await Promise.all([

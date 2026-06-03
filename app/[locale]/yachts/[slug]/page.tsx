@@ -1,3 +1,4 @@
+import YachtDetailClient from "./YachtDetailClient";
 import type { Metadata } from "next";
 import { unstable_cache } from "next/cache";
 import { getTranslations } from "next-intl/server";
@@ -17,13 +18,10 @@ import { getYachtDetailData, getPrimaryImage } from "@/lib/yachts";
 import { getPriceSummary } from "@/lib/price-data";
 import { calculateCompletenessScore, shouldNoindex } from "@/lib/completeness";
 import { localePath } from "@/lib/i18n-paths";
-import YachtDetailClient from "./YachtDetailClient";import { getYachtParams } from "@/lib/static-params";
 
 
 // ISR: Revalidate yacht detail pages every hour
-export const revalidate = 3600;
 
-export async function generateStaticParams() { return getYachtParams(); }
 
 
 // Cache yacht detail data query with tag for invalidation
@@ -101,13 +99,13 @@ function generateOfferJsonLd(params: {
 }
 
 interface YachtDetailPageProps {
-  params: Promise<{ slug: string; locale: string }>;
+  params: { slug: string; locale: string };
 }
 
 export async function generateMetadata({
   params,
 }: YachtDetailPageProps): Promise<Metadata> {
-  const { slug, locale } = await params;
+  const { slug, locale } = params;
   const t = await getTranslations({ locale, namespace: "YachtDetail" });
   const data = await getYachtData(slug);
 
@@ -148,7 +146,7 @@ export async function generateMetadata({
 }
 
 export default async function YachtDetailPage({ params }: YachtDetailPageProps) {
-  const { slug, locale } = await params;
+  const { slug, locale } = params;
   const t = await getTranslations({ locale, namespace: "YachtDetail" });
   const data = await getYachtData(slug);
 

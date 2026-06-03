@@ -8,10 +8,10 @@ function parseId(id: string) {
 
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
 
-  const { id } = await params
+  const { id } = params
   const manufacturerId = parseId(id)
   if (!manufacturerId) {
     return NextResponse.json({ error: 'Invalid manufacturer id' }, { status: 400 })

@@ -16,12 +16,12 @@ const imageUploadSchema = {
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
 
   try {
     await ensureSchema()
-    const { id } = await params
+    const { id } = params
     const yachtId = parseInt(id, 10)
     
     if (isNaN(yachtId)) {
@@ -69,12 +69,12 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
 
   try {
     await ensureSchema()
-    const { id } = await params
+    const { id } = params
     const yachtId = parseInt(id, 10)
     
     if (isNaN(yachtId)) {
@@ -195,12 +195,12 @@ export async function POST(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
 
   try {
     await ensureSchema()
-    const { id } = await params
+    const { id } = params
     const yachtId = parseInt(id, 10)
     
     if (isNaN(yachtId)) {

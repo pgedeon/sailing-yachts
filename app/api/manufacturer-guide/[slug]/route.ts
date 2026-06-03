@@ -61,10 +61,10 @@ interface ManufacturerGuide {
 
 export async function GET(
   _request: Request,
-  { params }: { params: Promise<{ slug: string }> },
+  { params }: { params: { slug: string } },
 ) {
   try {
-    const { slug } = await params;
+    const { slug } = params;
     const manufacturer = await getManufacturerBySlug(slug);
 
     if (!manufacturer) {

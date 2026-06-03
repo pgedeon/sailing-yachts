@@ -7,7 +7,7 @@ import { shouldNoindexComparePage } from "@/lib/thin-page-governance";
 
 interface ComparePageParams {
   searchParams: Promise<{ ids?: string }>;
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
 }
 
 /**
@@ -40,10 +40,10 @@ export default async function ComparePage({
   params,
 }: {
   searchParams: Promise<{ ids?: string }>;
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
 }) {
   const { ids } = await searchParams;
-  const { locale } = await params;
+  const { locale } = params;
   const t = await getTranslations({ locale, namespace: "Compare" });
 
   const initialIds = ids

@@ -7,10 +7,10 @@ export const dynamic = "force-dynamic";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ slug: string }> },
+  { params }: { params: { slug: string } },
 ) {
   try {
-    const { slug } = await params;
+    const { slug } = params;
 
     // Fetch source yacht
     const sourceResult = await db

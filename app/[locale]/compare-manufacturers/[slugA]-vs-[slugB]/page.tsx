@@ -47,9 +47,9 @@ async function getCachedCompareData(slugA: string, slugB: string) {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<Record<string, string | undefined>>;
+  params: Record<string, string | undefined>;
 }): Promise<Metadata> {
-  const rawParams = await params;
+  const rawParams = params;
   const parsed = parseCompareParams(rawParams);
   if (!parsed) notFound();
 
@@ -97,16 +97,16 @@ export async function generateMetadata({
 export default async function ManufacturerComparePage({
   params,
 }: {
-  params: Promise<Record<string, string | undefined>>;
+  params: Record<string, string | undefined>;
 }) {
-  const rawParams = await params;
+  const rawParams = params;
   const parsed = parseCompareParams(rawParams);
   if (!parsed) notFound();
 
   const data = await getCachedCompareData(parsed.slugA, parsed.slugB);
   if (!data) notFound();
 
-  const locale = (await params).locale ?? "en";
+  const locale = params.locale ?? "en";
   const t = await getTranslations({ locale, namespace: "ManufacturerCompare" });
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd(

@@ -19,10 +19,10 @@ export const runtime = "edge";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ slug: string }> },
+  { params }: { params: { slug: string } },
 ) {
   try {
-    const { slug } = await params;
+    const { slug } = params;
 
     // Use unstable_cache for 5-minute stale-while-revalidate
     const data = unstable_cache(

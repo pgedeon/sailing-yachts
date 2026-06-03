@@ -9,11 +9,11 @@ export const dynamic = 'force-dynamic'
 export default async function AdminEditReviewPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }) {
   await requireAdmin()
 
-  const { id } = await params
+  const { id } = params
   let review: any = null
   let yachts: any[] = []
   let fetchError: string | null = null

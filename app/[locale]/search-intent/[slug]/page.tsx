@@ -1,3 +1,4 @@
+import { SHIMMER_BLUR } from "@/lib/image-utils";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -5,13 +6,10 @@ import { getTranslations } from "next-intl/server";
 import { getSearchIntentBySlug } from "@/lib/search-intents";
 import { generateBreadcrumbJsonLd, getSiteUrl, generateCollectionPageJsonLd, generateYachtJsonLd, buildLocaleAlternates , buildOgImageUrl } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths"
-import { SHIMMER_BLUR } from "@/lib/image-utils";import { getSearchIntentParams } from "@/lib/static-params";
 
 
 // ISR: Revalidate search intent pages every 6 hours
-export const revalidate = 21600;
 
-export async function generateStaticParams() { return getSearchIntentParams(); }
 
 // Use dynamicParams to allow any slug at runtime
 export const dynamicParams = true;
@@ -20,9 +18,9 @@ export const dynamicParams = true;
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string; locale: string }>;
+  params: { slug: string; locale: string };
 }): Promise<Metadata> {
-  const { slug, locale } = await params;
+  const { slug, locale } = params;
   const t = await getTranslations({ locale, namespace: "SearchIntent" });
   const { intent } = await getSearchIntentBySlug(slug);
 
@@ -72,9 +70,9 @@ export async function generateMetadata({
 export default async function SearchIntentPage({
   params,
 }: {
-  params: Promise<{ slug: string; locale: string }>;
+  params: { slug: string; locale: string };
 }) {
-  const { slug, locale } = await params;
+  const { slug, locale } = params;
   const t = await getTranslations({ locale, namespace: "SearchIntent" });
   const { intent, yachts, totalCount } = await getSearchIntentBySlug(slug);
 

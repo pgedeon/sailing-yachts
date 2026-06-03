@@ -1,3 +1,4 @@
+import { localePath } from "@/lib/i18n-paths";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -14,13 +15,10 @@ import {
   getPartnerOffersByManufacturerId,
 } from "@/lib/partner-offers";
 import { getManufacturerBySlug } from "@/lib/manufacturers";
-import { localePath } from "@/lib/i18n-paths";import { getPartnersParams } from "@/lib/static-params";
 
 
 // ISR: Revalidate partner pages every 6 hours
-export const revalidate = 21600;
 
-export async function generateStaticParams() { return getPartnersParams(); }
 
 
 // Cache partner offers query with tag for invalidation
@@ -40,13 +38,13 @@ async function getPartnerPageData(slug: string) {
 }
 
 interface PartnersPageProps {
-  params: Promise<{ slug: string; locale: string }>;
+  params: { slug: string; locale: string };
 }
 
 export async function generateMetadata({
   params,
 }: PartnersPageProps): Promise<Metadata> {
-  const { slug, locale } = await params;
+  const { slug, locale } = params;
   const t = await getTranslations({ locale, namespace: "Manufacturers" });
   const data = await getPartnerPageData(slug);
 
@@ -95,7 +93,7 @@ export async function generateMetadata({
 export default async function PartnersPage({
   params,
 }: PartnersPageProps) {
-  const { slug, locale } = await params;
+  const { slug, locale } = params;
   const t = await getTranslations({ locale, namespace: "Manufacturers" });
   const data = await getPartnerPageData(slug);
 

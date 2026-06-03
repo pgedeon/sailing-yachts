@@ -6,9 +6,9 @@ export const dynamic = "force-dynamic";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> },
+  { params }: { params: { slug: string } },
 ) {
-  const { slug } = await params;
+  const { slug } = params;
 
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {

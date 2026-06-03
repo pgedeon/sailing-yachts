@@ -43,13 +43,13 @@ const patchSchema = z.object({
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: { id: string } },
 ) {
   const cookieStore = cookies();
 
 
   try {
-    const { id } = await params;
+    const { id } = params;
     const correctionId = Number(id);
     if (Number.isNaN(correctionId)) {
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
@@ -81,13 +81,13 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: { id: string } },
 ) {
   const cookieStore = cookies();
 
 
   try {
-    const { id } = await params;
+    const { id } = params;
     const correctionId = Number(id);
     if (Number.isNaN(correctionId)) {
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
@@ -211,13 +211,13 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: { id: string } },
 ) {
   const cookieStore = cookies();
 
 
   try {
-    const { id } = await params;
+    const { id } = params;
     const correctionId = Number(id);
     if (Number.isNaN(correctionId)) {
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 });

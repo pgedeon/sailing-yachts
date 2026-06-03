@@ -5,9 +5,9 @@ import { db, yachtModels, manufacturers, images } from "@/lib/db";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
-  const { id } = await params;
+  const { id } = params;
   const manufacturerId = parseInt(id, 10);
 
   if (isNaN(manufacturerId)) {

@@ -18,9 +18,9 @@ const CHANNEL_INFO: Record<string, { title: string; description: string }> = {
 
 export async function GET(
   _request: Request,
-  { params }: { params: Promise<{ locale: string }> }
+  { params }: { params: { locale: string } }
 ) {
-  const { locale } = await params;
+  const { locale } = params;
   const articles = await getAllPublishedArticles();
   const siteUrl = getSiteUrl();
   const channelInfo = CHANNEL_INFO[locale] || CHANNEL_INFO.en;

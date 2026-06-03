@@ -86,10 +86,10 @@ async function fetchYachtById(yachtId: number) {
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
 
-  const { id } = await params
+  const { id } = params
   const yachtId = parseId(id)
   if (!yachtId) {
     return NextResponse.json({ error: 'Invalid yacht id' }, { status: 400 })
@@ -114,10 +114,10 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
 
-  const { id } = await params
+  const { id } = params
   const yachtId = parseId(id)
   if (!yachtId) {
     return NextResponse.json({ error: 'Invalid yacht id' }, { status: 400 })
@@ -232,10 +232,10 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
 
-  const { id } = await params
+  const { id } = params
   const yachtId = parseId(id)
   if (!yachtId) {
     return NextResponse.json({ error: 'Invalid yacht id' }, { status: 400 })

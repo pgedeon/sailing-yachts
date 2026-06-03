@@ -1,3 +1,4 @@
+import { SHIMMER_BLUR } from "@/lib/image-utils";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,13 +8,10 @@ import { getLandingPageYachts } from "@/lib/landing-pages";
 import { getLandingPageBySlug, getAllLandingPageSlugs } from "@/data/landing-pages";
 import { generateBreadcrumbJsonLd, getSiteUrl, generateCollectionPageJsonLd, generateYachtJsonLd, buildLocaleAlternates , buildOgImageUrl } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths"
-import { SHIMMER_BLUR } from "@/lib/image-utils";import { getBestParams } from "@/lib/static-params";
 
 
 // ISR: Revalidate landing pages every 6 hours
-export const revalidate = 21600;
 
-export async function generateStaticParams() { return getBestParams(); }
 
 
 // Generate static params for all defined landing pages
@@ -22,9 +20,9 @@ export async function generateStaticParams() { return getBestParams(); }
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string; locale: string }>;
+  params: { slug: string; locale: string };
 }): Promise<Metadata> {
-  const { slug, locale } = await params;
+  const { slug, locale } = params;
   const pageDefinition = getLandingPageBySlug(slug);
 
   if (!pageDefinition) {
@@ -65,9 +63,9 @@ export async function generateMetadata({
 export default async function LandingPage({
   params,
 }: {
-  params: Promise<{ slug: string; locale: string }>;
+  params: { slug: string; locale: string };
 }) {
-  const { slug, locale } = await params;
+  const { slug, locale } = params;
   const t = await getTranslations({ locale, namespace: "LandingPages" });
   const pageDefinition = getLandingPageBySlug(slug);
 

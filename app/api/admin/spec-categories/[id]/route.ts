@@ -21,10 +21,10 @@ function parseId(id: string) {
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
 
-  const { id } = await params
+  const { id } = params
   const categoryId = parseId(id)
   if (!categoryId) {
     return NextResponse.json({ error: 'Invalid category id' }, { status: 400 })
@@ -56,10 +56,10 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
 
-  const { id } = await params
+  const { id } = params
   const categoryId = parseId(id)
   if (!categoryId) {
     return NextResponse.json({ error: 'Invalid category id' }, { status: 400 })
@@ -116,10 +116,10 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
 
-  const { id } = await params
+  const { id } = params
   const categoryId = parseId(id)
   if (!categoryId) {
     return NextResponse.json({ error: 'Invalid category id' }, { status: 400 })

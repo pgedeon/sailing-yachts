@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 export default async function LocaleNotFound({
   params,
 }: {
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
 }) {
-  const { locale } = await params;
+  const { locale } = params;
   const t = await getTranslations({ locale, namespace: "NotFound" });
 
   const navLinks = [

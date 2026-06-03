@@ -73,12 +73,12 @@ async function getTopManufacturers() {
 }
 
 interface HomeProps {
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
 }
 
 // Generate metadata with live yacht count
 export async function generateMetadata({ params }: HomeProps) {
-  const { locale } = await params;
+  const { locale } = params;
   const t = await getTranslations({ locale, namespace: "Home" });
   const stats = await getSiteStats();
   const yachtPhrase = formatYachtPhrase(stats);
@@ -117,7 +117,7 @@ export async function generateMetadata({ params }: HomeProps) {
 }
 
 export default async function Home({ params }: HomeProps) {
-  const { locale } = await params;
+  const { locale } = params;
   const t = await getTranslations({ locale, namespace: "Home" });
 
   const [featuredYachts, topManufacturers, stats] = await Promise.all([

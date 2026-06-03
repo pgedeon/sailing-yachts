@@ -67,9 +67,9 @@ async function getFeedItems(locale: string) {
 
 export async function GET(
   _request: Request,
-  { params }: { params: Promise<{ locale: string }> }
+  { params }: { params: { locale: string } }
 ) {
-  const { locale } = await params;
+  const { locale } = params;
   const channelInfo = CHANNEL_INFO[locale] || CHANNEL_INFO.en;
   const items = await getFeedItems(locale);
 

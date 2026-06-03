@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -24,7 +25,6 @@ import { getSpotlightByManufacturerId } from "@/lib/manufacturer-spotlights";
 import { SIZE_CATEGORIES } from "@/lib/size-categories";
 import ManufacturerLogo from "@/components/manufacturer-logo";
 import { localePath } from "@/lib/i18n-paths";
-import dynamic from "next/dynamic";import { getManufacturerParams } from "@/lib/static-params";
 
 
 // Lazy-loaded for bundle optimization (P22.4)
@@ -33,9 +33,7 @@ const ManufacturerComparisons = dynamic(() => import("./ManufacturerComparisons"
 const ManufacturerFleetChart = dynamic(() => import("@/components/manufacturer-fleet-chart"), { ssr: false });
 
 // ISR: Revalidate manufacturer detail pages every hour
-export const revalidate = 3600;
 
-export async function generateStaticParams() { return getManufacturerParams(); }
 
 
 // Cache manufacturer data query with tag for invalidation
@@ -59,7 +57,7 @@ async function getManufacturerData(slug: string) {
 }
 
 interface ManufacturerPageProps {
-  params: Promise<{ slug: string; locale: string }>;
+  params: { slug: string; locale: string };
 }
 
 function formatNumber(value: number | null, suffix: string) {
@@ -73,7 +71,7 @@ function formatNumber(value: number | null, suffix: string) {
 export async function generateMetadata({
   params,
 }: ManufacturerPageProps): Promise<Metadata> {
-  const { slug, locale } = await params;
+  const { slug, locale } = params;
   const t = await getTranslations({ locale, namespace: "Manufacturers" });
   const data = await getManufacturerData(slug);
 
@@ -131,7 +129,7 @@ export async function generateMetadata({
 export default async function ManufacturerPage({
   params,
 }: ManufacturerPageProps) {
-  const { slug, locale } = await params;
+  const { slug, locale } = params;
   const t = await getTranslations({ locale, namespace: "Manufacturers" });
   const data = await getManufacturerData(slug);
 

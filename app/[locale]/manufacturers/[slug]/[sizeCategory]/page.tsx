@@ -1,3 +1,4 @@
+import { ManufacturerSizeClient } from "./ManufacturerSizeClient";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,13 +15,10 @@ import {
   buildOgImageUrl,
 } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths";
-import { ManufacturerSizeClient } from "./ManufacturerSizeClient";import { getManufacturerSizeParams } from "@/lib/static-params";
 
 
 // Revalidate every 60 minutes
-export const revalidate = 3600;
 
-export async function generateStaticParams() { return getManufacturerSizeParams(); }
 
 
 /**
@@ -40,9 +38,9 @@ function parseParams(
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<Record<string, string | undefined>>;
+  params: Record<string, string | undefined>;
 }): Promise<Metadata> {
-  const rawParams = await params;
+  const rawParams = params;
   const parsed = parseParams(rawParams);
   if (!parsed) notFound();
 
@@ -103,9 +101,9 @@ export async function generateMetadata({
 export default async function ManufacturerSizePage({
   params,
 }: {
-  params: Promise<Record<string, string | undefined>>;
+  params: Record<string, string | undefined>;
 }) {
-  const rawParams = await params;
+  const rawParams = params;
   const parsed = parseParams(rawParams);
   if (!parsed) notFound();
 

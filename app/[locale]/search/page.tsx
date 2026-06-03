@@ -6,7 +6,7 @@ import { shouldNoindexSearchPage } from "@/lib/thin-page-governance";
 import { getTranslations } from "next-intl/server";
 
 interface SearchPageProps {
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
 }
 
 /**
@@ -15,7 +15,7 @@ interface SearchPageProps {
  * but the base /search page itself can be indexed.
  */
 export async function generateMetadata({ params }: SearchPageProps): Promise<Metadata> {
-  const { locale } = await params;
+  const { locale } = params;
   const t = await getTranslations({ locale, namespace: "Search" });
 
   return {
@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: SearchPageProps): Promise<Met
 }
 
 export default async function SearchPage({ params }: SearchPageProps) {
-  const { locale } = await params;
+  const { locale } = params;
   const t = await getTranslations({ locale, namespace: "Search" });
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([

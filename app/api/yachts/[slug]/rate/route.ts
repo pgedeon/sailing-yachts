@@ -17,7 +17,7 @@ const RATE_LIMIT = { limit: 10, windowSeconds: 60 };
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> },
+  { params }: { params: { slug: string } },
 ) {
   try {
     const ip = getClientIp(request);
@@ -29,7 +29,7 @@ export async function POST(
       );
     }
 
-    const { slug } = await params;
+    const { slug } = params;
 
     // Parse body
     let body: { score?: unknown };

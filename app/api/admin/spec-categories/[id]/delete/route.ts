@@ -9,10 +9,10 @@ function parseId(id: string) {
 
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
 
-  const { id } = await params
+  const { id } = params
   const categoryId = parseId(id)
   if (!categoryId) {
     return NextResponse.json({ error: 'Invalid category id' }, { status: 400 })

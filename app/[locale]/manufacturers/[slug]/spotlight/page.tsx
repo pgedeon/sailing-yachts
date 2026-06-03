@@ -1,3 +1,4 @@
+import { localePath } from "@/lib/i18n-paths";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { unstable_cache } from "next/cache";
@@ -7,16 +8,13 @@ import { marked } from "marked";
 
 import { getSpotlightBySlug } from "@/lib/manufacturer-spotlights";
 import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
-import { localePath } from "@/lib/i18n-paths";import { getSpotlightParams } from "@/lib/static-params";
 
 
-export const revalidate = 3600;
 
-export async function generateStaticParams() { return getSpotlightParams(); }
 
 
 interface ManufacturerSpotlightPageProps {
-  params: Promise<{ slug: string; locale: string }>;
+  params: { slug: string; locale: string };
 }
 
 async function getSpotlightData(slug: string) {
@@ -62,7 +60,7 @@ function formatSlugLabel(slug: string) {
 export async function generateMetadata({
   params,
 }: ManufacturerSpotlightPageProps): Promise<Metadata> {
-  const { slug, locale } = await params;
+  const { slug, locale } = params;
   const t = await getTranslations({ locale, namespace: "Manufacturers" });
   const spotlight = await getSpotlightData(slug);
 
@@ -107,7 +105,7 @@ export async function generateMetadata({
 export default async function ManufacturerSpotlightPage({
   params,
 }: ManufacturerSpotlightPageProps) {
-  const { slug, locale } = await params;
+  const { slug, locale } = params;
   const t = await getTranslations({ locale, namespace: "Manufacturers" });
   const spotlight = await getSpotlightData(slug);
 

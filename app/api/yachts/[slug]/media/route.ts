@@ -30,11 +30,11 @@ function toNum(v: string | number | null | undefined): number | null {
 /** GET /api/yachts/[slug]/media — public media assets for a yacht */
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ slug: string }> },
+  { params }: { params: { slug: string } },
 ) {
   try {
     await ensureSchema()
-    const { slug } = await params
+    const { slug } = params
 
     // Resolve yacht id from slug
     const yachtResult = await pool.query(

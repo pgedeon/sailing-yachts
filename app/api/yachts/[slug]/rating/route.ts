@@ -12,10 +12,10 @@ export const dynamic = "force-dynamic";
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> },
+  { params }: { params: { slug: string } },
 ) {
   try {
-    const { slug } = await params;
+    const { slug } = params;
 
     // Find yacht by slug
     const yachtRows = await db

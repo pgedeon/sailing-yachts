@@ -19,21 +19,15 @@ import {
 import { localePath } from "@/lib/i18n-paths";
 import { BestYearSizeClient } from "./BestYearSizeClient";
 
-// ISR: revalidate editorial pages every 6 hours
-export const revalidate = 21600;
 
-import { getBestYearSizeParams } from "@/lib/static-params";
 
-export async function generateStaticParams() {
-  return getBestYearSizeParams();
-}
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<Record<string, string | undefined>>;
+  params: Record<string, string | undefined>;
 }): Promise<Metadata> {
-  const rawParams = await params;
+  const rawParams = params;
   const yearStr = rawParams.year;
   const sizeCategoryStr = rawParams.sizeCategory;
   if (!yearStr || !sizeCategoryStr) notFound();
@@ -97,9 +91,9 @@ export async function generateMetadata({
 export default async function BestYearSizePage({
   params,
 }: {
-  params: Promise<Record<string, string | undefined>>;
+  params: Record<string, string | undefined>;
 }) {
-  const rawParams = await params;
+  const rawParams = params;
   const yearStr = rawParams.year;
   const sizeCategoryStr = rawParams.sizeCategory;
   if (!yearStr || !sizeCategoryStr) notFound();

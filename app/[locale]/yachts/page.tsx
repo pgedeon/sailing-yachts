@@ -11,7 +11,7 @@ import { getTranslations } from "next-intl/server";
 export const revalidate = 3600;
 
 interface YachtsPageParams {
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
   searchParams: Promise<{
     page?: string;
     'filters[manufacturers]'?: string[];
@@ -32,7 +32,7 @@ interface YachtsPageParams {
  * Implements thin-page governance with canonical URLs and noindex rules.
  */
 export async function generateMetadata({ params, searchParams }: YachtsPageParams): Promise<Metadata> {
-  const { locale } = await params;
+  const { locale } = params;
   const sp = await searchParams;
   const t = await getTranslations({ locale, namespace: "Yachts" });
 
@@ -81,7 +81,7 @@ export async function generateMetadata({ params, searchParams }: YachtsPageParam
 }
 
 export default async function YachtsPage({ params, searchParams }: YachtsPageParams) {
-  const { locale } = await params;
+  const { locale } = params;
   const t = await getTranslations({ locale, namespace: "Yachts" });
 
   // Fetch default listing data server-side for SEO
