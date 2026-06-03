@@ -181,6 +181,8 @@ export function CompareClient({ initialIds }: CompareClientProps) {
   const [saveName, setSaveName] = useState('');
   const [showSaveInput, setShowSaveInput] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [sharing, setSharing] = useState(false);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [savedPanelOpen, setSavedPanelOpen] = useState(false);
 
   // Load saved comparisons from localStorage on mount
@@ -215,21 +217,55 @@ export function CompareClient({ initialIds }: CompareClientProps) {
   };
 
   const handleCopyLink = async () => {
-    const url = getShareUrl(selectedIds);
+    if (shareUrl) {
+      // Already have a share URL, just copy it
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch {
+        const input = document.createElement('input');
+        input.value = shareUrl;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+      return;
+    }
+
+    setSharing(true);
     try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Fallback
-      const input = document.createElement('input');
-      input.value = url;
-      document.body.appendChild(input);
-      input.select();
-      document.execCommand('copy');
-      document.body.removeChild(input);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      const res = await fetch('/api/compare/share', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ yachtIds: selectedIds }),
+      });
+      if (!res.ok) throw new Error('Failed to create share link');
+      const data = await res.json();
+      const url = new URL(window.location.origin + data.url);
+      const fullUrl = url.toString();
+      setShareUrl(fullUrl);
+      try {
+        await navigator.clipboard.writeText(fullUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch {
+        const input = document.createElement('input');
+        input.value = fullUrl;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch (err) {
+      console.error('Failed to share:', err);
+    } finally {
+      setSharing(false);
     }
   };
 
@@ -310,6 +346,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
       return next;
     });
     lastFetchKey.current = '';
+    setShareUrl(null);
   };
 
   const removeYacht = (id: number) => {
@@ -438,10 +475,16 @@ export function CompareClient({ initialIds }: CompareClientProps) {
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors"
+              disabled={sharing}
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border border-gray-300 bg-white hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Copy share link"
             >
-              {copied ? (
+              {sharing ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+                  <span>{t("sharedComparison.creating")}</span>
+                </>
+              ) : copied ? (
                 <>
                   <svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -551,9 +594,19 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                     </div>
                   </button>
                   <button
-                    onClick={() => {
-                      const url = getShareUrl(sc.yachtIds);
-                      navigator.clipboard.writeText(url);
+                    onClick={async () => {
+                      try {
+                        const res = await fetch('/api/compare/share', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ yachtIds: sc.yachtIds }),
+                        });
+                        if (res.ok) {
+                          const data = await res.json();
+                          const url = window.location.origin + data.url;
+                          await navigator.clipboard.writeText(url);
+                        }
+                      } catch {}
                     }}
                     className="text-gray-300 hover:text-blue-500 transition-colors p-1"
                     title="Copy share link"
