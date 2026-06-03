@@ -973,3 +973,33 @@ export const insertEnrichmentSourceSchema = createInsertSchema(enrichmentSources
 export const selectEnrichmentSourceSchema = createSelectSchema(enrichmentSources);
 export const insertEnrichmentLogSchema = createInsertSchema(enrichmentLogs);
 export const selectEnrichmentLogSchema = createSelectSchema(enrichmentLogs);
+
+// P23.1: Yacht ratings (user-submitted star ratings)
+export const yachtRatings = pgTable(
+  "yacht_ratings",
+  {
+    id: serial("id").primaryKey(),
+    yachtModelId: integer("yacht_model_id")
+      .notNull()
+      .references(() => yachtModels.id, { onDelete: "cascade" }),
+    userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
+    score: integer("score").notNull(), // 1-5
+    ipAddress: varchar("ip_address", { length: 45 }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  },
+  (table) => ({
+    idxYacht: index("idx_yacht_ratings_yacht").on(table.yachtModelId),
+    idxUser: index("idx_yacht_ratings_user").on(table.userId),
+    uniqUserYacht: uniqueIndex("uniq_yacht_ratings_user_yacht").on(
+      table.yachtModelId,
+      table.userId,
+    ).where(sql`${table.userId} IS NOT NULL`),
+    uniqIpYacht: uniqueIndex("uniq_yacht_ratings_ip_yacht").on(
+      table.yachtModelId,
+      table.ipAddress,
+    ).where(sql`${table.ipAddress} IS NOT NULL AND ${table.userId} IS NULL`),
+  }),
+);
+
+export const insertYachtRatingSchema = createInsertSchema(yachtRatings);
+export const selectYachtRatingSchema = createSelectSchema(yachtRatings);
