@@ -9,9 +9,11 @@ export const dynamic = "force-dynamic";
 
 /**
  * GET /api/yachts/[slug]/rating — Get rating stats for a yacht.
+ *
+ * Returns: { average, count, distribution, userRating? }
  */
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: { slug: string } },
 ) {
   try {
@@ -28,8 +30,17 @@ export async function GET(
       return NextResponse.json({ error: "Yacht not found" }, { status: 404 });
     }
 
-    const stats = await getRatingStats(yachtRows[0].id);
-    return NextResponse.json(stats);
+    const yachtId = yachtRows[0].id;
+    const stats = await getRatingStats(yachtId);
+
+    // Also check if this IP has already rated
+    const ip = getClientIp(request);
+    const userRating = await getUserRating(yachtId, null, ip);
+
+    return NextResponse.json({
+      ...stats,
+      userRating,
+    });
   } catch (error) {
     console.error("Error fetching rating stats:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
