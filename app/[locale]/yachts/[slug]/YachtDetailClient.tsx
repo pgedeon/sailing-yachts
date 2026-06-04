@@ -28,6 +28,10 @@ const SocialShareButtons = dynamic(() => import("@/components/SocialShareButtons
   ssr: false,
   loading: () => <div className="h-8 w-32 animate-pulse bg-muted rounded" />,
 });
+const EmailYachtButton = dynamic(() => import("@/components/EmailYachtButton").then((m) => ({ default: m.EmailYachtButton })), {
+  ssr: false,
+  loading: () => <div className="h-8 w-24 animate-pulse bg-muted rounded" />,
+});
 const MediaGallery = dynamic(() => import("@/components/MediaGallery").then(m => ({ default: m.default })), {
   ssr: false,
   loading: () => <div className="h-64 animate-pulse bg-muted rounded-lg" />,
@@ -431,6 +435,11 @@ export default function YachtDetailClient() {
             url={pageUrl}
             title={pageTitle}
             description={yacht.description || undefined}
+          />
+          <EmailYachtButton
+            yachtSlug={slug}
+            yachtName={`${yacht.manufacturer} ${yacht.modelName}`}
+            className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium border border-border rounded-lg hover:bg-muted transition-colors"
           />
           <button
             onClick={handlePrint}
