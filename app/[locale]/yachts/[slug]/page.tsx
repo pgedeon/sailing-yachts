@@ -16,6 +16,7 @@ import {
 } from "@/lib/seo";
 import { getYachtDetailData, getPrimaryImage } from "@/lib/yachts";
 import { getPriceSummary } from "@/lib/price-data";
+import { getRatingStats } from "@/lib/rating-service";
 import { calculateCompletenessScore, shouldNoindex } from "@/lib/completeness";
 import { localePath } from "@/lib/i18n-paths";
 
@@ -267,6 +268,28 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
     // Price data unavailable — skip offer schema silently
   }
 
+  // P23.1: Fetch user star rating stats for AggregateRating JSON-LD
+  let userRatingJsonLd: Record<string, unknown> | null = null;
+  try {
+    const ratingStats = await getRatingStats(data.yacht.id);
+    if (ratingStats.count > 0) {
+      userRatingJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "AggregateRating",
+        itemReviewed: {
+          "@type": "Product",
+          name: `${manufacturerName} ${yachtData.modelName}`,
+        },
+        ratingValue: ratingStats.average,
+        reviewCount: ratingStats.count,
+        bestRating: 5,
+        worstRating: 1,
+      };
+    }
+  } catch {
+    // Rating data unavailable — skip silently
+  }
+
   return (
     <>
       <script
@@ -293,6 +316,12 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(offerJsonLd) }}
+        />
+      )}
+      {userRatingJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(userRatingJsonLd) }}
         />
       )}
       {mediaJsonLdItems.length > 0 && mediaJsonLdItems.map((item, idx) => (

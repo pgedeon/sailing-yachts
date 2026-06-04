@@ -223,6 +223,8 @@ export default function YachtDetailClient() {
     const sections: { id: string; label: string }[] = [];
     // Quick Facts always first
     sections.push({ id: "quick-facts", label: t("toc.quickFacts") });
+    // Ratings (always shown)
+    sections.push({ id: "ratings", label: t("toc.ratings") });
     // Specs
     if (Object.keys(yacht.specsByGroup).length > 0) {
       sections.push({ id: "specifications", label: t("toc.specifications") });
@@ -572,16 +574,9 @@ export default function YachtDetailClient() {
             </div>
           </div>
 
-
           {/* P23.1: Rating Widget */}
           <div id="ratings" className="mb-6 border-b pb-6 no-print">
-            <YachtRatingWidget
-              slug={yacht.slug}
-              initialAverage={0}
-              initialCount={0}
-              initialDistribution={{1:0,2:0,3:0,4:0,5:0}}
-              userRating={null}
-            />
+            <YachtRatingWidget slug={yacht.slug} />
           </div>
           {/* Quick Facts Summary */}
           <div id="quick-facts">
