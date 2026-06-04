@@ -1315,5 +1315,25 @@
     "submitError": "Échec de l'envoi de la note",
     "distribution": "Répartition des notes",
     "thanksForRating": "Merci pour votre note !"
+  },
+  "EmailYacht": {
+    "button": "Envoyer par email",
+    "dialogTitle": "Envoyer les détails du voilier par email",
+    "recipientLabel": "Email du destinataire",
+    "recipientPlaceholder": "ami@exemple.com",
+    "recipientRequired": "Veuillez entrer une adresse email valide",
+    "senderLabel": "Votre nom",
+    "senderPlaceholder": "Votre nom (facultatif)",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Ajoutez une note personnelle (facultatif)",
+    "sendButton": "Envoyer",
+    "sending": "Envoi en cours...",
+    "successTitle": "Email envoyé !",
+    "successMessage": "Les détails du voilier ont été envoyés à {email}",
+    "errorTitle": "Impossible d'envoyer l'email",
+    "errorMessage": "Veuillez réessayer plus tard.",
+    "rateLimitError": "Trop d'emails envoyés. Veuillez patienter avant d'en envoyer un autre.",
+    "subject": "{sender} vous recommande le {manufacturer} {model}",
+    "subjectNoSender": "Découvrez le {manufacturer} {model}"
   }
 }

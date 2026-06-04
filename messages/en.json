@@ -1315,5 +1315,25 @@
     "submitError": "Failed to submit rating",
     "distribution": "Rating distribution",
     "thanksForRating": "Thanks for rating!"
+  },
+  "EmailYacht": {
+    "button": "Email this yacht",
+    "dialogTitle": "Send yacht details by email",
+    "recipientLabel": "Recipient email",
+    "recipientPlaceholder": "friend@example.com",
+    "recipientRequired": "Please enter a valid email address",
+    "senderLabel": "Your name",
+    "senderPlaceholder": "Your name (optional)",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Add a personal note (optional)",
+    "sendButton": "Send",
+    "sending": "Sending...",
+    "successTitle": "Email sent!",
+    "successMessage": "Yacht details have been sent to {email}",
+    "errorTitle": "Could not send email",
+    "errorMessage": "Please try again later.",
+    "rateLimitError": "Too many emails sent. Please wait before sending another.",
+    "subject": "{sender} recommends the {manufacturer} {model}",
+    "subjectNoSender": "Check out the {manufacturer} {model}"
   }
 }
