@@ -1,58 +1,49 @@
 # Sailing Yachts Session Summary
 
 ## Issue Worked On
-#375 (P23.1: Yacht rating system with star ratings)
+#379 (P23.1: Yacht rating system with star ratings)
 
 ## What Was Implemented
-- Complete 5-star rating system for yacht detail pages
-- Database schema: `yacht_ratings` table with unique constraints per user/IP
-- **StarRatingInput** component: Interactive 5-star rating with visual feedback
-- **StarRatingDisplay** component: Read-only rating display for cards/detail pages  
-- **RatingDistribution** component: Bar chart showing 1-5 star distribution
-- **YachtRatingWidget** component: Main widget combining all rating functionality
-- API endpoints:
-  - GET `/api/yachts/[slug]/rating` - Fetch rating stats (average, count, distribution)
-  - POST `/api/yachts/[slug]/rate` - Submit rating (rate limited to 10/min)
-- Integration: Rating widget added to yacht detail pages below hero section
-- Rate limiting: 10 submissions per minute per IP address
-- Anonymous rating tracking: Duplicate ratings per user/IP prevented
-- i18n support: English and French translations for all rating text
-- 4 unit tests covering rating calculation logic
+- **YachtRatingWidget**: Rewired to fetch live rating data from `/api/yachts/[slug]/rating` on mount (was previously rendered with hardcoded zeros)
+- **Simplified props**: Widget now only needs `slug` prop — removed `initialAverage`, `initialCount`, `initialDistribution`, `userRating` props
+- **GET /api/yachts/[slug]/rating**: Now returns `userRating` based on IP lookup so returning users see their previous rating
+- **JSON-LD**: Added `AggregateRating` structured data for user star ratings on yacht detail pages (separate from expert review ratings)
+- **TOC**: Added 'Ratings' section to the table of contents
+- **i18n**: Added TOC key for ratings in both English and French
+- **Tests**: Expanded test suite from 4 to 13 tests covering calculation, validation, and widget state
 
 ## Build/Test Results
 - ✅ TypeScript check passed
 - ✅ Build passed successfully
-- ✅ Unit tests passed (rating calculation logic)
-- ✅ Linting passed
-- ✅ Performance budgets passed
+- ✅ 13 unit tests passed (rating calculation, score validation, widget state)
 
 ## Deploy Status
-- ✅ PR merged (https://github.com/pgedeon/sailing-yachts/pull/376)
-- ⏳ Production deployment pending on Vercel (last seen as "deploying")
+- ✅ PR merged (https://github.com/pgedeon/sailing-yachts/pull/380)
+- ✅ Manual Vercel deploy triggered
+- ✅ Production deployment verified at https://info.sailboats.fr
 
 ## Live Verification Results
-- ✅ Critical pages load without errors (/, /yachts, /search, /compare)
-- ✅ API returns valid data (confirmed 243 yachts available)
-- ✅ Rating API endpoints working correctly:
-  - GET `/api/yachts/[slug]/rating` returns proper stats structure
-  - POST `/api/yachts/[slug]/rate` accepts and processes submissions
-- ✅ Unique constraints working (prevents duplicate ratings)
-- ⏳ Full UI verification pending (production deploy in progress)
+- ✅ Critical pages load (/, /yachts, /search, /compare)
+- ✅ API returns valid data (243 yachts)
+- ✅ GET /api/yachts/[slug]/rating returns correct stats with distribution
+- ✅ POST /api/yachts/[slug]/rate validates and records ratings
+- ✅ Invalid scores (6, 0, non-integer) correctly rejected with 400 error
+- ✅ Yacht detail page renders rating widget showing live data ("5.0 · 1 rating")
+- ✅ Interactive star buttons render correctly (5 clickable star radio buttons)
+- ✅ Browser console shows no application errors
+- ✅ No "Application error" text on any page
 
 ## Issues Found and Fixed
-- Initial Vercel deployment failed due to missing environment variables (NEXTAUTH_SECRET, DATABASE_URL) - not related to our code changes
-- Test mocking complexity - simplified to focus on core rating calculation logic
-- Component import ordering issue in YachtDetailClient - resolved by placing dynamic imports correctly
+- None post-deploy
 
 ## Next Recommended Task
-- Complete pending Vercel deployment verification
-- Next in roadmap: P23.2 - Comparison sharing with persistent URLs
-- Potential enhancement: Add ratings to yacht listing cards (would require batch API for all yachts)
+- **P23.3 — "Email this yacht" feature** — Send yacht details via email to a friend
+- Or **P23.4 — Embeddable yacht comparison widget** — JavaScript embed for external sites
+- Or **P23.5 — Yacht of the week / featured rotation** — Admin-configurable featured yacht on homepage
 
 ## Technical Notes
-- Uses Next.js dynamic imports for client-side components
-- Drizzle ORM with Neon PostgreSQL database
-- Integrated with existing auth/user system (optional userId)
-- Follows existing i18n pattern for translations
-- Component design focused on reusability across pages
-- Rate limiting implemented at API level to prevent abuse
+- The rating widget was already partially implemented (schema, API routes, service, components) but never wired up to fetch actual data
+- The widget now uses `useEffect` to fetch rating data on mount with abort controller for cleanup
+- User's existing rating is looked up by IP for anonymous users (the `userRating` field in GET response)
+- The AggregateRating JSON-LD uses `bestRating: 5` (vs expert reviews which use `bestRating: 10`)
+- Note: Vercel auto-deploy did not trigger from squash merge — manual deploy was needed
