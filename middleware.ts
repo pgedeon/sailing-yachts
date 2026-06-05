@@ -17,7 +17,7 @@ const intlMiddleware = createMiddleware({
  * - All other routes set X-Frame-Options: DENY
  */
 function getSecurityHeaders(pathname: string): Record<string, string> {
-  const isEmbed = pathname.startsWith('/embed/')
+  const isEmbed = pathname === '/embed' || pathname.startsWith('/embed/')
 
   // Content-Security-Policy directives
   const cspDirectives = [
@@ -82,7 +82,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // ── Embed routes: allow framing for embeds ──
-  if (pathname.startsWith('/embed/')) {
+  if (pathname === '/embed' || pathname.startsWith('/embed/')) {
     const response = NextResponse.next()
     return addSecurityHeaders(response, pathname)
   }
