@@ -4,6 +4,9 @@ import EmbedCompareClient from "./EmbedCompareClient";
 
 export const dynamic = "force-dynamic";
 
+type LayoutMode = "full" | "compact";
+type ThemeMode = "light" | "dark" | "auto";
+
 interface YachtRow {
   id: number;
   model_name: string;
@@ -67,7 +70,7 @@ interface YachtDTO {
   priceTier: ReturnType<typeof calculatePriceTier>;
 }
 
-const SPEC_FIELDS: { group: string; fields: { key: keyof YachtDTO; label: string; unit?: string }[] }[] = [
+const SPEC_FIELDS_FULL: { group: string; fields: { key: keyof YachtDTO; label: string; unit?: string }[] }[] = [
   {
     group: "Dimensions",
     fields: [
@@ -112,14 +115,35 @@ const SPEC_FIELDS: { group: string; fields: { key: keyof YachtDTO; label: string
   },
 ];
 
+const SPEC_FIELDS_COMPACT: { group: string; fields: { key: keyof YachtDTO; label: string; unit?: string }[] }[] = [
+  {
+    group: "Key Specs",
+    fields: [
+      { key: "lengthOverall", label: "LOA", unit: "m" },
+      { key: "beam", label: "Beam", unit: "m" },
+      { key: "draft", label: "Draft", unit: "m" },
+      { key: "displacement", label: "Displacement", unit: "kg" },
+      { key: "cabins", label: "Cabins" },
+      { key: "berths", label: "Berths" },
+    ],
+  },
+];
+
 export default async function EmbedComparePage({
   searchParams,
 }: {
-  searchParams: Promise<{ ids?: string }>;
+  searchParams: Promise<{ ids?: string; layout?: string; theme?: string }>;
 }) {
   const params = await searchParams;
   const idsParam = params.ids;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://info.sailboats.fr";
+
+  // Parse layout mode
+  const layout: LayoutMode = params.layout === "compact" ? "compact" : "full";
+
+  // Parse theme
+  const theme: ThemeMode =
+    params.theme === "dark" ? "dark" : params.theme === "light" ? "light" : "auto";
 
   if (!idsParam) {
     return (
@@ -127,6 +151,9 @@ export default async function EmbedComparePage({
         <p className="text-lg font-medium">No yachts selected</p>
         <p className="text-sm mt-1">
           Usage: <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs">/embed/compare?ids=26,27</code>
+        </p>
+        <p className="text-xs mt-1 text-gray-400">
+          Options: <code>layout=compact|full</code>, <code>theme=light|dark|auto</code>
         </p>
       </div>
     );
@@ -170,32 +197,33 @@ export default async function EmbedComparePage({
     );
   }
 
-  // Fetch spec values
-  const specResult = await pool.query(
-    `SELECT sv.yacht_model_id, sv.value_text, sv.value_numeric,
-       sc.name AS category_name, sc.category_group, sc.unit
-     FROM spec_values sv
-     JOIN spec_categories sc ON sv.spec_category_id = sc.id
-     WHERE sv.yacht_model_id IN (${placeholders})
-     ORDER BY sc.category_group, sc.name`,
-    ids
-  );
-  const specRows = specResult.rows as SpecValue[];
+  // Only fetch spec values for full layout
+  let specsMap: Record<number, Record<string, { name: string; value: string; unit: string | null }[]>> = {};
+  if (layout === "full") {
+    const specResult = await pool.query(
+      `SELECT sv.yacht_model_id, sv.value_text, sv.value_numeric,
+         sc.name AS category_name, sc.category_group, sc.unit
+       FROM spec_values sv
+       JOIN spec_categories sc ON sv.spec_category_id = sc.id
+       WHERE sv.yacht_model_id IN (${placeholders})
+       ORDER BY sc.category_group, sc.name`,
+      ids
+    );
+    const specRows = specResult.rows as SpecValue[];
 
-  // Build specsByGroup per yacht
-  const specsMap: Record<number, Record<string, { name: string; value: string; unit: string | null }[]>> = {};
-  for (const sr of specRows) {
-    const yid = sr.yacht_model_id;
-    if (!specsMap[yid]) specsMap[yid] = {};
-    const group = sr.category_group || "Other";
-    if (!specsMap[yid][group]) specsMap[yid][group] = [];
-    let value = "—";
-    if (sr.value_numeric !== null) {
-      value = Number(sr.value_numeric).toLocaleString(undefined, { maximumFractionDigits: 2 });
-    } else if (sr.value_text) {
-      value = sr.value_text;
+    for (const sr of specRows) {
+      const yid = sr.yacht_model_id;
+      if (!specsMap[yid]) specsMap[yid] = {};
+      const group = sr.category_group || "Other";
+      if (!specsMap[yid][group]) specsMap[yid][group] = [];
+      let value = "—";
+      if (sr.value_numeric !== null) {
+        value = Number(sr.value_numeric).toLocaleString(undefined, { maximumFractionDigits: 2 });
+      } else if (sr.value_text) {
+        value = sr.value_text;
+      }
+      specsMap[yid][group].push({ name: sr.category_name, value, unit: sr.unit });
     }
-    specsMap[yid][group].push({ name: sr.category_name, value, unit: sr.unit });
   }
 
   // Map to DTO
@@ -235,7 +263,15 @@ export default async function EmbedComparePage({
     }),
   }));
 
+  const specFields = layout === "compact" ? SPEC_FIELDS_COMPACT : SPEC_FIELDS_FULL;
+
   return (
-    <EmbedCompareClient yachts={yachts} specFields={SPEC_FIELDS} siteUrl={siteUrl} />
+    <EmbedCompareClient
+      yachts={yachts}
+      specFields={specFields}
+      siteUrl={siteUrl}
+      layout={layout}
+      theme={theme}
+    />
   );
 }
