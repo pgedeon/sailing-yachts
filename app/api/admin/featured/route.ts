@@ -8,6 +8,8 @@ import {
   markNewsletterSent,
 } from "@/lib/featured-yacht-service";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   try {
     await ensureSchema();

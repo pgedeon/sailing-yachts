@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getActiveFeaturedYacht, getRecentFeaturedYachts } from "@/lib/featured-yacht-service";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const [active, recent] = await Promise.all([
