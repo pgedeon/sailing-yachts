@@ -1335,5 +1335,32 @@
     "rateLimitError": "Trop d'emails envoyés. Veuillez patienter avant d'en envoyer un autre.",
     "subject": "{sender} vous recommande le {manufacturer} {model}",
     "subjectNoSender": "Découvrez le {manufacturer} {model}"
+  },
+  "FeaturedYacht": {
+    "title": "Voilier de la Semaine",
+    "weekLabel": "LE CHOIX DE LA SEMAINE",
+    "defaultHeadline": "{manufacturer} {model}",
+    "viewFullSpecs": "Voir les caractéristiques",
+    "seeAllFeatured": "Voir tous les voiliers vedettes",
+    "cabins": "Cabines",
+    "berths": "Couchages",
+    "pageTitle": "Voilier de la Semaine",
+    "pageDescription": "Découvrez notre voilier vedette de la semaine. Chaque semaine, nous mettons en avant un voilier remarquable avec des spécifications détaillées, des analyses éditoriales et des recommandations d'experts.",
+    "thisWeeksPick": "Le choix de la semaine",
+    "compareWithOthers": "Comparer avec d'autres",
+    "noFeaturedYet": "Pas encore de voilier vedette",
+    "checkBackSoon": "Revenez bientôt pour découvrir notre prochain voilier vedette !",
+    "browseAllYachts": "Parcourir tous les voiliers",
+    "previousFeatures": "Précédemment mis en avant",
+    "neverMissTitle": "Ne manquez aucun voilier vedette",
+    "neverMissDescription": "Abonnez-vous à notre newsletter et recevez le voilier de la semaine directement dans votre boîte mail.",
+    "specLabels": {
+      "loa": "Longueur hors tout",
+      "beam": "Bau",
+      "draft": "Tirant d'eau",
+      "displacement": "Déplacement",
+      "cabins": "Cabines",
+      "berths": "Couchages"
+    }
   }
 }
