@@ -83,7 +83,7 @@
 - **P23.1 — Yacht rating system with star ratings** *(completed 2026-06-04 — Issue #379, PR #380, 13 tests)* — 5-star rating widget with live data fetching, distribution chart, JSON-LD AggregateRating, i18n.
 - **P23.2 — Comparison sharing with persistent URLs** *(completed 2026-06-03 — Issue #377, PR #378, 19 tests)* — Generate shareable comparison URLs (e.g., /compare/beneteau-oceanis-40-1-vs-bavaria-c42). Save comparison configurations server-side. OG images for shared comparisons. Social meta tags for comparison pages.
 - **P23.3 — "Email this yacht" feature** *(completed 2026-06-04 — Issue #381, PR #382, 45 tests)* — Send yacht details via email to a friend. Simple form with recipient email, optional message. Server-side email template with yacht specs and image. Rate-limited to prevent abuse.
-- **P23.4 — Embeddable yacht comparison widget** — JavaScript embed widget for external sites (blogs, forums). Configurable yacht selection, compact vs full layout. Generated at /embed/compare with iframe support. CDN-optimized, minimal footprint.
+- **P23.4 — Embeddable yacht comparison widget** *(completed 2026-06-05 — Issue #383, PR #384, 29 tests)* — Configurator page at /embed with yacht search/selection. Compact (6 specs) and full (17+ specs) layouts. Light/dark/auto themes. Copy-paste embed code (iframe + JS auto-resize). PostMessage auto-resize protocol. Frame-ancestors CSP allows third-party embedding.
 - **P23.5 — Yacht of the week / featured rotation** — Admin-configurable featured yacht shown on homepage. Weekly rotation with manual override. Newsletter integration to announce featured yacht. Landing page at /yacht-of-the-week.
 
 ### Phase 24 — Advanced Analytics & Intelligence (Priority: Medium) — 🔲 PLANNED
