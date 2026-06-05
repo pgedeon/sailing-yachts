@@ -1335,5 +1335,32 @@
     "rateLimitError": "Too many emails sent. Please wait before sending another.",
     "subject": "{sender} recommends the {manufacturer} {model}",
     "subjectNoSender": "Check out the {manufacturer} {model}"
+  },
+  "FeaturedYacht": {
+    "title": "Yacht of the Week",
+    "weekLabel": "THIS WEEK'S PICK",
+    "defaultHeadline": "{manufacturer} {model}",
+    "viewFullSpecs": "View Full Specs",
+    "seeAllFeatured": "See All Featured",
+    "cabins": "Cabins",
+    "berths": "Berths",
+    "pageTitle": "Yacht of the Week",
+    "pageDescription": "Discover our handpicked sailing yacht of the week. Every week we feature a standout sailboat with detailed specs, editorial insights, and expert recommendations.",
+    "thisWeeksPick": "This Week's Pick",
+    "compareWithOthers": "Compare with Others",
+    "noFeaturedYet": "No Featured Yacht Yet",
+    "checkBackSoon": "Check back soon for our next featured yacht!",
+    "browseAllYachts": "Browse All Yachts",
+    "previousFeatures": "Previously Featured",
+    "neverMissTitle": "Never Miss a Featured Yacht",
+    "neverMissDescription": "Subscribe to our newsletter and get the yacht of the week delivered to your inbox.",
+    "specLabels": {
+      "loa": "Length Overall",
+      "beam": "Beam",
+      "draft": "Draft",
+      "displacement": "Displacement",
+      "cabins": "Cabins",
+      "berths": "Berths"
+    }
   }
 }

@@ -156,6 +156,17 @@ export default async function AdminPage() {
                 Manage Descriptions
               </a>
             </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">Featured Yachts</h2>
+              <p className="text-gray-600 mb-4">Manage yacht of the week selections, schedule weekly features, and track newsletter sends.</p>
+              <a
+                href="/admin/featured"
+                className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
+              >
+                Manage Featured
+              </a>
+            </div>
           </div>
         </div>
       </div>

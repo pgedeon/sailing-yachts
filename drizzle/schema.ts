@@ -1023,3 +1023,32 @@ export const sharedComparisons = pgTable(
 
 export const insertSharedComparisonSchema = createInsertSchema(sharedComparisons);
 export const selectSharedComparisonSchema = createSelectSchema(sharedComparisons);
+
+// P23.5: Featured yachts (Yacht of the Week)
+export const featuredYachts = pgTable(
+  "featured_yachts",
+  {
+    id: serial("id").primaryKey(),
+    yachtModelId: integer("yacht_model_id")
+      .notNull()
+      .references(() => yachtModels.id, { onDelete: "cascade" }),
+    weekStart: timestamp("week_start", { withTimezone: true }).notNull(),
+    weekEnd: timestamp("week_end", { withTimezone: true }).notNull(),
+    headline: varchar("headline", { length: 500 }),
+    editorialText: text("editorial_text"),
+    newsletterSent: boolean("newsletter_sent").notNull().default(false),
+    isManualOverride: boolean("is_manual_override").notNull().default(false),
+    isActive: boolean("is_active").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxYacht: index("idx_featured_yachts_yacht").on(table.yachtModelId),
+    idxWeekStart: index("idx_featured_yachts_week_start").on(table.weekStart),
+    idxWeekEnd: index("idx_featured_yachts_week_end").on(table.weekEnd),
+    idxActive: index("idx_featured_yachts_active").on(table.isActive),
+  }),
+);
+
+export const insertFeaturedYachtSchema = createInsertSchema(featuredYachts);
+export const selectFeaturedYachtSchema = createSelectSchema(featuredYachts);

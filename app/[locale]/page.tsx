@@ -3,6 +3,7 @@ import Link from "next/link";
 import { unstable_cache } from "next/cache";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import { PersonalizedRecommendations } from "@/components/PersonalizedRecommendations";
+import { FeaturedYachtOfTheWeek } from "@/components/FeaturedYachtOfTheWeek";
 import { db, yachtModels, manufacturers } from "@/lib/db";
 import { desc, sql } from "drizzle-orm";
 import { generateWebsiteJsonLd, generateFaqJsonLd, getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
@@ -206,6 +207,9 @@ export default async function Home({ params }: HomeProps) {
             </div>
           </div>
         </section>
+
+        {/* Yacht of the Week */}
+        <FeaturedYachtOfTheWeek />
 
         {/* Featured Yachts */}
         <section className="py-16 px-4 bg-gray-50">
