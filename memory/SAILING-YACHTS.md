@@ -1,51 +1,46 @@
-# Sailing Yachts Session Summary
+# Sailing Yachts — Session Log
 
-## Issue Worked On
-#383 (P23.4: Embeddable yacht comparison widget)
+## Session: 2026-06-05 22:20 CEST
 
-## What Was Implemented
-- **Embed configurator page** at `/embed` — A step-by-step UI for creating embeddable widgets:
-  - Step 1: Search and select 2–4 yachts (uses /api/search autocomplete)
-  - Step 2: Choose layout (compact/full) and theme (light/dark/auto)
-  - Step 3: Live preview of the widget
-  - Step 4: Copy embed code (iframe or JavaScript auto-resize snippet)
-- **Compact layout mode** — Only 6 key specs (LOA, Beam, Draft, Displacement, Cabins, Berths), ~400px height
-- **Theme support** — Light, dark, and auto (follows system preference) color schemes for embedded widgets
-- **URL parameters** — `?ids=26,27&layout=compact&theme=dark` for direct widget configuration
-- **JavaScript embed snippet** — Creates iframe dynamically with postMessage auto-resize
-- **Middleware fix** — `/embed` (no trailing slash) now bypasses locale routing correctly
-- **CSP headers** — frame-ancestors allows `*` for embed routes, enabling third-party embedding
+### Issue: #385 — P23.5: Yacht of the Week / Featured Rotation
 
-## Build/Test Results
-- ✅ TypeScript check passed
-- ✅ Build passed successfully
-- ✅ 29 unit tests passed (URL building, embed code gen, theme detection, layout modes, postMessage protocol)
+### What Was Implemented
+- **DB schema**: `featured_yachts` table (id, yacht_model_id, week_start, week_end, headline, editorial_text, newsletter_sent, is_manual_override, is_active, timestamps)
+- **Migration**: 0008_featured_yachts applied to Neon DB via node/pg
+- **Service layer**: `lib/featured-yacht-service.ts` — getActiveFeaturedYacht, getRecentFeaturedYachts, getAllFeaturedYachts, createFeaturedYacht, updateFeaturedYacht, deleteFeaturedYacht, markNewsletterSent, generateDefaultHeadline
+- **Public API**: `/api/featured` (force-dynamic) — returns active + recent featured yachts
+- **Admin API**: `/api/admin/featured` (force-dynamic) — full CRUD + newsletter tracking
+- **Admin UI**: `/admin/featured` — search/select yacht, week range picker, headline/editorial fields, activate/deactivate, delete, mark newsletter sent
+- **Admin dashboard**: New "Featured Yachts" card added to admin home
+- **Homepage component**: `FeaturedYachtOfTheWeek` — client component, gracefully hidden when no featured yacht
+- **Landing page**: `/[locale]/yacht-of-the-week` — hero, active featured yacht with full specs, archive grid, newsletter CTA, Product JSON-LD
+- **i18n**: Full en + fr translations for all new strings (FeaturedYacht namespace)
+- **Tests**: 27 tests in `tests/featured-yacht.test.ts`
 
-## Deploy Status
-- ✅ PR merged (https://github.com/pgedeon/sailing-yachts/pull/384)
-- ✅ Middleware fix pushed directly to main
-- ✅ Vercel production deploy completed
+### Build/Test Results
+- TypeScript: ✅ Pass
+- Build: ✅ Pass
+- Tests: ✅ 27/27 pass
 
-## Live Verification Results
-- ✅ Critical pages load (/, /yachts, /search, /compare)
-- ✅ API returns valid data (243 yachts)
-- ✅ /embed configurator page loads and renders correctly
-- ✅ /embed/compare?ids=26,27 loads (full layout)
-- ✅ /embed/compare?ids=26,27&layout=compact loads (compact layout)
-- ✅ /embed/compare?ids=26,27&layout=full&theme=dark loads (dark theme)
-- ✅ Configurator shows correct content ("Embed Comparison Widget" heading, search input, layout/theme buttons)
-- ✅ Browser console shows no new errors (pre-existing CSP Sentry warning only)
-- ✅ No "Application error" text on any page
+### Deploy
+- PR #386 (feature) → merged (squash)
+- PR #387 (force-dynamic fix) → merged (squash)
+- Manual `vercel --prod` deploy required (auto-deploy disabled in vercel.json)
 
-## Issues Found and Fixed Post-Deploy
-- **404 on /embed**: Middleware only handled `/embed/` (with trailing slash), causing `/embed` to be redirected to `/en/embed` (404). Fixed by updating middleware to also match `/embed` without slash.
+### Live Verification (all PASS)
+- `/` ✅ | `/yachts` ✅ | `/search` ✅ | `/compare` ✅
+- `/yacht-of-the-week` ✅ — renders correctly with empty state
+- `/api/featured` ✅ — returns `{active: null, recent: []}`
+- `/api/yachts` ✅ — returns yacht data
 
-## Next Recommended Task
-- **P23.5 — Yacht of the week / featured rotation** — Admin-configurable featured yacht on homepage
-- Or move to Phase 24 (Advanced Analytics & Intelligence)
+### Post-Deploy Fix
+- `/api/featured` initially returned 404 — route was prerendered as static (○) because it had no `force-dynamic` export
+- Fix: Added `export const dynamic = "force-dynamic"` to both `/api/featured/route.ts` and `/api/admin/featured/route.ts`
 
-## Technical Notes
-- The embed configurator is intentionally outside the `[locale]` route group (no i18n needed — it's for widget authors, not end users)
-- The embed widget itself uses inline styles (not Tailwind) to ensure correct rendering when embedded in third-party sites that may not load our CSS
-- The JS auto-resize snippet listens for `postMessage` with type `sailing-yachts-embed` to dynamically adjust iframe height
-- Compact mode only queries yacht data from the main table (no spec_values join) for faster loading
+### Next Recommended Task
+- **P23.6** — Referral link generator (next unchecked item in FUTURE_ROADMAP.md Phase 23)
+- Or seed the first featured yacht via admin UI to validate the full flow end-to-end
+
+### Lessons
+- API routes using DB must have `export const dynamic = "force-dynamic"` to prevent static prerendering on Vercel
+- `vercel.json` has `deploymentEnabled: false` for GitHub — need manual `vercel --prod` deploys
