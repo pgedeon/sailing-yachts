@@ -91,9 +91,9 @@ async function flushVitals(): Promise<void> {
     // Use sendBeacon for reliability on page unload
     if (navigator.sendBeacon) {
       const blob = new Blob([payload], { type: "application/json" });
-      const sent = navigator.sendBeacon("/api/vitals", blob);
+      const sent = navigator.sendBeacon("https://api.sailboats.fr/vitals", blob);
       if (!sent) {
-        await fetch("/api/vitals", {
+        await fetch("https://api.sailboats.fr/vitals", {
           method: "POST",
           body: payload,
           headers: { "Content-Type": "application/json" },
@@ -101,7 +101,7 @@ async function flushVitals(): Promise<void> {
         });
       }
     } else {
-      await fetch("/api/vitals", {
+      await fetch("https://api.sailboats.fr/vitals", {
         method: "POST",
         body: payload,
         headers: { "Content-Type": "application/json" },
