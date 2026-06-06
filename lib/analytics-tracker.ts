@@ -107,9 +107,9 @@ async function flushQueue(): Promise<void> {
 
     if (navigator.sendBeacon) {
       const blob = new Blob([payload], { type: "application/json" });
-      navigator.sendBeacon("/api/analytics", blob);
+      navigator.sendBeacon("https://api.sailboats.fr/analytics", blob);
     } else {
-      await fetch("/api/analytics", {
+      await fetch("https://api.sailboats.fr/analytics", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: payload,
