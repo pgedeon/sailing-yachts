@@ -167,6 +167,17 @@ export default async function AdminPage() {
                 Manage Featured
               </a>
             </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">Analytics</h2>
+              <p className="text-gray-600 mb-4">User behavior tracking: page views, popular yachts, search trends, comparison patterns, and more.</p>
+              <a
+                href="/admin/analytics"
+                className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
+              >
+                View Analytics
+              </a>
+            </div>
           </div>
         </div>
       </div>

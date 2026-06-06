@@ -10,6 +10,7 @@ import Link from "next/link";
 // Lazy-loaded for bundle optimization (P22.4)
 // Lazy-loaded for bundle optimization (P22.4)
 import dynamic from "next/dynamic";
+import { trackCompare } from "@/lib/analytics-tracker";
 const ComparisonRadarChart = dynamic(
   () => import("@/components/comparison-radar-chart").then(m => ({ default: m.ComparisonRadarChart })),
   { ssr: false, loading: () => null },
@@ -305,7 +306,18 @@ export function CompareClient({ initialIds }: CompareClientProps) {
     setError(null);
     fetch(`/api/compare?ids=${selectedIds.join(',')}`)
       .then(res => res.ok ? res.json() : Promise.reject(new Error('Failed to fetch')))
-      .then(data => { setYachts(data.yachts || []); setLoading(false); })
+      .then(data => {
+        const fetched = data.yachts || [];
+        setYachts(fetched);
+        setLoading(false);
+        // Track comparison for analytics
+        if (fetched.length >= 2) {
+          try { trackCompare({
+            yachtIds: fetched.map((y: any) => y.id),
+            yachtNames: fetched.map((y: any) => y.manufacturer + " " + y.modelName),
+          }); } catch {}
+        }
+      })
       .catch(err => { setError(err.message); setLoading(false); });
   }, [selectedIds]);
 

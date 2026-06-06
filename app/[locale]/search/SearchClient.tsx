@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
 import { localePath } from "@/lib/i18n-paths";
+import { trackSearch } from "@/lib/analytics-tracker";
 
 interface SearchResult {
   id: number;
@@ -126,6 +127,8 @@ export function SearchClient() {
         const data = await res.json();
         setResults(data.yachts || []);
         setTotal(data.total || 0);
+        // Track search for analytics
+        try { trackSearch({ query: q, resultCount: data.total || 0 }); } catch {}
       } catch {
         setResults([]);
         setTotal(0);
