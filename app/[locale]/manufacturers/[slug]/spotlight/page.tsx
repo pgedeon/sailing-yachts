@@ -3,11 +3,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { unstable_cache } from "next/cache";
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { marked } from "marked";
 
 import { getSpotlightBySlug } from "@/lib/manufacturer-spotlights";
 import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
+import { getSpotlightParams } from "@/lib/static-params";
+
+export const revalidate = 3600;
 
 
 
@@ -57,10 +60,17 @@ function formatSlugLabel(slug: string) {
     .join(" ");
 }
 
+export async function generateStaticParams() {
+  return getSpotlightParams();
+}
+
 export async function generateMetadata({
   params,
 }: ManufacturerSpotlightPageProps): Promise<Metadata> {
-  const { slug, locale } = params;
+  const { slug, 
+locale } = params;
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Manufacturers" });
   const spotlight = await getSpotlightData(slug);
 

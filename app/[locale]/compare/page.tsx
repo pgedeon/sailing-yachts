@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getTranslations , setRequestLocale } from "next-intl/server";
 import { generateCompareMetadata, generateBreadcrumbJsonLd, getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
 import dynamic from "next/dynamic";
 const CompareClient = dynamic(() => import("./CompareClient").then(m => ({ default: m.CompareClient })), { ssr: false, loading: () => null });
@@ -44,6 +44,8 @@ export default async function ComparePage({
 }) {
   const { ids } = await searchParams;
   const { locale } = params;
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Compare" });
 
   const initialIds = ids

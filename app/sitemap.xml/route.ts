@@ -5,7 +5,6 @@ import {
   sitemapResponse,
 } from "@/lib/sitemap";
 
-export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
 export async function GET() {

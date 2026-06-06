@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { unstable_cache } from "next/cache";
-import { getTranslations } from "next-intl/server";
+import { getTranslations , setRequestLocale } from "next-intl/server";
 import { getManufacturerCompareData } from "@/lib/manufacturer-compare";
 import {
   getSiteUrl,
@@ -12,6 +12,7 @@ import {
 } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths";
 import { ManufacturerCompareClient } from "./ManufacturerCompareClient";
+import { getManufacturerComparisonParams } from "@/lib/static-params";
 
 // ISR: Revalidate every hour
 export const revalidate = 3600;
@@ -42,6 +43,10 @@ async function getCachedCompareData(slugA: string, slugB: string) {
     [`mfr-compare:${slugA}-vs-${slugB}`],
     { tags: [`mfr-compare:${slugA}-vs-${slugB}`, "manufacturers"], revalidate: 3600 },
   )();
+}
+
+export async function generateStaticParams() {
+  return getManufacturerComparisonParams();
 }
 
 export async function generateMetadata({
@@ -107,6 +112,8 @@ export default async function ManufacturerComparePage({
   if (!data) notFound();
 
   const locale = params.locale ?? "en";
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "ManufacturerCompare" });
 
   const breadcrumbJsonLd = generateBreadcrumbJsonLd(

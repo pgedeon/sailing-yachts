@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { getTranslations , setRequestLocale } from "next-intl/server";
 import { getSiteUrl, buildLocaleAlternates } from "@/lib/seo";
 import { buildOgImageUrl } from "@/lib/seo";
 
@@ -10,6 +10,8 @@ export async function generateMetadata({
   params: { locale: string };
 }): Promise<Metadata> {
   const { locale } = params;
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "BestValue" });
 
   const ogImage = buildOgImageUrl({ type: "default", title: t("meta.title"), description: t("meta.description") });

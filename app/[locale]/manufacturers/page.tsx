@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { unstable_cache } from "next/cache";
-import { getTranslations } from "next-intl/server";
+import { getTranslations , setRequestLocale } from "next-intl/server";
 import { getManufacturersWithCounts } from "@/lib/manufacturers";
 import { slugify } from "@/lib/utils/slugify";
 import { buildSafeQuery } from "@/lib/build-safe";
@@ -64,6 +64,8 @@ interface ManufacturersListingPageProps {
 
 export default async function ManufacturersPage({ params }: ManufacturersListingPageProps) {
   const { locale } = params;
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Manufacturers" });
 
   const manufacturers = await getManufacturers();

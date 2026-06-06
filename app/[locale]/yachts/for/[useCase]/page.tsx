@@ -14,6 +14,10 @@ import {
   buildOgImageUrl,
 } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths";
+import { setRequestLocale } from "next-intl/server";
+import { getUseCaseParams } from "@/lib/static-params";
+
+export const revalidate = 21600;
 
 
 // ISR: cache for 1 hour, invalidate via tags when admin updates yacht data
@@ -26,6 +30,10 @@ const getCachedUseCaseLandingData = unstable_cache(
   { tags: ["yachts", "manufacturers"] }
 );
 
+export async function generateStaticParams() {
+  return getUseCaseParams();
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -36,6 +44,8 @@ export async function generateMetadata({
   if (!useCaseSlug) notFound();
 
   const locale = rawParams.locale || "en";
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const data = await getCachedUseCaseLandingData(useCaseSlug);
   if (!data) notFound();
 
@@ -44,8 +54,8 @@ export async function generateMetadata({
   const title = `${useCaseLabel} Sailboats — Best Models & Specs | Sailing Yacht Info`;
   const description =
     locale === "fr"
-      ? data.useCase.descriptionFr(data.yachts.length)
-      : data.useCase.descriptionEn(data.yachts.length);
+      ? (data.useCase.descriptionFr?.(data.yachts.length) ?? "")
+      : (data.useCase.descriptionEn?.(data.yachts.length) ?? "");
 
   const path = `/yachts/for/${useCaseSlug}`;
 
@@ -98,8 +108,8 @@ export default async function UseCaseLandingPage({
 
   const description =
     locale === "fr"
-      ? data.useCase.descriptionFr(data.yachts.length)
-      : data.useCase.descriptionEn(data.yachts.length);
+      ? (data.useCase.descriptionFr?.(data.yachts.length) ?? "")
+      : (data.useCase.descriptionEn?.(data.yachts.length) ?? "");
 
   // JSON-LD: BreadcrumbList
   const breadcrumbJsonLd = generateBreadcrumbJsonLd(

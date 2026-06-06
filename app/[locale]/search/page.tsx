@@ -3,7 +3,7 @@ import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates, buildOgIma
 import dynamic from "next/dynamic";
 const SearchClient = dynamic(() => import("./SearchClient").then(m => ({ default: m.SearchClient })), { ssr: false, loading: () => null });
 import { shouldNoindexSearchPage } from "@/lib/thin-page-governance";
-import { getTranslations } from "next-intl/server";
+import { getTranslations , setRequestLocale } from "next-intl/server";
 
 interface SearchPageProps {
   params: { locale: string };
@@ -16,6 +16,8 @@ interface SearchPageProps {
  */
 export async function generateMetadata({ params }: SearchPageProps): Promise<Metadata> {
   const { locale } = params;
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Search" });
 
   return {

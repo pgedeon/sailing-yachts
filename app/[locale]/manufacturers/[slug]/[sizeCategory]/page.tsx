@@ -15,6 +15,10 @@ import {
   buildOgImageUrl,
 } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths";
+import { setRequestLocale } from "next-intl/server";
+import { getManufacturerSizeParams } from "@/lib/static-params";
+
+export const revalidate = 3600;
 
 
 // Revalidate every 60 minutes
@@ -35,6 +39,10 @@ function parseParams(
   return null;
 }
 
+export async function generateStaticParams() {
+  return getManufacturerSizeParams();
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -46,6 +54,8 @@ export async function generateMetadata({
 
   const { slug, sizeCategory } = parsed;
   const locale = rawParams.locale || "en";
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const data = await getManufacturerSizePageData(slug, sizeCategory);
   if (!data || data.yachts.length === 0) notFound();
 

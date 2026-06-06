@@ -5,11 +5,14 @@ import { USE_CASE_TAG_IDS, USE_CASE_TAG_META, assignUseCaseTags, type UseCaseTag
 import { UseCaseBadge } from '@/components/use-case-badge';
 import { pool } from '@/lib/db';
 import { localePath } from "@/lib/i18n-paths";
+import { setRequestLocale } from "next-intl/server";
 
 export const revalidate = 3600;
 
 export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
   const { locale } = params;
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'Yachts' });
 
   const ogImage = buildOgImageUrl({ type: "default", title: t('useCaseTagsPage.meta.title'), description: t('useCaseTagsPage.meta.description') });

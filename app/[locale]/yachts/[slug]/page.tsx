@@ -1,7 +1,7 @@
 import YachtDetailClient from "./YachtDetailClient";
 import type { Metadata } from "next";
 import { unstable_cache } from "next/cache";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import {
   generateYachtPageMetadata,
@@ -19,6 +19,9 @@ import { getPriceSummary } from "@/lib/price-data";
 import { getRatingStats } from "@/lib/rating-service";
 import { calculateCompletenessScore, shouldNoindex } from "@/lib/completeness";
 import { localePath } from "@/lib/i18n-paths";
+import { getYachtParams } from "@/lib/static-params";
+
+export const revalidate = 3600;
 
 
 // ISR: Revalidate yacht detail pages every hour
@@ -103,10 +106,17 @@ interface YachtDetailPageProps {
   params: { slug: string; locale: string };
 }
 
+export async function generateStaticParams() {
+  return getYachtParams();
+}
+
 export async function generateMetadata({
   params,
 }: YachtDetailPageProps): Promise<Metadata> {
-  const { slug, locale } = params;
+  const { slug, 
+locale } = params;
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "YachtDetail" });
   const data = await getYachtData(slug);
 

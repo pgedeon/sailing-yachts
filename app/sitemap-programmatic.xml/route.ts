@@ -10,7 +10,6 @@ import { SIZE_CATEGORIES } from "@/lib/size-categories";
 import { getManufacturerSizeCombinations } from "@/lib/manufacturer-size-landing";
 import { EDITORIAL_YEARS } from "@/lib/best-year-size-landing";
 
-export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
 const LOCALES = ["en", "fr"] as const;

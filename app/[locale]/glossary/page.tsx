@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { getTranslations , setRequestLocale } from "next-intl/server";
 import { getAllGlossaryTerms, getGlossaryCategories } from "@/lib/glossary";
 import { getSiteUrl, generateBreadcrumbJsonLd, generateCollectionPageJsonLd , buildLocaleAlternates , buildOgImageUrl } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths";
@@ -16,6 +16,8 @@ export async function generateMetadata({
   params,
 }: GlossaryPageProps): Promise<Metadata> {
   const { locale } = params;
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Glossary" });
   const terms = getAllGlossaryTerms();
   const categories = getGlossaryCategories();

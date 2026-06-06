@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { defaultLocale } from "@/i18n";
 
 export const metadata: Metadata = {
   title: "Page Not Found",
@@ -10,9 +11,10 @@ export const metadata: Metadata = {
 export default async function LocaleNotFound({
   params,
 }: {
-  params: { locale: string };
+  params?: { locale: string };
 }) {
-  const { locale } = params;
+  const locale = params?.locale || defaultLocale;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "NotFound" });
 
   const navLinks = [

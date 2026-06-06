@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getActiveFeaturedYacht, getRecentFeaturedYachts } from "@/lib/featured-yacht-service";
 import { generateWebsiteJsonLd, getSiteUrl } from "@/lib/seo";
-import { getTranslations } from "next-intl/server";
+import { getTranslations , setRequestLocale } from "next-intl/server";
 import { FeaturedYachtPageClient } from "./FeaturedYachtPageClient";
 
 export const revalidate = 3600;
@@ -13,6 +13,8 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = params;
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "FeaturedYacht" });
   const featured = await getActiveFeaturedYacht();
 

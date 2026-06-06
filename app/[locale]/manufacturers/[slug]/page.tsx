@@ -5,7 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { unstable_cache } from "next/cache";
 import { SHIMMER_BLUR } from "@/lib/image-utils";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import {
   generateBreadcrumbJsonLd,
@@ -25,6 +25,9 @@ import { getSpotlightByManufacturerId } from "@/lib/manufacturer-spotlights";
 import { SIZE_CATEGORIES } from "@/lib/size-categories";
 import ManufacturerLogo from "@/components/manufacturer-logo";
 import { localePath } from "@/lib/i18n-paths";
+import { getManufacturerParams } from "@/lib/static-params";
+
+export const revalidate = 3600;
 
 
 // Lazy-loaded for bundle optimization (P22.4)
@@ -68,10 +71,17 @@ function formatNumber(value: number | null, suffix: string) {
   })} ${suffix}`.trim();
 }
 
+export async function generateStaticParams() {
+  return getManufacturerParams();
+}
+
 export async function generateMetadata({
   params,
 }: ManufacturerPageProps): Promise<Metadata> {
-  const { slug, locale } = params;
+  const { slug, 
+locale } = params;
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Manufacturers" });
   const data = await getManufacturerData(slug);
 

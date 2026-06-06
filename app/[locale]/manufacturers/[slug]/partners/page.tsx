@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { unstable_cache } from "next/cache";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import {
   generateBreadcrumbJsonLd,
@@ -15,6 +15,9 @@ import {
   getPartnerOffersByManufacturerId,
 } from "@/lib/partner-offers";
 import { getManufacturerBySlug } from "@/lib/manufacturers";
+import { getPartnersParams } from "@/lib/static-params";
+
+export const revalidate = 3600;
 
 
 // ISR: Revalidate partner pages every 6 hours
@@ -41,10 +44,17 @@ interface PartnersPageProps {
   params: { slug: string; locale: string };
 }
 
+export async function generateStaticParams() {
+  return getPartnersParams();
+}
+
 export async function generateMetadata({
   params,
 }: PartnersPageProps): Promise<Metadata> {
-  const { slug, locale } = params;
+  const { slug, 
+locale } = params;
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Manufacturers" });
   const data = await getPartnerPageData(slug);
 

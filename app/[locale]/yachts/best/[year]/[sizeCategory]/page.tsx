@@ -18,9 +18,17 @@ import {
 } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths";
 import { BestYearSizeClient } from "./BestYearSizeClient";
+import { setRequestLocale } from "next-intl/server";
+import { getBestYearSizeParams } from "@/lib/static-params";
+
+export const revalidate = 21600;
 
 
 
+
+export async function generateStaticParams() {
+  return getBestYearSizeParams();
+}
 
 export async function generateMetadata({
   params,
@@ -39,6 +47,8 @@ export async function generateMetadata({
   if (!sizeCategory) notFound();
 
   const locale = rawParams.locale || "en";
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const content = EDITORIAL_CONTENT[sizeCategoryStr];
   const sizeLabel =
     locale === "fr" ? sizeCategory.labelFr : sizeCategory.labelEn;

@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { neon } from "@neondatabase/serverless";
 import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import dynamic from "next/dynamic";
+
+export const revalidate = 3600;
 
 const SharedCompareClient = dynamic(
   () => import("./SharedCompareClient").then((m) => ({ default: m.SharedCompareClient })),
@@ -45,6 +47,8 @@ async function getSharedComparison(shareId: string) {
 
 export async function generateMetadata({ params }: SharedComparePageProps): Promise<Metadata> {
   const { shareId, locale } = await params;
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const comparison = await getSharedComparison(shareId);
 
   if (!comparison) {

@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 const YachtsClient = dynamic(() => import("./YachtsClient"), { ssr: false, loading: () => null });
 import { shouldNoindexYachtsPage, generateYachtsPageCanonical } from "@/lib/thin-page-governance";
 import { getYachtsListing, getFilterOptions, type YachtsListingResult, type FilterOptions } from "@/lib/yachts";
-import { getTranslations } from "next-intl/server";
+import { getTranslations , setRequestLocale } from "next-intl/server";
 
 // Revalidate every 60 minutes — yacht list doesn't change frequently
 export const revalidate = 3600;
@@ -33,6 +33,8 @@ interface YachtsPageParams {
  */
 export async function generateMetadata({ params, searchParams }: YachtsPageParams): Promise<Metadata> {
   const { locale } = params;
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const sp = await searchParams;
   const t = await getTranslations({ locale, namespace: "Yachts" });
 

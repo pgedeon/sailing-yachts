@@ -11,7 +11,7 @@ import { slugify } from "@/lib/utils/slugify";
 import { getSiteStats, formatYachtPhrase, formatYachtCountFAQ } from "@/lib/site-stats";
 import { buildSafeQuery } from "@/lib/build-safe";
 import { useTranslations } from "next-intl";
-import { getMessages, getTranslations } from "next-intl/server";
+import { getMessages, getTranslations , setRequestLocale } from "next-intl/server";
 
 // ISR: Revalidate homepage cache every hour
 export const revalidate = 3600;
@@ -80,6 +80,8 @@ interface HomeProps {
 // Generate metadata with live yacht count
 export async function generateMetadata({ params }: HomeProps) {
   const { locale } = params;
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Home" });
   const stats = await getSiteStats();
   const yachtPhrase = formatYachtPhrase(stats);

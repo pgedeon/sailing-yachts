@@ -15,6 +15,10 @@ import {
 } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths";
 import { SizeCategoryHubClient } from "./SizeCategoryHubClient";
+import { setRequestLocale } from "next-intl/server";
+import { getSizeCategoryParams } from "@/lib/static-params";
+
+export const revalidate = 21600;
 
 
 // ISR: cache for 1 hour, invalidate via tags when admin updates yacht data
@@ -27,6 +31,10 @@ const getCachedSizeCategoryHubData = unstable_cache(
   { tags: ["yachts", "manufacturers"] }
 );
 
+export async function generateStaticParams() {
+  return getSizeCategoryParams();
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -37,6 +45,8 @@ export async function generateMetadata({
   if (!sizeCategory) notFound();
 
   const locale = rawParams.locale || "en";
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const data = await getCachedSizeCategoryHubData(sizeCategory);
   if (!data) notFound();
 
@@ -45,8 +55,8 @@ export async function generateMetadata({
   const title = `${sizeLabel} Sailboats — All Manufacturers | Specs & Reviews`;
   const description =
     locale === "fr"
-      ? data.sizeCategory.descriptionFr("all manufacturers", data.yachts.length)
-      : data.sizeCategory.descriptionEn("all manufacturers", data.yachts.length);
+      ? (data.sizeCategory.descriptionFr?.("all manufacturers", data.yachts.length) ?? "")
+      : (data.sizeCategory.descriptionEn?.("all manufacturers", data.yachts.length) ?? "");
 
   const path = `/yachts/by-size/${sizeCategory}`;
 
@@ -99,8 +109,8 @@ export default async function SizeCategoryHubPage({
 
   const description =
     locale === "fr"
-      ? data.sizeCategory.descriptionFr("all manufacturers", data.yachts.length)
-      : data.sizeCategory.descriptionEn("all manufacturers", data.yachts.length);
+      ? (data.sizeCategory.descriptionFr?.("all manufacturers", data.yachts.length) ?? "")
+      : (data.sizeCategory.descriptionEn?.("all manufacturers", data.yachts.length) ?? "");
 
   // JSON-LD: BreadcrumbList
   const breadcrumbJsonLd = generateBreadcrumbJsonLd(

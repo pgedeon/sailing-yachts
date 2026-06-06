@@ -5,8 +5,6 @@ import { cn } from "@/lib/utils";
 import WebVitals from "@/components/WebVitals";
 import AuthProvider from "./providers";
 import { getAllFlags } from "@/lib/feature-flags";
-import { cookies, headers } from "next/headers";
-import { defaultLocale, locales } from "@/i18n";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -83,40 +81,19 @@ export const metadata: Metadata = {
   },
 };
 
-function resolveLocale(cookieValue: string | undefined, pathname: string): string {
-  // Try cookie first (set by next-intl middleware on previous requests)
-  if (cookieValue && locales.includes(cookieValue as typeof locales[number])) {
-    return cookieValue;
-  }
-  // Fall back to URL path: /fr/... → "fr"
-  const match = pathname.match(/^\/([a-z]{2})(?:\/|$|\?)/);
-  if (match && locales.includes(match[1] as typeof locales[number])) {
-    return match[1];
-  }
-  return defaultLocale;
-}
-
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // The root layout is above the [locale] segment so getLocale() may return
-  // the default locale if the layout shell is cached. We resolve the locale
-  // from the NEXT_LOCALE cookie (set by next-intl middleware) with a URL
-  // pathname fallback for first-time visitors.
-  const cookieStore = await cookies();
-  const headersList = await headers();
-  const pathname =
-    headersList.get("x-invoke-path") ||
-    headersList.get("x-next-url") ||
-    headersList.get("x-vercel-url") ||
-    "";
-  const locale = resolveLocale(cookieStore.get("NEXT_LOCALE")?.value, pathname);
+  // Static root layout — NO cookies()/headers() calls.
+  // These dynamic APIs were previously used to detect locale for <html lang>,
+  // but they forced ALL routes into dynamic rendering (no ISR/Full Route Cache).
+  // Locale is now set client-side by LocaleHtmlUpdater in [locale]/layout.tsx.
   const featureFlags = getAllFlags();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body
         className={cn(inter.variable, "antialiased min-h-screen bg-background")}
       >

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { marked } from "marked";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import {
   getArticleBySlug,
   getRelatedArticles,
@@ -14,6 +14,9 @@ import NewsletterSignup from "@/components/NewsletterSignup";
 import BuyingGuideYachtList from "@/components/BuyingGuideYachtList";
 import { getTemplateById } from "@/lib/buying-guides";
 import { localePath } from "@/lib/i18n-paths";
+import { getGuideParams } from "@/lib/static-params";
+
+export const revalidate = 21600;
 
 
 
@@ -96,6 +99,10 @@ interface PageProps {
   params: { slug: string; locale: string };
 }
 
+export async function generateStaticParams() {
+  return getGuideParams();
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = params;
   const article = await getArticleBySlug(slug);
@@ -131,6 +138,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function GuideArticlePage({ params }: PageProps) {
   const { slug, locale } = params;
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Guides" });
 
   const article = await getArticleBySlug(slug);

@@ -2,10 +2,13 @@ import { localePath } from "@/lib/i18n-paths";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getTermBySlug, getRelatedTerms } from "@/lib/glossary";
 import { getYachtLinksForTerm } from "@/lib/glossary-yacht-links";
 import { getSiteUrl, generateBreadcrumbJsonLd, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
+import { getGlossaryParams } from "@/lib/static-params";
+
+export const revalidate = 86400;
 
 
 // ISR: Revalidate glossary term pages every 6 hours
@@ -16,10 +19,17 @@ interface GlossaryTermPageProps {
   params: { slug: string; locale: string };
 }
 
+export async function generateStaticParams() {
+  return getGlossaryParams();
+}
+
 export async function generateMetadata({
   params,
 }: GlossaryTermPageProps): Promise<Metadata> {
-  const { slug, locale } = params;
+  const { slug, 
+locale } = params;
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Glossary" });
   const term = getTermBySlug(slug);
 

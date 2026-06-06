@@ -8,6 +8,8 @@ import { PriceTierBadge } from "@/app/components/PriceTierBadge";
 import { calculatePriceTier } from "@/lib/price-tier";
 import { localePath } from "@/lib/i18n-paths";
 import { CanonicalCompareClient } from "./CanonicalCompareClient";
+import { setRequestLocale } from "next-intl/server";
+import { getComparisonParams } from "@/lib/static-params";
 
 const getCachedYachtsBySlugs = unstable_cache(
   async (slugA: string, slugB: string) => getYachtsBySlugs(slugA, slugB),
@@ -59,6 +61,10 @@ function parseCompareParams(
   }
 
   return null;
+}
+
+export async function generateStaticParams() {
+  return getComparisonParams();
 }
 
 export async function generateMetadata({
@@ -139,6 +145,8 @@ export default async function CanonicalComparePage({
   }
 
   const locale = rawParams.locale || "en";
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const intro = generateComparisonIntro(yachtA, yachtB);
   const fullNameA = `${yachtA.manufacturer} ${yachtA.modelName}`;
   const fullNameB = `${yachtB.manufacturer} ${yachtB.modelName}`;

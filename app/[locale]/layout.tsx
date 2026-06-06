@@ -2,10 +2,11 @@ import Link from "next/link";
 import HeaderAuthControls from "@/components/HeaderAuthControls";
 import { generateSiteNavigationJsonLd } from "@/lib/seo";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages, getTranslations } from "next-intl/server";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { locales, type Locale } from "@/i18n";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import LocaleHtmlUpdater from "@/components/LocaleHtmlUpdater";
 import { ClientNav } from "./ClientNav";
 import UXPolish from "@/components/UXPolish";
 import AnalyticsPageTracker from "@/components/AnalyticsPageTracker";
@@ -15,6 +16,11 @@ interface LayoutProps {
   params: { locale: string };
 }
 
+
+export async function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
+
 export default async function LocaleLayout({ children, params }: LayoutProps) {
   const { locale } = params;
 
@@ -22,6 +28,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   if (!locales.includes(locale as Locale)) {
     notFound();
   }
+
+  // Enable static rendering for next-intl (avoids headers() call)
+  setRequestLocale(locale);
 
   // Providing all messages to the client side
   const messages = await getMessages({ locale });
@@ -37,7 +46,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   ];
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
+    <NextIntlClientProvider locale={locale} messages={messages} now={new Date()} timeZone="Europe/Berlin">
+      {/* Client-side locale updater: sets <html lang> to the correct locale */}
+      <LocaleHtmlUpdater locale={locale} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

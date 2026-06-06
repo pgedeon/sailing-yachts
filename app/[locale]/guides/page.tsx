@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { getTranslations , setRequestLocale } from "next-intl/server";
 import { getAllPublishedArticles, getAllCategories, getBuyingGuideArticles } from "@/lib/articles";
 import { getSiteUrl , buildLocaleAlternates , buildOgImageUrl } from "@/lib/seo";
 import { BUYING_GUIDE_TEMPLATES, type GuideType } from "@/lib/buying-guides";
@@ -19,6 +19,8 @@ export async function generateMetadata({
   params,
 }: GuidesPageProps): Promise<Metadata> {
   const { locale } = params;
+  // Enable static rendering for next-intl
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Guides" });
 
   return {
