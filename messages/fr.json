@@ -1362,5 +1362,18 @@
       "cabins": "Cabines",
       "berths": "Couchages"
     }
+  },
+  "Newsletter": {
+    "heading": "Restez informé",
+    "description": "Soyez notifié lorsque de nouveaux yachts sont ajoutés à la base de données.",
+    "formLabel": "Inscription à la newsletter",
+    "emailLabel": "Adresse e-mail",
+    "placeholder": "Entrez votre adresse e-mail",
+    "placeholderCompact": "Votre e-mail pour les mises à jour",
+    "subscribe": "S'abonner",
+    "alreadySubscribed": "Vous êtes déjà inscrit !",
+    "successMessage": "Merci pour votre inscription ! Nous vous notifierons lorsque de nouveaux yachts seront ajoutés.",
+    "errorMessage": "Une erreur est survenue. Veuillez réessayer.",
+    "networkError": "Erreur réseau. Veuillez réessayer."
   }
 }

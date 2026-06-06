@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useId } from "react";
+import { useTranslations } from "next-intl";
 
 interface NewsletterSignupProps {
   source?: string;
@@ -13,6 +14,7 @@ export default function NewsletterSignup({
   className = "",
   compact = false,
 }: NewsletterSignupProps) {
+  const t = useTranslations("Newsletter");
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
@@ -40,17 +42,17 @@ export default function NewsletterSignup({
         setStatus("success");
         setMessage(
           data.alreadySubscribed
-            ? "You're already subscribed!"
-            : "Thanks for subscribing! We'll notify you when new yachts are added.",
+            ? t("alreadySubscribed")
+            : t("successMessage"),
         );
         setEmail("");
       } else {
         setStatus("error");
-        setMessage(data.error || "Something went wrong. Please try again.");
+        setMessage(data.error || t("errorMessage"));
       }
     } catch {
       setStatus("error");
-      setMessage("Network error. Please try again.");
+      setMessage(t("networkError"));
     }
   };
 
@@ -72,26 +74,24 @@ export default function NewsletterSignup({
       {!compact && (
         <>
           <h3 className="text-xl font-bold text-gray-900 mb-2" id={`${inputId}-title`}>
-            Stay Updated
+            {t("heading")}
           </h3>
           <p className="text-gray-600 text-sm mb-4">
-            Get notified when new yachts are added to the database.
+            {t("description")}
           </p>
         </>
       )}
-      <form onSubmit={handleSubmit} className="flex gap-2" aria-label="Newsletter signup">
+      <form onSubmit={handleSubmit} className="flex gap-2" aria-label={t("formLabel")}>
         {/* Screen-reader-only label */}
         <label htmlFor={inputId} className="sr-only">
-          Email address
+          {t("emailLabel")}
         </label>
         <input
           id={inputId}
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder={
-            compact ? "Your email for updates" : "Enter your email address"
-          }
+          placeholder={compact ? t("placeholderCompact") : t("placeholder")}
           required
           aria-describedby={status === "error" ? errorId : undefined}
           aria-invalid={status === "error"}
@@ -107,7 +107,7 @@ export default function NewsletterSignup({
             compact ? "text-sm" : ""
           }`}
         >
-          {status === "loading" ? "..." : compact ? "Subscribe" : "Subscribe"}
+          {status === "loading" ? "..." : t("subscribe")}
         </button>
       </form>
       {status === "error" && (

@@ -1362,5 +1362,18 @@
       "cabins": "Cabins",
       "berths": "Berths"
     }
+  },
+  "Newsletter": {
+    "heading": "Stay Updated",
+    "description": "Get notified when new yachts are added to the database.",
+    "formLabel": "Newsletter signup",
+    "emailLabel": "Email address",
+    "placeholder": "Enter your email address",
+    "placeholderCompact": "Your email for updates",
+    "subscribe": "Subscribe",
+    "alreadySubscribed": "You're already subscribed!",
+    "successMessage": "Thanks for subscribing! We'll notify you when new yachts are added.",
+    "errorMessage": "Something went wrong. Please try again.",
+    "networkError": "Network error. Please try again."
   }
 }

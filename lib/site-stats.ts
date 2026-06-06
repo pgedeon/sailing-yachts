@@ -83,16 +83,23 @@ export function formatCount(n: number): string {
 /**
  * Build a human-readable phrase like "200+ sailing yachts" using actual DB count.
  */
-export function formatYachtPhrase(stats: SiteStats): string {
+export function formatYachtPhrase(stats: SiteStats, locale = "en"): string {
   // Use yacht model count for main claim
-  return `${formatCount(stats.yachtModelCount)} sailing yachts`;
+  const count = formatCount(stats.yachtModelCount);
+  if (locale === "fr") {
+    return `${count} yachts à voile`;
+  }
+  return `${count} sailing yachts`;
 }
 
 /**
  * Build FAQ answer text for "How many yachts are in the database?"
  */
-export function formatYachtCountFAQ(stats: SiteStats): string {
+export function formatYachtCountFAQ(stats: SiteStats, locale = "en"): string {
   const models = stats.yachtModelCount;
   const mfrs = stats.manufacturerCount;
+  if (locale === "fr") {
+    return `La base de données comprend ${models} modèles de yachts à voile de ${mfrs} constructeurs dans le monde, avec des spécifications détaillées incluant les dimensions, le plan de voilure et l'aménagement.`;
+  }
   return `The database includes ${models} sailing yacht models across ${mfrs} manufacturers worldwide, with detailed specifications including dimensions, sail plans, and accommodation.`;
 }

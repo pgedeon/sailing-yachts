@@ -84,7 +84,7 @@ export async function generateMetadata({ params }: HomeProps) {
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Home" });
   const stats = await getSiteStats();
-  const yachtPhrase = formatYachtPhrase(stats);
+  const yachtPhrase = formatYachtPhrase(stats, locale);
 
   return {
     title: t("meta.title"),
@@ -115,7 +115,7 @@ export async function generateMetadata({ params }: HomeProps) {
       title: t("meta.twitterTitle"),
       description: t("meta.twitterDescription", { yachtPhrase }),
     },
-    alternates: buildLocaleAlternates("/"),
+    alternates: buildLocaleAlternates("/", locale),
   };
 }
 
@@ -128,10 +128,10 @@ export default async function Home({ params }: HomeProps) {
     getTopManufacturers(),
     getSiteStats(),
   ]);
-  const yachtPhrase = formatYachtPhrase(stats);
+  const yachtPhrase = formatYachtPhrase(stats, locale);
 
   const FAQ_ITEMS = [
-    { q: t("faq.q1"), a: formatYachtCountFAQ(stats) },
+    { q: t("faq.q1"), a: formatYachtCountFAQ(stats, locale) },
     { q: t("faq.q2"), a: t("faq.a2") },
     { q: t("faq.q3"), a: t("faq.a3") },
     { q: t("faq.q4"), a: t("faq.a4") },

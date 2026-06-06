@@ -47,7 +47,7 @@ export async function generateMetadata({
       title: t("meta.title"),
       description: t("meta.description"),
     },
-    alternates: buildLocaleAlternates("/guides"),
+    alternates: buildLocaleAlternates("/guides", locale),
   };
 }
 

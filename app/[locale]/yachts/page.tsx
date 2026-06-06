@@ -75,7 +75,7 @@ export async function generateMetadata({ params, searchParams }: YachtsPageParam
       description: t("meta.description"),
       images: [ogImage],
     },
-    alternates: buildLocaleAlternates("/yachts"),
+    alternates: buildLocaleAlternates("/yachts", locale),
     robots: noindex
       ? { index: false, follow: false }
       : { index: true, follow: true },

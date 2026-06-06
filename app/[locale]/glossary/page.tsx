@@ -53,7 +53,7 @@ export async function generateMetadata({
       title: t("meta.title"),
       description: t("meta.description", { count: terms.length }),
     },
-    alternates: buildLocaleAlternates("/glossary"),
+    alternates: buildLocaleAlternates("/glossary", locale),
   };
 }
 

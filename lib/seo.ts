@@ -16,17 +16,18 @@ export function getSiteUrl(path = ""): string {
  * { canonical: "/en/yachts/beneteau-first-27", languages: { en: "/en/...", fr: "/fr/..." } }
  * If path already starts with /en or /fr, strips it first.
  */
-export function buildLocaleAlternates(pathWithoutLocale: string): {
+export function buildLocaleAlternates(pathWithoutLocale: string, locale = "en"): {
   canonical: string;
   languages: Record<string, string>;
 } {
   const clean = pathWithoutLocale.replace(/^\/(en|fr)/, "");
   const path = clean.startsWith("/") ? clean : "/" + clean;
   return {
-    canonical: getSiteUrl(`/en${path}`),
+    canonical: getSiteUrl(`/${locale}${path}`),
     languages: {
       en: getSiteUrl(`/en${path}`),
       fr: getSiteUrl(`/fr${path}`),
+      "x-default": getSiteUrl(`/en${path}`),
     },
   };
 }
