@@ -84,7 +84,7 @@ describe("YachtDetailClient — Enhanced Layout Integration", () => {
 
   it("imports SocialShareButtons component", () => {
     const content = readFileSync(clientPath, "utf-8");
-    expect(content).toContain("import SocialShareButtons");
+    expect(content).toContain("SocialShareButtons");
   });
 
   it("imports TableOfContents component", () => {

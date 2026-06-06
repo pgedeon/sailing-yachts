@@ -146,7 +146,7 @@ export function BestYearSizeClient({
 
                   {/* View link */}
                   <div className="flex-shrink-0 text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <svg
+                    <svg aria-hidden="true"
                       className="w-5 h-5"
                       fill="none"
                       viewBox="0 0 24 24"

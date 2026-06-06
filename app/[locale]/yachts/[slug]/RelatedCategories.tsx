@@ -67,7 +67,7 @@ export function RelatedCategories({
       links.push({
         href: `/${locale}/yachts/by-size/${sc.slug}`,
         label: locale === "fr" ? sc.labelFr : sc.labelEn,
-        icon: <Ruler className="w-4 h-4" />,
+        icon: <Ruler className="w-4 h-4" aria-hidden="true" />,
       });
     }
   }

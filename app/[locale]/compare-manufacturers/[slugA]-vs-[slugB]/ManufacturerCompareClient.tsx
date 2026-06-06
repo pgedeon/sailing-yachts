@@ -162,7 +162,7 @@ export function ManufacturerCompareClient({
                 className="mt-4 inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400"
               >
                 {t("visitWebsite")}
-                <ArrowRight className="h-3 w-3" />
+                <ArrowRight className="h-3 w-3" aria-hidden="true" />
               </a>
             )}
           </div>
@@ -277,7 +277,7 @@ export function ManufacturerCompareClient({
                             : ""}
                         </div>
                       </div>
-                      <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                      <ArrowRight className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
                     </Link>
                   </li>
                 ))}

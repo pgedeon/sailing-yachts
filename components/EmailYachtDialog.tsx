@@ -100,12 +100,12 @@ export function EmailYachtDialog({
           className="absolute right-4 top-4 rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300"
           aria-label="Close"
         >
-          <X className="h-5 w-5" />
+          <X className="h-5 w-5" aria-hidden="true" />
         </button>
 
         {formState === "success" ? (
           <div className="py-4 text-center">
-            <CheckCircle className="mx-auto h-12 w-12 text-green-500" />
+            <CheckCircle className="mx-auto h-12 w-12 text-green-500" aria-hidden="true" />
             <h3 className="mt-3 text-lg font-semibold text-gray-900 dark:text-white">
               {t("successTitle")}
             </h3>
@@ -124,7 +124,7 @@ export function EmailYachtDialog({
             {/* Header */}
             <div className="mb-4 flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
-                <Mail className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <Mail className="h-5 w-5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
               </div>
               <div>
                 <h2
@@ -239,7 +239,7 @@ export function EmailYachtDialog({
                     </>
                   ) : (
                     <>
-                      <Mail className="h-4 w-4" />
+                      <Mail className="h-4 w-4" aria-hidden="true" />
                       {t("sendButton")}
                     </>
                   )}
