@@ -45,7 +45,7 @@ export function SameSizeAlternatives({
         const maxLength = targetLength + marginMeters;
 
         const res = await fetch(
-          `/api/yachts?minLength=${minLength}&maxLength=${maxLength}&exclude=${currentYachtId}&limit=${limit}`,
+          `/api/yachts?filters[lengthMin]=${minLength}&filters[lengthMax]=${maxLength}&exclude=${currentYachtId}&limit=${limit}`,
           { cache: "no-store" }
         );
         if (res.ok) {

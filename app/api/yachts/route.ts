@@ -111,6 +111,17 @@ export async function GET(request: Request) {
       params.push(searchParams.get('filters[hullMaterial]'));
     }
 
+    // Exclude specific yacht IDs (comma-separated)
+    const excludeParam = searchParams.get('exclude');
+    if (excludeParam) {
+      const excludeIds = excludeParam.split(',').map(Number).filter(Boolean);
+      if (excludeIds.length > 0) {
+        const placeholders = excludeIds.map(() => `$${paramIdx.value++}`).join(',');
+        conditions.push(`y.id NOT IN (${placeholders})`);
+        params.push(...excludeIds);
+      }
+    }
+
     // Range filters
     addRangeFilter(searchParams, 'filters[lengthMin]', 'filters[lengthMax]', 'y.length_overall', conditions, params, paramIdx);
     addRangeFilter(searchParams, 'filters[beamMin]', 'filters[beamMax]', 'y.beam', conditions, params, paramIdx);

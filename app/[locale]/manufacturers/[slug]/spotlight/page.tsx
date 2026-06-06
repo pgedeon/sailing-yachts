@@ -78,7 +78,7 @@ locale } = params;
     notFound();
   }
 
-  const title = `${spotlight.title} | Sailing Yacht Info`;
+  const title = spotlight.title;
   const description =
     spotlight.metaDescription ||
     `Explore ${spotlight.manufacturer.name}'s history, brand positioning, notable yacht models, and key milestones.`;

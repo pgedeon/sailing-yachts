@@ -41,11 +41,11 @@
   },
   "Home": {
     "meta": {
-      "title": "Sailing Yacht Info — Specs, Dimensions & Comparison Tool",
+      "title": "Specs, Dimensions & Comparison Tool",
       "description": "Comprehensive database of sailing yacht specifications. Search {yachtPhrase} by length, year, manufacturer. Compare dimensions, sail plans, and accommodation. Free to use.",
-      "ogTitle": "Sailing Yacht Info — Specs, Dimensions & Comparison Tool",
+      "ogTitle": "Specs, Dimensions & Comparison Tool",
       "ogDescription": "Search {yachtPhrase} by manufacturer, length, year. Compare specs side by side. Free database for sailors and buyers.",
-      "twitterTitle": "Sailing Yacht Info — Specs & Comparison Tool",
+      "twitterTitle": "Specs & Comparison Tool",
       "twitterDescription": "Search {yachtPhrase}. Compare dimensions, sail plans, accommodation. Free."
     },
     "hero": {
@@ -116,7 +116,7 @@
   },
   "Yachts": {
     "meta": {
-      "title": "Browse Sailing Yachts — Sailing Yacht Info",
+      "title": "Browse Sailing Yachts",
       "description": "Search and filter sailing yachts by manufacturer, length, year, and more."
     },
     "heading": "Sail Yachts",
@@ -377,7 +377,7 @@
   },
   "Search": {
     "meta": {
-      "title": "Search Yachts — Sailing Yacht Info",
+      "title": "Search Yachts",
       "description": "Search sailing yachts by manufacturer, model name, rig type, keel type, and more."
     },
     "heading": "Search Yachts",
@@ -408,7 +408,7 @@
   },
   "YachtDetail": {
     "meta": {
-      "title": "{manufacturer} {model} ({year}) — Sailing Yacht Info",
+      "title": "{manufacturer} {model} ({year})",
       "description": "{manufacturer} {model} ({year}) sailing yacht specifications. Length, beam, draft, displacement, rig type, cabins and more.",
       "notFoundTitle": "Yacht Not Found",
       "notFoundDescription": "The requested sailing yacht could not be found."

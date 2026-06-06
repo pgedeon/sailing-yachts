@@ -112,7 +112,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const url = getSiteUrl(`/guides/${article.slug}`);
   return {
-    title: `${article.title} | Sailing Yacht Info Guides`,
+    title: article.title,
     description:
       article.excerpt ||
       `Read "${article.title}" on Sailing Yacht Info.`,

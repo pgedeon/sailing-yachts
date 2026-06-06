@@ -41,11 +41,11 @@
   },
   "Home": {
     "meta": {
-      "title": "Sailing Yacht Info — Spécifications, Dimensions & Comparaison",
+      "title": "Spécifications, Dimensions & Comparaison",
       "description": "Base de données complète de spécifications de yachts à voile. Recherchez {yachtPhrase} par longueur, année, constructeur. Comparez dimensions, plans de voilure et aménagements. Gratuit.",
-      "ogTitle": "Sailing Yacht Info — Spécifications, Dimensions & Comparaison",
+      "ogTitle": "Spécifications, Dimensions & Comparaison",
       "ogDescription": "Recherchez {yachtPhrase} par constructeur, longueur, année. Comparez les spécifications côte à côte. Base de données gratuite pour marins et acheteurs.",
-      "twitterTitle": "Sailing Yacht Info — Spécifications & Comparaison",
+      "twitterTitle": "Spécifications & Comparaison",
       "twitterDescription": "Recherchez {yachtPhrase}. Comparez dimensions, plans de voilure, aménagements. Gratuit."
     },
     "hero": {
@@ -116,7 +116,7 @@
   },
   "Yachts": {
     "meta": {
-      "title": "Parcourir les yachts à voile — Sailing Yacht Info",
+      "title": "Parcourir les yachts à voile",
       "description": "Recherchez et filtrez les yachts à voile par constructeur, longueur, année et plus encore."
     },
     "heading": "Yachts à voile",
@@ -377,7 +377,7 @@
   },
   "Search": {
     "meta": {
-      "title": "Rechercher des yachts — Sailing Yacht Info",
+      "title": "Rechercher des yachts",
       "description": "Recherchez des yachts à voile par constructeur, nom de modèle, type de gréement, type de quille et plus encore."
     },
     "heading": "Rechercher des yachts",
@@ -408,7 +408,7 @@
   },
   "YachtDetail": {
     "meta": {
-      "title": "{manufacturer} {model} ({year}) — Sailing Yacht Info",
+      "title": "{manufacturer} {model} ({year})",
       "description": "{manufacturer} {model} ({year}) spécifications du yacht à voile. Longueur, bau, tirant d'eau, déplacement, type de gréement, cabines et plus encore.",
       "notFoundTitle": "Yacht introuvable",
       "notFoundDescription": "Le yacht demandé n'a pas été trouvé."

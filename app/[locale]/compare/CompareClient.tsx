@@ -476,7 +476,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
         <div>
         {/* Print-only header */}
         <div className="hidden printing-compare:block compare-print-header">
-          <h1>{t("printHeader")}</h1>
+          <div className="text-lg font-semibold">{t("printHeader")}</div>
           <p>{t("printDate", { date: new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) })}</p>
         </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t("heading")}</h1>

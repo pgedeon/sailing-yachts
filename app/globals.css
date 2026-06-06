@@ -282,7 +282,7 @@ textarea:focus-visible {
     text-align: center;
   }
 
-  .print-header h1 {
+  .print-header > div {
     font-size: 10pt !important;
     color: #666 !important;
     margin: 0 !important;
@@ -354,7 +354,7 @@ textarea:focus-visible {
       padding-bottom: 8px;
     }
 
-    .compare-print-header h1 {
+    .compare-print-header > div {
       font-size: 16pt;
       margin: 0 0 4px 0;
     }

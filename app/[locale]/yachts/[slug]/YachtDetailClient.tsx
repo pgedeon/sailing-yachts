@@ -389,7 +389,7 @@ export default function YachtDetailClient() {
     <div className="yacht-detail-page max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       {/* Print-only header */}
       <div className="print-header hidden" data-testid="print-header">
-        <h1>{t("printHeader")}</h1>
+        <div className="text-lg font-semibold">{t("printHeader")}</div>
       </div>
 
       <nav aria-label="Breadcrumb" className="mb-4 sm:mb-6 no-print">

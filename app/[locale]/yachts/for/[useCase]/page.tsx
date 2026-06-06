@@ -51,7 +51,7 @@ export async function generateMetadata({
 
   const useCaseLabel =
     locale === "fr" ? data.useCase.labelFr : data.useCase.labelEn;
-  const title = `${useCaseLabel} Sailboats — Best Models & Specs | Sailing Yacht Info`;
+  const title = `${useCaseLabel} Sailboats — Best Models & Specs`;
   const description =
     locale === "fr"
       ? (data.useCase.descriptionFr?.(data.yachts.length) ?? "")

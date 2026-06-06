@@ -149,12 +149,12 @@ export default async function Home({ params }: HomeProps) {
   };
 
   const browseBySize = [
-    { label: t("browseBySize.under25"), min: 0, max: 25 },
-    { label: t("browseBySize.range2530"), min: 25, max: 30 },
-    { label: t("browseBySize.range3035"), min: 30, max: 35 },
-    { label: t("browseBySize.range3540"), min: 35, max: 40 },
-    { label: t("browseBySize.range4050"), min: 40, max: 50 },
-    { label: t("browseBySize.over50"), min: 50, max: 999 },
+    { label: t("browseBySize.under25"), min: 0, max: 7.62 },
+    { label: t("browseBySize.range2530"), min: 7.62, max: 9.14 },
+    { label: t("browseBySize.range3035"), min: 9.14, max: 10.67 },
+    { label: t("browseBySize.range3540"), min: 10.67, max: 12.19 },
+    { label: t("browseBySize.range4050"), min: 12.19, max: 15.24 },
+    { label: t("browseBySize.over50"), min: 15.24, max: 999 },
   ];
 
   return (
@@ -200,7 +200,7 @@ export default async function Home({ params }: HomeProps) {
               {browseBySize.map(({ label, min, max }) => (
                 <Link
                   key={label}
-                  href={`/${locale}/yachts?minLength=${min}&maxLength=${max}`}
+                  href={`/${locale}/yachts?filters[lengthMin]=${min}&filters[lengthMax]=${max}`}
                   className="px-5 py-2 bg-gray-100 hover:bg-blue-100 text-gray-700 hover:text-blue-700 rounded-full text-sm font-medium transition"
                 >
                   {label}
