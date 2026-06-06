@@ -43,9 +43,9 @@
     "meta": {
       "title": "Spécifications, Dimensions & Comparaison",
       "description": "Base de données complète de spécifications de yachts à voile. Recherchez {yachtPhrase} par longueur, année, constructeur. Comparez dimensions, plans de voilure et aménagements. Gratuit.",
-      "ogTitle": "Spécifications, Dimensions & Comparaison",
+      "ogTitle": "Sailing Yacht Info — Spécifications, Dimensions & Comparaison",
       "ogDescription": "Recherchez {yachtPhrase} par constructeur, longueur, année. Comparez les spécifications côte à côte. Base de données gratuite pour marins et acheteurs.",
-      "twitterTitle": "Spécifications & Comparaison",
+      "twitterTitle": "Sailing Yacht Info — Spécifications & Comparaison",
       "twitterDescription": "Recherchez {yachtPhrase}. Comparez dimensions, plans de voilure, aménagements. Gratuit."
     },
     "hero": {

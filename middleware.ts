@@ -99,6 +99,15 @@ export async function middleware(request: NextRequest) {
     return addSecurityHeaders(response, pathname)
   }
 
+  // ── Invalid manufacturer sub-routes (compare, etc.) ──
+  // /manufacturers/[slug]/compare is not a valid route — redirect to manufacturer page
+  const mfrCompareMatch = pathname.match(/^\/(en|fr)\/manufacturers\/([^/]+)\/compare$/);
+  if (mfrCompareMatch) {
+    const locale = mfrCompareMatch[1];
+    const slug = mfrCompareMatch[2];
+    return NextResponse.redirect(new URL(`/${locale}/manufacturers/${slug}`, request.url));
+  }
+
   // ── Everything else: handle with next-intl middleware ──
   const response = intlMiddleware(request)
   return addSecurityHeaders(response, pathname)
