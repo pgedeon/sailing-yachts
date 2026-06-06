@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Admin Dashboard - Sailing Yacht Info",
+  title: "Admin Dashboard",
   description: "Administrative interface for managing sailing yacht data",
+  robots: { index: false, follow: false },
 };
 
 export default function AdminLayout({
