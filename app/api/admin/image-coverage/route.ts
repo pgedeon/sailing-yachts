@@ -37,7 +37,7 @@ export async function GET() {
       SELECT 
         ym.id,
         ym.model_name,
-        y.manufacturer_name,
+        y.name as manufacturer_name,
         ym.slug,
         ym.year,
         COALESCE(ym.media_count, 0) as media_count,
@@ -48,7 +48,7 @@ export async function GET() {
       LEFT JOIN manufacturers y ON ym.manufacturer_id = y.id
       LEFT JOIN image_counts ic ON ym.id = ic.yacht_model_id
       LEFT JOIN media_asset_counts mac ON ym.id = mac.yacht_model_id
-      ORDER BY ym.manufacturer_name, ym.model_name
+      ORDER BY y.name, ym.model_name
     `)
 
     const yachts: YachtWithImages[] = result.rows
