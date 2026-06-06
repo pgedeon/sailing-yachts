@@ -1052,3 +1052,31 @@ export const featuredYachts = pgTable(
 
 export const insertFeaturedYachtSchema = createInsertSchema(featuredYachts);
 export const selectFeaturedYachtSchema = createSelectSchema(featuredYachts);
+
+// P24.1: Analytics events (page views, searches, comparisons, interactions)
+export const analyticsEvents = pgTable(
+  "analytics_events",
+  {
+    id: serial("id").primaryKey(),
+    eventType: varchar("event_type", { length: 50 }).notNull(), // 'page_view', 'search', 'compare', 'yacht_view', 'manufacturer_view', 'guide_view', 'cta_click', 'share', 'filter_use'
+    page: varchar("page", { length: 500 }).notNull(),
+    entityId: integer("entity_id"), // yacht_model_id, manufacturer_id, etc.
+    entityType: varchar("entity_type", { length: 50 }), // 'yacht', 'manufacturer', 'guide', 'comparison'
+    sessionId: varchar("session_id", { length: 100 }).notNull(),
+    metadata: jsonb("metadata").$type<Record<string, unknown>>(),
+    referrer: varchar("referrer", { length: 500 }),
+    userAgent: varchar("user_agent", { length: 500 }),
+    country: varchar("country", { length: 2 }), // ISO country code
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxEventType: index("idx_analytics_events_type").on(table.eventType),
+    idxCreatedAt: index("idx_analytics_events_created").on(table.createdAt),
+    idxSessionId: index("idx_analytics_events_session").on(table.sessionId),
+    idxPage: index("idx_analytics_events_page").on(table.page),
+    idxEntity: index("idx_analytics_events_entity").on(table.entityType, table.entityId),
+  }),
+);
+
+export const insertAnalyticsEventSchema = createInsertSchema(analyticsEvents);
+export const selectAnalyticsEventSchema = createSelectSchema(analyticsEvents);

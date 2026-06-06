@@ -22,6 +22,7 @@ import TableOfContents from "@/components/TableOfContents";
 import dynamic from "next/dynamic";
 import { localePath } from "@/lib/i18n-paths";
 import { calculateCompletenessScore } from "@/lib/completeness";
+import { trackYachtView } from "@/lib/analytics-tracker";
 
 // Lazy-loaded below-the-fold components for bundle optimization (P22.4)
 const SocialShareButtons = dynamic(() => import("@/components/SocialShareButtons").then(m => ({ default: m.default })), {
@@ -292,7 +293,11 @@ export default function YachtDetailClient() {
         if (!r.ok) throw new Error(t("notFound.heading"));
         return r.json();
       })
-      .then((data) => setYacht(data))
+      .then((data) => {
+        setYacht(data);
+        // Track yacht view for analytics
+        try { trackYachtView({ yachtId: data.id, yachtSlug: slug, yachtName: data.modelName, manufacturerName: data.manufacturer }); } catch {}
+      })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [slug, t]);
