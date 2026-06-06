@@ -1080,3 +1080,27 @@ export const analyticsEvents = pgTable(
 
 export const insertAnalyticsEventSchema = createInsertSchema(analyticsEvents);
 export const selectAnalyticsEventSchema = createSelectSchema(analyticsEvents);
+
+// P24.2: A/B test events tracking
+export const abEvents = pgTable(
+  "ab_events",
+  {
+    id: serial("id").primaryKey(),
+    experimentId: varchar("experiment_id", { length: 100 }).notNull(),
+    variantId: varchar("variant_id", { length: 100 }).notNull(),
+    userId: varchar("user_id", { length: 255 }).notNull(),
+    eventType: varchar("event_type", { length: 50 }).notNull(), // 'impression', 'conversion', 'click'
+    metadata: jsonb("metadata").$type<Record<string, string>>().default({}),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxAbExperiment: index("idx_ab_events_experiment").on(table.experimentId),
+    idxAbExperimentVariant: index("idx_ab_events_experiment_variant").on(table.experimentId, table.variantId),
+    idxAbEventType: index("idx_ab_events_type").on(table.experimentId, table.eventType),
+    idxAbUser: index("idx_ab_events_user").on(table.userId, table.experimentId),
+    idxAbCreated: index("idx_ab_events_created").on(table.createdAt),
+  }),
+);
+
+export const insertAbEventSchema = createInsertSchema(abEvents);
+export const selectAbEventSchema = createSelectSchema(abEvents);
