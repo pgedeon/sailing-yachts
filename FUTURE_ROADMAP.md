@@ -88,7 +88,7 @@
 
 ### Phase 24 — Advanced Analytics & Intelligence (Priority: Medium) — 🔲 ACTIVE
 
-- **P24.1 — User behavior tracking dashboard** — Admin dashboard showing page views, popular yachts, search trends, comparison patterns. Aggregate anonymized analytics. Charts for daily/weekly/monthly trends.
+- **P24.1 — User behavior tracking dashboard** *(completed 2026-06-06 — Issue #388, PR #389, 16 tests)* — Admin dashboard showing page views, popular yachts, search trends, comparison patterns. Aggregate anonymized analytics. Charts for daily/weekly/monthly trends.
 - **P24.2 — A/B testing framework** — Implement server-side A/B test assignment (infrastructure exists in ab-testing.ts). Admin dashboard for managing experiments. Statistical significance calculator. Feature flag integration.
 - **P24.3 — Conversion funnel tracking** — Track user journey from landing → search → detail → compare → lead. Identify drop-off points. Admin funnel visualization.
 - **P24.4 — Search intent analysis dashboard** — Analyze search queries, zero-result searches, popular filters. Surface content gaps. Admin dashboard with search analytics.
