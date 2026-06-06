@@ -341,6 +341,10 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }}
         />
       ))}
+      {/* SSR H1 for SEO — client component also renders a visible H1 */}
+      <h1 className="sr-only">
+        {manufacturerName} {yachtData.modelName} ({yachtData.year})
+      </h1>
       <YachtDetailClient />
     </>
   );

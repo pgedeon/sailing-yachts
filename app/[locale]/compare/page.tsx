@@ -66,6 +66,8 @@ export default async function ComparePage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
+      {/* SSR H1 for SEO */}
+      <h1 className="sr-only">{t("heading")}</h1>
       <CompareClient initialIds={initialIds} />
     </>
   );

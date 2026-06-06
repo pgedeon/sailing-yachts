@@ -55,6 +55,8 @@ export default async function SearchPage({ params }: SearchPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
+      {/* SSR H1 for SEO */}
+      <h1 className="sr-only">{t("meta.title")}</h1>
       <SearchClient />
     </>
   );
