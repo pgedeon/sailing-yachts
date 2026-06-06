@@ -25,14 +25,14 @@ function getSecurityHeaders(pathname: string): Record<string, string> {
     "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
-    "img-src 'self' data: blob: https://info.sailboats.fr https://img.youtube.com https://i.vimeocdn.com https://*.googleusercontent.com",
+    "img-src 'self' data: blob: https:",
     "media-src 'self'",
     "object-src 'none'",
     isEmbed
       ? "frame-src 'self' https://www.youtube.com https://youtube.com https://player.vimeo.com"
       : "frame-src 'self' https://www.youtube.com https://youtube.com https://player.vimeo.com",
     "frame-ancestors " + (isEmbed ? "'self' *" : "'none'"),
-    "connect-src 'self' https://o*.ingest.sentry.io https://*.ingest.sentry.io https://info.sailboats.fr https://speedcurve.com https://cdn.speedcurve.com",
+    "connect-src 'self' https://*.ingest.sentry.io https://info.sailboats.fr https://api.sailboats.fr https://speedcurve.com https://cdn.speedcurve.com",
     "base-uri 'self'",
     "form-action 'self'",
     "upgrade-insecure-requests",
@@ -83,6 +83,12 @@ export async function middleware(request: NextRequest) {
 
   // ── Embed routes: allow framing for embeds ──
   if (pathname === '/embed' || pathname.startsWith('/embed/')) {
+    const response = NextResponse.next()
+    return addSecurityHeaders(response, pathname)
+  }
+
+  // ── Auth routes: no locale handling ──
+  if (pathname.startsWith('/auth/')) {
     const response = NextResponse.next()
     return addSecurityHeaders(response, pathname)
   }

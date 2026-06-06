@@ -56,6 +56,9 @@ const imageRemotePatterns = [
   { protocol: "https", hostname: "jboats.com" },
   { protocol: "https", hostname: "amel.fr" },
 
+  // Logos
+  { protocol: "https", hostname: "logo.clearbit.com" },
+
   // CMS / CDN
   { protocol: "https", hostname: "a.storyblok.com" },
   { protocol: "https", hostname: "img.youtube.com" },
