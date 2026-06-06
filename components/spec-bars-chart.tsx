@@ -178,7 +178,9 @@ export function SpecBarsChart({ yachtSpecs }: SpecBarsChartProps) {
       </div>
 
       <p className="text-sm text-muted-foreground mb-4">
-        {t("specBars.description")}
+        {t("specBars.description", {
+            sizeClassRange: `${stats.sizeClass.min.toFixed(1)}–${stats.sizeClass.max.toFixed(1)}m LOA`,
+          })}
       </p>
 
       {/* Legend */}
