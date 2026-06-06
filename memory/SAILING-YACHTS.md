@@ -1,53 +1,40 @@
 # Sailing Yachts — Session Log
 
-## Session: 2026-06-06 00:20 UTC
+## Session: 2026-06-06 20:20 UTC
 
-### Issue: #388 — P24.1: User Behavior Analytics Dashboard
+### Issue: #390 — P24.2: A/B Testing Admin Dashboard
 
 ### What Was Implemented
-- **DB schema**: `analytics_events` table (event_type, page, entity_id, entity_type, session_id, metadata, referrer, user_agent, country, timestamps)
-- **Migration**: 0022_analytics_events applied to Neon DB via node/pg
-- **Server service**: `lib/analytics-service.ts` — insertAnalyticsEvents, getAnalyticsSummary, getEventTrend, getMultiMetricTrend, getPopularYachts, getPopularSearches, getComparisonPatterns, getPageViewBreakdown, getTopReferrers, getEventCountsByType, getAdminAnalyticsDashboard
-- **Client tracker**: `lib/analytics-tracker.ts` — batched event sender (sendBeacon/fetch), anonymous session management, Do Not Track respect, auto-flush on page hide/visibility change
-- **Public API**: POST `/api/analytics` (force-dynamic) — collects batched events from client (max 50/batch)
-- **Admin API**: GET `/api/admin/analytics` (force-dynamic) — returns full dashboard data with configurable period
-- **Admin UI**: `/admin/analytics` — summary cards with sparklines, multi-line SVG trend chart, popular yachts/searches/comparisons, page breakdown bars, event distribution by type, top referrers
-- **Client integration**:
-  - `trackYachtView` on yacht detail page (YachtDetailClient.tsx)
-  - `trackCompare` on compare page (CompareClient.tsx)
-  - `trackSearch` on search page (SearchClient.tsx)
-  - `trackPageView` globally via AnalyticsPageTracker component in root layout
-- **Admin dashboard**: New "Analytics" card added to admin home
-- **Tests**: 16 tests in `tests/analytics.test.ts`
-
-### Also Done
-- Marked Phase 23 as ✅ COMPLETE in FUTURE_ROADMAP.md
-- Marked P23.5 as completed with issue reference
-- Updated Phase 24 to 🔲 ACTIVE
+- **DB migration**: `ab_events` table (experiment_id, variant_id, user_id, event_type, metadata, created_at) with 5 indexes
+- **Service**: `lib/ab-testing-service.ts` — event logging, aggregation, two-proportion Z-test for statistical significance, confidence intervals, significance detection with winner recommendation
+- **API**: POST `/api/ab/event` — logs A/B test events (impression, conversion, click) with validation
+- **API**: GET `/api/admin/ab-testing` — full dashboard data with period filtering (7d/30d/90d/all)
+- **Admin UI**: `/admin/ab-testing` — expandable experiment cards, variant breakdown table, traffic distribution bar charts, conversion rate comparison, confidence interval visualization, significance badges, standalone significance calculator, "How It Works" section
+- **Admin home**: Added A/B Testing card linking to new dashboard
+- **Schema**: Added `abEvents` table definition to drizzle schema
+- **Tests**: 17 tests covering variant assignment, event logging, aggregation, dashboard assembly, significance detection, API validation
 
 ### Build/Test Results
 - TypeScript: ✅ Pass
 - Build: ✅ Pass
-- Tests: ✅ 16/16 pass
+- Tests: ✅ 17/17 pass
 - CI (Lint + TypeScript + Build + Perf Budgets): ✅ All pass
 
 ### Deploy
-- PR #389 (feature/issue-388-analytics-dashboard) → merged (squash)
-- Manual `vercel --prod` deploy
+- PR #391 (feature/issue-390-ab-testing-dashboard) → merged (squash)
+- Manual `vercel --prod` deploy (auto-deploy was slow)
 
 ### Live Verification (all PASS)
 - `/` ✅ | `/yachts` ✅ | `/search` ✅ | `/compare` ✅
-- `/yachts/beneteau-oceanis-40-1` ✅
-- POST `/api/analytics` ✅ — events inserted successfully (verified with test event)
-- GET `/api/admin/analytics` ✅ — returns aggregated data with summary
-- `/admin/analytics` ✅ — renders dashboard page
+- API: `/api/yachts` ✅ — 243 yachts
+- POST `/api/ab/event` ✅ — events logged successfully (verified with test event)
+- GET `/api/admin/ab-testing` ✅ — returns experiment data with 2 experiments, significance analysis
+- `/admin/ab-testing` ✅ — renders dashboard page
 
 ### Next Recommended Task
-- **P24.2** — A/B testing framework admin dashboard (infrastructure exists in ab-testing.ts, needs admin UI + statistical significance calculator)
-- Or **P24.3** — Conversion funnel tracking
+- **P24.3** — Conversion funnel tracking (landing → search → detail → compare → lead)
+- Or **P24.4** — Search intent analysis dashboard
 
 ### Lessons
-- Template literal `${}` in sed/python replacements needs careful escaping — use file-based Python with proper string handling
-- `paramIdx` increment must match the number of placeholders/values in batch insert
-- Analytics tracker respects Do Not Track by default
-- Global page tracking should skip /admin and /api routes
+- Vercel auto-deploy from GitHub can be slow — manual deploy may be needed
+- `Math.max(localSum, dbCount)` for totalEvents: test expectations need to match the higher value
