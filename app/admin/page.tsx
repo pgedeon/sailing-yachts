@@ -189,6 +189,17 @@ export default async function AdminPage() {
                 View Experiments
               </a>
             </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">Conversion Funnel</h2>
+              <p className="text-gray-600 mb-4">Track user journey from landing to lead. Identify drop-off points and optimize conversions.</p>
+              <a
+                href="/admin/funnel"
+                className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
+              >
+                View Funnel
+              </a>
+            </div>
           </div>
         </div>
       </div>
