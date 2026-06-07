@@ -200,6 +200,17 @@ export default async function AdminPage() {
                 View Funnel
               </a>
             </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">Search Analytics</h2>
+              <p className="text-gray-600 mb-4">Analyze search queries, zero-result searches, popular filters, and surface content gaps.</p>
+              <a
+                href="/admin/search-analytics"
+                className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
+              >
+                View Search Analytics
+              </a>
+            </div>
           </div>
         </div>
       </div>
