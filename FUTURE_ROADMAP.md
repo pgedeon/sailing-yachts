@@ -86,13 +86,13 @@
 - **P23.4 — Embeddable yacht comparison widget** *(completed 2026-06-05 — Issue #383, PR #384, 29 tests)* — Configurator page at /embed with yacht search/selection. Compact (6 specs) and full (17+ specs) layouts. Light/dark/auto themes. Copy-paste embed code (iframe + JS auto-resize). PostMessage auto-resize protocol. Frame-ancestors CSP allows third-party embedding.
 - ~~**P23.5 — Yacht of the week / featured rotation**~~ *(completed 2026-06-05 — Issue #385, PR #386, 27 tests)* — Admin-configurable featured yacht shown on homepage. Weekly rotation with manual override. Newsletter integration to announce featured yacht. Landing page at /yacht-of-the-week.
 
-### Phase 24 — Advanced Analytics & Intelligence (Priority: Medium) — 🔲 ACTIVE
+### Phase 24 — Advanced Analytics & Intelligence (Priority: Medium) — ✅ COMPLETE
 
 - **P24.1 — User behavior tracking dashboard** *(completed 2026-06-06 — Issue #388, PR #389, 16 tests)* — Admin dashboard showing page views, popular yachts, search trends, comparison patterns. Aggregate anonymized analytics. Charts for daily/weekly/monthly trends.
 - **P24.2 — A/B testing framework** *(completed 2026-06-06 — Issue #390, PR #391, 17 tests)* — Admin dashboard at /admin/ab-testing with experiment management, variant breakdown, statistical significance calculator (Z-test), confidence intervals, traffic distribution charts, conversion rate comparison. Event tracking API at POST /api/ab/event and GET /api/admin/ab-testing.
 - **P24.3 — Conversion funnel tracking** *(completed 2026-06-08)* — Track user journey from landing → search → detail → compare → lead. Identify drop-off points. Admin funnel visualization.
 - **P24.4 — Search intent analysis dashboard** *(completed 2026-06-08)* — Analyze search queries, zero-result searches, popular filters. Surface content gaps. Admin dashboard with search analytics.
-- **P24.5 — Competitive positioning matrix** — Auto-generate competitive positioning analysis for each manufacturer. Market segment coverage visualization. Price positioning charts.
+- **P24.5 — Competitive positioning matrix** *(completed 2026-06-08)* — Auto-generate competitive positioning analysis for each manufacturer. Market segment coverage visualization. Price positioning charts.
 
 ### Phase 25 — Content Expansion (Priority: Medium) — 🔲 PLANNED
 
