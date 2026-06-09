@@ -7,6 +7,7 @@ import { marked } from "marked";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import {
   getArticleBySlug,
+  getArticleRelatedYachts,
   getRelatedArticles,
 } from "@/lib/articles";
 import { getSiteUrl, generateBreadcrumbJsonLd , buildLocaleAlternates } from "@/lib/seo";
@@ -111,26 +112,30 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const url = getSiteUrl(`/guides/${article.slug}`);
+  const metaTitle = article.metaTitle || article.title;
+  const metaDesc = article.metaDescription || article.excerpt || `Read "${article.title}" on Sailing Yacht Info.`;
+  const ogImage = article.ogImage || article.featuredImage;
   return {
-    title: article.title,
-    description:
-      article.excerpt ||
-      `Read "${article.title}" on Sailing Yacht Info.`,
+    title: metaTitle,
+    description: metaDesc,
+    ...(article.canonicalUrl ? { alternates: { canonical: article.canonicalUrl } } : {}),
+    ...(article.noindex ? { robots: { index: false, follow: false } } : {}),
     openGraph: {
-      title: article.title,
-      description: article.excerpt || undefined,
+      title: metaTitle,
+      description: metaDesc,
       url,
       type: "article",
       publishedTime: article.publishedAt?.toISOString(),
       modifiedTime: article.updatedAt?.toISOString(),
       authors: article.author ? [article.author] : undefined,
       siteName: "Sailing Yacht Info",
-      ...(article.featuredImage ? { images: [article.featuredImage] } : {}),
+      ...(ogImage ? { images: [ogImage] } : {}),
     },
     twitter: {
       card: "summary_large_image",
-      title: article.title,
-      description: article.excerpt || undefined,
+      title: metaTitle,
+      description: metaDesc,
+      ...(ogImage ? { images: [ogImage] } : {}),
     },
     alternates: buildLocaleAlternates(`/guides/${slug}`),
   };
@@ -151,6 +156,7 @@ export default async function GuideArticlePage({ params }: PageProps) {
   const { html: contentHtml, headings } = renderMarkdown(source);
 
   const relatedArticles = await getRelatedArticles(article.id, article.category);
+  const relatedYachts = await getArticleRelatedYachts(article.id);
 
   // Get buying guide template if this article is linked to one
   const template = article.buyingGuideTemplateId
@@ -440,6 +446,44 @@ export default async function GuideArticlePage({ params }: PageProps) {
             </div>
           </div>
         </div>
+
+        {/* Related Yachts */}
+        {relatedYachts.length > 0 && (
+          <section className="py-16 px-4 bg-white border-t border-slate-200">
+            <div className="max-w-5xl mx-auto">
+              <h2 className="text-2xl font-bold text-slate-800 mb-8 font-serif">
+                {t("article.relatedYachts", { defaultValue: "Featured Yachts" })}
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {relatedYachts.map((yacht) => (
+                  <Link
+                    key={yacht.id}
+                    href={localePath(locale, `/yachts/${yacht.slug}`)}
+                    className="block bg-slate-50 rounded-xl border border-slate-200 p-5 hover:border-amber-300 hover:shadow-lg transition-all duration-300 group"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
+                        {yacht.manufacturerName}
+                      </span>
+                      <span className="text-xs text-gray-400">{yacht.year}</span>
+                    </div>
+                    <h3 className="text-lg font-semibold text-slate-800 group-hover:text-amber-700 transition font-serif">
+                      {yacht.modelName}
+                    </h3>
+                    <div className="flex flex-wrap gap-3 mt-2 text-xs text-gray-500">
+                      {yacht.lengthOverall && (
+                        <span>LOA: {yacht.lengthOverall}m</span>
+                      )}
+                      {yacht.rigType && (
+                        <span>{yacht.rigType}</span>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Related Guides */}
         {relatedArticles && relatedArticles.length > 0 && (
