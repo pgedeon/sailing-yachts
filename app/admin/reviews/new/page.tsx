@@ -10,6 +10,7 @@ export default async function AdminNewReviewPage() {
   await requireAdmin()
 
   let yachts: any[] = []
+  let reviewSources: any[] = []
   let fetchError: string | null = null
 
   try {
@@ -27,6 +28,16 @@ export default async function AdminNewReviewPage() {
     }
     const data = await res.json()
     yachts = data.yachts ?? []
+
+    // Fetch review sources
+    const rsRes = await fetch(`${baseUrl}/api/admin/review-sources`, {
+      cache: 'no-store',
+      headers: { cookie: headersList.get('cookie') ?? '' },
+    })
+    if (rsRes.ok) {
+      const rsData = await rsRes.json()
+      reviewSources = rsData.sources ?? []
+    }
   } catch (error) {
     console.error('Failed to fetch yachts:', error)
     fetchError = error instanceof Error ? error.message : 'Unknown error'
@@ -59,7 +70,7 @@ export default async function AdminNewReviewPage() {
               <span className="block sm:inline"> No yachts found. Add some yachts first.</span>
             </div>
           ) : (
-            <NewReviewForm yachts={yachts} />
+            <NewReviewForm yachts={yachts} reviewSources={reviewSources} />
           )}
         </div>
       </div>

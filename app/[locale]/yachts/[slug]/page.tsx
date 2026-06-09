@@ -300,6 +300,26 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
     // Rating data unavailable — skip silently
   }
 
+  // P25.2: Fetch source-aware review aggregation for JSON-LD
+  let sourceAggregationJsonLd: Record<string, unknown> | null = null;
+  try {
+    const { getYachtReviewAggregation } = await import("@/lib/review-aggregation");
+    const agg = await getYachtReviewAggregation(data.yacht.id);
+    if (agg.sourceCount > 0) {
+      sourceAggregationJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "AggregateRating",
+        itemReviewed: { "@type": "Product", name: `${manufacturerName} ${yachtData.modelName}` },
+        ratingValue: agg.overallAverage,
+        reviewCount: agg.totalReviewCount,
+        bestRating: 5,
+        worstRating: 1,
+      };
+    }
+  } catch {
+    // Aggregation unavailable
+  }
+
   return (
     <>
       <script
@@ -341,6 +361,12 @@ export default async function YachtDetailPage({ params }: YachtDetailPageProps) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }}
         />
       ))}
+      {sourceAggregationJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(sourceAggregationJsonLd) }}
+        />
+      )}
       {/* SSR H1 for SEO — client component also renders a visible H1 */}
       <h1 className="sr-only">
         {manufacturerName} {yachtData.modelName} ({yachtData.year})

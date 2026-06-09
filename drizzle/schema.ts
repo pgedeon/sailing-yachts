@@ -226,6 +226,7 @@ export const reviews = pgTable(
       .notNull()
       .references(() => yachtModels.id, { onDelete: "cascade" }),
     source: varchar("source", { length: 100 }),
+    reviewSourceId: integer("review_source_id").references(() => reviewSources.id, { onDelete: "set null" }),
     rating: numeric("rating", { precision: 2, scale: 1 }),
     summary: text("summary"),
     fullText: text("full_text"),
@@ -1135,3 +1136,29 @@ export const articleYachts = pgTable(
 
 export const insertArticleYachtSchema = createInsertSchema(articleYachts);
 export const selectArticleYachtSchema = createSelectSchema(articleYachts);
+
+// P25.2: External review sources (magazines, YouTube channels, expert sites)
+export const reviewSources = pgTable(
+  "review_sources",
+  {
+    id: serial("id").primaryKey(),
+    name: varchar("name", { length: 200 }).notNull().unique(),
+    slug: varchar("slug", { length: 200 }).notNull().unique(),
+    websiteUrl: varchar("website_url", { length: 500 }),
+    logoUrl: varchar("logo_url", { length: 500 }),
+    description: text("description"),
+    credibilityScore: integer("credibility_score").default(50),
+    sourceType: varchar("source_type", { length: 50 }).notNull().default("magazine"),
+    isActive: boolean("is_active").notNull().default(true),
+    lastFetchedAt: timestamp("last_fetched_at", { withTimezone: true }),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    idxSlug: uniqueIndex("idx_review_sources_slug").on(table.slug),
+    idxActive: index("idx_review_sources_active").on(table.isActive),
+  }),
+);
+
+export const insertReviewSourceSchema = createInsertSchema(reviewSources);
+export const selectReviewSourceSchema = createSelectSchema(reviewSources);
