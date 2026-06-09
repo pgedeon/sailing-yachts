@@ -25,7 +25,21 @@ export default async function EditGuidePage({ params }: PageProps) {
     redirect("/admin/guides");
   }
 
-  const article = result.rows[0];
+  // Fetch related yachts
+  const yachtsResult = await pool.query(
+    `SELECT ym.id, ym.slug, ym.model_name, ym.year, m.name as manufacturer_name, ay.sort_order
+     FROM article_yachts ay
+     JOIN yacht_models ym ON ay.yacht_model_id = ym.id
+     JOIN manufacturers m ON ym.manufacturer_id = m.id
+     WHERE ay.article_id = $1
+     ORDER BY ay.sort_order, ym.model_name`,
+    [articleId]
+  );
+
+  const article = {
+    ...result.rows[0],
+    relatedYachts: yachtsResult.rows,
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">

@@ -23,10 +23,26 @@ export interface Article {
   buyingGuideTemplateId: string | null;
   isPublished: boolean;
   publishedAt: Date | null;
+  metaTitle: string | null;
+  metaDescription: string | null;
+  ogImage: string | null;
+  canonicalUrl: string | null;
+  noindex: boolean;
   createdAt: Date;
   updatedAt: Date;
   lastReviewedAt: Date | null;
   reviewStatus: string | null;
+}
+
+export interface RelatedYacht {
+  id: number;
+  slug: string;
+  modelName: string;
+  year: number;
+  manufacturerName: string;
+  lengthOverall: string | null;
+  rigType: string | null;
+  sortOrder: number;
 }
 
 export interface ArticleWithStats extends Article {
@@ -48,6 +64,11 @@ const FALLBACK_ARTICLE: Article = {
   buyingGuideTemplateId: null,
   isPublished: false,
   publishedAt: null,
+  metaTitle: null,
+  metaDescription: null,
+  ogImage: null,
+  canonicalUrl: null,
+  noindex: false,
   createdAt: new Date(),
   updatedAt: new Date(),
   lastReviewedAt: null,
@@ -88,6 +109,11 @@ export async function getArticleBySlug(
       buyingGuideTemplateId: row.buying_guide_template_id || null,
       isPublished: row.is_published,
       publishedAt: row.published_at,
+      metaTitle: row.meta_title || null,
+      metaDescription: row.meta_description || null,
+      ogImage: row.og_image || null,
+      canonicalUrl: row.canonical_url || null,
+      noindex: row.noindex || false,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
       lastReviewedAt: row.last_reviewed_at || null,
@@ -126,6 +152,11 @@ export async function getAllPublishedArticles(): Promise<Article[]> {
       updatedAt: row.updated_at,
       lastReviewedAt: row.last_reviewed_at || null,
       reviewStatus: row.review_status || null,
+      metaTitle: row.meta_title || null,
+      metaDescription: row.meta_description || null,
+      ogImage: row.og_image || null,
+      canonicalUrl: row.canonical_url || null,
+      noindex: row.noindex || false,
     }));
   }, FALLBACK_ARTICLES);
 }
@@ -163,6 +194,11 @@ export async function getArticlesByCategory(
       updatedAt: row.updated_at,
       lastReviewedAt: row.last_reviewed_at || null,
       reviewStatus: row.review_status || null,
+      metaTitle: row.meta_title || null,
+      metaDescription: row.meta_description || null,
+      ogImage: row.og_image || null,
+      canonicalUrl: row.canonical_url || null,
+      noindex: row.noindex || false,
     }));
   }, FALLBACK_ARTICLES);
 }
@@ -230,6 +266,11 @@ export async function getRelatedArticles(
       updatedAt: row.updated_at,
       lastReviewedAt: row.last_reviewed_at || null,
       reviewStatus: row.review_status || null,
+      metaTitle: row.meta_title || null,
+      metaDescription: row.meta_description || null,
+      ogImage: row.og_image || null,
+      canonicalUrl: row.canonical_url || null,
+      noindex: row.noindex || false,
     }));
   }, []);
 }
@@ -264,8 +305,44 @@ export async function getBuyingGuideArticles(): Promise<Article[]> {
       updatedAt: row.updated_at,
       lastReviewedAt: row.last_reviewed_at || null,
       reviewStatus: row.review_status || null,
+      metaTitle: row.meta_title || null,
+      metaDescription: row.meta_description || null,
+      ogImage: row.og_image || null,
+      canonicalUrl: row.canonical_url || null,
+      noindex: row.noindex || false,
     }));
   }, FALLBACK_ARTICLES);
+}
+
+/**
+ * Get related yachts for an article
+ */
+export async function getArticleRelatedYachts(
+  articleId: number
+): Promise<RelatedYacht[]> {
+  return buildSafeQuery(async () => {
+    const result = await pool.query(
+      `SELECT ym.id, ym.slug, ym.model_name, ym.year, m.name as manufacturer_name,
+              ym.length_overall, ym.rig_type, ay.sort_order
+       FROM article_yachts ay
+       JOIN yacht_models ym ON ay.yacht_model_id = ym.id
+       JOIN manufacturers m ON ym.manufacturer_id = m.id
+       WHERE ay.article_id = $1
+       ORDER BY ay.sort_order, ym.model_name`,
+      [articleId]
+    );
+
+    return result.rows.map((row) => ({
+      id: row.id,
+      slug: row.slug,
+      modelName: row.model_name,
+      year: row.year,
+      manufacturerName: row.manufacturer_name,
+      lengthOverall: row.length_overall,
+      rigType: row.rig_type,
+      sortOrder: row.sort_order,
+    }));
+  }, []);
 }
 
 /**
@@ -324,6 +401,11 @@ export async function createArticle(data: {
       buyingGuideTemplateId: row.buying_guide_template_id || null,
       isPublished: row.is_published,
       publishedAt: row.published_at,
+      metaTitle: row.meta_title || null,
+      metaDescription: row.meta_description || null,
+      ogImage: row.og_image || null,
+      canonicalUrl: row.canonical_url || null,
+      noindex: row.noindex || false,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
       lastReviewedAt: row.last_reviewed_at || null,

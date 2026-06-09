@@ -288,6 +288,12 @@ export const articles = pgTable(
     buyingGuideTemplateId: varchar("buying_guide_template_id", { length: 100 }),
     isPublished: boolean("is_published").default(false),
     publishedAt: timestamp("published_at"),
+    // SEO fields (P25.1)
+    metaTitle: varchar("meta_title", { length: 500 }),
+    metaDescription: varchar("meta_description", { length: 1000 }),
+    ogImage: varchar("og_image", { length: 500 }),
+    canonicalUrl: varchar("canonical_url", { length: 500 }),
+    noindex: boolean("noindex").default(false),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
   },
@@ -1104,3 +1110,28 @@ export const abEvents = pgTable(
 
 export const insertAbEventSchema = createInsertSchema(abEvents);
 export const selectAbEventSchema = createSelectSchema(abEvents);
+
+
+// P25.1: Article-Yacht join table for related yacht linking
+export const articleYachts = pgTable(
+  "article_yachts",
+  {
+    id: serial("id").primaryKey(),
+    articleId: integer("article_id")
+      .notNull()
+      .references(() => articles.id, { onDelete: "cascade" }),
+    yachtModelId: integer("yacht_model_id")
+      .notNull()
+      .references(() => yachtModels.id, { onDelete: "cascade" }),
+    sortOrder: integer("sort_order").default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxArticle: index("idx_article_yachts_article").on(table.articleId),
+    idxYacht: index("idx_article_yachts_yacht").on(table.yachtModelId),
+    idxUnique: uniqueIndex("idx_article_yachts_unique").on(table.articleId, table.yachtModelId),
+  }),
+);
+
+export const insertArticleYachtSchema = createInsertSchema(articleYachts);
+export const selectArticleYachtSchema = createSelectSchema(articleYachts);
