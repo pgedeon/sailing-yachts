@@ -69,6 +69,12 @@ export default async function AdminPage() {
                 Manage Reviews
               </a>
             </div>
+              <a
+                href="/admin/review-sources"
+                className="inline-block px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200 ml-2"
+              >
+                Review Sources
+              </a>
 
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
               <h2 className="text-xl font-semibold mb-4 text-gray-800">Specification Categories</h2>

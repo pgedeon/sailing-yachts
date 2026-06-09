@@ -53,6 +53,10 @@ const ReviewSubmissionForm = dynamic(() => import("@/components/ReviewSubmission
   ssr: false,
   loading: () => <div className="h-48 animate-pulse bg-muted rounded-lg" />,
 });
+const ReviewAggregation = dynamic(() => import("@/components/ReviewAggregation").then((m) => ({ default: m.default })), {
+  ssr: false,
+  loading: () => <div className="h-32 animate-pulse bg-muted rounded-lg" />,
+});
 const YachtRatingWidget = dynamic(() => import("@/components/YachtRatingWidget").then(m => ({ default: m.YachtRatingWidget })), {
   ssr: false,
   loading: () => <div className="h-24 animate-pulse bg-muted rounded-lg" />,
@@ -210,6 +214,7 @@ export default function YachtDetailClient() {
   const [error, setError] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<string>("");
   const [variants, setVariants] = useState<Array<import("./VariantSelector").YachtVariant>>([]);
+  const [reviewAggregation, setReviewAggregation] = useState<any>(null);
 
   // Translation-aware GROUP_LABELS
   const GROUP_LABELS: Record<string, string> = {
@@ -295,6 +300,8 @@ export default function YachtDetailClient() {
       })
       .then((data) => {
         setYacht(data);
+        // Fetch review aggregation (non-blocking)
+        fetch(`/api/yachts/${slug}/review-aggregation`).then(r => r.ok ? r.json() : null).then(setReviewAggregation).catch(() => {});
         // Track yacht view for analytics
         try { trackYachtView({ yachtId: data.id, yachtSlug: slug, yachtName: data.modelName, manufacturerName: data.manufacturer }); } catch {}
       })
@@ -798,6 +805,8 @@ export default function YachtDetailClient() {
                 </div>
               );
             })()}
+            {/* P25.2: Review Aggregation by Source */}
+            <ReviewAggregation aggregation={reviewAggregation} />
 
             {/* Reviews Section */}
             {yacht.reviews && yacht.reviews.length > 0 && (

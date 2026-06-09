@@ -11,11 +11,18 @@ interface Yacht {
   year?: number
 }
 
-interface NewReviewFormProps {
-  yachts: Yacht[]
+interface ReviewSource {
+  id: number
+  name: string
+  sourceType: string
 }
 
-export default function NewReviewForm({ yachts }: NewReviewFormProps) {
+interface NewReviewFormProps {
+  yachts: Yacht[]
+  reviewSources?: ReviewSource[]
+}
+
+export default function NewReviewForm({ yachts, reviewSources = [] }: NewReviewFormProps) {
   const router = useRouter()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -35,6 +42,7 @@ export default function NewReviewForm({ yachts }: NewReviewFormProps) {
       reviewDate: formData.get('reviewDate') as string || null,
       authorName: formData.get('authorName') as string || null,
       sourceUrl: formData.get('sourceUrl') as string || null,
+      reviewSourceId: formData.get('reviewSourceId') ? parseInt(formData.get('reviewSourceId') as string, 10) : null,
     }
 
     try {
@@ -85,6 +93,23 @@ export default function NewReviewForm({ yachts }: NewReviewFormProps) {
         </select>
       </div>
 
+      {reviewSources.length > 0 && (
+        <div>
+          <label htmlFor="reviewSourceId" className="block text-sm font-medium text-gray-700 mb-1">
+            Review Source (linked)
+          </label>
+          <select
+            id="reviewSourceId"
+            name="reviewSourceId"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">— None —</option>
+            {reviewSources.map((rs) => (
+              <option key={rs.id} value={rs.id}>{rs.name} ({rs.sourceType})</option>
+            ))}
+          </select>
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label htmlFor="source" className="block text-sm font-medium text-gray-700 mb-1">
