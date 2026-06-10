@@ -97,7 +97,7 @@
 ### Phase 25 — Content Expansion (Priority: Medium) — 🔲 PLANNED
 
 - **P25.1 — Sailing guides CMS** *(completed 2026-06-09 — Issue #401, PR #402, 15 tests)* — Full CMS for creating/editing sailing guides. Rich text editor (Markdown with preview), image upload with validation, SEO fields (meta_title, meta_description, og_image, canonical_url, noindex). Category tagging, related yacht linking with autocomplete search. Author attribution.
-- **P25.2 — Yacht review aggregation** — Aggregate reviews from external sources. Schema for review source, rating, URL. Display aggregated scores on yacht detail. Admin review management.
+- **P25.2 — Yacht review aggregation** *(completed 2026-06-09 — Issue #403, PR #404)* — Aggregate reviews from external sources. Schema for review source, rating, URL. Display aggregated scores on yacht detail. Admin review management.
 - **P25.3 — Interactive sailing quiz** — "Which yacht is right for you?" personality-style quiz. Result leads to yacht finder recommendations. Shareable results. Lead capture integration.
 - **P25.4 — Multilingual content pipeline** — Auto-translate guides and descriptions to French. Translation queue with human review. Translation memory for consistency.
 - **P25.5 — Dynamic FAQ generation** — Auto-generate FAQs from yacht data patterns. Schema markup for FAQ rich results. Crawlable FAQ pages per manufacturer/size category.

@@ -328,6 +328,21 @@ export default async function Home({ params }: HomeProps) {
           </div>
         </section>
 
+        {/* Quiz CTA */}
+        <section className="py-12 px-4 bg-gradient-to-r from-sky-50 to-blue-50 border-t border-blue-100">
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">{t("quizCta.title")}</h2>
+            <p className="text-gray-600 mb-6">{t("quizCta.subtitle")}</p>
+            <Link
+              href={`/${locale}/quiz`}
+              className="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition shadow-lg shadow-blue-200"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+              {t("quizCta.button")}
+            </Link>
+          </div>
+        </section>
+
         {/* Newsletter Signup */}
         <section className="py-12 px-4 bg-blue-50 border-t border-blue-100">
           <div className="max-w-xl mx-auto text-center">

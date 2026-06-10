@@ -107,6 +107,11 @@
       "title": "Prêt à trouver votre prochain yacht ?",
       "subtitle": "Recherchez dans la base de données ou comparez les bateaux côte à côte.",
       "browseAll": "Parcourir tous les yachts"
+    },
+    "quizCta": {
+      "title": "Pas sûr de savoir quel voilier est fait pour vous ?",
+      "subtitle": "Faites notre quiz en 2 minutes et obtenez des recommandations personnalisées basées sur votre expérience, votre budget et votre style de navigation.",
+      "button": "Faire le quiz"
     }
   },
   "LanguageSwitcher": {
@@ -1375,5 +1380,109 @@
     "successMessage": "Merci pour votre inscription ! Nous vous notifierons lorsque de nouveaux yachts seront ajoutés.",
     "errorMessage": "Une erreur est survenue. Veuillez réessayer.",
     "networkError": "Erreur réseau. Veuillez réessayer."
+  },
+  "Quiz": {
+    "title": "Quel voilier est fait pour vous ?",
+    "subtitle": "Répondez à 7 questions rapides et découvrez votre voilier idéal",
+    "step": "Étape",
+    "back": "Précédent",
+    "next": "Suivant",
+    "getResults": "Trouver mon voilier",
+    "analyzing": "Analyse en cours...",
+    "shareTitle": "Mes résultats du quiz voilier",
+    "shareText": "Je viens de trouver mon voilier idéal ! Faites le quiz pour trouver le vôtre.",
+    "steps": {
+      "experience": {
+        "question": "Quel est votre niveau d'expérience en voile ?",
+        "beginner": "Débutant",
+        "beginnerDesc": "Nouveau en voile ou moins de 2 ans",
+        "intermediate": "Intermédiaire",
+        "intermediateDesc": "Quelques années de navigation régulière",
+        "advanced": "Avancé",
+        "advancedDesc": "Marin expérimenté, nombreuses milles au compteur"
+      },
+      "sailingType": {
+        "question": "Quel type de voile préférez-vous ?",
+        "coastal": "Côtier / Sorties à la journée",
+        "coastalDesc": "Courtes excursions le long de la côte",
+        "offshore": "Hauturier / Eaux bleues",
+        "offshoreDesc": "Longues traversées en pleine mer",
+        "racing": "Course au large",
+        "racingDesc": "Voile de compétition et régates",
+        "cruising": "Croisière habitable",
+        "cruisingDesc": "Croisière prolongée et vie à bord"
+      },
+      "crewSize": {
+        "question": "Combien de personnes seront généralement à bord ?",
+        "solo": "En solitaire",
+        "soloDesc": "Juste moi — navigation en solitaire",
+        "couple": "En couple",
+        "coupleDesc": "Moi et mon/ma partenaire",
+        "family": "En famille",
+        "familyDesc": "Famille avec enfants (3-5 personnes)",
+        "group": "En groupe",
+        "groupDesc": "Amis ou équipage (5+ personnes)"
+      },
+      "budget": {
+        "question": "Quel est votre budget ?",
+        "budget": "Économique",
+        "budgetDesc": "Excellente valeur moins de 50k€",
+        "midrange": "Milieu de gamme",
+        "midrangeDesc": "50k€–200k€ pour un bon croiseur",
+        "premium": "Premium",
+        "premiumDesc": "200k€+ pour un voilier haut de gamme",
+        "any": "Pas encore sûr",
+        "anyDesc": "J'explore toutes les options"
+      },
+      "preferredLength": {
+        "question": "Quelle taille de voilier vous attire ?",
+        "small": "Petit (moins de 9m)",
+        "smallDesc": "Facile à manœuvrer, coûts réduits",
+        "medium": "Moyen (9–14m)",
+        "mediumDesc": "Le format idéal pour la plupart des navigateurs",
+        "large": "Grand (14m+)",
+        "largeDesc": "Espace et confort maximum",
+        "any": "Sans préférence",
+        "anyDesc": "Montrez-moi tout"
+      },
+      "keelPreference": {
+        "question": "Quel type de quille préférez-vous ?",
+        "fin": "Quille en aileron",
+        "finDesc": "Performance et agilité",
+        "wing": "Quille ailée",
+        "wingDesc": "Tirant d'eau réduit, excellente stabilité",
+        "full": "Quille longue",
+        "fullDesc": "Traditionnelle, marquée, bon cap",
+        "any": "Sans préférence",
+        "anyDesc": "Tout type de quille me convient"
+      },
+      "priority": {
+        "question": "Qu'est-ce qui compte le plus pour vous ?",
+        "performance": "Performances sous voile",
+        "performanceDesc": "Vitesse, réactivité et comportement",
+        "comfort": "Confort et espace",
+        "comfortDesc": "Espace de vie, aménagements et disposition",
+        "value": "Meilleur rapport qualité-prix",
+        "valueDesc": "Maximum de caractéristiques pour le budget",
+        "safety": "Sécurité et fiabilité",
+        "safetyDesc": "Tenue en mer et qualité de construction"
+      }
+    },
+    "results": {
+      "title": "Vos voiliers idéaux",
+      "subtitle": "Basé sur vos préférences, voici vos meilleures correspondances",
+      "match": "correspondance",
+      "viewYacht": "Voir les détails",
+      "noResults": "Aucun voilier correspondant trouvé. Essayez d'ajuster vos critères.",
+      "retry": "Recommencer le quiz",
+      "share": "Partager vos résultats",
+      "shareDesc": "Partagez vos résultats avec vos amis ou sauvegardez-les.",
+      "shareButton": "Copier le lien",
+      "saveResults": "Sauvegarder vos résultats",
+      "emailDesc": "Recevez vos résultats par email.",
+      "emailSuccess": "Résultats envoyés ! Vérifiez votre boîte mail.",
+      "send": "Envoyer",
+      "retake": "Refaire le quiz"
+    }
   }
 }

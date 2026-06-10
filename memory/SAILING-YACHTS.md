@@ -1,40 +1,40 @@
 # Sailing Yachts — Session Log
 
-## Session: 2026-06-06 20:20 UTC
+## Session: 2026-06-09 00:20 UTC
 
-### Issue: #390 — P24.2: A/B Testing Admin Dashboard
+### Issue: #401 — P25.1: Sailing Guides CMS Enhancements
 
 ### What Was Implemented
-- **DB migration**: `ab_events` table (experiment_id, variant_id, user_id, event_type, metadata, created_at) with 5 indexes
-- **Service**: `lib/ab-testing-service.ts` — event logging, aggregation, two-proportion Z-test for statistical significance, confidence intervals, significance detection with winner recommendation
-- **API**: POST `/api/ab/event` — logs A/B test events (impression, conversion, click) with validation
-- **API**: GET `/api/admin/ab-testing` — full dashboard data with period filtering (7d/30d/90d/all)
-- **Admin UI**: `/admin/ab-testing` — expandable experiment cards, variant breakdown table, traffic distribution bar charts, conversion rate comparison, confidence interval visualization, significance badges, standalone significance calculator, "How It Works" section
-- **Admin home**: Added A/B Testing card linking to new dashboard
-- **Schema**: Added `abEvents` table definition to drizzle schema
-- **Tests**: 17 tests covering variant assignment, event logging, aggregation, dashboard assembly, significance detection, API validation
+- **article_yachts join table**: DB migration creating join table with article_id, yacht_model_id, sort_order, cascading deletes, unique constraint
+- **SEO fields on articles**: Added meta_title, meta_description, og_image, canonical_url, noindex columns to articles table
+- **Yacht search API**: GET /api/admin/guides/yacht-search — search yachts by name/manufacturer for autocomplete
+- **Image upload API**: POST /api/admin/guides/upload-image — file upload with type/size validation, saves to /public/uploads/guides/
+- **Enhanced guide form**: Added related yacht selector with autocomplete, image upload widget (file + URL), SEO settings section with character count guidance, Google preview
+- **Public guide page**: Shows related yachts section with yacht cards, uses SEO fields in generateMetadata
+- **Updated admin APIs**: POST/PUT /api/admin/guides now handle SEO fields and relatedYachtIds
+- **Updated articles service**: Added RelatedYacht interface, getArticleRelatedYachts function, SEO fields in all queries
+- **Schema**: Added articleYachts drizzle table, SEO columns on articles
 
 ### Build/Test Results
 - TypeScript: ✅ Pass
-- Build: ✅ Pass
-- Tests: ✅ 17/17 pass
+- Build: ✅ Pass (1521 static pages)
+- Tests: ✅ 15/15 pass
 - CI (Lint + TypeScript + Build + Perf Budgets): ✅ All pass
 
 ### Deploy
-- PR #391 (feature/issue-390-ab-testing-dashboard) → merged (squash)
-- Manual `vercel --prod` deploy (auto-deploy was slow)
+- PR #402 (feature/issue-401-guides-cms-enhancements) → merged (squash)
+- Vercel auto-deploy from main
 
 ### Live Verification (all PASS)
 - `/` ✅ | `/yachts` ✅ | `/search` ✅ | `/compare` ✅
+- `/guides` ✅ | `/en/guides/how-to-choose-your-first-sailboat` ✅
 - API: `/api/yachts` ✅ — 243 yachts
-- POST `/api/ab/event` ✅ — events logged successfully (verified with test event)
-- GET `/api/admin/ab-testing` ✅ — returns experiment data with 2 experiments, significance analysis
-- `/admin/ab-testing` ✅ — renders dashboard page
 
 ### Next Recommended Task
-- **P24.3** — Conversion funnel tracking (landing → search → detail → compare → lead)
-- Or **P24.4** — Search intent analysis dashboard
+- **P25.2** — Yacht review aggregation (aggregate reviews from external sources)
+- Or **P25.3** — Interactive sailing quiz ("Which yacht is right for you?")
 
 ### Lessons
-- Vercel auto-deploy from GitHub can be slow — manual deploy may be needed
-- `Math.max(localSum, dbCount)` for totalEvents: test expectations need to match the higher value
+- The guides CMS already existed with basic functionality — P25.1 was about enhancing it with missing features
+- Neon DB `channel_binding=require` causes issues with pg client — use `sslmode=require` without channel_binding for migrations
+- Build "errors" for static pages (Neon connectivity during prerender) are pre-existing and not blocking
