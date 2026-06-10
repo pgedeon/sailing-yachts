@@ -1162,3 +1162,60 @@ export const reviewSources = pgTable(
 
 export const insertReviewSourceSchema = createInsertSchema(reviewSources);
 export const selectReviewSourceSchema = createSelectSchema(reviewSources);
+
+// P25.4: Content translations — multilingual content pipeline
+export const contentTranslations = pgTable(
+  "content_translations",
+  {
+    id: serial("id").primaryKey(),
+    contentType: varchar("content_type", { length: 50 }).notNull(), // 'yacht_description', 'manufacturer_description', 'article', 'guide', 'glossary_term', 'faq'
+    contentId: integer("content_id").notNull(),
+    fieldName: varchar("field_name", { length: 100 }).notNull(), // 'description', 'title', 'content', 'excerpt'
+    sourceLocale: varchar("source_locale", { length: 5 }).notNull().default("en"),
+    targetLocale: varchar("target_locale", { length: 5 }).notNull().default("fr"),
+    sourceText: text("source_text"),
+    translatedText: text("translated_text").notNull(),
+    translationMethod: varchar("translation_method", { length: 30 }).notNull().default("manual"), // 'manual', 'template', 'memory', 'external'
+    status: varchar("status", { length: 30 }).notNull().default("pending"), // 'pending', 'auto_translated', 'in_review', 'approved', 'rejected'
+    qualityScore: integer("quality_score").default(50),
+    reviewerId: integer("reviewer_id"),
+    reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxContentType: index("idx_ct_content_type").on(table.contentType),
+    idxContentId: index("idx_ct_content_id").on(table.contentId),
+    idxStatus: index("idx_ct_status").on(table.status),
+    idxLocalePair: index("idx_ct_locale_pair").on(table.sourceLocale, table.targetLocale),
+    idxUnique: uniqueIndex("idx_ct_unique").on(table.contentType, table.contentId, table.fieldName, table.sourceLocale, table.targetLocale),
+    idxMethod: index("idx_ct_method").on(table.translationMethod),
+  }),
+);
+
+export const translationMemory = pgTable(
+  "translation_memory",
+  {
+    id: serial("id").primaryKey(),
+    sourceLocale: varchar("source_locale", { length: 5 }).notNull().default("en"),
+    targetLocale: varchar("target_locale", { length: 5 }).notNull().default("fr"),
+    sourceText: text("source_text").notNull(),
+    translatedText: text("translated_text").notNull(),
+    sourceHash: varchar("source_hash", { length: 64 }).notNull(),
+    category: varchar("category", { length: 100 }),
+    matchCount: integer("match_count").notNull().default(1),
+    qualityScore: integer("quality_score").default(80),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxUnique: uniqueIndex("idx_tm_unique").on(table.sourceHash, table.sourceLocale, table.targetLocale),
+    idxCategory: index("idx_tm_category").on(table.category),
+    idxSourceHash: index("idx_tm_source_hash").on(table.sourceHash),
+  }),
+);
+
+export const insertContentTranslationSchema = createInsertSchema(contentTranslations);
+export const selectContentTranslationSchema = createSelectSchema(contentTranslations);
+export const insertTranslationMemorySchema = createInsertSchema(translationMemory);
+export const selectTranslationMemorySchema = createSelectSchema(translationMemory);
