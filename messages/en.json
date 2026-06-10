@@ -107,6 +107,11 @@
       "title": "Ready to find your next yacht?",
       "subtitle": "Search the database or compare boats side by side.",
       "browseAll": "Browse All Yachts"
+    },
+    "quizCta": {
+      "title": "Not Sure Which Yacht is Right for You?",
+      "subtitle": "Take our 2-minute quiz and get personalized yacht recommendations based on your experience, budget, and sailing style.",
+      "button": "Take the Quiz"
     }
   },
   "LanguageSwitcher": {
@@ -1375,5 +1380,109 @@
     "successMessage": "Thanks for subscribing! We'll notify you when new yachts are added.",
     "errorMessage": "Something went wrong. Please try again.",
     "networkError": "Network error. Please try again."
+  },
+  "Quiz": {
+    "title": "Which Sailing Yacht is Right for You?",
+    "subtitle": "Answer 7 quick questions and discover your perfect match",
+    "step": "Step",
+    "back": "Back",
+    "next": "Next",
+    "getResults": "Find My Yacht",
+    "analyzing": "Analyzing...",
+    "shareTitle": "My Sailing Yacht Quiz Results",
+    "shareText": "I just found my ideal sailing yacht! Take the quiz to find yours.",
+    "steps": {
+      "experience": {
+        "question": "What's your sailing experience level?",
+        "beginner": "Beginner",
+        "beginnerDesc": "New to sailing or less than 2 years",
+        "intermediate": "Intermediate",
+        "intermediateDesc": "A few years of regular sailing",
+        "advanced": "Advanced",
+        "advancedDesc": "Experienced sailor, many miles logged"
+      },
+      "sailingType": {
+        "question": "What type of sailing do you enjoy most?",
+        "coastal": "Coastal / Day Sailing",
+        "coastalDesc": "Short trips along the coast",
+        "offshore": "Offshore / Blue Water",
+        "offshoreDesc": "Long passages across open water",
+        "racing": "Racing",
+        "racingDesc": "Competitive sailing and regattas",
+        "cruising": "Liveaboard Cruising",
+        "cruisingDesc": "Extended cruising and living aboard"
+      },
+      "crewSize": {
+        "question": "How many people will typically be on board?",
+        "solo": "Solo",
+        "soloDesc": "Just me — single-handed sailing",
+        "couple": "Couple",
+        "coupleDesc": "Me and my partner",
+        "family": "Family",
+        "familyDesc": "Family with children (3-5 people)",
+        "group": "Group",
+        "groupDesc": "Friends or charter group (5+ people)"
+      },
+      "budget": {
+        "question": "What's your budget range?",
+        "budget": "Budget-Friendly",
+        "budgetDesc": "Looking for great value under €50k",
+        "midrange": "Mid-Range",
+        "midrangeDesc": "€50k–€200k for a solid cruiser",
+        "premium": "Premium",
+        "premiumDesc": "€200k+ for a top-quality yacht",
+        "any": "Not Sure Yet",
+        "anyDesc": "I'm exploring all options"
+      },
+      "preferredLength": {
+        "question": "What length of yacht appeals to you?",
+        "small": "Small (under 30ft / 9m)",
+        "smallDesc": "Easy to handle, lower costs",
+        "medium": "Medium (30–45ft / 9–14m)",
+        "mediumDesc": "The sweet spot for most sailors",
+        "large": "Large (45ft+ / 14m+)",
+        "largeDesc": "Maximum space and comfort",
+        "any": "No Preference",
+        "anyDesc": "Show me everything"
+      },
+      "keelPreference": {
+        "question": "What keel type do you prefer?",
+        "fin": "Fin Keel",
+        "finDesc": "Performance and agility",
+        "wing": "Wing Keel",
+        "wingDesc": "Shallow draft, great stability",
+        "full": "Full Keel",
+        "fullDesc": "Traditional, seaworthy, tracks well",
+        "any": "No Preference",
+        "anyDesc": "Any keel type works for me"
+      },
+      "priority": {
+        "question": "What matters most to you?",
+        "performance": "Sailing Performance",
+        "performanceDesc": "Speed, responsiveness, and handling",
+        "comfort": "Comfort & Space",
+        "comfortDesc": "Living space, amenities, and layout",
+        "value": "Best Value",
+        "valueDesc": "Maximum features for the budget",
+        "safety": "Safety & Reliability",
+        "safetyDesc": "Seaworthiness and build quality"
+      }
+    },
+    "results": {
+      "title": "Your Perfect Yacht Matches",
+      "subtitle": "Based on your preferences, here are your top matches",
+      "match": "match",
+      "viewYacht": "View Details",
+      "noResults": "No matching yachts found. Try adjusting your preferences.",
+      "retry": "Retake Quiz",
+      "share": "Share Your Results",
+      "shareDesc": "Share your quiz results with friends or save for later.",
+      "shareButton": "Copy Link",
+      "saveResults": "Save Your Results",
+      "emailDesc": "Get your results delivered to your inbox.",
+      "emailSuccess": "Results sent! Check your inbox.",
+      "send": "Send",
+      "retake": "Take the quiz again"
+    }
   }
 }
