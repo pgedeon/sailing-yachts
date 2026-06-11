@@ -37,6 +37,17 @@ export default async function AdminPage() {
               </a>
             </div>
 
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">Premium Tiers</h2>
+              <p className="text-gray-600 mb-4">Manage premium listing tiers, verified badges, and premium content for manufacturers.</p>
+              <a
+                href="/admin/premium"
+                className="inline-block px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition duration-200"
+              >
+                Manage Premium Tiers
+              </a>
+            </div>
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
               <h2 className="text-xl font-semibold mb-4 text-gray-800">Yachts</h2>
               <p className="text-gray-600 mb-4">Manage yacht models and specifications.</p>

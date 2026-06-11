@@ -17,6 +17,14 @@ export interface ManufacturerSummary {
 
 export interface ManufacturerDetail extends ManufacturerSummary {
   websiteUrl: string | null;
+  tier: string | null;
+  verifiedAt: string | null;
+  premiumVideoUrl: string | null;
+  premiumDocuments: Array<{ title: string; url: string; type: string }> | null;
+  premiumTagline: string | null;
+  premiumFeaturedSince: string | null;
+  premiumCtaText: string | null;
+  premiumCtaUrl: string | null;
 }
 
 export interface ManufacturerYachtCard {
@@ -113,6 +121,14 @@ export async function getManufacturerBySlug(
     yachtCount: Number(yachtCountResult[0]?.yachtCount ?? 0),
     websiteUrl: manufacturer.websiteUrl,
     logoUrl: manufacturer.logoUrl,
+    tier: manufacturer.tier ?? 'free',
+    verifiedAt: manufacturer.verifiedAt ?? null,
+    premiumVideoUrl: manufacturer.premiumVideoUrl ?? null,
+    premiumDocuments: manufacturer.premiumDocuments ?? null,
+    premiumTagline: manufacturer.premiumTagline ?? null,
+    premiumFeaturedSince: manufacturer.premiumFeaturedSince ?? null,
+    premiumCtaText: manufacturer.premiumCtaText ?? null,
+    premiumCtaUrl: manufacturer.premiumCtaUrl ?? null,
   };
 }
 
