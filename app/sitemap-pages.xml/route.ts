@@ -19,6 +19,7 @@ export async function GET() {
     { path: "/compare", changefreq: "weekly", priority: "0.7" },
     { path: "/search", changefreq: "monthly", priority: "0.6" },
     { path: "/favorites", changefreq: "monthly", priority: "0.4" },
+    { path: "/faq", changefreq: "weekly", priority: "0.7" },
     // Landing pages from /best/[slug]
     ...LANDING_PAGES.map((lp: LandingPageDefinition) => ({
       path: `/best/${lp.slug}`,
