@@ -1,40 +1,49 @@
-# Sailing Yachts — Session Log
+# Sailing Yachts — Session Notes
 
-## Session: 2026-06-09 00:20 UTC
+## Session: 2026-06-10 22:20 CEST
 
-### Issue: #401 — P25.1: Sailing Guides CMS Enhancements
+### Issues Worked On
+- **#407** (P25.3 Quiz) — Closed as duplicate. Quiz was already fully implemented.
+- **#408** (P25.4 Multilingual Content Pipeline) — ✅ COMPLETED
 
-### What Was Implemented
-- **article_yachts join table**: DB migration creating join table with article_id, yacht_model_id, sort_order, cascading deletes, unique constraint
-- **SEO fields on articles**: Added meta_title, meta_description, og_image, canonical_url, noindex columns to articles table
-- **Yacht search API**: GET /api/admin/guides/yacht-search — search yachts by name/manufacturer for autocomplete
-- **Image upload API**: POST /api/admin/guides/upload-image — file upload with type/size validation, saves to /public/uploads/guides/
-- **Enhanced guide form**: Added related yacht selector with autocomplete, image upload widget (file + URL), SEO settings section with character count guidance, Google preview
-- **Public guide page**: Shows related yachts section with yacht cards, uses SEO fields in generateMetadata
-- **Updated admin APIs**: POST/PUT /api/admin/guides now handle SEO fields and relatedYachtIds
-- **Updated articles service**: Added RelatedYacht interface, getArticleRelatedYachts function, SEO fields in all queries
-- **Schema**: Added articleYachts drizzle table, SEO columns on articles
+### P25.3 — Interactive Sailing Quiz
+- Pre-existing implementation found (7-step quiz, API, shareable results, email capture, i18n, tests)
+- Already live at /quiz and /fr/quiz
+- Closed #407, updated roadmap
+
+### P25.4 — Multilingual Content Pipeline
+- Created `content_translations` and `translation_memory` DB tables
+- Built `lib/translation-service.ts` with:
+  - Template-based French translation using 80+ nautical vocabulary entries
+  - Translation memory with SHA-256 hash lookup
+  - Auto-generation for yacht descriptions, manufacturer descriptions, articles
+  - Queue management, approve/reject, bulk approve
+  - Coverage stats tracking
+- Admin dashboard at `/admin/translations` with stats, queue, coverage bars
+- API endpoints: `/api/admin/translations` (GET/POST/PATCH) + `/api/translations` (GET)
+- Applied migration via Neon HTTP client (not drizzle-kit push)
+- PR #409 merged via squash
 
 ### Build/Test Results
 - TypeScript: ✅ Pass
-- Build: ✅ Pass (1521 static pages)
-- Tests: ✅ 15/15 pass
-- CI (Lint + TypeScript + Build + Perf Budgets): ✅ All pass
+- Build: ✅ Pass (1528 static pages)
+- Tests: ✅ 24/24 pass
+- Neon timeout errors during SSG are pre-existing (not related to changes)
 
-### Deploy
-- PR #402 (feature/issue-401-guides-cms-enhancements) → merged (squash)
-- Vercel auto-deploy from main
-
-### Live Verification (all PASS)
-- `/` ✅ | `/yachts` ✅ | `/search` ✅ | `/compare` ✅
-- `/guides` ✅ | `/en/guides/how-to-choose-your-first-sailboat` ✅
-- API: `/api/yachts` ✅ — 243 yachts
+### Deploy & Live Verification
+- Vercel deploy: ✅ Ready (10 min build)
+- Core pages: ✅ /, /yachts, /search, /compare — all 200
+- API: ✅ 243 yachts
+- /admin/translations: ✅ 200
+- /api/admin/translations?action=stats: ✅ Returns stats
+- /api/translations: ✅ Returns proper responses
 
 ### Next Recommended Task
-- **P25.2** — Yacht review aggregation (aggregate reviews from external sources)
-- Or **P25.3** — Interactive sailing quiz ("Which yacht is right for you?")
+- **P25.5** — Content freshness signals (last-updated dates, freshness badges)
+- Check FUTURE_ROADMAP.md for remaining Phase 25 items
 
-### Lessons
-- The guides CMS already existed with basic functionality — P25.1 was about enhancing it with missing features
-- Neon DB `channel_binding=require` causes issues with pg client — use `sslmode=require` without channel_binding for migrations
-- Build "errors" for static pages (Neon connectivity during prerender) are pre-existing and not blocking
+### Technical Notes
+- Migration was applied via `node -e` script using Neon HTTP client (not drizzle-kit)
+- Admin pages live under `app/admin/` (top-level, NOT under `app/[locale]/`)
+- Vercel auto-deploys from main but sometimes needs manual trigger (`vercel --prod --yes`)
+- Build takes ~10 minutes on Vercel

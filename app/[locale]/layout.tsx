@@ -41,6 +41,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
     { nameKey: "manufacturers", path: `/${locale}/manufacturers` },
     { nameKey: "guides", path: `/${locale}/guides` },
     { nameKey: "glossary", path: `/${locale}/glossary` },
+    { nameKey: "faq", path: `/${locale}/faq` },
     { nameKey: "search", path: `/${locale}/search` },
     { nameKey: "compare", path: `/${locale}/compare` },
   ];

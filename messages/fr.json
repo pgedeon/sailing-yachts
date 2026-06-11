@@ -10,7 +10,8 @@
       "glossary": "Glossaire",
       "search": "Recherche",
       "compare": "Comparer",
-      "favorites": "Favoris"
+      "favorites": "Favoris",
+      "faq": "FAQ"
     },
     "mobileNav": {
       "browseYachts": "Parcourir les yachts",
@@ -1484,5 +1485,22 @@
       "send": "Envoyer",
       "retake": "Refaire le quiz"
     }
+  },
+  "Faq": {
+    "meta": {
+      "title": "Questions Fréquentes sur les Voiliers",
+      "description": "Questions fréquentes sur les voiliers. Découvrez les constructeurs, tailles, types de gréement et plus encore."
+    },
+    "hero": {
+      "title": "Questions Fréquentes",
+      "subtitle": "Trouvez des réponses aux questions courantes sur les voiliers, les constructeurs et les spécifications."
+    },
+    "browseManufacturer": "FAQ par constructeur",
+    "browseSize": "FAQ par taille",
+    "allFaqs": "Toutes les FAQ",
+    "models": "modèles",
+    "yachts": "voiliers",
+    "viewAllYachts": "Voir tous les voiliers {manufacturer}",
+    "popularInSize": "Constructeurs populaires dans cette taille"
   }
 }

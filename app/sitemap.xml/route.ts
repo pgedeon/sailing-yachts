@@ -19,6 +19,7 @@ export async function GET() {
       { loc: `${SITE_URL}/sitemap-guides.xml`, lastmod },
       { loc: `${SITE_URL}/sitemap-compare.xml`, lastmod },
       { loc: `${SITE_URL}/sitemap-images.xml`, lastmod },
+      { loc: `${SITE_URL}/sitemap-faq.xml`, lastmod },
     ];
 
     const xml = buildSitemapIndexXml(sitemaps);
