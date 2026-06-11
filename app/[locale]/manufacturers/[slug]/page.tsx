@@ -225,24 +225,47 @@ export default async function ManufacturerPage({
                 <ManufacturerLogo name={manufacturer.name} logoUrl={manufacturer.logoUrl} size={64} />
                 <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
                   {manufacturer.name} {t("detail.yachtsSuffix")}
+                  {(manufacturer.tier === "verified" || manufacturer.tier === "premium") && (
+                    <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-semibold text-blue-700" title="Verified manufacturer">
+                      <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                      Verified
+                    </span>
+                  )}
                 </h1>
               </div>
               <p className="mt-4 max-w-3xl text-muted-foreground leading-relaxed">
                 {(locale === "fr" && manufacturer.descriptionFr ? manufacturer.descriptionFr : manufacturer.description) ||
                   t("detail.descriptionFallback", { name: manufacturer.name, count: manufacturer.yachtCount })}
               </p>
+              {manufacturer.tier === "premium" && manufacturer.premiumTagline && (
+                <p className="mt-2 text-sm font-medium text-amber-700 italic">
+                  &ldquo;{manufacturer.premiumTagline}&rdquo;
+                </p>
+              )}
             </div>
 
-            {manufacturer.websiteUrl && (
-              <a
-                href={manufacturer.websiteUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center rounded-lg border border-sky-200 bg-white px-4 py-2 text-sm font-medium text-sky-700 hover:bg-sky-50 transition-colors"
-              >
-                {t("detail.visitWebsite")}
-              </a>
-            )}
+            <div className="flex flex-wrap gap-3">
+              {manufacturer.websiteUrl && (
+                <a
+                  href={manufacturer.websiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center rounded-lg border border-sky-200 bg-white px-4 py-2 text-sm font-medium text-sky-700 hover:bg-sky-50 transition-colors"
+                >
+                  {t("detail.visitWebsite")}
+                </a>
+              )}
+              {manufacturer.tier === "premium" && manufacturer.premiumCtaText && manufacturer.premiumCtaUrl && (
+                <a
+                  href={manufacturer.premiumCtaUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center rounded-lg bg-amber-600 px-5 py-2 text-sm font-semibold text-white hover:bg-amber-700 transition-colors shadow-sm"
+                >
+                  {manufacturer.premiumCtaText}
+                </a>
+              )}
+            </div>
           </div>
 
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
@@ -267,6 +290,41 @@ export default async function ManufacturerPage({
               </div>
             </div>
           </div>
+
+          {/* P26.1: Premium video embed */}
+          {manufacturer.tier === "premium" && manufacturer.premiumVideoUrl && (
+            <div className="mt-6 rounded-xl overflow-hidden border border-border bg-black/5">
+              <iframe
+                src={manufacturer.premiumVideoUrl}
+                title={`${manufacturer.name} video`}
+                className="w-full aspect-video"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                loading="lazy"
+              />
+            </div>
+          )}
+
+          {/* P26.1: Premium documents */}
+          {manufacturer.tier === "premium" && manufacturer.premiumDocuments && manufacturer.premiumDocuments.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {manufacturer.premiumDocuments.map((doc, idx) => (
+                <a
+                  key={idx}
+                  href={doc.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-medium text-sky-700 hover:bg-sky-100 transition-colors"
+                >
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  {doc.title}
+                  <span className="text-sky-500">({doc.type})</span>
+                </a>
+              ))}
+            </div>
+          )}
         </section>
 
         {spotlight && (
