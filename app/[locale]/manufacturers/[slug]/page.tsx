@@ -541,6 +541,52 @@ export default async function ManufacturerPage({
 
         {/* INTERNAL LINKING MODULE (P6.7) */}
         <ManufacturerComparisons manufacturerName={manufacturer.name} yachts={yachts} />
+
+        {/* P26.1: Upgrade CTA for free-tier manufacturers */}
+        {manufacturer.tier === "free" && (
+          <section className="mt-10 sm:mt-12 rounded-2xl border-2 border-dashed border-amber-300 bg-gradient-to-br from-amber-50 via-white to-amber-50 p-6 sm:p-8">
+            <div className="flex flex-col items-center text-center max-w-2xl mx-auto">
+              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+                <svg className="h-6 w-6 text-amber-600" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+              </div>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">
+                {locale === "fr" ? "Mettez en valeur votre marque" : "Elevate Your Brand"}
+              </h2>
+              <p className="text-sm text-gray-600 mb-4">
+                {locale === "fr"
+                  ? "Passez à un profil Premium pour afficher des vidéos, des brochures téléchargeables, un badge vérifié et un placement prioritaire dans nos listes."
+                  : "Upgrade to a Premium profile to showcase videos, downloadable brochures, a verified badge, and priority placement in our listings."}
+              </p>
+              <div className="flex flex-wrap gap-3 justify-center">
+                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                  <svg className="h-4 w-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                  {locale === "fr" ? "Vidéo promotionnelle" : "Promotional video"}
+                </div>
+                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                  <svg className="h-4 w-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                  {locale === "fr" ? "Documents téléchargeables" : "Downloadable documents"}
+                </div>
+                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                  <svg className="h-4 w-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                  {locale === "fr" ? "Badge vérifié" : "Verified badge"}
+                </div>
+                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                  <svg className="h-4 w-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                  {locale === "fr" ? "Placement prioritaire" : "Priority placement"}
+                </div>
+              </div>
+              <a
+                href={`mailto:contact@sailboats.fr?subject=${encodeURIComponent(locale === "fr" ? `Profil Premium pour ${manufacturer.name}` : `Premium Profile for ${manufacturer.name}`)}`}
+                className="mt-4 inline-flex items-center gap-2 rounded-lg bg-amber-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-amber-700 transition-colors shadow-sm"
+              >
+                {locale === "fr" ? "Demander un profil Premium" : "Request Premium Profile"}
+                <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </a>
+            </div>
+          </section>
+        )}
       </div>
     </>
   );
