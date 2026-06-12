@@ -39,6 +39,6 @@
     "node_modules",
     "drizzle.config.ts",
     "scripts",
-    "tests"
+    "tests", "__tests__"
   ]
 }

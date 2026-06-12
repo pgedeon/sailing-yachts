@@ -410,6 +410,8 @@ export const leads = pgTable(
     utmCampaign: varchar("utm_campaign", { length: 100 }),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
+    score: integer("score"),
+    scoredAt: timestamp("scored_at", { withTimezone: true }),
   },
   (table) => ({
     idxEmail: index("idx_leads_email").on(table.email),
