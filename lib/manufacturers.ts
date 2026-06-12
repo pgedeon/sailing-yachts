@@ -1,4 +1,4 @@
-import { asc, count, desc, eq, inArray } from "drizzle-orm";
+import { asc, count, desc, eq, inArray, sql } from "drizzle-orm";
 
 import { db, images, manufacturers, yachtModels } from "@/lib/db-edge";
 import { slugify } from "@/lib/utils/slugify";
@@ -13,11 +13,11 @@ export interface ManufacturerSummary {
   description: string | null;
   descriptionFr: string | null;
   yachtCount: number;
+  tier: string | null;
 }
 
 export interface ManufacturerDetail extends ManufacturerSummary {
   websiteUrl: string | null;
-  tier: string | null;
   verifiedAt: string | null;
   premiumVideoUrl: string | null;
   premiumDocuments: Array<{ title: string; url: string; type: string }> | null;
@@ -52,6 +52,19 @@ function parseNullableNumber(value: string | number | null): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+/**
+ * P26.1: Tier priority for sorting — premium first, then verified, then free
+ */
+const TIER_PRIORITY: Record<string, number> = {
+  premium: 0,
+  verified: 1,
+  free: 2,
+};
+
+function tierPriority(tier: string | null): number {
+  return TIER_PRIORITY[tier ?? "free"] ?? 2;
+}
+
 export async function getManufacturersWithCounts(): Promise<ManufacturerSummary[]> {
   const rows = await db
     .select({
@@ -62,6 +75,7 @@ export async function getManufacturersWithCounts(): Promise<ManufacturerSummary[
       description: manufacturers.description,
       descriptionFr: manufacturers.descriptionFr,
       logoUrl: manufacturers.logoUrl,
+      tier: manufacturers.tier,
       yachtCount: count(yachtModels.id),
     })
     .from(manufacturers)
@@ -74,22 +88,31 @@ export async function getManufacturersWithCounts(): Promise<ManufacturerSummary[
       manufacturers.description,
       manufacturers.descriptionFr,
       manufacturers.logoUrl,
+      manufacturers.tier,
     )
     .orderBy(asc(manufacturers.name));
 
   type ManufacturerCountRow = (typeof rows)[number];
 
-  return rows.map((row: ManufacturerCountRow) => ({
-    id: row.id,
-    name: row.name,
-    slug: slugify(row.name),
-    country: row.country,
-    foundedYear: row.foundedYear,
-    description: row.description,
-    descriptionFr: row.descriptionFr,
-    logoUrl: row.logoUrl,
-    yachtCount: Number(row.yachtCount ?? 0),
-  }));
+  return rows
+    .map((row: ManufacturerCountRow) => ({
+      id: row.id,
+      name: row.name,
+      slug: slugify(row.name),
+      country: row.country,
+      foundedYear: row.foundedYear,
+      description: row.description,
+      descriptionFr: row.descriptionFr,
+      logoUrl: row.logoUrl,
+      tier: row.tier ?? "free",
+      yachtCount: Number(row.yachtCount ?? 0),
+    }))
+    // P26.1: Premium manufacturers first, then verified, then free (stable by name within tier)
+    .sort((a: ManufacturerSummary, b: ManufacturerSummary) => {
+      const tierDiff = tierPriority(a.tier) - tierPriority(b.tier);
+      if (tierDiff !== 0) return tierDiff;
+      return a.name.localeCompare(b.name);
+    });
 }
 
 export async function getManufacturerBySlug(
@@ -190,6 +213,7 @@ export async function getYachtsByManufacturerId(
 
 /**
  * Get related manufacturers — same country, excluding the current one.
+ * P26.1: Premium manufacturers shown first.
  */
 export async function getRelatedManufacturers(
   manufacturerId: number,
@@ -207,6 +231,7 @@ export async function getRelatedManufacturers(
       description: manufacturers.description,
       descriptionFr: manufacturers.descriptionFr,
       logoUrl: manufacturers.logoUrl,
+      tier: manufacturers.tier,
       yachtCount: count(yachtModels.id),
     })
     .from(manufacturers)
@@ -220,6 +245,7 @@ export async function getRelatedManufacturers(
       manufacturers.description,
       manufacturers.descriptionFr,
       manufacturers.logoUrl,
+      manufacturers.tier,
     )
     .orderBy(desc(count(yachtModels.id)))
     .limit(limit + 1);
@@ -238,6 +264,13 @@ export async function getRelatedManufacturers(
       description: row.description,
       descriptionFr: row.descriptionFr,
       logoUrl: row.logoUrl,
+      tier: row.tier ?? "free",
       yachtCount: Number(row.yachtCount ?? 0),
-    }));
+    }))
+    // P26.1: Premium first within related
+    .sort((a: ManufacturerSummary, b: ManufacturerSummary) => {
+      const tierDiff = tierPriority(a.tier) - tierPriority(b.tier);
+      if (tierDiff !== 0) return tierDiff;
+      return b.yachtCount - a.yachtCount;
+    });
 }

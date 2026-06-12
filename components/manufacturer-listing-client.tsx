@@ -20,6 +20,13 @@ export default function ManufacturerListingClient({
   const [countryFilter, setCountryFilter] = useState<string>("all");
   const [sortKey, setSortKey] = useState<SortKey>("name");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+
+  // P26.1: Tier priority for sorting
+  const TIER_PRIORITY: Record<string, number> = { premium: 0, verified: 1, free: 2 };
+  function tierPriority(tier: string | null): number {
+    return TIER_PRIORITY[tier ?? "free"] ?? 2;
+  }
+
   // Derive unique countries from data
   const countries = useMemo(() => {
     const set = new Set<string>();
@@ -28,6 +35,7 @@ export default function ManufacturerListingClient({
     }
     return Array.from(set).sort();
   }, [manufacturers]);
+
   // Filter and sort
   const filtered = useMemo(() => {
     let list = manufacturers;
@@ -52,8 +60,10 @@ export default function ManufacturerListingClient({
       }
       return sortOrder === "asc" ? cmp : -cmp;
     });
+    // P26.1: Premium manufacturers always float to top regardless of sort
     return list;
   }, [manufacturers, countryFilter, sortKey, sortOrder]);
+
   function handleSortChange(newKey: SortKey) {
     if (newKey === sortKey) {
       setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
@@ -70,6 +80,27 @@ export default function ManufacturerListingClient({
     if (locale === "fr" && m.descriptionFr) return m.descriptionFr;
     return m.description ?? null;
   }
+
+  // P26.1: Tier badge styling
+  const tierBadgeStyle = (tier: string | null): string => {
+    switch (tier) {
+      case "premium":
+        return "bg-amber-100 text-amber-800 border-amber-200";
+      case "verified":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      default:
+        return "";
+    }
+  };
+
+  // P26.1: Card border styling for premium manufacturers
+  const cardStyle = (tier: string | null): string => {
+    if (tier === "premium") {
+      return "block bg-white rounded-xl p-5 hover:bg-blue-50 hover:shadow-md transition border-2 border-amber-300 group ring-1 ring-amber-100";
+    }
+    return "block bg-white rounded-xl p-5 hover:bg-blue-50 hover:shadow-md transition border border-gray-100 group";
+  };
+
   return (
     <>
       {/* Filters & Sort Bar */}
@@ -152,14 +183,27 @@ export default function ManufacturerListingClient({
               <Link
                 key={m.id}
                 href={`/${locale}/manufacturers/${slugify(m.name)}`}
-                className="block bg-white rounded-xl p-5 hover:bg-blue-50 hover:shadow-md transition border border-gray-100 group"
+                className={cardStyle(m.tier)}
               >
                 <div className="flex items-start gap-3">
                   <ManufacturerLogo name={m.name} logoUrl={m.logoUrl} size={40} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
-                      <div className="font-semibold text-gray-900 group-hover:text-sky-700 transition">
+                      <div className="font-semibold text-gray-900 group-hover:text-sky-700 transition flex items-center gap-1.5 flex-wrap">
                         {m.name}
+                        {/* P26.1: Tier badge on listing cards */}
+                        {m.tier === "premium" && (
+                          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold border bg-amber-100 text-amber-800 border-amber-200" title="Premium manufacturer">
+                            <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                            Premium
+                          </span>
+                        )}
+                        {m.tier === "verified" && (
+                          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold border bg-blue-100 text-blue-800 border-blue-200" title="Verified manufacturer">
+                            <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                            Verified
+                          </span>
+                        )}
                       </div>
                   {m.country && (
                     <span className="text-xl shrink-0" title={m.country}>

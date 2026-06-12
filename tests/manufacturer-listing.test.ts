@@ -7,6 +7,12 @@ import type { ManufacturerSummary } from "@/lib/manufacturers";
 type SortKey = "name" | "yachtCount" | "foundedYear";
 type SortOrder = "asc" | "desc";
 
+// P26.1: Tier priority for sorting
+const TIER_PRIORITY: Record<string, number> = { premium: 0, verified: 1, free: 2 };
+function tierPriority(tier: string | null): number {
+  return TIER_PRIORITY[tier ?? "free"] ?? 2;
+}
+
 function filterByCountry(
   manufacturers: ManufacturerSummary[],
   country: string
@@ -66,6 +72,7 @@ const MOCK: ManufacturerSummary[] = [
     description: "French sailing yacht manufacturer",
     descriptionFr: "Constructeur français",
     yachtCount: 12,
+    tier: "premium",
   },
   {
     id: 2,
@@ -76,6 +83,7 @@ const MOCK: ManufacturerSummary[] = [
     description: "German yacht builder",
     descriptionFr: null,
     yachtCount: 8,
+    tier: "free",
   },
   {
     id: 3,
@@ -86,6 +94,7 @@ const MOCK: ManufacturerSummary[] = [
     description: "Another French builder",
     descriptionFr: "Un autre constructeur",
     yachtCount: 15,
+    tier: "verified",
   },
   {
     id: 4,
@@ -96,6 +105,7 @@ const MOCK: ManufacturerSummary[] = [
     description: null,
     descriptionFr: null,
     yachtCount: 5,
+    tier: "free",
   },
 ];
 
@@ -222,5 +232,70 @@ describe("Manufacturer listing — combined filter + sort", () => {
     const filtered = filterByCountry(MOCK, "Japan");
     const sorted = sortManufacturers(filtered, "name", "asc");
     expect(sorted).toHaveLength(0);
+  });
+});
+
+// P26.1: Tier-based sorting tests
+describe("Manufacturer listing — tier priority sorting (P26.1)", () => {
+  it("sorts premium manufacturers before verified and free", () => {
+    const sorted = [...MOCK].sort((a, b) => {
+      const tierDiff = tierPriority(a.tier) - tierPriority(b.tier);
+      if (tierDiff !== 0) return tierDiff;
+      return a.name.localeCompare(b.name);
+    });
+    // Beneteau (premium) first
+    expect(sorted[0].name).toBe("Beneteau");
+    expect(sorted[0].tier).toBe("premium");
+    // Jeanneau (verified) second
+    expect(sorted[1].name).toBe("Jeanneau");
+    expect(sorted[1].tier).toBe("verified");
+    // Free tier after
+    expect(sorted[2].tier).toBe("free");
+    expect(sorted[3].tier).toBe("free");
+  });
+
+  it("sorts verified before free but after premium", () => {
+    const data: ManufacturerSummary[] = [
+      { ...MOCK[1], tier: "free" },
+      { ...MOCK[3], tier: "free" },
+      { ...MOCK[0], tier: "verified" },
+    ];
+    const sorted = [...data].sort((a, b) => {
+      const tierDiff = tierPriority(a.tier) - tierPriority(b.tier);
+      if (tierDiff !== 0) return tierDiff;
+      return a.name.localeCompare(b.name);
+    });
+    expect(sorted[0].tier).toBe("verified");
+    expect(sorted[1].tier).toBe("free");
+    expect(sorted[2].tier).toBe("free");
+  });
+
+  it("preserves alphabetical order within same tier", () => {
+    const data: ManufacturerSummary[] = [
+      { ...MOCK[1], tier: "free" },
+      { ...MOCK[3], tier: "free" },
+    ];
+    const sorted = [...data].sort((a, b) => {
+      const tierDiff = tierPriority(a.tier) - tierPriority(b.tier);
+      if (tierDiff !== 0) return tierDiff;
+      return a.name.localeCompare(b.name);
+    });
+    expect(sorted[0].name).toBe("Hanse Yachts");
+    expect(sorted[1].name).toBe("X-Yachts");
+  });
+
+  it("treats null tier as free", () => {
+    expect(tierPriority(null)).toBe(2);
+    expect(tierPriority(undefined as any)).toBe(2);
+    expect(tierPriority("free")).toBe(2);
+  });
+
+  it("premium has highest priority (lowest number)", () => {
+    expect(tierPriority("premium")).toBeLessThan(tierPriority("verified"));
+    expect(tierPriority("verified")).toBeLessThan(tierPriority("free"));
+  });
+
+  it("handles unknown tier as free", () => {
+    expect(tierPriority("unknown")).toBe(2);
   });
 });
