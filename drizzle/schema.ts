@@ -1239,3 +1239,91 @@ export const insertContentTranslationSchema = createInsertSchema(contentTranslat
 export const selectContentTranslationSchema = createSelectSchema(contentTranslations);
 export const insertTranslationMemorySchema = createInsertSchema(translationMemory);
 export const selectTranslationMemorySchema = createSelectSchema(translationMemory);
+
+// --- P26.3: Affiliate Link Optimization Engine ---
+
+// Affiliate placement locations (where links appear on the site)
+export const affiliatePlacements = pgTable(
+  "affiliate_placements",
+  {
+    id: serial("id").primaryKey(),
+    placementKey: varchar("placement_key", { length: 100 }).notNull().unique(),
+    label: varchar("label", { length: 255 }).notNull(),
+    pagePattern: varchar("page_pattern", { length: 255 }).notNull(),
+    position: varchar("position", { length: 50 }).notNull().default("sidebar"),
+    isActive: boolean("is_active").notNull().default(true),
+    rotationStrategy: varchar("rotation_strategy", { length: 50 }).notNull().default("ab_test"),
+    autoOptimize: boolean("auto_optimize").notNull().default(true),
+    minSampleSize: integer("min_sample_size").notNull().default(100),
+    confidenceThreshold: numeric("confidence_threshold", { precision: 3, scale: 2 }).notNull().default("0.95"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxKey: uniqueIndex("idx_affiliate_placements_key").on(table.placementKey),
+    idxActive: index("idx_affiliate_placements_active").on(table.isActive),
+    idxPagePattern: index("idx_affiliate_placements_page").on(table.pagePattern),
+  }),
+);
+
+// Affiliate variants (different link/partner configs for a placement)
+export const affiliateVariants = pgTable(
+  "affiliate_variants",
+  {
+    id: serial("id").primaryKey(),
+    placementId: integer("placement_id").notNull().references(() => affiliatePlacements.id, { onDelete: "cascade" }),
+    variantKey: varchar("variant_key", { length: 100 }).notNull(),
+    partnerName: varchar("partner_name", { length: 100 }).notNull().default("amazon"),
+    linkText: varchar("link_text", { length: 255 }).notNull(),
+    linkUrl: varchar("link_url", { length: 1000 }).notNull(),
+    affiliateTag: varchar("affiliate_tag", { length: 100 }),
+    displayOrder: integer("display_order").default(0),
+    trafficWeight: integer("traffic_weight").notNull().default(50),
+    isActive: boolean("is_active").notNull().default(true),
+    isWinner: boolean("is_winner").notNull().default(false),
+    clicks: integer("clicks").notNull().default(0),
+    conversions: integer("conversions").notNull().default(0),
+    estimatedRevenue: numeric("estimated_revenue", { precision: 10, scale: 2 }).notNull().default("0.00"),
+    impressions: integer("impressions").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxPlacement: index("idx_affiliate_variants_placement").on(table.placementId),
+    idxPlacementKey: uniqueIndex("idx_affiliate_variants_placement_key").on(table.placementId, table.variantKey),
+    idxPartner: index("idx_affiliate_variants_partner").on(table.partnerName),
+    idxActive: index("idx_affiliate_variants_active").on(table.isActive),
+    idxWinner: index("idx_affiliate_variants_winner").on(table.isWinner),
+  }),
+);
+
+// Affiliate click/conversion tracking events
+export const affiliateTrackingEvents = pgTable(
+  "affiliate_tracking_events",
+  {
+    id: serial("id").primaryKey(),
+    variantId: integer("variant_id").notNull().references(() => affiliateVariants.id, { onDelete: "cascade" }),
+    placementId: integer("placement_id").notNull().references(() => affiliatePlacements.id, { onDelete: "cascade" }),
+    eventType: varchar("event_type", { length: 50 }).notNull(),
+    sessionId: varchar("session_id", { length: 100 }),
+    page: varchar("page", { length: 500 }),
+    yachtId: integer("yacht_id"),
+    revenue: numeric("revenue", { precision: 10, scale: 2 }),
+    metadata: jsonb("metadata").$type<Record<string, string | number | null>>().default({}),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxVariant: index("idx_affiliate_tracking_variant").on(table.variantId),
+    idxPlacement: index("idx_affiliate_tracking_placement").on(table.placementId),
+    idxEventType: index("idx_affiliate_tracking_type").on(table.eventType),
+    idxCreated: index("idx_affiliate_tracking_created").on(table.createdAt),
+    idxSession: index("idx_affiliate_tracking_session").on(table.sessionId),
+  }),
+);
+
+export const insertAffiliatePlacementSchema = createInsertSchema(affiliatePlacements);
+export const selectAffiliatePlacementSchema = createSelectSchema(affiliatePlacements);
+export const insertAffiliateVariantSchema = createInsertSchema(affiliateVariants);
+export const selectAffiliateVariantSchema = createSelectSchema(affiliateVariants);
+export const insertAffiliateTrackingEventSchema = createInsertSchema(affiliateTrackingEvents);
+export const selectAffiliateTrackingEventSchema = createSelectSchema(affiliateTrackingEvents);
