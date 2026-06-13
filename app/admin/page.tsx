@@ -249,6 +249,16 @@ export default async function AdminPage() {
                 View Positioning
               </a>
             </div>
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">PDF Reports</h2>
+              <p className="text-gray-600 mb-4">Track premium comparison report downloads, lead conversion rates, and popular comparisons.</p>
+              <a
+                href="/admin/reports"
+                className="inline-block px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition duration-200"
+              >
+                View Report Analytics
+              </a>
+            </div>
           </div>
         </div>
       </div>
