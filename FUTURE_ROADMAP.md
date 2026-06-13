@@ -107,7 +107,7 @@
 - **P26.1 — Premium listing tier for manufacturers** — Enhanced manufacturer profiles with video, documents, verified badge. Admin interface for managing premium tier. Feature gating logic.
 - **P26.2 — Lead scoring & qualification** — Score incoming leads based on behavior signals. Priority routing for high-value leads. Admin lead management dashboard enhancement.
 - **P26.3 — Affiliate link optimization engine** — A/B test affiliate link placement. Revenue tracking per placement. Auto-rotate best-performing partners.
-- **P26.4 — Premium comparison reports (PDF)** — Generate downloadable PDF comparison reports. Branded with site identity. Lead gate for download. Server-side PDF generation.
+- **P26.4 — Premium comparison reports (PDF)** *(completed 2026-06-13 — Issue #422, PR #423)* — Server-side PDF generation using pdf-lib. Lead-gated download (email required). Branded report with summary cards, spec comparison table with best-value highlights, CTA page. Admin dashboard at /admin/reports. API at POST /api/compare/report.
 - **P26.5 — Newsletter monetization** — Sponsored content slots in newsletter. Open/click rate optimization. Subscriber segmentation for targeted sends.
 
 ### Phase 27 — Technical Debt & Platform Hardening (Priority: Low) — 🔲 PLANNED
