@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db, yachtModels, manufacturers, images } from "@/lib/db";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { rankSimilarYachts, type YachtForSimilarity } from "@/lib/similarity-score";
 
 export const dynamic = "force-dynamic";
@@ -71,43 +71,52 @@ export async function GET(
     // Compute similarity using new weighted algorithm
     const ranked = rankSimilarYachts(source, candidates);
 
-    // Build response with images and factor details
-    const similar = await Promise.all(
-      ranked.map(async (entry) => {
-        let primaryImage: string | null = null;
-        try {
-          const yachtImages = await db
-            .select({ url: images.url })
-            .from(images)
-            .where(eq(images.yachtModelId, entry.yacht.id))
-            .limit(1);
-          primaryImage = yachtImages.length > 0 ? yachtImages[0].url : null;
-        } catch {
-          primaryImage = null;
-        }
+    // P27.1: Batch-fetch all images for ranked yachts instead of N+1 queries
+    const rankedIds = ranked.map((entry) => entry.yacht.id);
+    const imageMap = new Map<number, string | null>();
 
-        return {
-          id: entry.yacht.id,
-          manufacturer: entry.yacht.manufacturer,
-          modelName: entry.yacht.modelName,
-          slug: entry.yacht.slug,
-          year: entry.yacht.year,
-          lengthOverall: entry.yacht.lengthOverall,
-          beam: entry.yacht.beam,
-          draft: entry.yacht.draft,
-          displacement: entry.yacht.displacement,
-          sailAreaMain: entry.yacht.sailAreaMain,
-          rigType: entry.yacht.rigType,
-          keelType: entry.yacht.keelType,
-          hullMaterial: entry.yacht.hullMaterial,
-          cabins: entry.yacht.cabins,
-          berths: entry.yacht.berths,
-          score: entry.score,
-          factors: entry.factors,
-          primaryImage,
-        };
-      }),
-    );
+    if (rankedIds.length > 0) {
+      const imageRows = await db
+        .select({
+          yachtModelId: images.yachtModelId,
+          url: images.url,
+          isPrimary: images.isPrimary,
+          sortOrder: images.sortOrder,
+        })
+        .from(images)
+        .where(inArray(images.yachtModelId, rankedIds))
+        .orderBy(images.yachtModelId, images.sortOrder);
+
+      for (const row of imageRows) {
+        if (!imageMap.has(row.yachtModelId)) {
+          imageMap.set(row.yachtModelId, row.url);
+        }
+        if (row.isPrimary) {
+          imageMap.set(row.yachtModelId, row.url);
+        }
+      }
+    }
+
+    const similar = ranked.map((entry) => ({
+      id: entry.yacht.id,
+      manufacturer: entry.yacht.manufacturer,
+      modelName: entry.yacht.modelName,
+      slug: entry.yacht.slug,
+      year: entry.yacht.year,
+      lengthOverall: entry.yacht.lengthOverall,
+      beam: entry.yacht.beam,
+      draft: entry.yacht.draft,
+      displacement: entry.yacht.displacement,
+      sailAreaMain: entry.yacht.sailAreaMain,
+      rigType: entry.yacht.rigType,
+      keelType: entry.yacht.keelType,
+      hullMaterial: entry.yacht.hullMaterial,
+      cabins: entry.yacht.cabins,
+      berths: entry.yacht.berths,
+      score: entry.score,
+      factors: entry.factors,
+      primaryImage: imageMap.get(entry.yacht.id) ?? null,
+    }));
 
     return NextResponse.json({ similar });
   } catch (error) {
