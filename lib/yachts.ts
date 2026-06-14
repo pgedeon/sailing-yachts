@@ -94,47 +94,49 @@ export interface FilterOptions {
 /**
  * Get paginated yacht listing for SSR.
  * Fetches the default view (no filters, page 1) so Google can index real yacht data.
+ *
+ * P27.1: Optimized to run count + data queries in parallel instead of sequentially.
  */
 export async function getYachtsListing(page: number = 1, limit: number = 20): Promise<YachtsListingResult> {
   const offset = (page - 1) * limit;
 
-  // Count total
-  const [{ total }] = await db
-    .select({ total: count() })
-    .from(yachtModels);
+  // P27.1: Run count + data in parallel instead of sequentially
+  const [countResult, rows] = await Promise.all([
+    db.select({ total: count() }).from(yachtModels),
+    db
+      .select({
+        id: yachtModels.id,
+        manufacturer: manufacturers.name,
+        modelName: yachtModels.modelName,
+        year: yachtModels.year,
+        slug: yachtModels.slug,
+        lengthOverall: yachtModels.lengthOverall,
+        beam: yachtModels.beam,
+        draft: yachtModels.draft,
+        displacement: yachtModels.displacement,
+        ballast: yachtModels.ballast,
+        sailAreaMain: yachtModels.sailAreaMain,
+        rigType: yachtModels.rigType,
+        keelType: yachtModels.keelType,
+        hullMaterial: yachtModels.hullMaterial,
+        cabins: yachtModels.cabins,
+        berths: yachtModels.berths,
+        heads: yachtModels.heads,
+        maxOccupancy: yachtModels.maxOccupancy,
+        engineHp: yachtModels.engineHp,
+        engineType: yachtModels.engineType,
+        fuelCapacity: yachtModels.fuelCapacity,
+        waterCapacity: yachtModels.waterCapacity,
+        description: yachtModels.description,
+      })
+      .from(yachtModels)
+      .leftJoin(manufacturers, eq(yachtModels.manufacturerId, manufacturers.id))
+      .orderBy(yachtModels.id)
+      .limit(limit)
+      .offset(offset),
+  ]);
 
-  // Fetch page of yachts with manufacturer name
-  const rows = await db
-    .select({
-      id: yachtModels.id,
-      manufacturer: manufacturers.name,
-      modelName: yachtModels.modelName,
-      year: yachtModels.year,
-      slug: yachtModels.slug,
-      lengthOverall: yachtModels.lengthOverall,
-      beam: yachtModels.beam,
-      draft: yachtModels.draft,
-      displacement: yachtModels.displacement,
-      ballast: yachtModels.ballast,
-      sailAreaMain: yachtModels.sailAreaMain,
-      rigType: yachtModels.rigType,
-      keelType: yachtModels.keelType,
-      hullMaterial: yachtModels.hullMaterial,
-      cabins: yachtModels.cabins,
-      berths: yachtModels.berths,
-      heads: yachtModels.heads,
-      maxOccupancy: yachtModels.maxOccupancy,
-      engineHp: yachtModels.engineHp,
-      engineType: yachtModels.engineType,
-      fuelCapacity: yachtModels.fuelCapacity,
-      waterCapacity: yachtModels.waterCapacity,
-      description: yachtModels.description,
-    })
-    .from(yachtModels)
-    .leftJoin(manufacturers, eq(yachtModels.manufacturerId, manufacturers.id))
-    .orderBy(yachtModels.id)
-    .limit(limit)
-    .offset(offset);
+  const [{ total }] = countResult;
 
   // Convert numeric strings to numbers for the client
   const yachts: YachtListItem[] = rows.map((r: typeof rows[number]) => ({
@@ -190,6 +192,9 @@ export async function getFilterOptions(): Promise<FilterOptions> {
 /**
  * Get yacht detail data by slug with all related specs, images, and reviews.
  * Used by both yacht detail page and yacht detail API.
+ *
+ * P27.1: Optimized to parallelize specs, images, reviews, and media queries
+ * instead of running them sequentially.
  */
 export async function getYachtDetailData(slug: string): Promise<YachtDetailData | null> {
   // Find yacht by slug
@@ -208,23 +213,50 @@ export async function getYachtDetailData(slug: string): Promise<YachtDetailData 
 
   const { yacht, manufacturer, manufacturerLogoUrl } = yachtResult[0];
 
-  // Fetch all spec values with category info
-  const specs = await db
-    .select({
-      category: specCategories.name,
-      valueText: specValues.valueText,
-      valueNumeric: specValues.valueNumeric,
-      unit: specCategories.unit,
-      group: specCategories.categoryGroup,
-      displayOrder: specCategories.displayOrder,
-    })
-    .from(specValues)
-    .leftJoin(
-      specCategories,
-      eq(specValues.specCategoryId, specCategories.id),
-    )
-    .where(eq(specValues.yachtModelId, yacht.id))
-    .orderBy(specCategories.displayOrder);
+  // P27.1: Run specs, images, reviews, and media queries in parallel
+  const [specs, yachtImages, yachtReviews, yachtMedia] = await Promise.all([
+    // Fetch all spec values with category info
+    db
+      .select({
+        category: specCategories.name,
+        valueText: specValues.valueText,
+        valueNumeric: specValues.valueNumeric,
+        unit: specCategories.unit,
+        group: specCategories.categoryGroup,
+        displayOrder: specCategories.displayOrder,
+      })
+      .from(specValues)
+      .leftJoin(specCategories, eq(specValues.specCategoryId, specCategories.id))
+      .where(eq(specValues.yachtModelId, yacht.id))
+      .orderBy(specCategories.displayOrder),
+    // Fetch images
+    db
+      .select()
+      .from(images)
+      .where(eq(images.yachtModelId, yacht.id))
+      .orderBy(images.sortOrder),
+    // Fetch reviews (optional)
+    db
+      .select()
+      .from(reviews)
+      .where(eq(reviews.yachtModelId, yacht.id))
+      .orderBy(reviews.reviewDate),
+    // Fetch media assets (P10.2)
+    db
+      .select({
+        id: mediaAssets.id,
+        mediaType: mediaAssets.mediaType,
+        title: mediaAssets.title,
+        description: mediaAssets.description,
+        url: mediaAssets.url,
+        embedUrl: mediaAssets.embedUrl,
+        thumbnailUrl: mediaAssets.thumbnailUrl,
+        fileFormat: mediaAssets.fileFormat,
+      })
+      .from(mediaAssets)
+      .where(eq(mediaAssets.yachtModelId, yacht.id))
+      .orderBy(mediaAssets.sortOrder),
+  ]);
 
   // Group specs by categoryGroup, ensuring non-null values and category presence
   const specsByGroup: Record<
@@ -247,36 +279,6 @@ export async function getYachtDetailData(slug: string): Promise<YachtDetailData 
       unit: s.unit ?? undefined,
     });
   }
-
-  // Fetch images
-  const yachtImages = await db
-    .select()
-    .from(images)
-    .where(eq(images.yachtModelId, yacht.id))
-    .orderBy(images.sortOrder);
-
-  // Fetch reviews (optional)
-  const yachtReviews = await db
-    .select()
-    .from(reviews)
-    .where(eq(reviews.yachtModelId, yacht.id))
-    .orderBy(reviews.reviewDate);
-
-  // Fetch media assets (P10.2)
-  const yachtMedia = await db
-    .select({
-      id: mediaAssets.id,
-      mediaType: mediaAssets.mediaType,
-      title: mediaAssets.title,
-      description: mediaAssets.description,
-      url: mediaAssets.url,
-      embedUrl: mediaAssets.embedUrl,
-      thumbnailUrl: mediaAssets.thumbnailUrl,
-      fileFormat: mediaAssets.fileFormat,
-    })
-    .from(mediaAssets)
-    .where(eq(mediaAssets.yachtModelId, yacht.id))
-    .orderBy(mediaAssets.sortOrder);
 
   return {
     yacht,
@@ -320,24 +322,71 @@ export async function getYachtDetailData(slug: string): Promise<YachtDetailData 
 
 /**
  * Get primary image for a yacht.
+ *
+ * P27.1: Optimized from 2 sequential queries to a single JOIN query.
  */
 export async function getPrimaryImage(slug: string): Promise<string | null> {
-  const yachtResult = await db
-    .select({ id: yachtModels.id })
+  // Single query: join yacht_models with images and get primary/first image
+  const result = await db
+    .select({
+      url: images.url,
+      isPrimary: images.isPrimary,
+      sortOrder: images.sortOrder,
+    })
     .from(yachtModels)
+    .innerJoin(images, eq(images.yachtModelId, yachtModels.id))
     .where(eq(yachtModels.slug, slug))
-    .limit(1);
-
-  if (yachtResult.length === 0) return null;
-
-  const yachtImages = await db
-    .select()
-    .from(images)
-    .where(eq(images.yachtModelId, yachtResult[0].id))
     .orderBy(images.sortOrder);
 
-  const primaryImage = yachtImages.find((img: typeof images.$inferSelect) => img.isPrimary) || yachtImages[0];
+  if (result.length === 0) return null;
+
+  const primaryImage = result.find((img: typeof result[number]) => img.isPrimary) || result[0];
   return primaryImage?.url || null;
+}
+
+/**
+ * Batch-fetch primary images for multiple yacht IDs.
+ * Eliminates N+1 pattern when displaying lists of yachts.
+ *
+ * P27.1: New helper to prevent N+1 image queries in list views.
+ */
+export async function getPrimaryImagesBatch(yachtIds: number[]): Promise<Map<number, string | null>> {
+  if (yachtIds.length === 0) return new Map();
+
+  const result = await db
+    .select({
+      yachtModelId: images.yachtModelId,
+      url: images.url,
+      isPrimary: images.isPrimary,
+      sortOrder: images.sortOrder,
+    })
+    .from(images)
+    .where(inArray(images.yachtModelId, yachtIds))
+    .orderBy(images.yachtModelId, images.sortOrder);
+
+  const map = new Map<number, string | null>();
+  // Initialize all IDs with null
+  for (const id of yachtIds) {
+    map.set(id, null);
+  }
+  // Fill in first occurrence (sorted by sortOrder, so primary/first comes first per yacht)
+  const seen = new Set<number>();
+  for (const row of result) {
+    if (seen.has(row.yachtModelId)) continue;
+    seen.add(row.yachtModelId);
+    // Prefer primary image; since rows are ordered by sortOrder within each yacht,
+    // check if any row for this yacht has isPrimary
+    map.set(row.yachtModelId, row.url);
+  }
+
+  // Second pass: prefer isPrimary images
+  for (const row of result) {
+    if (row.isPrimary) {
+      map.set(row.yachtModelId, row.url);
+    }
+  }
+
+  return map;
 }
 
 /**
