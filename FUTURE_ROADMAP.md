@@ -102,13 +102,13 @@
 - **P25.4 — Multilingual content pipeline** *(completed 2026-06-10 — Issue #408, PR #409)* — Auto-translate guides and descriptions to French. Translation queue with human review. Translation memory for consistency.
 - **P25.5 — Dynamic FAQ generation** *(completed 2026-06-11 — Issue #410, PR #411)* — Auto-generate FAQs from yacht data patterns. Schema markup for FAQ rich results. Crawlable FAQ pages per manufacturer/size category.
 
-### Phase 26 — Monetization & Revenue (Priority: Medium) — 🔧 IN PROGRESS
+### Phase 26 — Monetization & Revenue (Priority: Medium) — ✅ COMPLETE
 
 - **P26.1 — Premium listing tier for manufacturers** — Enhanced manufacturer profiles with video, documents, verified badge. Admin interface for managing premium tier. Feature gating logic.
 - **P26.2 — Lead scoring & qualification** — Score incoming leads based on behavior signals. Priority routing for high-value leads. Admin lead management dashboard enhancement.
 - **P26.3 — Affiliate link optimization engine** — A/B test affiliate link placement. Revenue tracking per placement. Auto-rotate best-performing partners.
 - **P26.4 — Premium comparison reports (PDF)** *(completed 2026-06-13 — Issue #422, PR #423)* — Server-side PDF generation using pdf-lib. Lead-gated download (email required). Branded report with summary cards, spec comparison table with best-value highlights, CTA page. Admin dashboard at /admin/reports. API at POST /api/compare/report.
-- **P26.5 — Newsletter monetization** — Sponsored content slots in newsletter. Open/click rate optimization. Subscriber segmentation for targeted sends.
+- **P26.5 — Newsletter monetization** *(completed 2026-06-14 — Issue #424, PR #425, 12 tests)* — Campaign builder with sponsored content slots, subscriber segmentation (tags + engagement scoring), open/click tracking (pixel + redirect), analytics dashboard with revenue stats and subscriber growth.
 
 ### Phase 27 — Technical Debt & Platform Hardening (Priority: Low) — 🔲 PLANNED
 

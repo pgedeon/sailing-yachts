@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db, ensureSchema, newsletterCampaigns, newsletterSponsorSlots } from "@/lib/db";
 import { eq, sql } from "drizzle-orm";
 
+export const dynamic = "force-dynamic";
+
 // GET — single campaign with sponsor slots and stats
 export async function GET(
   request: NextRequest,

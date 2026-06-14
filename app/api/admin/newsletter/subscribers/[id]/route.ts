@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db, ensureSchema, newsletterSubscribers } from "@/lib/db";
 import { eq, sql } from "drizzle-orm";
 
+export const dynamic = "force-dynamic";
+
 // PATCH — update subscriber tags
 export async function PATCH(
   request: NextRequest,

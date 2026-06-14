@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db, ensureSchema, newsletterCampaigns, newsletterClicks, newsletterSubscribers } from "@/lib/db";
 import { eq, sql } from "drizzle-orm";
 
+export const dynamic = "force-dynamic";
+
 // GET — redirect and track click
 export async function GET(request: NextRequest) {
   try {

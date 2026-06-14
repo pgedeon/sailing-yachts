@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db, ensureSchema, newsletterCampaigns, newsletterOpens, newsletterClicks, newsletterSubscribers, newsletterSponsorSlots } from "@/lib/db";
 import { desc, eq, sql } from "drizzle-orm";
 
+export const dynamic = "force-dynamic";
+
 // GET — newsletter monetization analytics dashboard data
 export async function GET(request: NextRequest) {
   try {
