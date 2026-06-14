@@ -206,6 +206,87 @@ export async function ensureSchema() {
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_partner_offers_active ON partner_offers(is_active);
     `);
+
+    // ─── Newsletter monetization tables ───────────────────────────────
+    // Ensure newsletter_subscribers has monetization columns
+    const nlSubCols = await client.query(`
+      SELECT column_name FROM information_schema.columns
+      WHERE table_name = 'newsletter_subscribers' AND table_schema = 'public'
+    `);
+    const nlSubExisting = new Set(nlSubCols.rows.map((r: any) => r.column_name));
+    if (!nlSubExisting.has('tags')) {
+      await client.query(`ALTER TABLE newsletter_subscribers ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}'::text[]`);
+    }
+    if (!nlSubExisting.has('engagement_score')) {
+      await client.query(`ALTER TABLE newsletter_subscribers ADD COLUMN IF NOT EXISTS engagement_score INTEGER DEFAULT 0`);
+    }
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS newsletter_campaigns (
+        id SERIAL PRIMARY KEY,
+        subject VARCHAR(500) NOT NULL,
+        preheader VARCHAR(500),
+        body_markdown TEXT NOT NULL,
+        status VARCHAR(20) NOT NULL DEFAULT 'draft',
+        target_segment VARCHAR(100),
+        scheduled_for TIMESTAMPTZ,
+        sent_at TIMESTAMPTZ,
+        recipient_count INTEGER DEFAULT 0,
+        open_count INTEGER DEFAULT 0,
+        click_count INTEGER DEFAULT 0,
+        revenue NUMERIC(10,2) DEFAULT 0,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_nl_campaigns_status ON newsletter_campaigns(status);`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_nl_campaigns_scheduled ON newsletter_campaigns(scheduled_for);`);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS newsletter_sponsor_slots (
+        id SERIAL PRIMARY KEY,
+        campaign_id INTEGER NOT NULL REFERENCES newsletter_campaigns(id) ON DELETE CASCADE,
+        sponsor_name VARCHAR(255) NOT NULL,
+        sponsor_logo VARCHAR(500),
+        headline VARCHAR(500) NOT NULL,
+        body_text TEXT,
+        cta_text VARCHAR(100),
+        cta_url VARCHAR(500) NOT NULL,
+        slot_position VARCHAR(20) NOT NULL DEFAULT 'middle',
+        revenue NUMERIC(10,2) NOT NULL DEFAULT 0,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_nl_sponsor_campaign ON newsletter_sponsor_slots(campaign_id);`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_nl_sponsor_position ON newsletter_sponsor_slots(slot_position);`);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS newsletter_opens (
+        id SERIAL PRIMARY KEY,
+        campaign_id INTEGER NOT NULL REFERENCES newsletter_campaigns(id) ON DELETE CASCADE,
+        subscriber_id INTEGER REFERENCES newsletter_subscribers(id) ON DELETE SET NULL,
+        user_agent VARCHAR(500),
+        ip_address VARCHAR(45),
+        opened_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_nl_opens_campaign ON newsletter_opens(campaign_id);`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_nl_opens_subscriber ON newsletter_opens(subscriber_id);`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_nl_opens_when ON newsletter_opens(opened_at);`);
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS newsletter_clicks (
+        id SERIAL PRIMARY KEY,
+        campaign_id INTEGER NOT NULL REFERENCES newsletter_campaigns(id) ON DELETE CASCADE,
+        subscriber_id INTEGER REFERENCES newsletter_subscribers(id) ON DELETE SET NULL,
+        url VARCHAR(500) NOT NULL,
+        link_label VARCHAR(200),
+        clicked_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_nl_clicks_campaign ON newsletter_clicks(campaign_id);`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_nl_clicks_subscriber ON newsletter_clicks(subscriber_id);`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_nl_clicks_when ON newsletter_clicks(clicked_at);`);
     // After creating base tables, ensure yacht_models has all Drizzle columns
     // (migrate from minimal to full schema if needed)
     const columnResult = await client.query(`

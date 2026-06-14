@@ -271,8 +271,10 @@ export const newsletterSubscribers = pgTable(
     email: varchar("email", { length: 255 }).notNull().unique(),
     confirmed: boolean("confirmed").default(false),
     source: varchar("source", { length: 100 }).default("website"),
+    tags: text("tags").array().default([]),
     createdAt: timestamp("created_at").defaultNow(),
     confirmedAt: timestamp("confirmed_at"),
+    engagementScore: integer("engagement_score").default(0),
   },
   (table) => ({
     idxEmail: uniqueIndex("idx_newsletter_email").on(table.email),
@@ -1327,3 +1329,97 @@ export const insertAffiliateVariantSchema = createInsertSchema(affiliateVariants
 export const selectAffiliateVariantSchema = createSelectSchema(affiliateVariants);
 export const insertAffiliateTrackingEventSchema = createInsertSchema(affiliateTrackingEvents);
 export const selectAffiliateTrackingEventSchema = createSelectSchema(affiliateTrackingEvents);
+
+// ─── Newsletter Monetization ──────────────────────────────────────
+
+// Newsletter campaigns (issues sent to subscribers)
+export const newsletterCampaigns = pgTable(
+  "newsletter_campaigns",
+  {
+    id: serial("id").primaryKey(),
+    subject: varchar("subject", { length: 500 }).notNull(),
+    preheader: varchar("preheader", { length: 500 }),
+    bodyMarkdown: text("body_markdown").notNull(),
+    status: varchar("status", { length: 20 }).notNull().default("draft"), // draft, scheduled, sent
+    targetSegment: varchar("target_segment", { length: 100 }), // tag name or "all"
+    scheduledFor: timestamp("scheduled_for", { withTimezone: true }),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+    recipientCount: integer("recipient_count").default(0),
+    openCount: integer("open_count").default(0),
+    clickCount: integer("click_count").default(0),
+    revenue: numeric("revenue", { precision: 10, scale: 2 }).default("0"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxStatus: index("idx_nl_campaigns_status").on(table.status),
+    idxScheduled: index("idx_nl_campaigns_scheduled").on(table.scheduledFor),
+  }),
+);
+
+// Sponsored content slots within newsletter campaigns
+export const newsletterSponsorSlots = pgTable(
+  "newsletter_sponsor_slots",
+  {
+    id: serial("id").primaryKey(),
+    campaignId: integer("campaign_id").notNull().references(() => newsletterCampaigns.id, { onDelete: "cascade" }),
+    sponsorName: varchar("sponsor_name", { length: 255 }).notNull(),
+    sponsorLogo: varchar("sponsor_logo", { length: 500 }),
+    headline: varchar("headline", { length: 500 }).notNull(),
+    bodyText: text("body_text"),
+    ctaText: varchar("cta_text", { length: 100 }),
+    ctaUrl: varchar("cta_url", { length: 500 }).notNull(),
+    slotPosition: varchar("slot_position", { length: 20 }).notNull().default("middle"), // top, middle, bottom
+    revenue: numeric("revenue", { precision: 10, scale: 2 }).notNull().default("0"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxCampaign: index("idx_nl_sponsor_campaign").on(table.campaignId),
+    idxPosition: index("idx_nl_sponsor_position").on(table.slotPosition),
+  }),
+);
+
+// Newsletter open tracking (tracking pixel)
+export const newsletterOpens = pgTable(
+  "newsletter_opens",
+  {
+    id: serial("id").primaryKey(),
+    campaignId: integer("campaign_id").notNull().references(() => newsletterCampaigns.id, { onDelete: "cascade" }),
+    subscriberId: integer("subscriber_id").references(() => newsletterSubscribers.id, { onDelete: "set null" }),
+    userAgent: varchar("user_agent", { length: 500 }),
+    ipAddress: varchar("ip_address", { length: 45 }),
+    openedAt: timestamp("opened_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxCampaign: index("idx_nl_opens_campaign").on(table.campaignId),
+    idxSubscriber: index("idx_nl_opens_subscriber").on(table.subscriberId),
+    idxOpened: index("idx_nl_opens_when").on(table.openedAt),
+  }),
+);
+
+// Newsletter click tracking
+export const newsletterClicks = pgTable(
+  "newsletter_clicks",
+  {
+    id: serial("id").primaryKey(),
+    campaignId: integer("campaign_id").notNull().references(() => newsletterCampaigns.id, { onDelete: "cascade" }),
+    subscriberId: integer("subscriber_id").references(() => newsletterSubscribers.id, { onDelete: "set null" }),
+    url: varchar("url", { length: 500 }).notNull(),
+    linkLabel: varchar("link_label", { length: 200 }),
+    clickedAt: timestamp("clicked_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    idxCampaign: index("idx_nl_clicks_campaign").on(table.campaignId),
+    idxSubscriber: index("idx_nl_clicks_subscriber").on(table.subscriberId),
+    idxClicked: index("idx_nl_clicks_when").on(table.clickedAt),
+  }),
+);
+
+export const insertNewsletterCampaignSchema = createInsertSchema(newsletterCampaigns);
+export const selectNewsletterCampaignSchema = createSelectSchema(newsletterCampaigns);
+export const insertNewsletterSponsorSlotSchema = createInsertSchema(newsletterSponsorSlots);
+export const selectNewsletterSponsorSlotSchema = createSelectSchema(newsletterSponsorSlots);
+export const insertNewsletterOpenSchema = createInsertSchema(newsletterOpens);
+export const selectNewsletterOpenSchema = createSelectSchema(newsletterOpens);
+export const insertNewsletterClickSchema = createInsertSchema(newsletterClicks);
+export const selectNewsletterClickSchema = createSelectSchema(newsletterClicks);
