@@ -111,14 +111,22 @@ export default async function AdminPage() {
 
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
               <h2 className="text-xl font-semibold mb-4 text-gray-800">Newsletter</h2>
-              <p className="text-gray-600 mb-4">View and manage newsletter subscribers.</p>
-              <a
-                href="/admin/newsletter"
-                className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
-              >
-                Manage Subscribers
-              </a>
-          </div>
+              <p className="text-gray-600 mb-4">Manage subscribers, segments, and campaigns with sponsored content slots.</p>
+              <div className="flex gap-2">
+                <a
+                  href="/admin/newsletter"
+                  className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
+                >
+                  Subscribers
+                </a>
+                <a
+                  href="/admin/newsletter/campaigns"
+                  className="inline-block px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition duration-200"
+                >
+                  Campaigns
+                </a>
+              </div>
+            </div>
 
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
               <h2 className="text-xl font-semibold mb-4 text-gray-800">Guides CMS</h2>
