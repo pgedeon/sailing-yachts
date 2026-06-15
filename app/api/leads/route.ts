@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, leads } from "@/lib/db";
 import { eq, inArray, desc } from "drizzle-orm";
+import { z } from "zod";
+import { checkRateLimit, getClientIp, rateLimitHeaders, WRITE_RATE_LIMIT } from "@/lib/rate-limit";
 
 export interface LeadSubmission {
   name: string;
@@ -18,6 +20,21 @@ export interface LeadSubmission {
 
 const VALID_LEAD_TYPES = ["dealer_inquiry", "price_request", "find_similar", "general"];
 
+// --- Zod validation ---
+const leadSchema = z.object({
+  name: z.string().min(1, "Name is required").max(200),
+  email: z.string().email("Invalid email address").max(255),
+  phone: z.string().max(50).optional(),
+  message: z.string().max(5000).optional(),
+  yachtIds: z.string().min(1, "yachtIds is required"),
+  leadType: z.enum(["dealer_inquiry", "price_request", "find_similar", "general"]).optional().default("general"),
+  pageUrl: z.string().max(2000).optional(),
+  referrer: z.string().max(2000).optional(),
+  utmSource: z.string().max(200).optional(),
+  utmMedium: z.string().max(200).optional(),
+  utmCampaign: z.string().max(200).optional(),
+});
+
 /**
  * POST /api/leads
  *
@@ -26,19 +43,30 @@ const VALID_LEAD_TYPES = ["dealer_inquiry", "price_request", "find_similar", "ge
  */
 export async function POST(request: NextRequest) {
   try {
-    const body: LeadSubmission = await request.json();
-
-    if (!body.name || !body.email || !body.yachtIds) {
+    // Rate limit (write: 20/min)
+    const ip = getClientIp(request);
+    const rlResult = checkRateLimit(`leads:${ip}`, WRITE_RATE_LIMIT);
+    if (!rlResult.allowed) {
       return NextResponse.json(
-        { error: "Missing required fields: name, email, and yachtIds are required" },
-        { status: 400 }
+        { error: "Too many requests. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(Math.ceil((rlResult.resetAt - Date.now()) / 1000)),
+            ...rateLimitHeaders(rlResult),
+          },
+        },
       );
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(body.email)) {
-      return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
+    const parsed = leadSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Validation failed", details: parsed.error.flatten().fieldErrors },
+        { status: 400 },
+      );
     }
+    const body = parsed.data;
 
     const yachtIds = body.yachtIds
       .split(",")
@@ -54,7 +82,7 @@ export async function POST(request: NextRequest) {
       columns: { id: true, manufacturer: true, modelName: true, slug: true, lengthOverall: true },
     });
 
-    const leadType = VALID_LEAD_TYPES.includes(body.leadType || "") ? body.leadType : "general";
+    const leadType = body.leadType;
 
     const sourceMap: Record<string, string> = {
       dealer_inquiry: "yacht_detail_dealer",

@@ -1,40 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendEmail } from "@/lib/email";
 import { getYachtDetailData, getPrimaryImage } from "@/lib/yachts";
-
-// In-memory rate limiter (per IP, resets on redeploy)
-const rateLimiter = new Map<string, { count: number; resetAt: number }>();
-const MAX_EMAILS_PER_HOUR = 3;
-const RATE_WINDOW_MS = 60 * 60 * 1000; // 1 hour
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimiter.get(ip);
-
-  if (!entry || now > entry.resetAt) {
-    rateLimiter.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
-    return false;
-  }
-
-  if (entry.count >= MAX_EMAILS_PER_HOUR) {
-    return true;
-  }
-
-  entry.count++;
-  return false;
-}
-
-// Clean up old entries periodically
-if (typeof setInterval !== "undefined") {
-  setInterval(() => {
-    const now = Date.now();
-    for (const [ip, entry] of rateLimiter.entries()) {
-      if (now > entry.resetAt) {
-        rateLimiter.delete(ip);
-      }
-    }
-  }, 5 * 60 * 1000);
-}
+import { checkRateLimit, getClientIp, rateLimitHeaders, STRICT_WRITE_RATE_LIMIT } from "@/lib/rate-limit";
 
 export interface EmailYachtRequest {
   recipientEmail: string;
@@ -46,16 +13,19 @@ export interface EmailYachtRequest {
 
 export async function POST(request: NextRequest) {
   try {
-    // Rate limit check
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-      request.headers.get("x-real-ip") ||
-      "unknown";
-
-    if (isRateLimited(ip)) {
+    // Rate limit check (strict: 5/hour)
+    const ip = getClientIp(request);
+    const rlResult = checkRateLimit(`email-yacht:${ip}`, STRICT_WRITE_RATE_LIMIT);
+    if (!rlResult.allowed) {
       return NextResponse.json(
         { error: "Rate limited", message: "Too many emails. Please wait before sending another." },
-        { status: 429 }
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(Math.ceil((rlResult.resetAt - Date.now()) / 1000)),
+            ...rateLimitHeaders(rlResult),
+          },
+        }
       );
     }
 

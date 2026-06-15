@@ -1,6 +1,6 @@
 /**
- * Simple in-memory rate limiter for API routes.
- * Uses a sliding window counter per IP/key.
+ * Centralized rate limiting for API routes.
+ * Uses in-memory sliding window counters per IP/key.
  *
  * Also includes admin login brute-force protection.
  */
@@ -31,6 +31,27 @@ export interface RateLimitOptions {
   windowSeconds: number;
 }
 
+// ── Tiered presets ──
+
+/** Read-heavy routes (GET /api/yachts, /api/search, etc.) */
+export const READ_RATE_LIMIT: RateLimitOptions = {
+  limit: 120,
+  windowSeconds: 60,
+};
+
+/** Write routes (POST leads, reviews, corrections, etc.) */
+export const WRITE_RATE_LIMIT: RateLimitOptions = {
+  limit: 20,
+  windowSeconds: 60,
+};
+
+/** Sensitive write routes — strict (email sharing, compare share) */
+export const STRICT_WRITE_RATE_LIMIT: RateLimitOptions = {
+  limit: 5,
+  windowSeconds: 3600, // 1 hour
+};
+
+/** Default rate limit (backward compatible) */
 export const DEFAULT_RATE_LIMIT: RateLimitOptions = {
   limit: 100,
   windowSeconds: 60,
@@ -58,7 +79,7 @@ export function checkRateLimit(
   return { allowed: true, remaining: options.limit - entry.count, resetAt: entry.resetTime, limit: options.limit };
 }
 
-export function getClientIp(request: Request): string {
+export function getClientIp(request: Request | NextRequest): string {
   const forwarded = request.headers.get('x-forwarded-for');
   if (forwarded) {
     return forwarded.split(',')[0].trim();
@@ -75,9 +96,12 @@ export function rateLimitHeaders(result: { remaining: number; resetAt: number; l
     'X-RateLimit-Limit': String(result.limit),
     'X-RateLimit-Remaining': String(result.remaining),
     'X-RateLimit-Reset': String(Math.ceil(result.resetAt / 1000)),
-    'Cache-Control': 'no-cache', // No caching for rate limit responses
+    'Cache-Control': 'no-cache',
   };
 }
+
+// ── NextRequest type import (for type-only usage) ──
+import type { NextRequest } from 'next/server';
 
 // ── Admin login brute-force protection ──
 // Uses a separate tracking map with individual attempt timestamps for sliding window.

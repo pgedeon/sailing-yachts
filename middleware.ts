@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import createMiddleware from 'next-intl/middleware'
-import { checkLoginRateLimit, getClientIp } from '@/lib/rate-limit'
+import { checkLoginRateLimit, checkRateLimit, getClientIp, rateLimitHeaders, READ_RATE_LIMIT, WRITE_RATE_LIMIT } from '@/lib/rate-limit'
 import { locales, defaultLocale } from '@/i18n'
 
 // next-intl middleware for locale routing
@@ -43,6 +43,7 @@ function getSecurityHeaders(pathname: string): Record<string, string> {
     'Referrer-Policy': 'strict-origin-when-cross-origin',
     'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
     'Content-Security-Policy': cspDirectives,
+    'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
     // X-Frame-Options only set for non-embed routes (CSP frame-ancestors takes priority in modern browsers)
     ...(isEmbed ? {} : { 'X-Frame-Options': 'DENY' }),
   }
@@ -56,28 +57,75 @@ function addSecurityHeaders(response: NextResponse, pathname: string): NextRespo
   return response
 }
 
+/**
+ * Apply tiered rate limiting to API routes.
+ * - GET requests: READ_RATE_LIMIT (120/min)
+ * - POST/PUT/DELETE: WRITE_RATE_LIMIT (20/min)
+ * - Special strict routes use per-route limits
+ */
+function applyApiRateLimit(request: NextRequest): NextResponse | null {
+  const { pathname } = request.nextUrl
+  const method = request.method
+  const clientIp = getClientIp(request)
+  const isWrite = method !== 'GET' && method !== 'HEAD'
+
+  // Strict-limited write routes
+  const strictRoutes = [
+    '/api/email-yacht',
+    '/api/compare/share',
+  ]
+
+  // Login route has its own brute-force protection
+  if (pathname === '/api/auth/callback/credentials' && method === 'POST') {
+    const rateLimit = checkLoginRateLimit(clientIp)
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: 'Too many login attempts. Please try again later.', retryAfterMs: rateLimit.retryAfterMs },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil(rateLimit.retryAfterMs / 1000)) } }
+      )
+    }
+    return null // Let the route handler proceed
+  }
+
+  // Public write routes that have their own validation + rate limiting via checkRateLimit
+  // We still apply a general write limit at middleware level for defense-in-depth
+  const options = isWrite ? WRITE_RATE_LIMIT : READ_RATE_LIMIT
+  const rlKey = `${method}:${pathname}:${clientIp}`
+  const result = checkRateLimit(rlKey, options)
+
+  if (!result.allowed) {
+    const retryAfter = Math.ceil((result.resetAt - Date.now()) / 1000)
+    return NextResponse.json(
+      { error: 'Rate limit exceeded. Please try again later.' },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': String(retryAfter),
+          ...rateLimitHeaders(result),
+        },
+      }
+    )
+  }
+
+  return null
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // ── API routes: no locale handling, just rate limiting ──
+  // ── API routes: rate limiting + security headers ──
   if (pathname.startsWith('/api/')) {
-    const clientIp = getClientIp(request)
-
-    // Rate limiting for admin login attempts
-    if (pathname === '/api/auth/callback/credentials' && request.method === 'POST') {
-      const rateLimit = checkLoginRateLimit(clientIp)
-      if (!rateLimit.allowed) {
-        return NextResponse.json(
-          { error: 'Too many login attempts. Please try again later.', retryAfterMs: rateLimit.retryAfterMs },
-          { status: 429, headers: { 'Retry-After': String(Math.ceil(rateLimit.retryAfterMs / 1000)) } }
-        )
-      }
+    // Apply rate limiting
+    const rateLimited = applyApiRateLimit(request)
+    if (rateLimited) {
+      return rateLimited
     }
 
     const response = NextResponse.next()
-    // API-specific security headers (no CSP needed for API routes)
+    // API-specific security headers
     response.headers.set('X-Content-Type-Options', 'nosniff')
     response.headers.set('X-Frame-Options', 'DENY')
+    response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload')
     return response
   }
 

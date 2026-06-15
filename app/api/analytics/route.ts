@@ -1,7 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { insertAnalyticsEvents } from "@/lib/analytics-service";
+import { z } from "zod";
 
 export const dynamic = "force-dynamic";
+
+const analyticsEventSchema = z.object({
+  eventType: z.enum([
+    "page_view", "search", "compare", "yacht_view",
+    "manufacturer_view", "guide_view", "cta_click",
+    "share", "filter_use", "rating", "email_yacht", "featured_view",
+  ]),
+  page: z.string().max(2000).optional().default("/"),
+  entityId: z.number().optional(),
+  entityType: z.enum(["yacht", "manufacturer", "guide", "comparison"]).optional(),
+  sessionId: z.string().max(200).optional().default("unknown"),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+  referrer: z.string().max(2000).optional(),
+});
+
+const analyticsSchema = z.object({
+  events: z.array(analyticsEventSchema).min(1).max(50),
+});
 
 /**
  * POST /api/analytics — Collect batched analytics events from the client.
@@ -11,21 +30,18 @@ export const dynamic = "force-dynamic";
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const body = await request.json();
-    const events = body.events;
-
-    if (!Array.isArray(events) || events.length === 0) {
+    const parsed = analyticsSchema.safeParse(await request.json());
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "No events provided" },
+        { error: "Invalid analytics payload", details: parsed.error.flatten().fieldErrors },
         { status: 400 },
       );
     }
 
-    // Limit batch size
-    const batch = events.slice(0, 50);
+    const batch = parsed.data.events;
 
     const processed = await insertAnalyticsEvents(
-      batch.map((e: any) => ({
+      batch.map((e) => ({
         eventType: e.eventType,
         page: e.page || "/",
         entityId: e.entityId,
