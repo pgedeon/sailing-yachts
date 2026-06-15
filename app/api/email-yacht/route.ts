@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { sendEmail } from "@/lib/email";
 import { getYachtDetailData, getPrimaryImage } from "@/lib/yachts";
 import { checkRateLimit, getClientIp, rateLimitHeaders, STRICT_WRITE_RATE_LIMIT } from "@/lib/rate-limit";
+import { validate, emailYachtSchema } from "@/lib/validations";
 
 export interface EmailYachtRequest {
   recipientEmail: string;
@@ -29,40 +30,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body: EmailYachtRequest = await request.json();
-    const { recipientEmail, senderName, message, yachtSlug, locale } = body;
-
-    // Validate recipient email
-    if (!recipientEmail || typeof recipientEmail !== "string") {
+    const rawBody = await request.json();
+    const validation = validate(emailYachtSchema, rawBody);
+    if (!validation.success) {
       return NextResponse.json(
-        { error: "Recipient email is required" },
+        { error: "Validation failed", details: validation.errors },
         { status: 400 }
       );
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(recipientEmail.trim().toLowerCase())) {
-      return NextResponse.json(
-        { error: "Invalid email format" },
-        { status: 400 }
-      );
-    }
-
-    // Validate yacht slug
-    if (!yachtSlug || typeof yachtSlug !== "string") {
-      return NextResponse.json(
-        { error: "Yacht slug is required" },
-        { status: 400 }
-      );
-    }
-
-    // Optional message length check
-    if (message && message.length > 500) {
-      return NextResponse.json(
-        { error: "Message must be 500 characters or less" },
-        { status: 400 }
-      );
-    }
+    const { recipientEmail, senderName, message, yachtSlug } = validation.data;
+    const locale = typeof rawBody.locale === "string" ? rawBody.locale : undefined;
 
     // Fetch yacht data
     const yachtDataResult = await getYachtDetailData(yachtSlug);

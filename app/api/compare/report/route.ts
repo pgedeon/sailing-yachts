@@ -12,6 +12,7 @@ import { eq, and } from "drizzle-orm";
 import { edgePool } from "@/lib/edge-pool";
 import { generateComparisonReport, type ReportYacht } from "@/lib/pdf-report";
 import { trackExportDownload } from "@/lib/revenue-analytics";
+import { validate, compareReportSchema } from "@/lib/validations";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -24,33 +25,16 @@ interface ReportRequestBody {
 
 export async function POST(request: NextRequest) {
   try {
-    const body: ReportRequestBody = await request.json();
-
-    // Validate
-    if (!body.email || !body.yachtIds || !Array.isArray(body.yachtIds)) {
+    const rawBody = await request.json();
+    const validation = validate(compareReportSchema, rawBody);
+    if (!validation.success) {
       return NextResponse.json(
-        { error: "Missing required fields: email and yachtIds" },
+        { error: "Validation failed", details: validation.errors },
         { status: 400 },
       );
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(body.email)) {
-      return NextResponse.json(
-        { error: "Invalid email address" },
-        { status: 400 },
-      );
-    }
-
-    if (body.yachtIds.length < 2 || body.yachtIds.length > 4) {
-      return NextResponse.json(
-        { error: "Between 2 and 4 yachts required" },
-        { status: 400 },
-      );
-    }
-
-    // Fetch yacht data
-    const ids = body.yachtIds;
+    const { email, name, yachtIds: ids } = validation.data;
     const placeholders = ids.map((_, i) => `$${i + 1}`).join(",");
     const yachtQuery = `
       SELECT
@@ -98,15 +82,15 @@ export async function POST(request: NextRequest) {
     const yachtIdsStr = ids.join(",");
     const existingLead = await db.query.leads.findFirst({
       where: and(
-        eq(leads.email, body.email),
+        eq(leads.email, email),
         eq(leads.yachtIds, yachtIdsStr),
       ),
     });
 
     if (!existingLead) {
       await db.insert(leads).values({
-        name: body.name || "PDF Report Download",
-        email: body.email,
+        name: name || "PDF Report Download",
+        email: email,
         yachtIds: yachtIdsStr,
         source: "compare_pdf_report",
         leadType: "general",
@@ -121,8 +105,8 @@ export async function POST(request: NextRequest) {
 
     // Generate PDF
     const pdfBytes = await generateComparisonReport(reportYachts, {
-      email: body.email,
-      name: body.name,
+      email: email,
+      name: name,
     });
 
     // Track analytics

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pool } from "@/lib/db";
 import { selectVariant, recordTrackingEvent } from "@/lib/affiliate-optimization";
+import { validate, affiliateTrackSchema } from "@/lib/validations";
 
 export const dynamic = "force-dynamic";
 
@@ -107,16 +108,16 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { action, variantId, placementId, sessionId, page, yachtId, revenue, metadata } = body;
-
-    if (!variantId || !placementId || !action) {
-      return NextResponse.json({ error: "action, variantId, placementId required" }, { status: 400 });
+    const rawBody = await request.json();
+    const validation = validate(affiliateTrackSchema, rawBody);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: "Validation failed", details: validation.errors },
+        { status: 400 }
+      );
     }
 
-    if (action !== "click" && action !== "conversion") {
-      return NextResponse.json({ error: "action must be click or conversion" }, { status: 400 });
-    }
+    const { action, variantId, placementId, sessionId, page, yachtId, revenue, metadata } = validation.data;
 
     await recordTrackingEvent({
       variantId,

@@ -8,6 +8,7 @@ import {
   updateFaqProposalStatus,
   deleteFaqProposal,
 } from "@/lib/faq-harvesting";
+import { validate, faqProposalActionSchema } from "@/lib/validations";
 
 export const dynamic = "force-dynamic";
 
@@ -76,8 +77,16 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const action = body.action || "create";
+    const rawBody = await request.json();
+    const validation = validate(faqProposalActionSchema, rawBody);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: "Validation failed", details: validation.errors },
+        { status: 400 }
+      );
+    }
+
+    const { action } = validation.data;
 
     switch (action) {
       case "harvest": {
@@ -89,7 +98,7 @@ export async function POST(request: NextRequest) {
       }
 
       case "create": {
-        if (!body.question) {
+        if (!validation.data.question) {
           return NextResponse.json(
             { error: "Question is required" },
             { status: 400 }
@@ -97,10 +106,10 @@ export async function POST(request: NextRequest) {
         }
 
         const proposal = await createFaqProposal({
-          question: body.question,
-          suggestedAnswer: body.suggestedAnswer,
-          category: body.category,
-          source: body.source,
+          question: validation.data.question,
+          suggestedAnswer: validation.data.suggestedAnswer,
+          category: validation.data.category,
+          source: validation.data.source,
         });
 
         if (!proposal) {
@@ -114,7 +123,7 @@ export async function POST(request: NextRequest) {
       }
 
       case "update": {
-        if (!body.id || !body.status) {
+        if (!validation.data.id || !validation.data.status) {
           return NextResponse.json(
             { error: "ID and status are required" },
             { status: 400 }
@@ -122,7 +131,7 @@ export async function POST(request: NextRequest) {
         }
 
         const validStatuses = ["approved", "rejected", "published"];
-        if (!validStatuses.includes(body.status)) {
+        if (!validStatuses.includes(validation.data.status)) {
           return NextResponse.json(
             { error: `Status must be one of: ${validStatuses.join(", ")}` },
             { status: 400 }
@@ -130,9 +139,9 @@ export async function POST(request: NextRequest) {
         }
 
         const proposal = await updateFaqProposalStatus(
-          body.id,
-          body.status,
-          body.adminNotes
+          validation.data.id,
+          validation.data.status,
+          validation.data.adminNotes
         );
 
         if (!proposal) {
@@ -146,14 +155,14 @@ export async function POST(request: NextRequest) {
       }
 
       case "delete": {
-        if (!body.id) {
+        if (!validation.data.id) {
           return NextResponse.json(
             { error: "ID is required" },
             { status: 400 }
           );
         }
 
-        const deleted = await deleteFaqProposal(body.id);
+        const deleted = await deleteFaqProposal(validation.data.id);
         if (!deleted) {
           return NextResponse.json(
             { error: "Proposal not found" },

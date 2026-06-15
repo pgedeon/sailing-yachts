@@ -195,3 +195,83 @@ export function validate<T>(schema: z.ZodType<T>, data: unknown): ValidationResu
     errors: result.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`),
   };
 }
+
+// ─── P27.2: API Input Validation Schemas ─────────────────────────────────
+
+// Email-yacht sharing
+export const emailYachtSchema = z.object({
+  recipientEmail: z.string().email("Valid recipient email is required").max(255),
+  yachtSlug: z.string().min(1, "Yacht slug is required").max(500),
+  senderName: z.string().max(200).optional(),
+  senderEmail: z.string().email("Invalid sender email").max(255).optional(),
+  message: z.string().max(2000).optional(),
+});
+
+// Compare share
+export const compareShareSchema = z.object({
+  yachtIds: z.array(z.number().int().positive()).min(2, "At least 2 yachts required").max(4, "Maximum 4 yachts"),
+  title: z.string().max(500).optional().nullable(),
+});
+
+// FAQ proposal
+export const faqProposalActionSchema = z.object({
+  action: z.enum(["create", "harvest", "update", "delete"]).optional().default("create"),
+  question: z.string().min(1, "Question is required").max(1000).optional(),
+  suggestedAnswer: z.string().max(5000).optional(),
+  category: z.string().max(200).optional(),
+  source: z.string().max(500).optional(),
+  id: z.coerce.number().int().positive().optional(),
+  status: z.enum(["approved", "rejected", "published"]).optional(),
+  adminNotes: z.string().max(5000).optional(),
+});
+
+// Quiz answers
+export const quizAnswersSchema = z.object({
+  experience: z.string().max(100),
+  sailingType: z.string().max(100),
+  crewSize: z.string().max(100),
+  budget: z.string().max(100),
+  preferredLength: z.string().max(100),
+  keelPreference: z.string().max(100),
+  priority: z.string().max(100),
+});
+
+// Revenue events
+export const revenueEventItemSchema = z.object({
+  type: z.string().min(1).max(100),
+  page: z.string().max(500).optional(),
+  source: z.string().max(200).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+  sessionId: z.string().max(200).optional(),
+  timestamp: z.union([z.string(), z.number(), z.date()]),
+});
+
+export const revenueEventsSchema = z.object({
+  events: z.array(revenueEventItemSchema).min(1, "No events provided").max(50, "Maximum 50 events per batch"),
+});
+
+// Affiliate tracking
+export const affiliateTrackSchema = z.object({
+  action: z.enum(["click", "conversion"]),
+  variantId: z.coerce.number().int().positive(),
+  placementId: z.coerce.number().int().positive(),
+  sessionId: z.string().max(200).optional(),
+  page: z.string().max(500).optional(),
+  yachtId: z.number().int().positive().optional(),
+  revenue: z.number().nonnegative().optional(),
+  metadata: z.record(z.string(), z.string().or(z.number()).or(z.null())).optional(),
+});
+
+// Compare report (PDF)
+export const compareReportSchema = z.object({
+  email: z.string().email("Invalid email address").max(255),
+  name: z.string().max(200).optional(),
+  yachtIds: z.array(z.number().int().positive()).min(2, "Between 2 and 4 yachts required").max(4, "Between 2 and 4 yachts required"),
+});
+
+// Auth register
+export const authRegisterSchema = z.object({
+  email: z.string().email("Please enter a valid email address.").max(255),
+  password: z.string().min(8, "Password must be at least 8 characters long.").max(72, "Password must be 72 characters or fewer."),
+  name: z.string().max(200).optional(),
+});
