@@ -1,32 +1,24 @@
 import { NextResponse } from "next/server";
 import { pool } from "@/lib/db";
 import { validate, publicReviewSubmissionSchema } from "@/lib/validations";
+import { checkRateLimit, getClientIp, rateLimitHeaders, STRICT_WRITE_RATE_LIMIT } from "@/lib/rate-limit";
 import { revalidateTag } from "next/cache";
-
-// Simple in-memory rate limiter: max 3 per IP per hour
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + 60 * 60 * 1000 });
-    return false;
-  }
-  if (entry.count >= 3) return true;
-  entry.count++;
-  return false;
-}
 
 export async function POST(request: Request) {
   try {
-    // Rate limit by IP
-    const forwarded = request.headers.get("x-forwarded-for");
-    const ip = forwarded?.split(",")[0]?.trim() || "unknown";
-    if (isRateLimited(ip)) {
+    // Rate limit by IP (strict: 5/hour)
+    const ip = getClientIp(request);
+    const rlResult = checkRateLimit(`reviews:${ip}`, STRICT_WRITE_RATE_LIMIT);
+    if (!rlResult.allowed) {
       return NextResponse.json(
         { error: "Too many submissions. Please try again later." },
-        { status: 429 },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(Math.ceil((rlResult.resetAt - Date.now()) / 1000)),
+            ...rateLimitHeaders(rlResult),
+          },
+        },
       );
     }
 

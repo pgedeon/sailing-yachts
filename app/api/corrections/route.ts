@@ -1,32 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pool } from "@/lib/db";
 import { z } from "zod";
+import { checkRateLimit, getClientIp, rateLimitHeaders, STRICT_WRITE_RATE_LIMIT } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
-
-// --- Rate limiting (in-memory, per IP) ---
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + 60 * 60 * 1000 }); // 1 hour window
-    return false;
-  }
-  entry.count++;
-  return entry.count > 3; // max 3 per hour
-}
-
-// Periodically prune stale entries (every 10 minutes)
-if (typeof setInterval !== "undefined") {
-  setInterval(() => {
-    const now = Date.now();
-    for (const [key, entry] of rateLimitMap) {
-      if (now > entry.resetAt) rateLimitMap.delete(key);
-    }
-  }, 10 * 60 * 1000);
-}
 
 // --- Validation ---
 const correctionSchema = z.object({
@@ -55,15 +32,19 @@ const correctionSchema = z.object({
  */
 export async function POST(request: NextRequest) {
   try {
-    // Rate limit by IP
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-      request.headers.get("x-real-ip") ||
-      "unknown";
-    if (isRateLimited(ip)) {
+    // Rate limit by IP (strict: 5/hour)
+    const ip = getClientIp(request);
+    const rlResult = checkRateLimit(`corrections:${ip}`, STRICT_WRITE_RATE_LIMIT);
+    if (!rlResult.allowed) {
       return NextResponse.json(
         { error: "Too many submissions. Please try again later." },
-        { status: 429 },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(Math.ceil((rlResult.resetAt - Date.now()) / 1000)),
+            ...rateLimitHeaders(rlResult),
+          },
+        },
       );
     }
 

@@ -1,30 +1,43 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, ensureSchema, newsletterSubscribers } from "@/lib/db";
 import { eq } from "drizzle-orm";
+import { z } from "zod";
+import { checkRateLimit, getClientIp, rateLimitHeaders, WRITE_RATE_LIMIT } from "@/lib/rate-limit";
+
+const newsletterSchema = z.object({
+  email: z.string().email("Invalid email format").max(255),
+  source: z.string().max(100).optional().default("website"),
+});
 
 export async function POST(request: NextRequest) {
   try {
     await ensureSchema();
 
-    const body = await request.json();
-    const { email, source } = body;
-
-    // Validate email
-    if (!email || typeof email !== "string") {
+    // Rate limit (write: 20/min)
+    const ip = getClientIp(request);
+    const rlResult = checkRateLimit(`newsletter:${ip}`, WRITE_RATE_LIMIT);
+    if (!rlResult.allowed) {
       return NextResponse.json(
-        { error: "Email is required" },
+        { error: "Too many requests. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(Math.ceil((rlResult.resetAt - Date.now()) / 1000)),
+            ...rateLimitHeaders(rlResult),
+          },
+        },
+      );
+    }
+
+    const parsed = newsletterSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Validation failed", details: parsed.error.flatten().fieldErrors },
         { status: 400 },
       );
     }
 
-    const trimmedEmail = email.trim().toLowerCase();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(trimmedEmail)) {
-      return NextResponse.json(
-        { error: "Invalid email format" },
-        { status: 400 },
-      );
-    }
+    const trimmedEmail = parsed.data.email.trim().toLowerCase();
 
     // Check if already subscribed
     const existing = await db
@@ -43,7 +56,7 @@ export async function POST(request: NextRequest) {
     // Insert new subscriber
     await db.insert(newsletterSubscribers).values({
       email: trimmedEmail,
-      source: source || "website",
+      source: parsed.data.source,
     });
 
     return NextResponse.json(

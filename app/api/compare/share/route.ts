@@ -1,13 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { neon } from "@neondatabase/serverless";
+import { checkRateLimit, getClientIp, rateLimitHeaders, WRITE_RATE_LIMIT } from "@/lib/rate-limit";
 
 export const runtime = "edge";
-
-const RATE_LIMIT_WINDOW = 60_000; // 1 minute
-const RATE_LIMIT_MAX = 10; // 10 shares per minute
-
-// In-memory rate limiting (per-edge-instance, good enough for this use case)
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
 function generateShareId(): string {
   // Generate a 8-character base62 ID
@@ -21,35 +16,20 @@ function generateShareId(): string {
   }
   return id;
 }
-
-function getClientIp(request: NextRequest): string {
-  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-}
-
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
-    return true;
-  }
-
-  if (entry.count >= RATE_LIMIT_MAX) {
-    return false;
-  }
-
-  entry.count++;
-  return true;
-}
-
 export async function POST(request: NextRequest) {
   try {
     const ip = getClientIp(request);
-    if (!checkRateLimit(ip)) {
+    const rlResult = checkRateLimit(`compare-share:${ip}`, WRITE_RATE_LIMIT);
+    if (!rlResult.allowed) {
       return NextResponse.json(
         { error: "Rate limit exceeded. Try again later." },
-        { status: 429 }
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(Math.ceil((rlResult.resetAt - Date.now()) / 1000)),
+            ...rateLimitHeaders(rlResult),
+          },
+        }
       );
     }
 

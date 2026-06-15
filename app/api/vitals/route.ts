@@ -7,6 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 interface VitalMetric {
   name: string;
@@ -17,6 +18,20 @@ interface VitalMetric {
   url: string;
   timestamp: number;
 }
+
+const vitalMetricSchema = z.object({
+  name: z.string().min(1).max(50),
+  value: z.number(),
+  rating: z.string().max(50),
+  delta: z.number().optional().default(0),
+  navigationType: z.string().max(50).optional().default("unknown"),
+  url: z.string().min(1).max(2000),
+  timestamp: z.number(),
+});
+
+const vitalsSchema = z.object({
+  metrics: z.array(vitalMetricSchema).min(1).max(50),
+});
 
 // In-memory store — will reset on cold starts but persists within a function instance.
 // For production, this would be replaced with a Neon DB table.
@@ -48,31 +63,15 @@ const THRESHOLDS: Record<string, { good: number; poor: number }> = {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const body = await request.json();
-    const metrics: VitalMetric[] = body.metrics;
-
-    if (!Array.isArray(metrics) || metrics.length === 0) {
+    const parsed = vitalsSchema.safeParse(await request.json());
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "Expected { metrics: [...] }" },
-        { status: 400 }
+        { error: "Invalid vitals payload", details: parsed.error.flatten().fieldErrors },
+        { status: 400 },
       );
     }
 
-    // Validate each metric
-    const validMetrics = metrics.filter(
-      (m) =>
-        m.name &&
-        typeof m.value === "number" &&
-        typeof m.url === "string" &&
-        typeof m.timestamp === "number"
-    );
-
-    if (validMetrics.length === 0) {
-      return NextResponse.json(
-        { error: "No valid metrics in batch" },
-        { status: 400 }
-      );
-    }
+    const validMetrics: VitalMetric[] = parsed.data.metrics;
 
     // Store metrics (with size limit)
     metricsStore.push(...validMetrics);
