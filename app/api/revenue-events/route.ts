@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pool } from "@/lib/db";
+import { validate, revenueEventsSchema } from "@/lib/validations";
 
 export const dynamic = "force-dynamic";
 
@@ -21,15 +22,16 @@ interface RevenueEventPayload {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const body = await request.json();
-    const events: RevenueEventPayload[] = body.events;
-
-    if (!Array.isArray(events) || events.length === 0) {
-      return NextResponse.json({ error: "No events provided" }, { status: 400 });
+    const rawBody = await request.json();
+    const validation = validate(revenueEventsSchema, rawBody);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: "Validation failed", details: validation.errors },
+        { status: 400 }
+      );
     }
 
-    // Limit batch size
-    const batch = events.slice(0, 50);
+    const batch = validation.data.events;
 
     // Insert events into database
     const values: any[] = [];

@@ -150,7 +150,7 @@ describe("Email Yacht Feature — P23.3", () => {
     it("validates recipient email", () => {
       const content = readFileSync(routePath, "utf-8");
       expect(content).toContain("recipientEmail");
-      expect(content).toContain("emailRegex");
+      expect(content).toContain("emailYachtSchema");
     });
 
     it("validates message length <= 500", () => {
@@ -160,8 +160,7 @@ describe("Email Yacht Feature — P23.3", () => {
 
     it("has rate limiting", () => {
       const content = readFileSync(routePath, "utf-8");
-      expect(content).toContain("rateLimiter");
-      expect(content).toContain("MAX_EMAILS_PER_HOUR");
+      expect(content).toContain("STRICT_WRITE_RATE_LIMIT");
       expect(content).toContain("429");
     });
 
@@ -228,7 +227,7 @@ describe("Email Yacht Feature — P23.3", () => {
 
     it("gets client IP for rate limiting", () => {
       const content = readFileSync(routePath, "utf-8");
-      expect(content).toContain("x-forwarded-for");
+      expect(content).toContain("getClientIp");
     });
   });
 

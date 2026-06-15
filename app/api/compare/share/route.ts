@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { neon } from "@neondatabase/serverless";
 import { checkRateLimit, getClientIp, rateLimitHeaders, WRITE_RATE_LIMIT } from "@/lib/rate-limit";
+import { validate, compareShareSchema } from "@/lib/validations";
 
 export const runtime = "edge";
 
@@ -33,39 +34,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-    const { yachtIds, title } = body;
-
-    // Validate yachtIds
-    if (!Array.isArray(yachtIds) || yachtIds.length < 2 || yachtIds.length > 4) {
+    const rawBody = await request.json();
+    const validation = validate(compareShareSchema, rawBody);
+    if (!validation.success) {
       return NextResponse.json(
-        { error: "yachtIds must be an array of 2-4 yacht IDs" },
+        { error: "Validation failed", details: validation.errors },
         { status: 400 }
       );
     }
 
-    // Validate each ID is a number
-    const validIds = yachtIds.map((id: unknown) => {
-      const n = typeof id === "string" ? parseInt(id, 10) : Number(id);
-      return isNaN(n) ? null : n;
-    });
-
-    if (validIds.some((id: number | null) => id === null)) {
-      return NextResponse.json(
-        { error: "All yachtIds must be valid numbers" },
-        { status: 400 }
-      );
-    }
-
-    // Validate title if provided
-    if (title !== undefined && typeof title !== "string") {
-      return NextResponse.json(
-        { error: "Title must be a string" },
-        { status: 400 }
-      );
-    }
-
-    const sanitizedTitle = title?.trim().substring(0, 500) || null;
+    const validIds = validation.data.yachtIds;
+    const sanitizedTitle = validation.data.title?.trim().substring(0, 500) || null;
 
     const databaseUrl = process.env.DATABASE_URL;
     if (!databaseUrl) {

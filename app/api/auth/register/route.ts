@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs"
 import { eq } from "drizzle-orm"
 import { NextResponse } from "next/server"
 import { db, users } from "@/lib/db"
+import { validate, authRegisterSchema } from "@/lib/validations";
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
@@ -9,22 +10,18 @@ function isValidEmail(email: string) {
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
-    const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : ""
-    const password = typeof body.password === "string" ? body.password : ""
-    const name = typeof body.name === "string" ? body.name.trim() : ""
-
-    if (!email || !isValidEmail(email)) {
-      return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 })
+    const rawBody = await request.json()
+    const validation = validate(authRegisterSchema, rawBody)
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.errors[0] || "Invalid input" },
+        { status: 400 },
+      )
     }
 
-    if (password.length < 8) {
-      return NextResponse.json({ error: "Password must be at least 8 characters long." }, { status: 400 })
-    }
-
-    if (password.length > 72) {
-      return NextResponse.json({ error: "Password must be 72 characters or fewer." }, { status: 400 })
-    }
+    const email = validation.data.email.trim().toLowerCase()
+    const password = validation.data.password
+    const name = validation.data.name?.trim()
 
     const existingUsers = await db
       .select({ id: users.id })

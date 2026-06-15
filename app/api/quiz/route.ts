@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { pool } from "@/lib/db";
+import { validate, quizAnswersSchema } from "@/lib/validations";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -279,16 +280,23 @@ function scoreYacht(
 /** POST /api/quiz — submit quiz answers, get matched yachts */
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const rawBody = await request.json();
+    const validation = validate(quizAnswersSchema, rawBody);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: "Validation failed", details: validation.errors },
+        { status: 400 },
+      );
+    }
 
     const answers: QuizAnswers = {
-      experience: body.experience || "",
-      sailingType: body.sailingType || "",
-      crewSize: body.crewSize || "",
-      budget: body.budget || "",
-      preferredLength: body.preferredLength || "",
-      keelPreference: body.keelPreference || "",
-      priority: body.priority || "",
+      experience: validation.data.experience || "",
+      sailingType: validation.data.sailingType || "",
+      crewSize: validation.data.crewSize || "",
+      budget: validation.data.budget || "",
+      preferredLength: validation.data.preferredLength || "",
+      keelPreference: validation.data.keelPreference || "",
+      priority: validation.data.priority || "",
     };
 
     const { conditions } = buildQuizFilters(answers);
