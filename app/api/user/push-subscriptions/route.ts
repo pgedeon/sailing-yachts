@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { eq, and } from 'drizzle-orm'
 import { authOptions } from '@/lib/auth'
 import { db, pushSubscriptions } from '@/lib/db'
+import { validateBody, pushSubscriptionSchema } from '@/lib/api-validate'
 
 // GET /api/user/push-subscriptions — list current user's push subscriptions
 export async function GET() {
@@ -43,14 +44,9 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { endpoint, keys, notifyNewMatches, notifyPriceChanges, frequency, quietHoursStart, quietHoursEnd } = body
-
-    if (!endpoint || typeof endpoint !== 'string') {
-      return NextResponse.json({ error: 'endpoint is required' }, { status: 400 })
-    }
-    if (!keys?.p256dh || !keys?.auth) {
-      return NextResponse.json({ error: 'keys.p256dh and keys.auth are required' }, { status: 400 })
-    }
+    const validation = validateBody(pushSubscriptionSchema, body)
+    if (!validation.ok) return validation.response
+    const { endpoint, keys, notifyNewMatches, notifyPriceChanges, frequency, quietHoursStart, quietHoursEnd } = validation.data
 
     // Upsert: if endpoint already exists for this user, update it
     const existing = await db

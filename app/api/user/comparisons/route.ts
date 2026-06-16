@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { eq, and } from 'drizzle-orm'
 import { authOptions } from '@/lib/auth'
 import { db, savedComparisons } from '@/lib/db'
+import { validateBody, userSavedComparisonSchema } from '@/lib/api-validate'
 
 // GET /api/user/comparisons - list saved comparisons
 export async function GET() {
@@ -33,11 +34,9 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { name, yachtIds } = body
-
-    if (!yachtIds || !Array.isArray(yachtIds) || yachtIds.length < 2 || yachtIds.length > 4) {
-      return NextResponse.json({ error: 'yachtIds must be an array of 2-4 yacht IDs' }, { status: 400 })
-    }
+    const validation = validateBody(userSavedComparisonSchema, body)
+    if (!validation.ok) return validation.response
+    const { name, yachtIds } = validation.data
 
     const result = await db.insert(savedComparisons).values({
       userId: Number(session.user.id),

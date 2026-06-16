@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { recordSearchIntent } from "@/lib/search-intents";
+import { validateBody, searchIntentRecordSchema } from "@/lib/api-validate";
 
 /**
  * POST /api/search-intents/record
@@ -8,16 +9,12 @@ import { recordSearchIntent } from "@/lib/search-intents";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { searchQuery, matchedIntentSlug } = body;
+    const validation = validateBody(searchIntentRecordSchema, body);
+    if (!validation.ok) return validation.response;
 
-    if (!searchQuery) {
-      return NextResponse.json(
-        { error: "Missing required field: searchQuery" },
-        { status: 400 }
-      );
-    }
+    const { searchQuery, matchedIntentSlug } = validation.data;
 
-    await recordSearchIntent(searchQuery, matchedIntentSlug);
+    await recordSearchIntent(searchQuery, matchedIntentSlug ?? undefined);
 
     return NextResponse.json({ success: true });
   } catch (error) {

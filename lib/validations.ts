@@ -275,3 +275,111 @@ export const authRegisterSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters long.").max(72, "Password must be 72 characters or fewer."),
   name: z.string().max(200).optional(),
 });
+
+// ─── P27.2: Additional API Input Validation Schemas ─────────────────────
+
+// A/B test event
+export const abEventSchema = z.object({
+  experimentId: z.string().min(1).max(100),
+  variantId: z.string().min(1).max(100),
+  userId: z.string().min(1).max(200),
+  eventType: z.enum(["impression", "conversion", "click"]),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+});
+
+// Search intent record
+export const searchIntentRecordSchema = z.object({
+  searchQuery: z.string().min(1, "searchQuery is required").max(500),
+  matchedIntentSlug: z.string().max(500).optional().nullable(),
+});
+
+// User favorite add
+export const userFavoriteSchema = z.object({
+  yachtModelId: z.number().int().positive("yachtModelId must be a positive integer"),
+});
+
+// User saved search
+export const userSavedSearchSchema = z.object({
+  name: z.string().max(255).optional(),
+  searchParams: z.record(z.string(), z.unknown()),
+  resultCount: z.number().int().nonnegative().optional().nullable(),
+  alertEnabled: z.boolean().optional().default(false),
+});
+
+// User saved search update
+export const userSavedSearchUpdateSchema = z.object({
+  id: z.number().int().positive(),
+  name: z.string().max(255).optional(),
+  alertEnabled: z.boolean().optional(),
+  searchParams: z.record(z.string(), z.unknown()).optional(),
+});
+
+// User saved comparison
+export const userSavedComparisonSchema = z.object({
+  name: z.string().max(255).optional(),
+  yachtIds: z.array(z.number().int().positive()).min(2).max(4),
+});
+
+// User account (privacy settings update)
+export const userAccountUpdateSchema = z.object({
+  analyticsOptOut: z.boolean().optional(),
+  communicationOptOut: z.boolean().optional(),
+  dataSharingConsent: z.boolean().optional(),
+});
+
+// Push subscription
+export const pushSubscriptionSchema = z.object({
+  endpoint: z.string().url("endpoint must be a valid URL").max(2000),
+  keys: z.object({
+    p256dh: z.string().min(1).max(500),
+    auth: z.string().min(1).max(500),
+  }),
+  notifyNewMatches: z.boolean().optional().default(true),
+  notifyPriceChanges: z.boolean().optional().default(true),
+  frequency: z.enum(["instant", "daily", "weekly"]).optional().default("daily"),
+  quietHoursStart: z.string().max(10).optional().nullable(),
+  quietHoursEnd: z.string().max(10).optional().nullable(),
+});
+
+// Alert preferences
+export const alertPreferencesSchema = z.object({
+  alertType: z.enum(["new_yachts", "price_changes", "new_reviews"]),
+  enabled: z.boolean().optional().default(true),
+  frequency: z.enum(["instant", "daily", "weekly"]).optional().default("daily"),
+});
+
+// Content freshness query params
+export const contentFreshnessQuerySchema = z.object({
+  days: z.coerce.number().int().positive().max(365).optional().default(90),
+  status: z.enum(["fresh", "due", "stale"]).optional(),
+  limit: z.coerce.number().int().positive().max(50).optional().default(20),
+});
+
+// Analytics tracking event
+export const analyticsEventSchema = z.object({
+  events: z.array(
+    z.object({
+      type: z.string().min(1).max(100),
+      page: z.string().max(500).optional(),
+      referrer: z.string().max(500).optional(),
+      sessionId: z.string().max(200).optional(),
+      duration: z.number().nonnegative().optional(),
+      metadata: z.record(z.string(), z.unknown()).optional(),
+      timestamp: z.union([z.string(), z.number(), z.date()]).optional(),
+    })
+  ).min(1, "At least one event required").max(100, "Maximum 100 events per batch"),
+});
+
+// Vitals (Web Vitals reporting)
+export const vitalsSchema = z.object({
+  metric: z.object({
+    name: z.enum(["CLS", "LCP", "FID", "INP", "FCP", "TTFB"]),
+    value: z.number(),
+    rating: z.enum(["good", "needs-improvement", "poor"]),
+    delta: z.number().optional(),
+    id: z.string().max(200).optional(),
+    navigationType: z.string().max(50).optional(),
+  }),
+  page: z.string().max(500).optional(),
+  sessionId: z.string().max(200).optional(),
+});
