@@ -1,12 +1,16 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: './tests',
+  testDir: '.',
+  testMatch: /(tests|e2e)\/.*\.(test|spec)\.ts$/,
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: 1, // Use single worker to avoid overloading production
-  reporter: 'list',
+  reporter: [
+    ['list'],
+    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+  ],
   snapshotPathTemplate: '{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
   snapshotDir: './tests',
   expect: {
@@ -16,10 +20,26 @@ export default defineConfig({
     },
   },
   projects: [
+    // Desktop Chrome — all tests
     {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
+        baseURL: process.env.PLAYWRIGHT_BASE_URL || 'https://info.sailboats.fr',
+        trace: 'on-first-retry',
+        screenshot: 'only-on-failure',
+        headless: true,
+        actionTimeout: 15000,
+        navigationTimeout: 30000,
+      },
+    },
+    // Mobile Chrome — critical journeys only
+    {
+      name: 'mobile-chrome',
+      testDir: './e2e',
+      testMatch: /critical-journeys/,
+      use: {
+        ...devices['Pixel 5'],
         baseURL: process.env.PLAYWRIGHT_BASE_URL || 'https://info.sailboats.fr',
         trace: 'on-first-retry',
         screenshot: 'only-on-failure',
