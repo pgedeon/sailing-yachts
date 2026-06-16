@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { eq, and } from 'drizzle-orm'
 import { authOptions } from '@/lib/auth'
 import { db, savedSearches } from '@/lib/db'
+import { validateBody, userSavedSearchSchema, userSavedSearchUpdateSchema } from '@/lib/api-validate'
 
 // GET /api/user/searches - list saved searches
 export async function GET() {
@@ -33,18 +34,16 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { name, searchParams, resultCount, alertEnabled } = body
-
-    if (!searchParams || typeof searchParams !== 'object') {
-      return NextResponse.json({ error: 'searchParams object required' }, { status: 400 })
-    }
+    const validation = validateBody(userSavedSearchSchema, body)
+    if (!validation.ok) return validation.response
+    const { name, searchParams, resultCount, alertEnabled } = validation.data
 
     const result = await db.insert(savedSearches).values({
       userId: Number(session.user.id),
       name: name || `Search — ${new Date().toLocaleDateString()}`,
       searchParams,
-      resultCount: resultCount || null,
-      alertEnabled: typeof alertEnabled === 'boolean' ? alertEnabled : false,
+      resultCount: resultCount ?? null,
+      alertEnabled: alertEnabled ?? false,
     }).returning({ id: savedSearches.id })
 
     return NextResponse.json({ success: true, id: result[0].id })
@@ -63,11 +62,9 @@ export async function PUT(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { id, name, alertEnabled } = body
-
-    if (!id) {
-      return NextResponse.json({ error: 'id required' }, { status: 400 })
-    }
+    const validation = validateBody(userSavedSearchUpdateSchema, body)
+    if (!validation.ok) return validation.response
+    const { id, name, alertEnabled } = validation.data
 
     const userId = Number(session.user.id)
 
@@ -75,7 +72,7 @@ export async function PUT(request: NextRequest) {
     const existing = await db
       .select()
       .from(savedSearches)
-      .where(and(eq(savedSearches.id, Number(id)), eq(savedSearches.userId, userId)))
+      .where(and(eq(savedSearches.id, id), eq(savedSearches.userId, userId)))
       .limit(1)
 
     if (existing.length === 0) {
@@ -83,13 +80,13 @@ export async function PUT(request: NextRequest) {
     }
 
     const updates: Record<string, unknown> = { updatedAt: new Date() }
-    if (typeof name === 'string') updates.name = name
-    if (typeof alertEnabled === 'boolean') updates.alertEnabled = alertEnabled
+    if (name !== undefined) updates.name = name
+    if (alertEnabled !== undefined) updates.alertEnabled = alertEnabled
 
     await db
       .update(savedSearches)
       .set(updates)
-      .where(eq(savedSearches.id, Number(id)))
+      .where(eq(savedSearches.id, id))
 
     return NextResponse.json({ success: true })
   } catch (error) {

@@ -267,6 +267,16 @@ export default async function AdminPage() {
                 View Report Analytics
               </a>
             </div>
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">Security Audit</h2>
+              <p className="text-gray-600 mb-4">Rate limiting config, input validation coverage, security headers, and CORS policy overview.</p>
+              <a
+                href="/admin/security"
+                className="inline-block px-4 py-2 bg-slate-700 text-white rounded-md hover:bg-slate-800 transition duration-200"
+              >
+                View Security Audit
+              </a>
+            </div>
           </div>
         </div>
       </div>

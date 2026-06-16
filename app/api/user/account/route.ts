@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { eq } from "drizzle-orm";
 import { authOptions } from "@/lib/auth";
 import { db, users } from "@/lib/db";
+import { validateBody, userAccountUpdateSchema } from "@/lib/api-validate";
 
 export const dynamic = "force-dynamic";
 
@@ -58,18 +59,12 @@ export async function PATCH(req: NextRequest) {
     }
 
     const body = await req.json();
+    const validation = validateBody(userAccountUpdateSchema, body);
+    if (!validation.ok) return validation.response;
     const updates: Record<string, boolean> = {};
-
-    // Only allow updating specific privacy fields
-    if (typeof body.analyticsOptOut === "boolean") {
-      updates.analyticsOptOut = body.analyticsOptOut;
-    }
-    if (typeof body.communicationOptOut === "boolean") {
-      updates.communicationOptOut = body.communicationOptOut;
-    }
-    if (typeof body.dataSharingConsent === "boolean") {
-      updates.dataSharingConsent = body.dataSharingConsent;
-    }
+    if (validation.data.analyticsOptOut !== undefined) updates.analyticsOptOut = validation.data.analyticsOptOut;
+    if (validation.data.communicationOptOut !== undefined) updates.communicationOptOut = validation.data.communicationOptOut;
+    if (validation.data.dataSharingConsent !== undefined) updates.dataSharingConsent = validation.data.dataSharingConsent;
 
     if (Object.keys(updates).length === 0) {
       return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });

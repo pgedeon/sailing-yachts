@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { eq, and } from 'drizzle-orm'
 import { authOptions } from '@/lib/auth'
 import { db, userFavorites, yachtModels, manufacturers } from '@/lib/db'
+import { validateBody, userFavoriteSchema } from '@/lib/api-validate'
 
 // GET /api/user/favorites — list user's favorites with yacht details
 export async function GET() {
@@ -50,11 +51,9 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { yachtModelId } = body
-
-    if (!yachtModelId || typeof yachtModelId !== 'number') {
-      return NextResponse.json({ error: 'yachtModelId required' }, { status: 400 })
-    }
+    const validation = validateBody(userFavoriteSchema, body)
+    if (!validation.ok) return validation.response
+    const { yachtModelId } = validation.data
 
     // Check if already favorited
     const existing = await db

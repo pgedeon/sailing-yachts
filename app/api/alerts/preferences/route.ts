@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { eq, and } from 'drizzle-orm'
 import { authOptions } from '@/lib/auth'
 import { db, alertPreferences } from '@/lib/db'
+import { validateBody, alertPreferencesSchema } from '@/lib/api-validate'
 
 // GET /api/alerts/preferences — list user's alert preferences
 export async function GET() {
@@ -33,15 +34,9 @@ export async function PUT(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { alertType, enabled, frequency } = body
-
-    if (!alertType || !['new_yachts', 'price_changes', 'new_reviews'].includes(alertType)) {
-      return NextResponse.json({ error: 'Valid alertType required (new_yachts, price_changes, new_reviews)' }, { status: 400 })
-    }
-
-    if (frequency && !['instant', 'daily', 'weekly'].includes(frequency)) {
-      return NextResponse.json({ error: 'frequency must be instant, daily, or weekly' }, { status: 400 })
-    }
+    const validation = validateBody(alertPreferencesSchema, body)
+    if (!validation.ok) return validation.response
+    const { alertType, enabled, frequency } = validation.data
 
     const userId = Number(session.user.id)
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Pool } from "pg";
 import { insertAbEvent } from "@/lib/ab-testing-service";
+import { validateBody, abEventSchema } from "@/lib/api-validate";
 
 export const dynamic = "force-dynamic";
 
@@ -15,27 +16,22 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { experimentId, variantId, userId, eventType, metadata } = body;
+    const validation = validateBody(abEventSchema, body);
+    if (!validation.ok) return validation.response;
 
-    if (!experimentId || !variantId || !userId || !eventType) {
-      return NextResponse.json(
-        { error: "Missing required fields: experimentId, variantId, userId, eventType" },
-        { status: 400 },
-      );
-    }
-
-    if (!["impression", "conversion", "click"].includes(eventType)) {
-      return NextResponse.json(
-        { error: "Invalid eventType. Must be: impression, conversion, or click" },
-        { status: 400 },
-      );
-    }
+    const { experimentId, variantId, userId, eventType, metadata } = validation.data;
 
     const client = await pool.connect();
     try {
       await insertAbEvent(
         (sql, params) => client.query(sql, params),
-        { experimentId, variantId, userId, eventType, metadata },
+        {
+          experimentId,
+          variantId,
+          userId,
+          eventType,
+          metadata: metadata as Record<string, string> | undefined,
+        },
       );
     } finally {
       client.release();
