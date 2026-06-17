@@ -113,7 +113,7 @@
 ### Phase 27 — Technical Debt & Platform Hardening (Priority: Low) — 🔲 PLANNED
 
 - **P27.1 — Database query optimization audit** *(completed 2026-06-14 — Issue #426, PR #427, 8 tests)* — Parallelized sequential queries in getYachtDetailData, getYachtsListing, newsletter analytics. Eliminated N+1 in similar yachts API. Added 16 composite/partial indexes. Query performance monitoring utility.
-- **P27.2 — API rate limiting & security hardening** — Implement per-IP and per-user rate limiting. Input validation audit. CORS policy review.
+- **P27.2 — API rate limiting & security hardening** *(completed 2026-06-16 — Issue #432, PR #433, 40 tests)* — Added Zod validation to 8 public POST/PUT/DELETE routes. Created security audit admin dashboard at /admin/security. Shared validation helper, 13 new schemas, live coverage scanning API.
 - **P27.3 — Test coverage improvement** — Target 90%+ coverage for critical paths. Integration test suite for API routes. E2E test suite with Playwright.
 - **P27.4 — CI/CD pipeline enhancement** — Automated dependency updates. Security scanning in CI. Performance regression detection.
 - **P27.5 — Documentation & developer experience** — API documentation refresh. Component storybook. Contributing guide. Architecture decision records.
