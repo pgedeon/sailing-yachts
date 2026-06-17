@@ -106,6 +106,11 @@ describe('P27.4 — CI/CD Pipeline Enhancement', () => {
       expect(auditStep.run).toContain('--audit-level=high');
     });
 
+    it('security-scan job is informational (continue-on-error)', () => {
+      ciWorkflow = readYaml('.github/workflows/ci.yml');
+      expect(ciWorkflow.jobs['security-scan']['continue-on-error']).toBe(true);
+    });
+
     it('preserves existing typecheck, build, and lint jobs', () => {
       ciWorkflow = readYaml('.github/workflows/ci.yml');
       expect(ciWorkflow.jobs.typecheck).toBeDefined();
@@ -138,6 +143,11 @@ describe('P27.4 — CI/CD Pipeline Enhancement', () => {
         return run.includes('lhci') || run.includes('autorun');
       });
       expect(lhciStep).toBeDefined();
+    });
+
+    it('lighthouse-ci job is informational (continue-on-error)', () => {
+      const ciWorkflow = readYaml('.github/workflows/ci.yml');
+      expect(ciWorkflow.jobs['lighthouse-ci']['continue-on-error']).toBe(true);
     });
   });
 

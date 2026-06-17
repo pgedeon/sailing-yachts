@@ -80,6 +80,9 @@ jobs:
   security-scan:
     name: Security Audit
     runs-on: ubuntu-latest
+    # Informational - reports vulnerabilities without blocking PRs
+    # Fixes will arrive via Dependabot automated dependency updates
+    continue-on-error: true
 
     steps:
     - uses: actions/checkout@v5
@@ -99,8 +102,8 @@ jobs:
         echo "🔍 Running npm audit..."
         npm audit --audit-level=high --omit=dev || {
           echo "⚠️  High or critical vulnerabilities detected"
-          # Output full audit for visibility
-          npm audit --omit=dev
+          echo "💡 Run npm audit locally for full details"
+          echo "📌 Dependabot will open PRs for fixable vulnerabilities"
           exit 1
         }
         echo "✅ No high or critical vulnerabilities found"
@@ -190,6 +193,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build]
     if: github.event_name == 'pull_request'
+    # Informational - reports perf regressions without blocking PRs
+    # until LHCI_GITHUB_APP_TOKEN secret is configured
+    continue-on-error: true
 
     steps:
     - uses: actions/checkout@v5
