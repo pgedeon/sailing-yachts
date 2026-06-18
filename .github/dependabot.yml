@@ -1,0 +1,55 @@
+# Dependabot configuration — automated dependency updates
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+
+updates:
+  # npm dependencies — weekly, grouped
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 10
+    groups:
+      # Group all minor/patch updates together to reduce PR noise
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+      # Major versions get separate PRs for careful review
+      major:
+        update-types:
+          - major
+    ignore:
+      # Don't auto-update Next.js major versions — requires manual migration
+      - dependency-name: next
+        update-types: ["version-update:semver-major"]
+      - dependency-name: react
+        update-types: ["version-update:semver-major"]
+      - dependency-name: react-dom
+        update-types: ["version-update:semver-major"]
+    commit-message:
+      prefix: chore(deps)
+      include: scope
+    labels:
+      - dependencies
+      - auto-build
+
+  # GitHub Actions dependencies
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore(ci)
+      include: scope
+    labels:
+      - dependencies
+      - ci
