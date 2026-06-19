@@ -33,6 +33,9 @@ function getPool() {
       max: 10,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000,
+      ssl: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "false" 
+        ? { rejectUnauthorized: false } 
+        : undefined,
     });
   }
   return poolInstance;

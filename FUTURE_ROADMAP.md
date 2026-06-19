@@ -110,7 +110,7 @@
 - **P26.4 — Premium comparison reports (PDF)** *(completed 2026-06-13 — Issue #422, PR #423)* — Server-side PDF generation using pdf-lib. Lead-gated download (email required). Branded report with summary cards, spec comparison table with best-value highlights, CTA page. Admin dashboard at /admin/reports. API at POST /api/compare/report.
 - **P26.5 — Newsletter monetization** *(completed 2026-06-14 — Issue #424, PR #425, 12 tests)* — Campaign builder with sponsored content slots, subscriber segmentation (tags + engagement scoring), open/click tracking (pixel + redirect), analytics dashboard with revenue stats and subscriber growth.
 
-### Phase 27 — Technical Debt & Platform Hardening (Priority: Low) — 🔲 PLANNED
+### Phase 27 — Technical Debt & Platform Hardening (Priority: Low) — ✅ COMPLETE
 
 - **P27.1 — Database query optimization audit** *(completed 2026-06-14 — Issue #426, PR #427, 8 tests)* — Parallelized sequential queries in getYachtDetailData, getYachtsListing, newsletter analytics. Eliminated N+1 in similar yachts API. Added 16 composite/partial indexes. Query performance monitoring utility.
 - **P27.2 — API rate limiting & security hardening** *(completed 2026-06-16 — Issue #432, PR #433, 40 tests)* — Added Zod validation to 8 public POST/PUT/DELETE routes. Created security audit admin dashboard at /admin/security. Shared validation helper, 13 new schemas, live coverage scanning API.
