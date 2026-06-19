@@ -1,41 +1,56 @@
 /**
  * Edge-compatible database query helper.
  *
- * Uses `@neondatabase/serverless` Pool (HTTP-based) instead of `pg` Pool (TCP-based).
- * Same `.query()` interface, but works in Next.js Edge runtime.
+ * Uses neon() HTTP function from @neondatabase/serverless.
+ * Routes through OCI PostgreSQL HTTP SQL proxy when DATABASE_PROXY_URL is set.
+ * Accepts $1, $2 style parameterized queries (converts to neon() format).
  *
- * Usage in API routes:
+ * Usage:
  *   import { edgePool } from '@/lib/edge-pool';
- *   export const runtime = 'edge';
- *   const result = await edgePool.query('SELECT ...');
+ *   const result = await edgePool.query('SELECT * FROM yachts WHERE id = $1', [42]);
  */
-import { Pool } from '@neondatabase/serverless';
+import { neon, neonConfig } from "@neondatabase/serverless";
 
-let edgePoolInstance: Pool | null = null;
+let sqlFn: ReturnType<typeof neon> | null = null;
+let proxyConfigured = false;
 
-function getEdgePool(): Pool {
-  if (!edgePoolInstance) {
+function configureProxy() {
+  if (proxyConfigured) return;
+  proxyConfigured = true;
+  const proxyUrl = process.env.DATABASE_PROXY_URL;
+  if (proxyUrl) {
+    neonConfig.fetchEndpoint = proxyUrl;
+  }
+}
+
+function getSql() {
+  if (!sqlFn) {
+    configureProxy();
     const connectionString = process.env.DATABASE_URL;
     if (!connectionString) {
-      throw new Error('DATABASE_URL is not set');
+      throw new Error("DATABASE_URL is not set");
     }
-    edgePoolInstance = new Pool({ connectionString });
+    sqlFn = neon(connectionString);
   }
-  return edgePoolInstance;
+  return sqlFn;
+}
+
+export interface EdgeQueryResult {
+  rows: Record<string, any>[];
+  rowCount: number;
 }
 
 /**
- * Drop-in replacement for `pool` from `@/lib/db` that works in Edge runtime.
- * Uses Neon's HTTP-based Pool instead of pg's TCP-based Pool.
+ * Pool-like wrapper using neon() HTTP function.
+ * Returns { rows, rowCount } compatible with pg.Pool.query().
  */
-export const edgePool = new Proxy({} as Pool, {
-  get(_, prop: string | symbol) {
-    if (typeof prop === 'symbol') return undefined;
-    const instance = getEdgePool() as any;
-    const value = instance[prop];
-    if (typeof value === 'function') {
-      return (...args: any[]) => value.apply(instance, args);
-    }
-    return value;
+export const edgePool = {
+  async query(text: string, params?: any[]): Promise<EdgeQueryResult> {
+    const sql = getSql();
+    const result = params && params.length > 0
+      ? await sql(text, params)
+      : await sql(text);
+    const rows = Array.isArray(result) ? result as Record<string, any>[] : [];
+    return { rows, rowCount: rows.length };
   },
-});
+};
