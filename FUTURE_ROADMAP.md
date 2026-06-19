@@ -116,4 +116,4 @@
 - **P27.2 — API rate limiting & security hardening** *(completed 2026-06-16 — Issue #432, PR #433, 40 tests)* — Added Zod validation to 8 public POST/PUT/DELETE routes. Created security audit admin dashboard at /admin/security. Shared validation helper, 13 new schemas, live coverage scanning API.
 - **P27.3 — Test coverage improvement** *(completed 2026-06-17 — Issue #434, PR #435, 90+ tests)* — Comprehensive API integration test suite (55+ tests) covering all public GET endpoints + error handling tests (25+). E2E critical journey test suite (20+ tests). Updated Playwright config for dual test dirs and mobile project.
 - **P27.4 — CI/CD pipeline enhancement** — Automated dependency updates. Security scanning in CI. Performance regression detection.
-- **P27.5 — Documentation & developer experience** — API documentation refresh. Component storybook. Contributing guide. Architecture decision records.
+- **P27.5 — Documentation & developer experience** *(completed 2026-06-19 — Issue #444, commit 6680894)* — API documentation refresh (334-line docs/API.md). Component storybook (6 stories). Contributing guide (267 lines). 5 ADRs. README refresh.
