@@ -47,9 +47,11 @@ export interface EdgeQueryResult {
 export const edgePool = {
   async query(text: string, params?: any[]): Promise<EdgeQueryResult> {
     const sql = getSql();
+    // neon() in v1.x has stricter types for tagged template literals.
+    // Cast to any to maintain backward compatibility with string + params API.
     const result = params && params.length > 0
-      ? await sql(text, params)
-      : await sql(text);
+      ? await sql(text as any, params as any)
+      : await sql(text as any);
     const rows = Array.isArray(result) ? result as Record<string, any>[] : [];
     return { rows, rowCount: rows.length };
   },
