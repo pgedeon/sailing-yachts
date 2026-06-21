@@ -117,3 +117,7 @@
 - **P27.3 — Test coverage improvement** *(completed 2026-06-17 — Issue #434, PR #435, 90+ tests)* — Comprehensive API integration test suite (55+ tests) covering all public GET endpoints + error handling tests (25+). E2E critical journey test suite (20+ tests). Updated Playwright config for dual test dirs and mobile project.
 - **P27.4 — CI/CD pipeline enhancement** *(completed 2026-06-17 — Issue #436, PR #437)* — Automated dependency updates. Security scanning in CI. Performance regression detection.
 - **P27.5 — Documentation & developer experience** *(completed 2026-06-19 — Issue #444, commit 6680894)* — API documentation refresh (334-line docs/API.md). Component storybook (6 stories). Contributing guide (267 lines). 5 ADRs. README refresh.
+
+### Post-Migration — OCI PostgreSQL Infrastructure Fix (Priority: High) — ✅ COMPLETE
+
+- **PM.1 — Remove @neondatabase/serverless dependency** *(completed 2026-06-21 — Issue #453, PR #455)* — After migrating from Neon to OCI PostgreSQL, the Neon HTTP client couldn't connect. Rewrote lib/edge-pool.ts and lib/db-edge.ts to use pg Pool. Removed Edge runtime from 9 DB-backed routes. Updated all scripts and test files. Removed @neondatabase/serverless from dependencies.
