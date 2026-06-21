@@ -1,47 +1,37 @@
-const { neon } = require('@neondatabase/serverless');
-const { drizzle } = require('drizzle-orm/neon-http');
+/**
+ * Test drizzle filter queries via pg driver
+ */
+require('dotenv').config();
+const { Pool } = require('pg');
+const { drizzle } = require('drizzle-orm/node-postgres');
 const { eq, sql, and } = require('drizzle-orm');
 const { yachtModels, manufacturers } = require('./drizzle/schema');
 
-const connectionString = 'postgresql://neondb_owner:npg_3azLQtYjN0WM@ep-dry-wildflower-agwrkfeu-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "false"
+    ? { rejectUnauthorized: false }
+    : undefined,
+});
 
 async function run() {
-  const sqlClient = neon(connectionString);
-  const db = drizzle(sqlClient);
+  const db = drizzle(pool);
 
-  // Build base query like in the API
-  let query = db
-    .select({
-      yacht: yachtModels,
-      manufacturer: manufacturers.name,
-    })
+  const result = await db
+    .select({ yacht: yachtModels, manufacturer: manufacturers.name })
     .from(yachtModels)
-    .leftJoin(
-      manufacturers,
-      eq(yachtModels.manufacturerId, manufacturers.id)
-    );
+    .leftJoin(manufacturers, eq(yachtModels.manufacturerId, manufacturers.id))
+    .limit(5);
 
-  // Apply manufacturer filter using ANY as in the route
-  const filters = { manufacturers: [23, 24] };
-  const conditions = [];
-
-  if (filters.manufacturers && Array.isArray(filters.manufacturers) && filters.manufacturers.length > 0) {
-    conditions.push(sql`${yachtModels.manufacturerId} = ANY(${filters.manufacturers})`);
+  console.log('Sample results:');
+  for (const row of result) {
+    console.log(`  ${row.manufacturer} ${row.yacht.modelName}`);
   }
 
-  if (conditions.length > 0) {
-    query = query.where(and(...conditions));
-  }
-
-  // Execute
-  const results = await query;
-  console.log('Results count:', results.length);
-  console.log('Results:', JSON.stringify(results, null, 2));
-
-  await sqlClient.end();
+  await pool.end();
 }
 
 run().catch(err => {
-  console.error('Error:', err);
+  console.error(err);
   process.exit(1);
 });

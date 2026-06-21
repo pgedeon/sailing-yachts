@@ -2,9 +2,13 @@
  * Seed additional buying guides and educational articles
  * Run: node scripts/seed-guides.js
  */
-require('dotenv').config();
-const { neon } = require('@neondatabase/serverless');
-const sql = neon(process.env.DATABASE_URL);
+require("dotenv").config();
+const { Pool } = require("pg");
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "false" ? { rejectUnauthorized: false } : undefined,
+});
 
 const guides = [
   {
@@ -479,33 +483,36 @@ Many modern production yachts can handle ocean passages with proper preparation:
 
 ---
 
-*Explore our [Bluewater Glossary](/glossary/bluewater) for more offshore sailing terminology.*`
-  },
-];
-
 async function main() {
-  for (const guide of guides) {
-    try {
-      await sql`
-        INSERT INTO articles (slug, title, excerpt, content, content_markdown, category, author, author_title, reading_time_minutes, is_published, published_at, created_at, updated_at)
-        VALUES (${guide.slug}, ${guide.title}, ${guide.excerpt}, ${guide.md}, ${guide.md}, ${guide.category}, 'Sailing Yacht Info Editorial', 'Data-Driven Sailing Analysis', ${guide.reading_time_minutes}, true, NOW(), NOW(), NOW())
-        ON CONFLICT (slug) DO UPDATE SET
-          title = EXCLUDED.title,
-          excerpt = EXCLUDED.excerpt,
-          content = EXCLUDED.content,
-          content_markdown = EXCLUDED.content_markdown,
-          category = EXCLUDED.category,
-          reading_time_minutes = EXCLUDED.reading_time_minutes,
-          updated_at = NOW()
-      `;
-      console.log('✅ Inserted:', guide.title);
-    } catch (e) {
-      console.error('❌ Error:', guide.slug, e.message);
+  const client = await pool.connect();
+  try {
+    for (const guide of guides) {
+      try {
+        await client.query(
+          `INSERT INTO articles (slug, title, excerpt, content, content_markdown, category, author, author_title, reading_time_minutes, is_published, published_at, created_at, updated_at)
+           VALUES ($1, $2, $3, $4, $5, $6, 'Sailing Yacht Info Editorial', 'Data-Driven Sailing Analysis', $7, true, NOW(), NOW(), NOW())
+           ON CONFLICT (slug) DO UPDATE SET
+             title = EXCLUDED.title,
+             excerpt = EXCLUDED.excerpt,
+             content = EXCLUDED.content,
+             content_markdown = EXCLUDED.content_markdown,
+             category = EXCLUDED.category,
+             reading_time_minutes = EXCLUDED.reading_time_minutes,
+             updated_at = NOW()`,
+          [guide.slug, guide.title, guide.excerpt, guide.md, guide.md, guide.category, guide.reading_time_minutes]
+        );
+        console.log('✅ Inserted:', guide.title);
+      } catch (e) {
+        console.error('❌ Error:', guide.slug, e.message);
+      }
     }
-  }
 
-  const count = await sql`SELECT count(*) as c FROM articles WHERE is_published = true`;
-  console.log('\nTotal published articles:', count[0].c);
+    const countRes = await client.query('SELECT count(*) as c FROM articles WHERE is_published = true');
+    console.log('\nTotal published articles:', countRes.rows[0].c);
+  } finally {
+    client.release();
+    await pool.end();
+  }
 }
 
 main().catch(console.error);

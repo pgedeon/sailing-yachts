@@ -16,7 +16,6 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^1.1.0",
     "@radix-ui/react-select": "^2.3.1",
     "@radix-ui/react-slot": "^1.0.3",
     "@sentry/nextjs": "^10.59.0",

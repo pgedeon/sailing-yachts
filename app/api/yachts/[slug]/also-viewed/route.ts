@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { neon } from "@neondatabase/serverless";
+import { edgePool } from "@/lib/edge-pool";
 import { buildFallbackAlsoViewed } from "@/lib/also-viewed";
 
 export const dynamic = "force-dynamic";
@@ -17,43 +17,43 @@ export async function GET(request: NextRequest, props: { params: Promise<{ slug:
   }
 
   try {
-    const sql = neon(connectionString);
-
     // Get current yacht info
-    const currentRows = await sql`
-      SELECT ym.id, ym.length_overall, ym.manufacturer_id, m.name as manufacturer
-      FROM yacht_models ym
-      JOIN manufacturers m ON m.id = ym.manufacturer_id
-      WHERE ym.slug = ${slug}
-    `;
+    const currentResult = await edgePool.query(
+      `SELECT ym.id, ym.length_overall, ym.manufacturer_id, m.name as manufacturer
+       FROM yacht_models ym
+       JOIN manufacturers m ON m.id = ym.manufacturer_id
+       WHERE ym.slug = $1`,
+      [slug]
+    );
 
-    if (currentRows.length === 0) {
+    if (currentResult.rows.length === 0) {
       return NextResponse.json({ yachts: [] }, { status: 404 });
     }
 
-    const current = currentRows[0];
+    const current = currentResult.rows[0];
     const loa = Number(current.length_overall) || 0;
     const loaMin = Math.max(0, loa - 3);
     const loaMax = loa + 3;
 
     // Get candidate yachts
-    const candidates = await sql`
-      SELECT ym.id, m.name as manufacturer, ym.model_name as "modelName",
+    const candidatesResult = await edgePool.query(
+      `SELECT ym.id, m.name as manufacturer, ym.model_name as "modelName",
               ym.slug, ym.year, ym.length_overall as "lengthOverall",
               ym.manufacturer_id as "manufacturerId",
               (SELECT yi.url FROM images yi WHERE yi.yacht_model_id = ym.id AND yi.is_primary = true LIMIT 1) as "primaryImage"
        FROM yacht_models ym
        JOIN manufacturers m ON m.id = ym.manufacturer_id
-       WHERE ym.id != ${current.id}
+       WHERE ym.id != $1
          AND ym.length_overall IS NOT NULL
-         AND ym.length_overall >= ${loaMin}
-         AND ym.length_overall <= ${loaMax}
+         AND ym.length_overall >= $2
+         AND ym.length_overall <= $3
        ORDER BY ym.length_overall ASC
-       LIMIT 30
-    `;
+       LIMIT 30`,
+      [current.id, loaMin, loaMax]
+    );
 
     const yachts = buildFallbackAlsoViewed(
-      candidates.map((r: Record<string, unknown>) => ({
+      candidatesResult.rows.map((r: Record<string, unknown>) => ({
         id: r.id as number,
         manufacturer: r.manufacturer as string,
         modelName: r.modelName as string,

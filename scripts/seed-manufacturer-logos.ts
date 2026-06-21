@@ -8,7 +8,7 @@
  * Run: npx tsx scripts/seed-manufacturer-logos.ts
  */
 
-import { neon } from "@neondatabase/serverless";
+import { Pool } from "pg";
 
 // Build logo URL mapping: manufacturer name -> logo URL
 // Clearbit format: https://logo.clearbit.com/{domain}
@@ -82,43 +82,51 @@ async function main() {
     process.exit(1);
   }
 
-  const sql = neon(databaseUrl);
+  const pool = new Pool({
+    connectionString: databaseUrl,
+    ssl: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "false"
+      ? { rejectUnauthorized: false }
+      : undefined,
+  });
+  const client = await pool.connect();
 
-  // Get all manufacturers
-  const manufacturers = await sql`
-    SELECT id, name, website_url, logo_url
-    FROM manufacturers
-    ORDER BY name
-  `;
+  try {
+    // Get all manufacturers
+    const manufacturers = await client.query(
+      "SELECT id, name, website_url, logo_url FROM manufacturers ORDER BY name"
+    );
 
-  console.log(`Found ${manufacturers.length} manufacturers`);
+    console.log(`Found ${manufacturers.rows.length} manufacturers`);
 
-  let updated = 0;
-  let skipped = 0;
-  let cleared = 0;
+    let updated = 0;
+    let skipped = 0;
+    let cleared = 0;
 
-  for (const m of manufacturers) {
-    const logoUrl = getLogoUrl(m.name, m.website_url);
+    for (const m of manufacturers.rows) {
+      const logoUrl = getLogoUrl(m.name, m.website_url);
 
-    if (logoUrl) {
-      await sql`
-        UPDATE manufacturers
-        SET logo_url = ${logoUrl}
-        WHERE id = ${m.id}
-      `;
-      console.log(`  ✅ ${m.name}: ${logoUrl}`);
-      updated++;
-    } else if (m.logo_url) {
-      // Has existing logo but we can't determine one — keep it
-      console.log(`  ⏭️  ${m.name}: keeping existing ${m.logo_url}`);
-      skipped++;
-    } else {
-      console.log(`  ⬜ ${m.name}: no logo available (will use fallback)`);
-      cleared++;
+      if (logoUrl) {
+        await client.query(
+          "UPDATE manufacturers SET logo_url = $1 WHERE id = $2",
+          [logoUrl, m.id]
+        );
+        console.log(`  ✅ ${m.name}: ${logoUrl}`);
+        updated++;
+      } else if (m.logo_url) {
+        // Has existing logo but we can't determine one — keep it
+        console.log(`  ⏭️  ${m.name}: keeping existing ${m.logo_url}`);
+        skipped++;
+      } else {
+        console.log(`  ⬜ ${m.name}: no logo available (will use fallback)`);
+        cleared++;
+      }
     }
-  }
 
-  console.log(`\nDone: ${updated} updated, ${skipped} kept, ${cleared} without logo`);
+    console.log(`\nDone: ${updated} updated, ${skipped} kept, ${cleared} without logo`);
+  } finally {
+    client.release();
+    await pool.end();
+  }
 }
 
 main().catch((err) => {

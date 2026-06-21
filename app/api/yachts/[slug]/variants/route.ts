@@ -5,7 +5,6 @@ import { db, yachtModels } from "@/lib/db-edge";
 import { eq } from "drizzle-orm";
 
 export const revalidate = 3600;
-export const runtime = "edge";
 
 export async function GET(request: Request, props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;

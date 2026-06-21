@@ -15,7 +15,6 @@ function toNum(v: string | number | null): number | null {
 
 // ISR: Revalidate public API responses every 5 minutes for stale-while-revalidate
 export const revalidate = 300;
-export const runtime = "edge";
 
 export async function GET(request: Request, props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;

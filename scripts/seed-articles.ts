@@ -1,8 +1,12 @@
 import "dotenv/config";
-import { neon } from "@neondatabase/serverless";
+import { Pool } from "pg";
 
 const DATABASE_URL = process.env.DATABASE_URL!;
-const sql = neon(DATABASE_URL);
+
+const pool = new Pool({
+  connectionString: DATABASE_URL,
+  ssl: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "false" ? { rejectUnauthorized: false } : undefined,
+});
 
 const articles = [
   {
@@ -492,49 +496,51 @@ There is no universally "better" choice. Monohulls offer a more traditional sail
   },
 ];
 
+
 async function main() {
   console.log("Seeding articles...");
+  const client = await pool.connect();
 
-  for (const article of articles) {
-    const result = await sql`
-      INSERT INTO articles (
-        slug, title, excerpt, content, content_markdown, category,
-        author, author_title, reading_time_minutes,
-        is_published, published_at, created_at, updated_at
-      ) VALUES (
-        ${article.slug},
-        ${article.title},
-        ${article.excerpt},
-        ${article.content_markdown},
-        ${article.content_markdown},
-        ${article.category},
-        ${article.author},
-        ${article.author_title},
-        ${article.reading_time_minutes},
-        true,
-        NOW(),
-        NOW(),
-        NOW()
-      )
-      ON CONFLICT (slug) DO UPDATE SET
-        title = EXCLUDED.title,
-        excerpt = EXCLUDED.excerpt,
-        content_markdown = EXCLUDED.content_markdown,
-        content = EXCLUDED.content,
-        category = EXCLUDED.category,
-        author = EXCLUDED.author,
-        author_title = EXCLUDED.author_title,
-        reading_time_minutes = EXCLUDED.reading_time_minutes,
-        is_published = EXCLUDED.is_published,
-        published_at = EXCLUDED.published_at,
-        updated_at = NOW()
-      RETURNING id, slug
-    `;
-    console.log(`  Upserted: ${result[0].slug} (id=${result[0].id})`);
+  try {
+    for (const article of articles) {
+      const result = await client.query(
+        `INSERT INTO articles (
+          slug, title, excerpt, content, content_markdown, category,
+          author, author_title, reading_time_minutes,
+          is_published, published_at, created_at, updated_at
+        ) VALUES (
+          $1, $2, $3, $4, $5, $6,
+          $7, $8, $9,
+          true, NOW(), NOW(), NOW()
+        )
+        ON CONFLICT (slug) DO UPDATE SET
+          title = EXCLUDED.title,
+          excerpt = EXCLUDED.excerpt,
+          content_markdown = EXCLUDED.content_markdown,
+          content = EXCLUDED.content,
+          category = EXCLUDED.category,
+          author = EXCLUDED.author,
+          author_title = EXCLUDED.author_title,
+          reading_time_minutes = EXCLUDED.reading_time_minutes,
+          is_published = EXCLUDED.is_published,
+          published_at = EXCLUDED.published_at,
+          updated_at = NOW()
+        RETURNING id, slug`,
+        [
+          article.slug, article.title, article.excerpt,
+          article.content_markdown, article.content_markdown, article.category,
+          article.author, article.author_title, article.reading_time_minutes,
+        ]
+      );
+      console.log(`  Upserted: ${result.rows[0].slug} (id=${result.rows[0].id})`);
+    }
+
+    const countRes = await client.query("SELECT count(*) as total FROM articles WHERE is_published = true");
+    console.log(`\nDone. Published articles: ${countRes.rows[0].total}`);
+  } finally {
+    client.release();
+    await pool.end();
   }
-
-  const count = await sql`SELECT count(*) as total FROM articles WHERE is_published = true`;
-  console.log(`\nDone. Published articles: ${count[0].total}`);
 }
 
 main().catch((e) => {
