@@ -3,7 +3,6 @@ import { edgePool } from '@/lib/edge-pool';
 import { cached, CACHE_TTL, CACHE_TAGS } from '@/lib/api-cache';
 import { assignUseCaseTags, type UseCaseTagId } from '@/lib/use-case-tags';
 
-export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 // ─── Lightweight field sets ──────────────────────────────────────────

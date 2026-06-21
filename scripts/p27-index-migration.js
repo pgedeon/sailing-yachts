@@ -19,7 +19,7 @@ if (!dbUrlMatch) {
 }
 const DATABASE_URL = dbUrlMatch[1].replace(/"/g, '');
 
-const { Pool } = require('@neondatabase/serverless');
+const { Pool } = require('pg');
 
 const indexes = [
   // Year sorting (common in listing pages)
@@ -66,7 +66,12 @@ const indexes = [
 ];
 
 async function runMigration() {
-  const pool = new Pool({ connectionString: DATABASE_URL });
+  const pool = new Pool({
+    connectionString: DATABASE_URL,
+    ssl: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "false"
+      ? { rejectUnauthorized: false }
+      : undefined,
+  });
   let success = 0;
   let skipped = 0;
 

@@ -1,13 +1,17 @@
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
+import { Pool } from 'pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import { eq, count } from 'drizzle-orm';
 import { yachtModels, manufacturers } from './drizzle/schema';
 
-const connectionString = 'postgresql://neondb_owner:npg_3azLQtYjN0WM@ep-dry-wildflower-agwrkfeu-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "false"
+    ? { rejectUnauthorized: false }
+    : undefined,
+});
 
 async function run() {
-  const sql = neon(connectionString);
-  const db = drizzle(sql);
+  const db = drizzle(pool);
 
   // Build the exact base query from /api/yachts (no filters)
   let query = db
@@ -32,7 +36,7 @@ async function run() {
   const rows = await query;
   console.log('Rows fetched:', rows.length);
 
-  await sql.end();
+  await pool.end();
 }
 
 run().catch(err => {

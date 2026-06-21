@@ -1,6 +1,6 @@
 import { migrate } from "drizzle-orm/migrate";
-import { drizzle } from "drizzle-orm/neon-http";
-import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 import path from "path";
 
 async function runMigrations() {
@@ -9,14 +9,15 @@ async function runMigrations() {
     throw new Error("DATABASE_URL environment variable is required");
   }
 
-  const sql = neon(dbUrl);
-  const db = drizzle(sql);
+  const pool = new Pool({ connectionString: dbUrl });
+  const db = drizzle(pool);
 
   // Run all pending migrations from ./drizzle/migrations
   await migrate(db, {
     migrationsFolder: path.join(process.cwd(), "drizzle/migrations"),
   });
 
+  await pool.end();
   console.log("✅ Drizzle migrations applied successfully");
 }
 

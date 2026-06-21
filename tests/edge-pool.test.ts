@@ -3,7 +3,7 @@ import { describe, it, expect, vi } from 'vitest';
 describe('edge-pool', () => {
   it('should export edgePool proxy with query method', async () => {
     // Mock DATABASE_URL
-    process.env.DATABASE_URL = 'postgresql://test:test@ep-test.us-east-2.aws.neon.tech/test';
+    process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/testdb';
 
     // Dynamic import to get fresh module with mocked env
     const { edgePool } = await import('@/lib/edge-pool');
@@ -30,7 +30,7 @@ describe('edge-pool', () => {
 
 describe('db-edge', () => {
   it('should export db proxy with Drizzle methods', async () => {
-    process.env.DATABASE_URL = 'postgresql://test:test@ep-test.us-east-2.aws.neon.tech/test';
+    process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/testdb';
 
     const { db } = await import('@/lib/db-edge');
     expect(db).toBeDefined();
@@ -41,7 +41,7 @@ describe('db-edge', () => {
   });
 
   it('should re-export schema tables', async () => {
-    process.env.DATABASE_URL = 'postgresql://test:test@ep-test.us-east-2.aws.neon.tech/test';
+    process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/testdb';
 
     const mod = await import('@/lib/db-edge');
     expect(mod.manufacturers).toBeDefined();

@@ -2,8 +2,14 @@
  * Seed manufacturer spotlights for top brands missing them
  */
 require('dotenv').config();
-const { neon } = require('@neondatabase/serverless');
-const sql = neon(process.env.DATABASE_URL);
+const { Pool } = require('pg');
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "false"
+    ? { rejectUnauthorized: false }
+    : undefined,
+});
 
 const spotlights = [
   {
@@ -81,37 +87,43 @@ const spotlights = [
 ];
 
 async function main() {
-  for (const sp of spotlights) {
-    try {
-      const manu = await sql`SELECT id FROM manufacturers WHERE name = ${sp.name}`;
-      if (manu.length === 0) {
-        console.log('⚠️  Not found:', sp.name);
-        continue;
-      }
-      const manuId = manu[0].id;
-      const slug = sp.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-$/, '');
-      const notableJson = JSON.stringify(sp.notable_models);
-      const milestonesJson = JSON.stringify(sp.milestones);
+  const client = await pool.connect();
+  try {
+    for (const sp of spotlights) {
+      try {
+        const manuRes = await client.query('SELECT id FROM manufacturers WHERE name = $1', [sp.name]);
+        if (manuRes.rows.length === 0) {
+          console.log('⚠️  Not found:', sp.name);
+          continue;
+        }
+        const manuId = manuRes.rows[0].id;
+        const slug = sp.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-$/, '');
+        const notableJson = JSON.stringify(sp.notable_models);
+        const milestonesJson = JSON.stringify(sp.milestones);
 
-      await sql`
-        INSERT INTO manufacturer_spotlights (manufacturer_id, slug, title, meta_description, history_markdown, brand_positioning, notable_models, milestones, is_published, published_at, created_at, updated_at)
-        VALUES (${manuId}, ${slug}, ${sp.title}, ${sp.meta_description}, ${sp.history_markdown}, ${sp.brand_positioning}, ${notableJson}::jsonb, ${milestonesJson}::jsonb, true, NOW(), NOW(), NOW())
-        ON CONFLICT (manufacturer_id) DO UPDATE SET
-          title = EXCLUDED.title,
-          meta_description = EXCLUDED.meta_description,
-          history_markdown = EXCLUDED.history_markdown,
-          brand_positioning = EXCLUDED.brand_positioning,
-          notable_models = EXCLUDED.notable_models,
-          milestones = EXCLUDED.milestones,
-          updated_at = NOW()
-      `;
-      console.log('✅', sp.name);
-    } catch (e) {
-      console.error('❌', sp.name, e.message);
+        await client.query(`
+          INSERT INTO manufacturer_spotlights (manufacturer_id, slug, title, meta_description, history_markdown, brand_positioning, notable_models, milestones, is_published, published_at, created_at, updated_at)
+          VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb, $8::jsonb, true, NOW(), NOW(), NOW())
+          ON CONFLICT (manufacturer_id) DO UPDATE SET
+            title = EXCLUDED.title,
+            meta_description = EXCLUDED.meta_description,
+            history_markdown = EXCLUDED.history_markdown,
+            brand_positioning = EXCLUDED.brand_positioning,
+            notable_models = EXCLUDED.notable_models,
+            milestones = EXCLUDED.milestones,
+            updated_at = NOW()
+        `, [manuId, slug, sp.title, sp.meta_description, sp.history_markdown, sp.brand_positioning, notableJson, milestonesJson]);
+        console.log('✅', sp.name);
+      } catch (e) {
+        console.error('❌', sp.name, e.message);
+      }
     }
+    const countRes = await client.query('SELECT count(*) as c FROM manufacturer_spotlights WHERE is_published = true');
+    console.log('\nTotal spotlights:', countRes.rows[0].c);
+  } finally {
+    client.release();
+    await pool.end();
   }
-  const count = await sql`SELECT count(*) as c FROM manufacturer_spotlights WHERE is_published = true`;
-  console.log('\nTotal spotlights:', count[0].c);
 }
 
 main().catch(console.error);
