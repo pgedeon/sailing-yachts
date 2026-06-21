@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { neon } from "@neondatabase/serverless";
+import { edgePool } from "@/lib/edge-pool";
 import { checkRateLimit, getClientIp, rateLimitHeaders, WRITE_RATE_LIMIT } from "@/lib/rate-limit";
 import { validate, compareShareSchema } from "@/lib/validations";
 
-export const runtime = "edge";
 
 function generateShareId(): string {
   // Generate a 8-character base62 ID
@@ -17,6 +16,7 @@ function generateShareId(): string {
   }
   return id;
 }
+
 export async function POST(request: NextRequest) {
   try {
     const ip = getClientIp(request);
@@ -46,22 +46,14 @@ export async function POST(request: NextRequest) {
     const validIds = validation.data.yachtIds;
     const sanitizedTitle = validation.data.title?.trim().substring(0, 500) || null;
 
-    const databaseUrl = process.env.DATABASE_URL;
-    if (!databaseUrl) {
-      return NextResponse.json(
-        { error: "Database not configured" },
-        { status: 500 }
-      );
-    }
-
-    const sql = neon(databaseUrl);
     const shareId = generateShareId();
 
     // Insert the shared comparison
-    await sql`
-      INSERT INTO shared_comparisons (share_id, yacht_ids, title)
-      VALUES (${shareId}, ${JSON.stringify(validIds)}, ${sanitizedTitle})
-    `;
+    await edgePool.query(
+      `INSERT INTO shared_comparisons (share_id, yacht_ids, title)
+       VALUES ($1, $2, $3)`,
+      [shareId, JSON.stringify(validIds), sanitizedTitle]
+    );
 
     return NextResponse.json({
       shareId,
@@ -89,35 +81,27 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const databaseUrl = process.env.DATABASE_URL;
-    if (!databaseUrl) {
-      return NextResponse.json(
-        { error: "Database not configured" },
-        { status: 500 }
-      );
-    }
+    const rows = await edgePool.query(
+      `SELECT share_id, yacht_ids, title, view_count, created_at
+       FROM shared_comparisons
+       WHERE share_id = $1`,
+      [shareId]
+    );
 
-    const sql = neon(databaseUrl);
-
-    const rows = await sql`
-      SELECT share_id, yacht_ids, title, view_count, created_at
-      FROM shared_comparisons
-      WHERE share_id = ${shareId}
-    `;
-
-    if (rows.length === 0) {
+    if (rows.rows.length === 0) {
       return NextResponse.json(
         { error: "Shared comparison not found" },
         { status: 404 }
       );
     }
 
-    const row = rows[0];
+    const row = rows.rows[0];
 
     // Increment view count (fire-and-forget)
-    sql`UPDATE shared_comparisons SET view_count = view_count + 1 WHERE share_id = ${shareId}`.catch(
-      () => {}
-    );
+    edgePool.query(
+      `UPDATE shared_comparisons SET view_count = view_count + 1 WHERE share_id = $1`,
+      [shareId]
+    ).catch(() => {});
 
     return NextResponse.json({
       shareId: row.share_id,

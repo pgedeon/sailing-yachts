@@ -1,46 +1,42 @@
 /**
  * Edge-safe database module.
- * Routes queries through OCI PostgreSQL via HTTP SQL proxy when DATABASE_PROXY_URL is set.
- * Falls back to direct Neon connection when no proxy is configured.
- * Safe to import from Edge runtime routes.
+ *
+ * Previously used @neondatabase/serverless for Neon HTTP queries.
+ * After migrating to OCI PostgreSQL, now uses pg Pool for all connections.
+ * This module is kept for import compatibility — it re-exports from db.ts.
+ *
+ * Safe to import from any route (no longer Edge-runtime specific).
  */
-import { drizzle } from "drizzle-orm/neon-http";
-import { neon, neonConfig } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 import * as schema from "../drizzle/schema";
 
 let dbInstance: ReturnType<typeof drizzle> | null = null;
-let proxyConfigured = false;
+let poolInstance: Pool | null = null;
 
-function getDatabaseUrl() {
-  const connectionString = process.env.DATABASE_URL;
-  if (!connectionString) {
-    return null;
+function getPool(): Pool {
+  if (!poolInstance) {
+    const connectionString = process.env.DATABASE_URL;
+    if (!connectionString) {
+      throw new Error("DATABASE_URL is not set");
+    }
+    poolInstance = new Pool({
+      connectionString,
+      max: 10,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 10000,
+      ssl: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "false"
+        ? { rejectUnauthorized: false }
+        : undefined,
+    });
   }
-  return connectionString;
-}
-
-function configureProxy() {
-  if (proxyConfigured) return;
-  proxyConfigured = true;
-  const proxyUrl = process.env.DATABASE_PROXY_URL;
-  if (proxyUrl) {
-    // Route all SQL queries through our OCI HTTP SQL proxy
-    neonConfig.fetchEndpoint = proxyUrl;
-  }
+  return poolInstance;
 }
 
 export function getDb() {
   if (!dbInstance) {
-    configureProxy();
-    const connectionString = getDatabaseUrl();
-    if (!connectionString) {
-      return null as any;
-    }
-    // When using proxy, the DATABASE_URL is still used by neon() for parsing
-    // but actual queries go to DATABASE_PROXY_URL via fetchEndpoint override.
-    // DATABASE_URL must be a valid postgresql:// connection string format.
-    const sql = neon(connectionString);
-    dbInstance = drizzle(sql, { schema });
+    const pool = getPool();
+    dbInstance = drizzle(pool, { schema });
   }
   return dbInstance;
 }
@@ -50,9 +46,6 @@ export const db = new Proxy({}, {
   get(_, prop: string | symbol) {
     if (typeof prop === "symbol") return undefined;
     const instance = getDb() as any;
-    if (!instance) {
-      throw new Error("Cannot access database during build (DATABASE_URL is not set)");
-    }
     const value = instance[prop];
     if (typeof value === "function") {
       return (...args: any[]) => value.apply(instance, args);

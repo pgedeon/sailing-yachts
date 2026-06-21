@@ -2,10 +2,11 @@ import { describe, it, expect, vi } from 'vitest';
 
 describe('edge-pool', () => {
   it('should export edgePool proxy with query method', async () => {
-    // Mock DATABASE_URL
-    process.env.DATABASE_URL = 'postgresql://test:test@ep-test.us-east-2.aws.neon.tech/test';
+    // Mock DATABASE_URL (standard PostgreSQL connection string)
+    process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/testdb';
 
     // Dynamic import to get fresh module with mocked env
+    vi.resetModules();
     const { edgePool } = await import('@/lib/edge-pool');
     expect(edgePool).toBeDefined();
     expect(typeof edgePool.query).toBe('function');
@@ -15,12 +16,12 @@ describe('edge-pool', () => {
     const originalUrl = process.env.DATABASE_URL;
     delete process.env.DATABASE_URL;
 
-    // Reset module cache
+    // Reset module cache to clear singleton poolInstance
     vi.resetModules();
 
     try {
       const { edgePool } = await import('@/lib/edge-pool');
-      expect(() => edgePool.query('SELECT 1')).toThrow('DATABASE_URL is not set');
+      await expect(edgePool.query('SELECT 1')).rejects.toThrow('DATABASE_URL is not set');
     } finally {
       process.env.DATABASE_URL = originalUrl;
       vi.resetModules();
@@ -30,7 +31,8 @@ describe('edge-pool', () => {
 
 describe('db-edge', () => {
   it('should export db proxy with Drizzle methods', async () => {
-    process.env.DATABASE_URL = 'postgresql://test:test@ep-test.us-east-2.aws.neon.tech/test';
+    process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/testdb';
+    vi.resetModules();
 
     const { db } = await import('@/lib/db-edge');
     expect(db).toBeDefined();
@@ -41,7 +43,8 @@ describe('db-edge', () => {
   });
 
   it('should re-export schema tables', async () => {
-    process.env.DATABASE_URL = 'postgresql://test:test@ep-test.us-east-2.aws.neon.tech/test';
+    process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/testdb';
+    vi.resetModules();
 
     const mod = await import('@/lib/db-edge');
     expect(mod.manufacturers).toBeDefined();

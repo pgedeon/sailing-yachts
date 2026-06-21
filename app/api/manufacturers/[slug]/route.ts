@@ -5,7 +5,6 @@ import {
   getYachtsByManufacturerId,
 } from "@/lib/manufacturers";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export async function GET(_request: Request, props: { params: Promise<{ slug: string }> }) {

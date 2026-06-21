@@ -1,14 +1,11 @@
 /**
- * Full database module (Node.js runtime only).
- * Re-exports Edge-safe `db` + schema from db-edge.ts,
+ * Full database module (Node.js runtime).
+ * Re-exports drizzle db + schema from db-edge.ts,
  * plus `pool` (pg) and `ensureSchema` which require Node.js runtime.
- *
- * IMPORTANT: Do NOT import this from Edge runtime routes.
- * Use `import { db } from '@/lib/db-edge'` instead.
  */
 import { Pool } from "pg";
 
-// Re-export everything Edge-safe
+// Re-export everything from db-edge (drizzle db + schema)
 export { db, getDb } from "./db-edge";
 export * from "../drizzle/schema";
 
@@ -330,7 +327,7 @@ export async function ensureSchema() {
             sql = 'ALTER TABLE yacht_models ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW()';
             break;
           case 'data_source':
-            sql = 'ALTER TABLE yacht_models ADD COLUMN IF NOT EXISTS data_source VARCHAR(100) DEFAULT \'manual\'';
+            sql = "ALTER TABLE yacht_models ADD COLUMN IF NOT EXISTS data_source VARCHAR(100) DEFAULT 'manual'";
             break;
           case 'source_confidence':
             sql = 'ALTER TABLE yacht_models ADD COLUMN IF NOT EXISTS source_confidence INTEGER DEFAULT 50';

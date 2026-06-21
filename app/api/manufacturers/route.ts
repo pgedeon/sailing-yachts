@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getManufacturersWithCounts } from '@/lib/manufacturers';
 
-export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {

@@ -1,42 +1,40 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { neon } from "@neondatabase/serverless";
+import { edgePool } from "@/lib/edge-pool";
 import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import SharedCompareClient from "./SharedCompareClientLazy";
 
 export const revalidate = 3600;
 
-export const runtime = "edge";
 
 interface SharedComparePageProps {
   params: Promise<{ locale: string; shareId: string }>;
 }
 
 async function getSharedComparison(shareId: string) {
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) return null;
-
-  const sql = neon(databaseUrl);
-  const rows = await sql`
-    SELECT share_id, yacht_ids, title, view_count, created_at
-    FROM shared_comparisons
-    WHERE share_id = ${shareId}
-  `;
-
-  if (rows.length === 0) return null;
-
-  // Increment view count (fire-and-forget)
-  sql`UPDATE shared_comparisons SET view_count = view_count + 1 WHERE share_id = ${shareId}`.catch(
-    () => {}
+  const rows = await edgePool.query(
+    `SELECT share_id, yacht_ids, title, view_count, created_at
+     FROM shared_comparisons
+     WHERE share_id = $1`,
+    [shareId]
   );
 
+  if (rows.rows.length === 0) return null;
+
+  // Increment view count (fire-and-forget)
+  edgePool.query(
+    `UPDATE shared_comparisons SET view_count = view_count + 1 WHERE share_id = $1`,
+    [shareId]
+  ).catch(() => {});
+
+  const row = rows.rows[0];
   return {
-    shareId: rows[0].share_id,
-    yachtIds: rows[0].yacht_ids as number[],
-    title: rows[0].title as string | null,
-    viewCount: rows[0].view_count as number,
-    createdAt: rows[0].created_at as string,
+    shareId: row.share_id,
+    yachtIds: row.yacht_ids as number[],
+    title: row.title as string | null,
+    viewCount: row.view_count as number,
+    createdAt: row.created_at as string,
   };
 }
 
