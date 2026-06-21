@@ -11,7 +11,7 @@ import FaqStructuredData from "../FaqStructuredData";
 export const revalidate = 3600;
 
 interface MfrFaqPageProps {
-  params: { locale: string; manufacturer: string };
+  params: Promise<{ locale: string; manufacturer: string }>;
 }
 
 export async function generateStaticParams() {
@@ -22,7 +22,8 @@ export async function generateStaticParams() {
   ]);
 }
 
-export async function generateMetadata({ params }: MfrFaqPageProps): Promise<Metadata> {
+export async function generateMetadata(props: MfrFaqPageProps): Promise<Metadata> {
+  const params = await props.params;
   const { locale, manufacturer } = params;
   setRequestLocale(locale);
 
@@ -32,7 +33,7 @@ export async function generateMetadata({ params }: MfrFaqPageProps): Promise<Met
   // Since slugs are derived from names, we need to find the original name
   const { db, manufacturers, yachtModels } = await import("@/lib/db-edge");
   const { eq, count, sql } = await import("drizzle-orm");
-  
+
   const mfrRows = await db
     .select({ name: manufacturers.name })
     .from(manufacturers)
@@ -62,7 +63,8 @@ export async function generateMetadata({ params }: MfrFaqPageProps): Promise<Met
   };
 }
 
-export default async function ManufacturerFaqPage({ params }: MfrFaqPageProps) {
+export default async function ManufacturerFaqPage(props: MfrFaqPageProps) {
+  const params = await props.params;
   const { locale, manufacturer: manufacturerSlug } = params;
   setRequestLocale(locale);
   const isFr = locale === "fr";

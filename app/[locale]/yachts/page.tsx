@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 import { generateBreadcrumbJsonLd, generateCollectionPageJsonLd, getSiteUrl , buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
 import { Suspense } from "react";
-import dynamic from "next/dynamic";
-const YachtsClient = dynamic(() => import("./YachtsClient"), { ssr: false, loading: () => null });
+
 import { shouldNoindexYachtsPage, generateYachtsPageCanonical } from "@/lib/thin-page-governance";
 import { getYachtsListing, getFilterOptions, type YachtsListingResult, type FilterOptions } from "@/lib/yachts";
 import { getTranslations , setRequestLocale } from "next-intl/server";
+import YachtsClient from "./YachtsClientLazy";
 
 // Revalidate every 60 minutes — yacht list doesn't change frequently
 export const revalidate = 3600;
 
 interface YachtsPageParams {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{
     page?: string;
     'filters[manufacturers]'?: string[];
@@ -31,11 +31,12 @@ interface YachtsPageParams {
  * Generate dynamic metadata for yachts page based on search params.
  * Implements thin-page governance with canonical URLs and noindex rules.
  */
-export async function generateMetadata({ params, searchParams }: YachtsPageParams): Promise<Metadata> {
+export async function generateMetadata(props: YachtsPageParams): Promise<Metadata> {
+  const params = await props.params;
   const { locale } = params;
   // Enable static rendering for next-intl
   setRequestLocale(locale);
-  const sp = await searchParams;
+  const sp = await props.searchParams;
   const t = await getTranslations({ locale, namespace: "Yachts" });
 
   const normalizedParams = {
@@ -82,13 +83,14 @@ export async function generateMetadata({ params, searchParams }: YachtsPageParam
   };
 }
 
-export default async function YachtsPage({ params, searchParams }: YachtsPageParams) {
+export default async function YachtsPage(props: YachtsPageParams) {
+  const params = await props.params;
   const { locale } = params;
   const t = await getTranslations({ locale, namespace: "Yachts" });
 
   // Fetch default listing data server-side for SEO
   // Only pre-fetch for the default (no-filter) view — filtered views use client-side fetching
-  const sp = await searchParams;
+  const sp = await props.searchParams;
   const hasFilters = Object.keys(sp).some(k => k.startsWith('filters['));
   const page = parseInt(sp.page || '1', 10);
 

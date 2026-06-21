@@ -7,10 +7,8 @@ export const dynamic = 'force-dynamic';
 /**
  * GET /api/v1/yachts/[slug] — Single yacht by slug.
  */
-export async function GET(
-  request: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function GET(request: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const ip = getClientIp(request);
   const rl = checkRateLimit(ip);
   if (!rl.allowed) {

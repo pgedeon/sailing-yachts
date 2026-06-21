@@ -13,7 +13,7 @@ import AnalyticsPageTracker from "@/components/AnalyticsPageTracker";
 
 interface LayoutProps {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
 
@@ -21,7 +21,13 @@ export async function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
-export default async function LocaleLayout({ children, params }: LayoutProps) {
+export default async function LocaleLayout(props: LayoutProps) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   const { locale } = params;
 
   // Validate locale

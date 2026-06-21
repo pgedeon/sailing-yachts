@@ -16,10 +16,8 @@ const CHANNEL_INFO: Record<string, { title: string; description: string }> = {
   },
 };
 
-export async function GET(
-  _request: Request,
-  { params }: { params: { locale: string } }
-) {
+export async function GET(_request: Request, props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const { locale } = params;
   const articles = await getAllPublishedArticles();
   const siteUrl = getSiteUrl();

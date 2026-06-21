@@ -45,7 +45,7 @@ export default async function AdminEnrichmentPage() {
   let fetchError: string | null = null
 
   try {
-    const headersList = headers()
+    const headersList = await headers()
     const host = headersList.get('x-forwarded-host') ?? headersList.get('host')
     const proto = headersList.get('x-forwarded-proto') ?? 'http'
     const baseUrl = host ? `${proto}://${host}` : 'http://localhost:3000'

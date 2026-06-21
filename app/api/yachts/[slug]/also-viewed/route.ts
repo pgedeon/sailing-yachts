@@ -4,10 +4,8 @@ import { buildFallbackAlsoViewed } from "@/lib/also-viewed";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { slug: string } },
-) {
+export async function GET(request: NextRequest, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const { slug } = params;
 
   const connectionString = process.env.DATABASE_URL;

@@ -28,10 +28,8 @@ function toNum(v: string | number | null | undefined): number | null {
 }
 
 /** GET /api/yachts/[slug]/media — public media assets for a yacht */
-export async function GET(
-  request: Request,
-  { params }: { params: { slug: string } },
-) {
+export async function GET(request: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     await ensureSchema()
     const { slug } = params

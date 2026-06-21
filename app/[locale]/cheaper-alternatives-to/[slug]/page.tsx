@@ -47,11 +47,12 @@ export async function generateStaticParams() {
   return getCheaperAlternativeParams();
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string; locale: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ slug: string; locale: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const { slug, 
 locale } = params;
   // Enable static rendering for next-intl
@@ -210,11 +211,12 @@ function formatPrice(
   return fmt(min || max!);
 }
 
-export default async function CheaperAlternativesPage({
-  params,
-}: {
-  params: { slug: string; locale: string };
-}) {
+export default async function CheaperAlternativesPage(
+  props: {
+    params: Promise<{ slug: string; locale: string }>;
+  }
+) {
+  const params = await props.params;
   const { slug, locale } = params;
   const t = await getTranslations({ locale, namespace: "CheaperAlternatives" });
   const sourceYacht = await getSourceYacht(slug);

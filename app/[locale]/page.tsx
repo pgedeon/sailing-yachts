@@ -74,11 +74,12 @@ async function getTopManufacturers() {
 }
 
 interface HomeProps {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
 // Generate metadata with live yacht count
-export async function generateMetadata({ params }: HomeProps) {
+export async function generateMetadata(props: HomeProps) {
+  const params = await props.params;
   const { locale } = params;
   // Enable static rendering for next-intl
   setRequestLocale(locale);
@@ -119,7 +120,8 @@ export async function generateMetadata({ params }: HomeProps) {
   };
 }
 
-export default async function Home({ params }: HomeProps) {
+export default async function Home(props: HomeProps) {
+  const params = await props.params;
   const { locale } = params;
   const t = await getTranslations({ locale, namespace: "Home" });
 

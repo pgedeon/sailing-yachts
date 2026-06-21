@@ -5,10 +5,8 @@ import { rankSimilarYachts, type YachtForSimilarity } from "@/lib/similarity-sco
 
 export const dynamic = "force-dynamic";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { slug: string } },
-) {
+export async function GET(request: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     const { slug } = params;
 

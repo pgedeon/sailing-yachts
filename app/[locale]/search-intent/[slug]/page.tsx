@@ -22,11 +22,12 @@ export async function generateStaticParams() {
   return getSearchIntentParams();
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string; locale: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ slug: string; locale: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const { slug, 
 locale } = params;
   // Enable static rendering for next-intl
@@ -77,11 +78,12 @@ locale } = params;
 }
 
 // Main search intent page component
-export default async function SearchIntentPage({
-  params,
-}: {
-  params: { slug: string; locale: string };
-}) {
+export default async function SearchIntentPage(
+  props: {
+    params: Promise<{ slug: string; locale: string }>;
+  }
+) {
+  const params = await props.params;
   const { slug, locale } = params;
   const t = await getTranslations({ locale, namespace: "SearchIntent" });
   const { intent, yachts, totalCount } = await getSearchIntentBySlug(slug);

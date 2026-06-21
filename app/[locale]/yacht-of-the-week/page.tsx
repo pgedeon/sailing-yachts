@@ -8,10 +8,11 @@ import { FeaturedYachtPageClient } from "./FeaturedYachtPageClient";
 export const revalidate = 3600;
 
 interface Props {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const { locale } = params;
   // Enable static rendering for next-intl
   setRequestLocale(locale);
@@ -45,7 +46,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function YachtOfTheWeekPage({ params }: Props) {
+export default async function YachtOfTheWeekPage(props: Props) {
+  const params = await props.params;
   const { locale } = params;
   const t = await getTranslations({ locale, namespace: "FeaturedYacht" });
 

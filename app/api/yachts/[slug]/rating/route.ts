@@ -12,10 +12,8 @@ export const dynamic = "force-dynamic";
  *
  * Returns: { average, count, distribution, userRating? }
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { slug: string } },
-) {
+export async function GET(request: NextRequest, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     const { slug } = params;
 

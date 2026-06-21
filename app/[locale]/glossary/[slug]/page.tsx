@@ -16,16 +16,15 @@ export const revalidate = 86400;
 
 
 interface GlossaryTermPageProps {
-  params: { slug: string; locale: string };
+  params: Promise<{ slug: string; locale: string }>;
 }
 
 export async function generateStaticParams() {
   return getGlossaryParams();
 }
 
-export async function generateMetadata({
-  params,
-}: GlossaryTermPageProps): Promise<Metadata> {
+export async function generateMetadata(props: GlossaryTermPageProps): Promise<Metadata> {
+  const params = await props.params;
   const { slug, 
 locale } = params;
   // Enable static rendering for next-intl
@@ -72,7 +71,8 @@ locale } = params;
 }
 
 
-export default async function GlossaryTermPage({ params }: GlossaryTermPageProps) {
+export default async function GlossaryTermPage(props: GlossaryTermPageProps) {
+  const params = await props.params;
   const { slug, locale } = params;
   const t = await getTranslations({ locale, namespace: "Glossary" });
   const term = getTermBySlug(slug);

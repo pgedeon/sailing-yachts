@@ -41,11 +41,9 @@ const patchSchema = z.object({
 /**
  * GET /api/admin/corrections/[id]
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } },
-) {
-  const cookieStore = cookies();
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const cookieStore = await cookies();
 
 
   try {
@@ -79,11 +77,9 @@ export async function GET(
  * PATCH /api/admin/corrections/[id]
  * Accept or reject a correction. When accepted, auto-updates the yacht_model field.
  */
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } },
-) {
-  const cookieStore = cookies();
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const cookieStore = await cookies();
 
 
   try {
@@ -209,11 +205,9 @@ export async function PATCH(
 /**
  * DELETE /api/admin/corrections/[id]
  */
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } },
-) {
-  const cookieStore = cookies();
+export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const cookieStore = await cookies();
 
 
   try {

@@ -9,12 +9,11 @@ import { localePath } from "@/lib/i18n-paths";
 export const revalidate = 21600;
 
 interface GlossaryPageProps {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
-export async function generateMetadata({
-  params,
-}: GlossaryPageProps): Promise<Metadata> {
+export async function generateMetadata(props: GlossaryPageProps): Promise<Metadata> {
+  const params = await props.params;
   const { locale } = params;
   // Enable static rendering for next-intl
   setRequestLocale(locale);
@@ -57,7 +56,8 @@ export async function generateMetadata({
   };
 }
 
-export default async function GlossaryPage({ params }: GlossaryPageProps) {
+export default async function GlossaryPage(props: GlossaryPageProps) {
+  const params = await props.params;
   const { locale } = params;
   const t = await getTranslations({ locale, namespace: "Glossary" });
 
@@ -90,7 +90,6 @@ export default async function GlossaryPage({ params }: GlossaryPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
       />
-
       <main className="min-h-screen">
         {/* Header */}
         <section className="bg-gradient-to-b from-sky-50 to-white py-16 px-4">

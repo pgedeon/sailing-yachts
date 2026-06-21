@@ -3,10 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { db, yachtModels, manufacturers, images } from "@/lib/db";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const { id } = params;
     const manufacturerId = parseInt(id, 10);

@@ -5,10 +5,8 @@ import { getArticleBySlug, deleteArticle } from "@/lib/articles";
  * GET /api/articles/[slug]
  * Get a single article by slug
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { slug: string } }
-) {
+export async function GET(request: NextRequest, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     const article = await getArticleBySlug(params.slug);
 
@@ -33,10 +31,8 @@ export async function GET(
  * DELETE /api/articles/[slug]
  * Delete an article by slug (admin)
  */
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { slug: string } }
-) {
+export async function DELETE(request: NextRequest, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     const success = await deleteArticle(params.slug);
 

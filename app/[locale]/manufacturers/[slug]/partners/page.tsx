@@ -41,16 +41,15 @@ async function getPartnerPageData(slug: string) {
 }
 
 interface PartnersPageProps {
-  params: { slug: string; locale: string };
+  params: Promise<{ slug: string; locale: string }>;
 }
 
 export async function generateStaticParams() {
   return getPartnersParams();
 }
 
-export async function generateMetadata({
-  params,
-}: PartnersPageProps): Promise<Metadata> {
+export async function generateMetadata(props: PartnersPageProps): Promise<Metadata> {
+  const params = await props.params;
   const { slug, 
 locale } = params;
   // Enable static rendering for next-intl
@@ -100,9 +99,8 @@ locale } = params;
   };
 }
 
-export default async function PartnersPage({
-  params,
-}: PartnersPageProps) {
+export default async function PartnersPage(props: PartnersPageProps) {
+  const params = await props.params;
   const { slug, locale } = params;
   const t = await getTranslations({ locale, namespace: "Manufacturers" });
   const data = await getPartnerPageData(slug);
