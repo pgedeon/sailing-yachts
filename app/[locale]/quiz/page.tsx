@@ -19,11 +19,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function QuizPage({
-  params,
-}: {
-  params: { locale: string };
-}) {
+export default async function QuizPage(
+  props: {
+    params: Promise<{ locale: string }>;
+  }
+) {
+  const params = await props.params;
   const { locale } = params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Quiz" });

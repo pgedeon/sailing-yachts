@@ -15,7 +15,7 @@ function toNum(v: string | number | null | undefined): number | null {
  * List user corrections with optional filters.
  */
 export async function GET(request: NextRequest) {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
 
   try {

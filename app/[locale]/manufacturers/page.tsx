@@ -59,10 +59,11 @@ export const metadata: Metadata = {
 };
 
 interface ManufacturersListingPageProps {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
-export default async function ManufacturersPage({ params }: ManufacturersListingPageProps) {
+export default async function ManufacturersPage(props: ManufacturersListingPageProps) {
+  const params = await props.params;
   const { locale } = params;
   // Enable static rendering for next-intl
   setRequestLocale(locale);

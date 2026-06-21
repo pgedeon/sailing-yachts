@@ -12,12 +12,11 @@ import { SHIMMER_BLUR } from "@/lib/image-utils";
 export const revalidate = 3600;
 
 interface GuidesPageProps {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
-export async function generateMetadata({
-  params,
-}: GuidesPageProps): Promise<Metadata> {
+export async function generateMetadata(props: GuidesPageProps): Promise<Metadata> {
+  const params = await props.params;
   const { locale } = params;
   // Enable static rendering for next-intl
   setRequestLocale(locale);
@@ -102,7 +101,8 @@ function FreshnessBadge({
   return null;
 }
 
-export default async function GuidesPage({ params }: GuidesPageProps) {
+export default async function GuidesPage(props: GuidesPageProps) {
+  const params = await props.params;
   const { locale } = params;
   const t = await getTranslations({ locale, namespace: "Guides" });
 

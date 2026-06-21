@@ -4,11 +4,12 @@ import { getTranslations , setRequestLocale } from "next-intl/server";
 import { getSiteUrl, buildLocaleAlternates } from "@/lib/seo";
 import { buildOgImageUrl } from "@/lib/seo";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { locale: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ locale: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const { locale } = params;
   // Enable static rendering for next-intl
   setRequestLocale(locale);
@@ -55,11 +56,12 @@ const BEST_VALUE_CATEGORIES = [
   },
 ];
 
-export default async function BestValueIndexPage({
-  params,
-}: {
-  params: { locale: string };
-}) {
+export default async function BestValueIndexPage(
+  props: {
+    params: Promise<{ locale: string }>;
+  }
+) {
+  const params = await props.params;
   const { locale } = params;
   const t = await getTranslations({ locale, namespace: "BestValue" });
 

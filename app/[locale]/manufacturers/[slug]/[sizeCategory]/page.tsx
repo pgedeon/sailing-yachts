@@ -43,11 +43,12 @@ export async function generateStaticParams() {
   return getManufacturerSizeParams();
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Record<string, string | undefined>;
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<Record<string, string | undefined>>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const rawParams = params;
   const parsed = parseParams(rawParams);
   if (!parsed) notFound();
@@ -108,11 +109,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function ManufacturerSizePage({
-  params,
-}: {
-  params: Record<string, string | undefined>;
-}) {
+export default async function ManufacturerSizePage(
+  props: {
+    params: Promise<Record<string, string | undefined>>;
+  }
+) {
+  const params = await props.params;
   const rawParams = params;
   const parsed = parseParams(rawParams);
   if (!parsed) notFound();

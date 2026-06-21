@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
-import dynamic from "next/dynamic";
-const SearchClient = dynamic(() => import("./SearchClient").then(m => ({ default: m.SearchClient })), { ssr: false, loading: () => null });
+
 import { shouldNoindexSearchPage } from "@/lib/thin-page-governance";
 import { getTranslations , setRequestLocale } from "next-intl/server";
+import SearchClient from "./SearchClientLazy";
 
 interface SearchPageProps {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
 /**
@@ -14,7 +14,8 @@ interface SearchPageProps {
  * Search results pages should be noindexed for user-specific queries,
  * but the base /search page itself can be indexed.
  */
-export async function generateMetadata({ params }: SearchPageProps): Promise<Metadata> {
+export async function generateMetadata(props: SearchPageProps): Promise<Metadata> {
+  const params = await props.params;
   const { locale } = params;
   // Enable static rendering for next-intl
   setRequestLocale(locale);
@@ -40,7 +41,8 @@ export async function generateMetadata({ params }: SearchPageProps): Promise<Met
   };
 }
 
-export default async function SearchPage({ params }: SearchPageProps) {
+export default async function SearchPage(props: SearchPageProps) {
+  const params = await props.params;
   const { locale } = params;
   const t = await getTranslations({ locale, namespace: "Search" });
 

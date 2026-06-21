@@ -17,7 +17,7 @@ export const revalidate = 3600;
 
 
 interface ManufacturerSpotlightPageProps {
-  params: { slug: string; locale: string };
+  params: Promise<{ slug: string; locale: string }>;
 }
 
 async function getSpotlightData(slug: string) {
@@ -64,9 +64,8 @@ export async function generateStaticParams() {
   return getSpotlightParams();
 }
 
-export async function generateMetadata({
-  params,
-}: ManufacturerSpotlightPageProps): Promise<Metadata> {
+export async function generateMetadata(props: ManufacturerSpotlightPageProps): Promise<Metadata> {
+  const params = await props.params;
   const { slug, 
 locale } = params;
   // Enable static rendering for next-intl
@@ -112,9 +111,8 @@ locale } = params;
   };
 }
 
-export default async function ManufacturerSpotlightPage({
-  params,
-}: ManufacturerSpotlightPageProps) {
+export default async function ManufacturerSpotlightPage(props: ManufacturerSpotlightPageProps) {
+  const params = await props.params;
   const { slug, locale } = params;
   const t = await getTranslations({ locale, namespace: "Manufacturers" });
   const spotlight = await getSpotlightData(slug);

@@ -15,10 +15,8 @@ const RATE_LIMIT = { limit: 10, windowSeconds: 60 };
  *
  * Body: { score: number } (1-5)
  */
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { slug: string } },
-) {
+export async function POST(request: NextRequest, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   try {
     const ip = getClientIp(request);
     const rlResult = checkRateLimit(`rate:${ip}`, RATE_LIMIT);

@@ -3,14 +3,9 @@ import { notFound } from "next/navigation";
 import { neon } from "@neondatabase/serverless";
 import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates, buildOgImageUrl } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import dynamic from "next/dynamic";
+import SharedCompareClient from "./SharedCompareClientLazy";
 
 export const revalidate = 3600;
-
-const SharedCompareClient = dynamic(
-  () => import("./SharedCompareClient").then((m) => ({ default: m.SharedCompareClient })),
-  { ssr: false, loading: () => null }
-);
 
 export const runtime = "edge";
 

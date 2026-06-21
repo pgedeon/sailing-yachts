@@ -7,10 +7,8 @@ export const dynamic = 'force-dynamic';
 /**
  * GET /api/v1/manufacturers/[id] — Single manufacturer with its yachts.
  */
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const ip = getClientIp(request);
   const rl = checkRateLimit(ip);
   if (!rl.allowed) {

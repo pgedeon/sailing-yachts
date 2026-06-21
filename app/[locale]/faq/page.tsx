@@ -10,10 +10,11 @@ import FaqStructuredData from "./FaqStructuredData";
 export const revalidate = 3600; // ISR: revalidate every hour
 
 interface FaqPageProps {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
-export async function generateMetadata({ params }: FaqPageProps): Promise<Metadata> {
+export async function generateMetadata(props: FaqPageProps): Promise<Metadata> {
+  const params = await props.params;
   const { locale } = params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Faq" });
@@ -35,7 +36,8 @@ export async function generateMetadata({ params }: FaqPageProps): Promise<Metada
   };
 }
 
-export default async function FaqPage({ params }: FaqPageProps) {
+export default async function FaqPage(props: FaqPageProps) {
+  const params = await props.params;
   const { locale } = params;
   setRequestLocale(locale);
   const isFr = locale === "fr";
@@ -49,7 +51,6 @@ export default async function FaqPage({ params }: FaqPageProps) {
   return (
     <main className="min-h-screen bg-white">
       <FaqStructuredData jsonLd={data.jsonLd} />
-      
       {/* Hero */}
       <section className="bg-gradient-to-b from-blue-50 to-white py-12 border-b">
         <div className="max-w-4xl mx-auto px-4">
@@ -59,7 +60,6 @@ export default async function FaqPage({ params }: FaqPageProps) {
           <p className="text-lg text-gray-600">{description}</p>
         </div>
       </section>
-
       {/* FAQ Items */}
       <section className="max-w-4xl mx-auto px-4 py-10">
         <div className="space-y-6">
@@ -84,7 +84,6 @@ export default async function FaqPage({ params }: FaqPageProps) {
           ))}
         </div>
       </section>
-
       {/* Browse by Manufacturer */}
       {mfrSlugs.length > 0 && (
         <section className="bg-gray-50 py-10 border-t">
@@ -106,7 +105,6 @@ export default async function FaqPage({ params }: FaqPageProps) {
           </div>
         </section>
       )}
-
       {/* Browse by Size */}
       <section className="py-10 border-t">
         <div className="max-w-4xl mx-auto px-4">

@@ -8,10 +8,8 @@ import { pool } from "@/lib/db";
  * Returns yachts that match a buying guide template's filters.
  * Queries the database directly instead of making an internal HTTP roundtrip.
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const { id } = params;
     const template = getTemplateById(id);

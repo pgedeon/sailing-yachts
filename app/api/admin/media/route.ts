@@ -12,7 +12,7 @@ function toNum(v: string | number | null | undefined): number | null {
 
 /** GET /api/admin/media?yachtId=N — list media assets for a yacht */
 export async function GET(request: Request) {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
 
 
   try {
@@ -65,7 +65,7 @@ export async function GET(request: Request) {
 
 /** POST /api/admin/media — create a new media asset */
 export async function POST(request: Request) {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
 
 
   try {
@@ -180,7 +180,7 @@ export async function POST(request: Request) {
 
 /** PATCH /api/admin/media?id=N — update a media asset */
 export async function PATCH(request: Request) {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
 
 
   try {
@@ -270,7 +270,7 @@ export async function PATCH(request: Request) {
 
 /** DELETE /api/admin/media?id=N — delete a media asset */
 export async function DELETE(request: Request) {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
 
 
   try {

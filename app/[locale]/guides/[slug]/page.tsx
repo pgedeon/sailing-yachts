@@ -97,14 +97,15 @@ function countWords(text: string): number {
 }
 
 interface PageProps {
-  params: { slug: string; locale: string };
+  params: Promise<{ slug: string; locale: string }>;
 }
 
 export async function generateStaticParams() {
   return getGuideParams();
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  const params = await props.params;
   const { slug } = params;
   const article = await getArticleBySlug(slug);
   if (!article) {
@@ -141,7 +142,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function GuideArticlePage({ params }: PageProps) {
+export default async function GuideArticlePage(props: PageProps) {
+  const params = await props.params;
   const { slug, locale } = params;
   // Enable static rendering for next-intl
   setRequestLocale(locale);

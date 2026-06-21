@@ -30,11 +30,12 @@ export async function generateStaticParams() {
   return getBestYearSizeParams();
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Record<string, string | undefined>;
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<Record<string, string | undefined>>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const rawParams = params;
   const yearStr = rawParams.year;
   const sizeCategoryStr = rawParams.sizeCategory;
@@ -98,11 +99,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function BestYearSizePage({
-  params,
-}: {
-  params: Record<string, string | undefined>;
-}) {
+export default async function BestYearSizePage(
+  props: {
+    params: Promise<Record<string, string | undefined>>;
+  }
+) {
+  const params = await props.params;
   const rawParams = params;
   const yearStr = rawParams.year;
   const sizeCategoryStr = rawParams.sizeCategory;

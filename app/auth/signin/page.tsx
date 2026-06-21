@@ -4,12 +4,13 @@ import AuthCard from "./AuthCard"
 import { authOptions } from "@/lib/auth"
 
 type SignInPageProps = {
-  searchParams?: {
+  searchParams?: Promise<{
     error?: string
-  }
+  }>
 }
 
-export default async function SignInPage({ searchParams }: SignInPageProps) {
+export default async function SignInPage(props: SignInPageProps) {
+  const searchParams = await props.searchParams;
   const session = await getServerSession(authOptions)
 
   if (session?.user?.id) {

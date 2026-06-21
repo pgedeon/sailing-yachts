@@ -9,7 +9,8 @@ import { setRequestLocale } from "next-intl/server";
 
 export const revalidate = 3600;
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const params = await props.params;
   const { locale } = params;
   // Enable static rendering for next-intl
   setRequestLocale(locale);
@@ -37,7 +38,8 @@ export async function generateMetadata({ params }: { params: { locale: string } 
   };
 }
 
-export default async function UseCaseTagsPage({ params }: { params: { locale: string } }) {
+export default async function UseCaseTagsPage(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   const { locale } = params;
   const t = await getTranslations({ locale, namespace: 'Yachts' });
 

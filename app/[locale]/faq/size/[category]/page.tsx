@@ -11,7 +11,7 @@ import FaqStructuredData from "../../FaqStructuredData";
 export const revalidate = 3600;
 
 interface SizeFaqPageProps {
-  params: { locale: string; category: string };
+  params: Promise<{ locale: string; category: string }>;
 }
 
 export async function generateStaticParams() {
@@ -21,7 +21,8 @@ export async function generateStaticParams() {
   ]);
 }
 
-export async function generateMetadata({ params }: SizeFaqPageProps): Promise<Metadata> {
+export async function generateMetadata(props: SizeFaqPageProps): Promise<Metadata> {
+  const params = await props.params;
   const { locale, category } = params;
   setRequestLocale(locale);
 
@@ -47,7 +48,8 @@ export async function generateMetadata({ params }: SizeFaqPageProps): Promise<Me
   };
 }
 
-export default async function SizeCategoryFaqPage({ params }: SizeFaqPageProps) {
+export default async function SizeCategoryFaqPage(props: SizeFaqPageProps) {
+  const params = await props.params;
   const { locale, category: categorySlug } = params;
   setRequestLocale(locale);
   const isFr = locale === "fr";
@@ -64,7 +66,6 @@ export default async function SizeCategoryFaqPage({ params }: SizeFaqPageProps) 
   return (
     <main className="min-h-screen bg-white">
       <FaqStructuredData jsonLd={data.jsonLd} />
-
       {/* Hero */}
       <section className="bg-gradient-to-b from-blue-50 to-white py-12 border-b">
         <div className="max-w-4xl mx-auto px-4">
@@ -90,7 +91,6 @@ export default async function SizeCategoryFaqPage({ params }: SizeFaqPageProps) 
           </div>
         </div>
       </section>
-
       {/* FAQ Items */}
       <section className="max-w-4xl mx-auto px-4 py-10">
         <div className="space-y-6">
@@ -115,7 +115,6 @@ export default async function SizeCategoryFaqPage({ params }: SizeFaqPageProps) 
           ))}
         </div>
       </section>
-
       {/* Top Manufacturers in this size */}
       {stats.manufacturers.length > 0 && (
         <section className="bg-gray-50 py-8 border-t">

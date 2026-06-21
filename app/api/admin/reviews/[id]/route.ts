@@ -37,10 +37,8 @@ function parseId(id: string) {
   return Number.isFinite(value) ? value : null
 }
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
 
   const { id } = params
   const reviewId = parseId(id)
@@ -72,10 +70,8 @@ export async function GET(
   }
 }
 
-export async function PATCH(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
 
   const { id } = params
   const reviewId = parseId(id)
@@ -136,10 +132,8 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
 
   const { id } = params
   const reviewId = parseId(id)

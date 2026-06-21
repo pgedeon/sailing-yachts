@@ -84,10 +84,8 @@ async function fetchYachtById(yachtId: number) {
   return result.rows[0] ?? null
 }
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
 
   const { id } = params
   const yachtId = parseId(id)
@@ -112,10 +110,8 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
 
   const { id } = params
   const yachtId = parseId(id)
@@ -230,10 +226,8 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
 
   const { id } = params
   const yachtId = parseId(id)

@@ -103,16 +103,15 @@ function generateOfferJsonLd(params: {
 }
 
 interface YachtDetailPageProps {
-  params: { slug: string; locale: string };
+  params: Promise<{ slug: string; locale: string }>;
 }
 
 export async function generateStaticParams() {
   return getYachtParams();
 }
 
-export async function generateMetadata({
-  params,
-}: YachtDetailPageProps): Promise<Metadata> {
+export async function generateMetadata(props: YachtDetailPageProps): Promise<Metadata> {
+  const params = await props.params;
   const { slug, 
 locale } = params;
   // Enable static rendering for next-intl
@@ -156,7 +155,8 @@ locale } = params;
   };
 }
 
-export default async function YachtDetailPage({ params }: YachtDetailPageProps) {
+export default async function YachtDetailPage(props: YachtDetailPageProps) {
+  const params = await props.params;
   const { slug, locale } = params;
   const t = await getTranslations({ locale, namespace: "YachtDetail" });
   const data = await getYachtData(slug);

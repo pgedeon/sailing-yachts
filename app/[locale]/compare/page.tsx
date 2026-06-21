@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { getTranslations , setRequestLocale } from "next-intl/server";
 import { generateCompareMetadata, generateBreadcrumbJsonLd, getSiteUrl , buildLocaleAlternates } from "@/lib/seo";
-import dynamic from "next/dynamic";
-const CompareClient = dynamic(() => import("./CompareClient").then(m => ({ default: m.CompareClient })), { ssr: false, loading: () => null });
+
 import { shouldNoindexComparePage } from "@/lib/thin-page-governance";
+import CompareClient from "./CompareClientLazy";
 
 interface ComparePageParams {
   searchParams: Promise<{ ids?: string }>;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
 /**
@@ -35,14 +35,15 @@ export async function generateMetadata({ searchParams }: ComparePageParams): Pro
   };
 }
 
-export default async function ComparePage({
-  searchParams,
-  params,
-}: {
-  searchParams: Promise<{ ids?: string }>;
-  params: { locale: string };
-}) {
-  const { ids } = await searchParams;
+export default async function ComparePage(
+  props: {
+    searchParams: Promise<{ ids?: string }>;
+    params: Promise<{ locale: string }>;
+  }
+) {
+  const { params: paramsPromise, searchParams: searchParamsPromise } = props;
+  const params = await paramsPromise;
+  const { ids } = await searchParamsPromise;
   const { locale } = params;
   // Enable static rendering for next-intl
   setRequestLocale(locale);

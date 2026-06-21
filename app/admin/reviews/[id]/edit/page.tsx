@@ -6,11 +6,12 @@ import EditReviewForm from './EditReviewForm'
 
 export const dynamic = 'force-dynamic'
 
-export default async function AdminEditReviewPage({
-  params,
-}: {
-  params: { id: string }
-}) {
+export default async function AdminEditReviewPage(
+  props: {
+    params: Promise<{ id: string }>
+  }
+) {
+  const params = await props.params;
   await requireAdmin()
 
   const { id } = params
@@ -19,7 +20,7 @@ export default async function AdminEditReviewPage({
   let fetchError: string | null = null
 
   try {
-    const headersList = headers()
+    const headersList = await headers()
     const host = headersList.get('x-forwarded-host') ?? headersList.get('host')
     const proto = headersList.get('x-forwarded-proto') ?? 'http'
     const baseUrl = host ? `${proto}://${host}` : 'http://localhost:3000'
