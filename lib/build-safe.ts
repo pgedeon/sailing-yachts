@@ -24,6 +24,15 @@ const DB_CONNECTION_ERRORS = [
   "terminating connection due to administrator command",
   "connection terminated unexpectedly",
   "too many clients already",
+  // SSL/TLS errors (common with self-hosted PostgreSQL)
+  "DEPTH_ZERO_SELF_SIGNED_CERT",
+  "self-signed certificate",
+  "UNABLE_TO_VERIFY_LEAF_SIGNATURE",
+  "CERT_HAS_EXPIRED",
+  "unable to verify the first certificate",
+  // Network errors
+  "fetch failed",
+  "network",
 ];
 
 function isDbConnectionError(err: any): boolean {

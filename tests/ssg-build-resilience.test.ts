@@ -164,6 +164,10 @@ describe("DB connection error patterns", () => {
     "terminating connection due to administrator command",
     "connection terminated unexpectedly",
     "too many clients already",
+    "DEPTH_ZERO_SELF_SIGNED_CERT",
+    "self-signed certificate",
+    "UNABLE_TO_VERIFY_LEAF_SIGNATURE",
+    "unable to verify the first certificate",
   ];
 
   for (const msg of connectionErrorMessages) {
