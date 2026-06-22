@@ -19,48 +19,20 @@ const getCachedYachtsBySlugs = unstable_cache(
 
 // ISR: cache for 1 hour, invalidate via tags when admin updates yacht data
 export const revalidate = 3600;
+
 /**
- * Next.js treats [slugA]-vs-[slugB] as a SINGLE dynamic segment named
- * "slugA]-vs-[slugB" (it does NOT split into two separate params).
- * We receive the full URL segment (e.g. "beneteau-oceanis-40-1-vs-jeanneau-sun-odyssey-410")
- * and split on "-vs-" to extract both yacht slugs.
+ * Parse the combined slug segment (e.g. "beneteau-oceanis-40-1-vs-jeanneau-sun-odyssey-410")
+ * into individual yacht slugs.
  */
-function parseCompareParams(
-  rawParams: Record<string, string | undefined>
+function parseCompareSlug(
+  slug: string | undefined,
 ): { slugA: string; slugB: string } | null {
-  // Try the combined key that Next.js generates for [slugA]-vs-[slugB]
-  const combinedKeys = Object.keys(rawParams).filter(
-    (k) => k.includes("slugA") || k.includes("slugB") || k.includes("vs")
-  );
-
-  for (const key of combinedKeys) {
-    const value = rawParams[key];
-    if (value && value.includes("-vs-")) {
-      const idx = value.indexOf("-vs-");
-      return {
-        slugA: value.substring(0, idx),
-        slugB: value.substring(idx + 4), // skip "-vs-"
-      };
-    }
-  }
-
-  // Fallback: try individual keys (won't work but kept for type compat)
-  if (rawParams.slugA && rawParams.slugB) {
-    return { slugA: rawParams.slugA, slugB: rawParams.slugB };
-  }
-
-  // Last resort: try every value that contains "-vs-"
-  for (const value of Object.values(rawParams)) {
-    if (value && value.includes("-vs-")) {
-      const idx = value.indexOf("-vs-");
-      return {
-        slugA: value.substring(0, idx),
-        slugB: value.substring(idx + 4),
-      };
-    }
-  }
-
-  return null;
+  if (!slug || !slug.includes("-vs-")) return null;
+  const idx = slug.indexOf("-vs-");
+  const slugA = slug.substring(0, idx);
+  const slugB = slug.substring(idx + 4);
+  if (!slugA || !slugB) return null;
+  return { slugA, slugB };
 }
 
 export async function generateStaticParams() {
@@ -69,12 +41,11 @@ export async function generateStaticParams() {
 
 export async function generateMetadata(
   props: {
-    params: Promise<Record<string, string | undefined>>;
+    params: Promise<{ slug?: string; locale?: string }>;
   }
 ): Promise<Metadata> {
   const params = await props.params;
-  const rawParams = params;
-  const parsed = parseCompareParams(rawParams);
+  const parsed = parseCompareSlug(params.slug);
 
   if (!parsed) {
     notFound();
@@ -128,12 +99,11 @@ export async function generateMetadata(
 
 export default async function CanonicalComparePage(
   props: {
-    params: Promise<Record<string, string | undefined>>;
+    params: Promise<{ slug?: string; locale?: string }>;
   }
 ) {
   const params = await props.params;
-  const rawParams = params;
-  const parsed = parseCompareParams(rawParams);
+  const parsed = parseCompareSlug(params.slug);
 
   if (!parsed) {
     notFound();
@@ -146,7 +116,7 @@ export default async function CanonicalComparePage(
     notFound();
   }
 
-  const locale = rawParams.locale || "en";
+  const locale = params.locale || "en";
   // Enable static rendering for next-intl
   setRequestLocale(locale);
   const intro = generateComparisonIntro(yachtA, yachtB);
