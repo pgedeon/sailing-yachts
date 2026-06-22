@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { pool } from "@/lib/db";
+import { buildSafeQuery } from "@/lib/build-safe";
 import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates , buildOgImageUrl } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths"
 import { getCheaperAlternativeParams } from "@/lib/static-params";
@@ -97,13 +98,16 @@ locale } = params;
 async function getSourceYacht(
   slug: string
 ): Promise<SourceYacht | null> {
-  const result = await pool.query(
-    `SELECT y.id, y.slug, m.name AS manufacturer, y.model_name, y.length_overall, y.cabins
-     FROM yacht_models y
-     LEFT JOIN manufacturers m ON y.manufacturer_id = m.id
-     WHERE y.slug = $1
-     LIMIT 1`,
-    [slug]
+  const result = await buildSafeQuery(
+    () => pool.query(
+      `SELECT y.id, y.slug, m.name AS manufacturer, y.model_name, y.length_overall, y.cabins
+       FROM yacht_models y
+       LEFT JOIN manufacturers m ON y.manufacturer_id = m.id
+       WHERE y.slug = $1
+       LIMIT 1`,
+      [slug]
+    ),
+    { rows: [] as any[] } as any
   );
   if (result.rows.length === 0) return null;
   const r = result.rows[0];
@@ -166,13 +170,16 @@ async function getAlternatives(
     LIMIT 12
   `;
 
-  const result = await pool.query(query, [
-    lengthMin,
-    lengthMax,
-    sourceYacht.id,
-    sourceYacht.cabins || 0,
-    sourceYacht.lengthOverall,
-  ]);
+  const result = await buildSafeQuery(
+    () => pool.query(query, [
+      lengthMin,
+      lengthMax,
+      sourceYacht.id,
+      sourceYacht.cabins || 0,
+      sourceYacht.lengthOverall,
+    ]),
+    { rows: [] as any[] } as any
+  );
 
   return result.rows.map((r: any) => ({
     id: r.id,

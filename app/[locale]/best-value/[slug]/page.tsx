@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { pool } from "@/lib/db";
+import { buildSafeQuery } from "@/lib/build-safe";
 import { generateBreadcrumbJsonLd, getSiteUrl, buildLocaleAlternates , buildOgImageUrl } from "@/lib/seo";
 import { localePath } from "@/lib/i18n-paths"
 import { getBestValueParams } from "@/lib/static-params";
@@ -235,10 +236,10 @@ export async function getBestValueYachts(
     LIMIT 24
   `;
 
-  const result = await pool.query(query, [
-    pageDef.lengthMin,
-    pageDef.lengthMax,
-  ]);
+  const result = await buildSafeQuery(
+    () => pool.query(query, [pageDef.lengthMin, pageDef.lengthMax]),
+    { rows: [] as any[] } as any
+  );
 
   const yachts: BestValueYacht[] = result.rows.map((r: any) => ({
     id: r.id,

@@ -8,6 +8,7 @@ import { eq, and, sql, count, desc } from "drizzle-orm";
 import { SIZE_CATEGORIES, type SizeCategory } from "@/lib/size-categories";
 import type { YachtListItem } from "@/lib/yachts";
 import { slugify } from "@/lib/utils/slugify";
+import { safeDataFetch } from "@/lib/build-safe";
 
 /** Supported editorial years. */
 export const EDITORIAL_YEARS = [2024, 2025, 2026] as const;
@@ -137,76 +138,104 @@ export async function getBestYearSizePageData(
   year: EditorialYear,
   sizeCategorySlug: string
 ): Promise<BestYearSizePageData | null> {
-  const sizeCategory = SIZE_CATEGORIES.find((c) => c.slug === sizeCategorySlug);
-  if (!sizeCategory) return null;
+  return safeDataFetch(async () => {
+    const sizeCategory = SIZE_CATEGORIES.find((c) => c.slug === sizeCategorySlug);
+    if (!sizeCategory) return null;
 
-  // Get yachts in this size range, preferring newer year models
-  const yachts = await db
-    .select({
-      id: yachtModels.id,
-      manufacturer: manufacturers.name,
-      modelName: yachtModels.modelName,
-      year: yachtModels.year,
-      slug: yachtModels.slug,
-      lengthOverall: yachtModels.lengthOverall,
-      beam: yachtModels.beam,
-      draft: yachtModels.draft,
-      displacement: yachtModels.displacement,
-      ballast: yachtModels.ballast,
-      sailAreaMain: yachtModels.sailAreaMain,
-      rigType: yachtModels.rigType,
-      keelType: yachtModels.keelType,
-      hullMaterial: yachtModels.hullMaterial,
-      cabins: yachtModels.cabins,
-      berths: yachtModels.berths,
-      heads: yachtModels.heads,
-      maxOccupancy: yachtModels.maxOccupancy,
-      engineHp: yachtModels.engineHp,
-      engineType: yachtModels.engineType,
-      fuelCapacity: yachtModels.fuelCapacity,
-      waterCapacity: yachtModels.waterCapacity,
-      description: yachtModels.description,
-    })
-    .from(yachtModels)
-    .innerJoin(manufacturers, eq(yachtModels.manufacturerId, manufacturers.id))
-    .where(
-      and(
-        sql`${yachtModels.lengthOverall}::numeric >= ${sizeCategory.loaMin}`,
-        sql`${yachtModels.lengthOverall}::numeric < ${sizeCategory.loaMax}`
+    // Get yachts in this size range, preferring newer year models
+    const yachts = await db
+      .select({
+        id: yachtModels.id,
+        manufacturer: manufacturers.name,
+        modelName: yachtModels.modelName,
+        year: yachtModels.year,
+        slug: yachtModels.slug,
+        lengthOverall: yachtModels.lengthOverall,
+        beam: yachtModels.beam,
+        draft: yachtModels.draft,
+        displacement: yachtModels.displacement,
+        ballast: yachtModels.ballast,
+        sailAreaMain: yachtModels.sailAreaMain,
+        rigType: yachtModels.rigType,
+        keelType: yachtModels.keelType,
+        hullMaterial: yachtModels.hullMaterial,
+        cabins: yachtModels.cabins,
+        berths: yachtModels.berths,
+        heads: yachtModels.heads,
+        maxOccupancy: yachtModels.maxOccupancy,
+        engineHp: yachtModels.engineHp,
+        engineType: yachtModels.engineType,
+        fuelCapacity: yachtModels.fuelCapacity,
+        waterCapacity: yachtModels.waterCapacity,
+        description: yachtModels.description,
+      })
+      .from(yachtModels)
+      .innerJoin(manufacturers, eq(yachtModels.manufacturerId, manufacturers.id))
+      .where(
+        and(
+          sql`${yachtModels.lengthOverall}::numeric >= ${sizeCategory.loaMin}`,
+          sql`${yachtModels.lengthOverall}::numeric < ${sizeCategory.loaMax}`
+        )
       )
-    )
-    .orderBy(desc(yachtModels.year), yachtModels.modelName);
+      .orderBy(desc(yachtModels.year), yachtModels.modelName);
 
-  if (yachts.length === 0) return null;
+    if (yachts.length === 0) return null;
 
-  // Get top manufacturers in this size range
-  const mfrCounts = await db
-    .select({
-      name: manufacturers.name,
-      cnt: count(),
-    })
-    .from(yachtModels)
-    .innerJoin(manufacturers, eq(yachtModels.manufacturerId, manufacturers.id))
-    .where(
-      and(
-        sql`${yachtModels.lengthOverall}::numeric >= ${sizeCategory.loaMin}`,
-        sql`${yachtModels.lengthOverall}::numeric < ${sizeCategory.loaMax}`
+    // Get top manufacturers in this size range
+    const mfrCounts = await db
+      .select({
+        name: manufacturers.name,
+        cnt: count(),
+      })
+      .from(yachtModels)
+      .innerJoin(manufacturers, eq(yachtModels.manufacturerId, manufacturers.id))
+      .where(
+        and(
+          sql`${yachtModels.lengthOverall}::numeric >= ${sizeCategory.loaMin}`,
+          sql`${yachtModels.lengthOverall}::numeric < ${sizeCategory.loaMax}`
+        )
       )
-    )
-    .groupBy(manufacturers.name)
-    .orderBy(desc(sql`count(*)`))
-    .limit(10);
+      .groupBy(manufacturers.name)
+      .orderBy(desc(sql`count(*)`))
+      .limit(10);
 
-  const topManufacturers = mfrCounts.map((m: { name: string; cnt: number }) => ({
-    name: m.name,
-    slug: slugify(m.name),
-    count: Number(m.cnt),
-  }));
+    const topManufacturers = mfrCounts.map((m: { name: string; cnt: number }) => ({
+      name: m.name,
+      slug: slugify(m.name),
+      count: Number(m.cnt),
+    }));
 
-  // Get counts for other size categories
-  const otherSizes = await Promise.all(
-    SIZE_CATEGORIES.filter((sc) => sc.slug !== sizeCategorySlug).map(
-      async (sc) => {
+    // Get counts for other size categories
+    const otherSizes = await Promise.all(
+      SIZE_CATEGORIES.filter((sc) => sc.slug !== sizeCategorySlug).map(
+        async (sc) => {
+          const result = await db
+            .select({ cnt: count() })
+            .from(yachtModels)
+            .innerJoin(
+              manufacturers,
+              eq(yachtModels.manufacturerId, manufacturers.id)
+            )
+            .where(
+              and(
+                sql`${yachtModels.lengthOverall}::numeric >= ${sc.loaMin}`,
+                sql`${yachtModels.lengthOverall}::numeric < ${sc.loaMax}`
+              )
+            );
+          return {
+            slug: sc.slug,
+            labelEn: sc.labelEn,
+            labelFr: sc.labelFr,
+            count: Number(result[0]?.cnt ?? 0),
+          };
+        }
+      )
+    );
+
+    // Get yacht counts per other year (same size range)
+    const otherYears = await Promise.all(
+      EDITORIAL_YEARS.filter((y) => y !== year).map(async (y) => {
+        // Count yachts with year matching or within 3 years of editorial year
         const result = await db
           .select({ cnt: count() })
           .from(yachtModels)
@@ -216,52 +245,27 @@ export async function getBestYearSizePageData(
           )
           .where(
             and(
-              sql`${yachtModels.lengthOverall}::numeric >= ${sc.loaMin}`,
-              sql`${yachtModels.lengthOverall}::numeric < ${sc.loaMax}`
+              sql`${yachtModels.lengthOverall}::numeric >= ${sizeCategory.loaMin}`,
+              sql`${yachtModels.lengthOverall}::numeric < ${sizeCategory.loaMax}`,
+              sql`${yachtModels.year} >= ${y - 3}`,
+              sql`${yachtModels.year} <= ${y}`
             )
           );
-        return {
-          slug: sc.slug,
-          labelEn: sc.labelEn,
-          labelFr: sc.labelFr,
-          count: Number(result[0]?.cnt ?? 0),
-        };
-      }
-    )
-  );
+        return { year: y, count: Number(result[0]?.cnt ?? 0) };
+      })
+    );
 
-  // Get yacht counts per other year (same size range)
-  const otherYears = await Promise.all(
-    EDITORIAL_YEARS.filter((y) => y !== year).map(async (y) => {
-      // Count yachts with year matching or within 3 years of editorial year
-      const result = await db
-        .select({ cnt: count() })
-        .from(yachtModels)
-        .innerJoin(
-          manufacturers,
-          eq(yachtModels.manufacturerId, manufacturers.id)
-        )
-        .where(
-          and(
-            sql`${yachtModels.lengthOverall}::numeric >= ${sizeCategory.loaMin}`,
-            sql`${yachtModels.lengthOverall}::numeric < ${sizeCategory.loaMax}`,
-            sql`${yachtModels.year} >= ${y - 3}`,
-            sql`${yachtModels.year} <= ${y}`
-          )
-        );
-      return { year: y, count: Number(result[0]?.cnt ?? 0) };
-    })
-  );
-
-  return {
-    year,
-    sizeCategory,
-    yachts,
-    topManufacturers,
-    otherSizes,
-    otherYears,
-  };
+    return {
+      year,
+      sizeCategory,
+      yachts,
+      topManufacturers,
+      otherSizes,
+      otherYears,
+    };
+  });
 }
+
 
 /**
  * Generate static params for all year+size combinations.

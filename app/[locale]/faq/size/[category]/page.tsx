@@ -26,26 +26,30 @@ export async function generateMetadata(props: SizeFaqPageProps): Promise<Metadat
   const { locale, category } = params;
   setRequestLocale(locale);
 
-  const cat = SIZE_CATEGORIES.find((c) => c.slug === category);
-  if (!cat) return {};
+  try {
+    const cat = SIZE_CATEGORIES.find((c) => c.slug === category);
+    if (!cat) return {};
 
-  const stats = await getSizeCategoryStats(cat);
-  if (!stats) return {};
+    const stats = await getSizeCategoryStats(cat);
+    if (!stats) return {};
 
-  const data = generateSizeCategoryFaqs(stats);
-  const title = locale === "fr" ? data.titleFr : data.title;
+    const data = generateSizeCategoryFaqs(stats);
+    const title = locale === "fr" ? data.titleFr : data.title;
 
-  return {
-    title,
-    description: locale === "fr" ? data.descriptionFr : data.description,
-    alternates: buildLocaleAlternates(`/faq/size/${category}`, locale),
-    openGraph: {
+    return {
       title,
       description: locale === "fr" ? data.descriptionFr : data.description,
-      type: "website",
-      url: getSiteUrl(`/${locale}/faq/size/${category}`),
-    },
-  };
+      alternates: buildLocaleAlternates(`/faq/size/${category}`, locale),
+      openGraph: {
+        title,
+        description: locale === "fr" ? data.descriptionFr : data.description,
+        type: "website",
+        url: getSiteUrl(`/${locale}/faq/size/${category}`),
+      },
+    };
+  } catch {
+    return {};
+  }
 }
 
 export default async function SizeCategoryFaqPage(props: SizeFaqPageProps) {
@@ -57,7 +61,12 @@ export default async function SizeCategoryFaqPage(props: SizeFaqPageProps) {
   const cat = SIZE_CATEGORIES.find((c) => c.slug === categorySlug);
   if (!cat) notFound();
 
-  const stats = await getSizeCategoryStats(cat);
+  let stats: Awaited<ReturnType<typeof getSizeCategoryStats>> = null;
+  try {
+    stats = await getSizeCategoryStats(cat);
+  } catch {
+    // DB error — allow dynamic rendering at runtime
+  }
   if (!stats) notFound();
 
   const data = generateSizeCategoryFaqs(stats);

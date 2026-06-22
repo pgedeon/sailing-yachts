@@ -4,6 +4,7 @@ import { getSiteUrl, buildLocaleAlternates, buildOgImageUrl } from '@/lib/seo';
 import { USE_CASE_TAG_IDS, USE_CASE_TAG_META, assignUseCaseTags, type UseCaseTagId } from '@/lib/use-case-tags';
 import { UseCaseBadge } from '@/components/use-case-badge';
 import { pool } from '@/lib/db';
+import { buildSafeQuery } from '@/lib/build-safe';
 import { localePath } from "@/lib/i18n-paths";
 import { setRequestLocale } from "next-intl/server";
 
@@ -44,8 +45,11 @@ export default async function UseCaseTagsPage(props: { params: Promise<{ locale:
   const t = await getTranslations({ locale, namespace: 'Yachts' });
 
   // Count yachts per tag for stats
-  const result = await pool.query(
-    `SELECT id, length_overall, beam, draft, displacement, ballast, sail_area_main, rig_type, keel_type, cabins, berths FROM yacht_models`
+  const result = await buildSafeQuery(
+    () => pool.query(
+      `SELECT id, length_overall, beam, draft, displacement, ballast, sail_area_main, rig_type, keel_type, cabins, berths FROM yacht_models`
+    ),
+    { rows: [] as any[] } as any
   );
 
   const tagCounts: Record<string, number> = {};

@@ -7,6 +7,7 @@
  */
 
 import { db, yachtModels, manufacturers } from "@/lib/db";
+import { safeDataFetch } from "@/lib/build-safe";
 import { eq, and, sql, count, asc } from "drizzle-orm";
 import {
   USE_CASE_TAG_IDS,
@@ -134,6 +135,7 @@ export interface UseCaseLandingData {
 export async function getUseCaseLandingData(
   useCaseSlug: string
 ): Promise<UseCaseLandingData | null> {
+  return safeDataFetch(async () => {
   const useCase = getUseCaseMeta(useCaseSlug);
   if (!useCase) return null;
 
@@ -240,6 +242,7 @@ export async function getUseCaseLandingData(
     otherUseCases,
     relatedSizes,
   };
+  });
 }
 
 /** Parse a DB value that might be a string (decimal column) to number or null */
