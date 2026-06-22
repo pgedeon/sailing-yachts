@@ -16,19 +16,20 @@ import { getManufacturerComparisonParams } from "@/lib/static-params";
 
 // ISR: Revalidate every hour
 export const revalidate = 3600;
-function parseCompareParams(
-  rawParams: Record<string, string | undefined>,
+
+/**
+ * Parse the combined slug segment (e.g. "bavaria-yachts-vs-beneteau")
+ * into individual manufacturer slugs.
+ */
+function parseCompareSlug(
+  slug: string | undefined,
 ): { slugA: string; slugB: string } | null {
-  for (const value of Object.values(rawParams)) {
-    if (value && value.includes("-vs-")) {
-      const idx = value.indexOf("-vs-");
-      return {
-        slugA: value.substring(0, idx),
-        slugB: value.substring(idx + 4),
-      };
-    }
-  }
-  return null;
+  if (!slug || !slug.includes("-vs-")) return null;
+  const idx = slug.indexOf("-vs-");
+  const slugA = slug.substring(0, idx);
+  const slugB = slug.substring(idx + 4);
+  if (!slugA || !slugB) return null;
+  return { slugA, slugB };
 }
 
 async function getCachedCompareData(slugA: string, slugB: string) {
@@ -51,12 +52,11 @@ export async function generateStaticParams() {
 
 export async function generateMetadata(
   props: {
-    params: Promise<Record<string, string | undefined>>;
+    params: Promise<{ slug?: string; locale?: string }>;
   }
 ): Promise<Metadata> {
   const params = await props.params;
-  const rawParams = params;
-  const parsed = parseCompareParams(rawParams);
+  const parsed = parseCompareSlug(params.slug);
   if (!parsed) notFound();
 
   const data = await getCachedCompareData(parsed.slugA, parsed.slugB);
@@ -102,12 +102,11 @@ export async function generateMetadata(
 
 export default async function ManufacturerComparePage(
   props: {
-    params: Promise<Record<string, string | undefined>>;
+    params: Promise<{ slug?: string; locale?: string }>;
   }
 ) {
   const params = await props.params;
-  const rawParams = params;
-  const parsed = parseCompareParams(rawParams);
+  const parsed = parseCompareSlug(params.slug);
   if (!parsed) notFound();
 
   const data = await getCachedCompareData(parsed.slugA, parsed.slugB);

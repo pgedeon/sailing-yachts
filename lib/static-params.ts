@@ -23,7 +23,7 @@ import { locales } from "@/i18n";
 import { slugify } from "@/lib/utils/slugify";
 
 type SlugParam = { slug: string };
-type ComparisonParam = { slugA: string; slugB: string };
+type ComparisonParam = { slug: string }; // combined format: "slugA-vs-slugB"
 
 // ─── Internal helpers ─────────────────────────────────────────────
 
@@ -92,7 +92,7 @@ async function fetchComparisonSlugs(limit: number = 30): Promise<ComparisonParam
   const comparisons: ComparisonParam[] = [];
   for (let i = 0; i < Math.min(slugs.length, 25); i++) {
     for (let j = i + 1; j < Math.min(slugs.length, 25); j++) {
-      comparisons.push({ slugA: slugs[i], slugB: slugs[j] });
+      comparisons.push({ slug: `${slugs[i]}-vs-${slugs[j]}` });
     }
   }
   return comparisons;
@@ -109,7 +109,7 @@ async function fetchManufacturerComparisonSlugs(): Promise<ComparisonParam[]> {
   const comparisons: ComparisonParam[] = [];
   for (let i = 0; i < Math.min(slugs.length, 15); i++) {
     for (let j = i + 1; j < Math.min(slugs.length, 15); j++) {
-      comparisons.push({ slugA: slugs[i], slugB: slugs[j] });
+      comparisons.push({ slug: `${slugs[i]}-vs-${slugs[j]}` });
     }
   }
   return comparisons;
@@ -179,12 +179,12 @@ export function getBestYearSizeParams() {
   );
 }
 
-/** /compare/[slugA]-vs-[slugB] */
+/** /compare/[slug] — combined slug format: "slugA-vs-slugB" */
 export async function getComparisonParams() {
   return withLocales(await safeQuery(fetchComparisonSlugs));
 }
 
-/** /compare-manufacturers/[slugA]-vs-[slugB] */
+/** /compare-manufacturers/[slug] — combined slug format: "slugA-vs-slugB" */
 export async function getManufacturerComparisonParams() {
   return withLocales(await safeQuery(fetchManufacturerComparisonSlugs));
 }
