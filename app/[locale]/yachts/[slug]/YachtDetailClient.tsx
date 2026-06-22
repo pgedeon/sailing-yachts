@@ -734,7 +734,7 @@ export default function YachtDetailClient() {
               const recommendation = getBoatRecommendation(yacht, t);
               if (!recommendation) return null;
               return (
-                <section className="mt-10 sm:mt-12 bg-gradient-to-r from-sky-50 to-cyan-50 border border-sky-200 rounded-xl p-6">
+                <section className="mt-10 sm:mt-12 bg-linear-to-r from-sky-50 to-cyan-50 border border-sky-200 rounded-xl p-6">
                   <h2 className="text-lg sm:text-xl font-bold mb-3 text-sky-900">{t("recommendation.heading")}</h2>
                   <p className="text-muted-foreground leading-relaxed">{recommendation}</p>
                   <div className="mt-4 flex flex-wrap gap-2">
@@ -996,7 +996,7 @@ export default function YachtDetailClient() {
         </div>
 
         {/* TOC Sidebar — desktop only */}
-        <div className="hidden lg:block w-56 flex-shrink-0 no-print">
+        <div className="hidden lg:block w-56 shrink-0 no-print">
           <TableOfContents sections={tocSections} activeId={activeSection} />
         </div>
       </div>

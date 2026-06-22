@@ -268,7 +268,7 @@ export default async function GuideArticlePage(props: PageProps) {
         </nav>
 
         {/* Article Header */}
-        <header className="bg-gradient-to-b from-slate-900 via-slate-800 to-slate-700 pt-16 pb-20 px-4 relative">
+        <header className="bg-linear-to-b from-slate-900 via-slate-800 to-slate-700 pt-16 pb-20 px-4 relative">
           <div className="max-w-3xl mx-auto relative z-10">
             {article.category && (
               <span className="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-widest bg-amber-500/15 text-amber-300 rounded-full mb-6 border border-amber-500/20">
@@ -408,7 +408,7 @@ export default async function GuideArticlePage(props: PageProps) {
                       <details key={idx} className="p-6 group">
                         <summary className="text-lg font-semibold text-slate-800 cursor-pointer list-none flex items-center justify-between hover:text-amber-700 transition font-serif">
                           {faq.question}
-                          <span className="text-amber-500 group-open:rotate-180 transition-transform duration-200 ml-4 flex-shrink-0">▼</span>
+                          <span className="text-amber-500 group-open:rotate-180 transition-transform duration-200 ml-4 shrink-0">▼</span>
                         </summary>
                         <p className="text-slate-600 mt-4 pl-4 border-l-4 border-amber-500/50 leading-relaxed">{faq.answer}</p>
                       </details>
@@ -428,7 +428,7 @@ export default async function GuideArticlePage(props: PageProps) {
               </div>
 
               {/* Browse Yachts CTA */}
-              <div className="mt-8 bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 rounded-2xl p-10 text-center text-white shadow-xl relative overflow-hidden">
+              <div className="mt-8 bg-linear-to-r from-amber-600 via-amber-500 to-amber-600 rounded-2xl p-10 text-center text-white shadow-xl relative overflow-hidden">
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMwLTkuOTQtOC4wNi0xOC0xOC0xOGgydjM2YzAgOS45NCA4LjA2IDE4IDE4IDE4SDE4Yy05Ljk0IDAtMTgtOC4wNi0xOC0xOHYtMzZoMzZ6IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9Ii4wMyIvPjwvZz48L3N2Zz4=')] opacity-30" />
                 <div className="relative z-10">
                   <h3 className="text-2xl font-semibold mb-3 font-serif">

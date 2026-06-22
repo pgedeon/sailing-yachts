@@ -200,7 +200,7 @@ function FavoritesTab() {
               </Link>
               <button
                 onClick={() => removeFavorite(fav.yachtModelId)}
-                className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-100 transition-colors flex-shrink-0"
+                className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-100 transition-colors shrink-0"
                 title="Remove"
               >
                 ✕
@@ -330,7 +330,7 @@ function SearchesTab() {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
+                <div className="flex items-center gap-2 shrink-0">
                   <label className="relative inline-flex items-center cursor-pointer" title={search.alertEnabled ? "Disable alert" : "Enable alert for new matches"}>
                     <input
                       type="checkbox"
@@ -411,7 +411,7 @@ function ComparisonsTab() {
               {comp.yachtIds.length} yachts · Saved {new Date(comp.createdAt).toLocaleDateString()}
             </p>
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             <Link
               href={localePath(locale, `/compare?ids=${comp.yachtIds.join(",")}`)}
               className="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"

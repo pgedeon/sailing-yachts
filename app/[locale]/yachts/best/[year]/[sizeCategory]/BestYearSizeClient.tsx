@@ -53,7 +53,7 @@ export function BestYearSizeClient({
               <div className="p-5">
                 <div className="flex items-start gap-4">
                   {/* Rank badge */}
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold text-sm">
+                  <div className="shrink-0 w-10 h-10 rounded-full bg-linear-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold text-sm">
                     {index + 1}
                   </div>
 
@@ -145,7 +145,7 @@ export function BestYearSizeClient({
                   </div>
 
                   {/* View link */}
-                  <div className="flex-shrink-0 text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="shrink-0 text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
                     <svg aria-hidden="true"
                       className="w-5 h-5"
                       fill="none"

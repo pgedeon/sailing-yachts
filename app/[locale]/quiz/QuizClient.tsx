@@ -248,7 +248,7 @@ export default function QuizClient() {
   // ─── Results View ─────────────────────────────────────────────────
   if (results !== null) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-sky-50">
+      <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-sky-50">
         <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
           {/* Header */}
           <div className="text-center mb-8">
@@ -290,7 +290,7 @@ export default function QuizClient() {
                   <div className="flex items-start gap-4">
                     {/* Rank badge */}
                     <div
-                      className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
+                      className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
                         idx === 0
                           ? "bg-blue-600 text-white"
                           : idx === 1
@@ -323,7 +323,7 @@ export default function QuizClient() {
                             )}
                           </div>
                         </div>
-                        <div className="flex-shrink-0 text-right">
+                        <div className="shrink-0 text-right">
                           <div className="text-2xl font-bold text-blue-600">
                             {Math.round(yacht.matchScore)}%
                           </div>
@@ -443,7 +443,7 @@ export default function QuizClient() {
 
   // ─── Quiz Steps ──────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-sky-50">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-sky-50">
       <div className="max-w-2xl mx-auto px-4 py-8 sm:py-12">
         {/* Header */}
         <div className="text-center mb-8">
@@ -497,7 +497,7 @@ export default function QuizClient() {
               >
                 <div className="flex items-center gap-3">
                   <div
-                    className={`flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                    className={`shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                       answers[stepKey] === option.value
                         ? "border-blue-500 bg-blue-500"
                         : "border-gray-300"

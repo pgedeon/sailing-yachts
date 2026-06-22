@@ -211,7 +211,7 @@ export default async function ManufacturerPage(props: ManufacturerPageProps) {
           </ol>
         </nav>
 
-        <section className="rounded-2xl border border-border bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-6 sm:p-8">
+        <section className="rounded-2xl border border-border bg-linear-to-br from-sky-50 via-white to-cyan-50 p-6 sm:p-8">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
             {t("detail.profileLabel")}
           </p>
@@ -324,7 +324,7 @@ export default async function ManufacturerPage(props: ManufacturerPageProps) {
         </section>
 
         {spotlight && (
-          <section className="mt-8 rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-6 sm:p-8">
+          <section className="mt-8 rounded-2xl border border-sky-200 bg-linear-to-br from-sky-50 via-white to-cyan-50 p-6 sm:p-8">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-3xl">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
@@ -385,7 +385,7 @@ export default async function ManufacturerPage(props: ManufacturerPageProps) {
               {yachts.map((yacht) => {
                 const cardContent = (
                   <>
-                    <div className="relative overflow-hidden aspect-[16/9] bg-muted">
+                    <div className="relative overflow-hidden aspect-16/9 bg-muted">
                       {yacht.primaryImage ? (
                         <Image
                           src={yacht.primaryImage}
@@ -397,7 +397,7 @@ export default async function ManufacturerPage(props: ManufacturerPageProps) {
                           blurDataURL={SHIMMER_BLUR}
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-sky-100 to-cyan-50 text-sm font-medium text-sky-700">
+                        <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-sky-100 to-cyan-50 text-sm font-medium text-sky-700">
                           {manufacturer.name} {yacht.modelName}
                         </div>
                       )}
@@ -540,7 +540,7 @@ export default async function ManufacturerPage(props: ManufacturerPageProps) {
 
         {/* P26.1: Upgrade CTA for free-tier manufacturers */}
         {manufacturer.tier === "free" && (
-          <section className="mt-10 sm:mt-12 rounded-2xl border-2 border-dashed border-amber-300 bg-gradient-to-br from-amber-50 via-white to-amber-50 p-6 sm:p-8">
+          <section className="mt-10 sm:mt-12 rounded-2xl border-2 border-dashed border-amber-300 bg-linear-to-br from-amber-50 via-white to-amber-50 p-6 sm:p-8">
             <div className="flex flex-col items-center text-center max-w-2xl mx-auto">
               <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mb-4">
                 <svg className="h-6 w-6 text-amber-600" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>

@@ -128,7 +128,7 @@ function SimpleBarChart({
       {data.map((item, i) => (
         <div key={i} className="flex items-center gap-3">
           <div
-            className="w-32 text-sm text-gray-700 truncate flex-shrink-0"
+            className="w-32 text-sm text-gray-700 truncate shrink-0"
             title={item.label}
           >
             {item.label}

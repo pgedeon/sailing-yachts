@@ -581,7 +581,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
           {/* Sidebar — always visible on md+, toggleable on mobile */}
           <aside
             id="filter-sidebar"
-            className={`${filtersOpen ? 'block' : 'hidden'} md:block w-full md:w-72 flex-shrink-0`}
+            className={`${filtersOpen ? 'block' : 'hidden'} md:block w-full md:w-72 shrink-0`}
             aria-hidden={!filtersOpen && true}
           >
             <FilterSidebar />
@@ -685,7 +685,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
               <h2 className="text-xl sm:text-2xl font-bold pr-4">{selectedYacht.manufacturer} {selectedYacht.modelName}</h2>
               <button
                 onClick={closeModal}
-                className="text-gray-500 hover:text-gray-700 text-2xl leading-none flex-shrink-0"
+                className="text-gray-500 hover:text-gray-700 text-2xl leading-none shrink-0"
                 aria-label={t('modal.close')}
               >
                 &times;

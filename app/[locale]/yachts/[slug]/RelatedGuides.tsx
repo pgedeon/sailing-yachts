@@ -49,7 +49,7 @@ export function RelatedGuides({
   if (loading) {
     return (
       <section
-        className="mt-10 sm:mt-12 bg-gradient-to-r from-sky-50 via-white to-cyan-50 border border-sky-200 rounded-xl p-6"
+        className="mt-10 sm:mt-12 bg-linear-to-r from-sky-50 via-white to-cyan-50 border border-sky-200 rounded-xl p-6"
         data-testid="related-guides-section"
       >
         <div className="flex items-center gap-2 mb-4">
@@ -74,7 +74,7 @@ export function RelatedGuides({
     // Fallback: link to guides hub
     return (
       <section
-        className="mt-10 sm:mt-12 bg-gradient-to-r from-sky-50 via-white to-cyan-50 border border-sky-200 rounded-xl p-6"
+        className="mt-10 sm:mt-12 bg-linear-to-r from-sky-50 via-white to-cyan-50 border border-sky-200 rounded-xl p-6"
         data-testid="related-guides-section"
       >
         <div className="flex items-center gap-2 mb-4">
@@ -99,7 +99,7 @@ export function RelatedGuides({
 
   return (
     <section
-      className="mt-10 sm:mt-12 bg-gradient-to-r from-sky-50 via-white to-cyan-50 border border-sky-200 rounded-xl p-6"
+      className="mt-10 sm:mt-12 bg-linear-to-r from-sky-50 via-white to-cyan-50 border border-sky-200 rounded-xl p-6"
       data-testid="related-guides-section"
     >
       <div className="flex items-center gap-2 mb-4">
@@ -141,7 +141,7 @@ export function RelatedGuides({
                   )}
                 </div>
               </div>
-              <ExternalLink className="h-4 w-4 text-sky-600 flex-shrink-0" aria-hidden="true" />
+              <ExternalLink className="h-4 w-4 text-sky-600 shrink-0" aria-hidden="true" />
             </div>
           </a>
         ))}

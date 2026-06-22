@@ -26,7 +26,7 @@ export default function GuideDetailLoading() {
         </div>
 
         {/* Hero image */}
-        <div className="aspect-[2/1] bg-muted animate-pulse rounded-lg mb-8" />
+        <div className="aspect-2/1 bg-muted animate-pulse rounded-lg mb-8" />
 
         {/* Content paragraphs */}
         <div className="space-y-6">

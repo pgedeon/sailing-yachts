@@ -408,7 +408,7 @@ export function SearchClient() {
                         )}
                       </div>
                     </div>
-                    <div className="flex-shrink-0 grid grid-cols-3 gap-3 text-center">
+                    <div className="shrink-0 grid grid-cols-3 gap-3 text-center">
                       {yacht.lengthOverall && (
                         <div>
                           <div className="text-sm font-semibold text-foreground">

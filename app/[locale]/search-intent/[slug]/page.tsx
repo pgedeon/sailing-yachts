@@ -157,7 +157,7 @@ export default async function SearchIntentPage(
       ))}
 
       {/* Page Header */}
-      <section className="bg-gradient-to-b from-sky-50 to-white py-16 px-4">
+      <section className="bg-linear-to-b from-sky-50 to-white py-16 px-4">
         <div className="max-w-5xl mx-auto text-center">
           <div className="mb-4 text-4xl">{intent.icon}</div>
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
@@ -202,7 +202,7 @@ export default async function SearchIntentPage(
                         )}
                       </div>
                       {yacht.primaryImageUrl && (
-                        <div className="ml-4 flex-shrink-0 w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
+                        <div className="ml-4 shrink-0 w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
                           <Image
                             src={yacht.primaryImageUrl}
                             alt={`${yacht.manufacturer} ${yacht.modelName}`}

@@ -145,7 +145,7 @@ export default async function GuidesPage(props: GuidesPageProps) {
   return (
     <main className="min-h-screen">
       {/* Header */}
-      <section className="bg-gradient-to-b from-sky-50 to-white py-16 px-4">
+      <section className="bg-linear-to-b from-sky-50 to-white py-16 px-4">
         <div className="max-w-5xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             {t("heading")}
@@ -349,7 +349,7 @@ export default async function GuidesPage(props: GuidesPageProps) {
                   </div>
 
                   {/* Browse Yachts CTA */}
-                  <div className="mt-12 bg-gradient-to-r from-blue-600 to-sky-500 rounded-xl p-8 text-center text-white">
+                  <div className="mt-12 bg-linear-to-r from-blue-600 to-sky-500 rounded-xl p-8 text-center text-white">
                     <h3 className="text-2xl font-semibold mb-4">
                       {t("cta.exploreTitle")}
                     </h3>

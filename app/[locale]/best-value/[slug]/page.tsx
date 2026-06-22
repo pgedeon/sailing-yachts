@@ -374,7 +374,7 @@ export default async function BestValuePage(
       />
 
       {/* Header */}
-      <section className="bg-gradient-to-b from-emerald-50 to-white py-16 px-4">
+      <section className="bg-linear-to-b from-emerald-50 to-white py-16 px-4">
         <div className="max-w-5xl mx-auto text-center">
           <div className="mb-4 text-4xl">{pageDef.icon}</div>
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
@@ -403,7 +403,7 @@ export default async function BestValuePage(
                 >
                   <div className="flex flex-col sm:flex-row gap-4">
                     {/* Rank & Image */}
-                    <div className="flex items-center gap-4 sm:w-40 flex-shrink-0">
+                    <div className="flex items-center gap-4 sm:w-40 shrink-0">
                       <div
                         className={`text-2xl font-bold w-10 h-10 rounded-full flex items-center justify-center ${
                           index === 0
@@ -418,7 +418,7 @@ export default async function BestValuePage(
                         {index + 1}
                       </div>
                       {yacht.primaryImageUrl ? (
-                        <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                        <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden shrink-0">
                           <Image
                             src={yacht.primaryImageUrl}
                             alt={`${yacht.manufacturer} ${yacht.modelName}`}
@@ -430,7 +430,7 @@ export default async function BestValuePage(
                           />
                         </div>
                       ) : (
-                        <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500 text-2xl flex-shrink-0">
+                        <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500 text-2xl shrink-0">
                           ⛵
                         </div>
                       )}
@@ -454,7 +454,7 @@ export default async function BestValuePage(
                         </div>
 
                         {/* Value Score Badge */}
-                        <div className="flex items-center gap-2 flex-shrink-0">
+                        <div className="flex items-center gap-2 shrink-0">
                           <div className="text-right">
                             <div className="text-xs text-gray-500 uppercase tracking-wide">
                               {t("detail.valueScore")}

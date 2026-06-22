@@ -73,7 +73,7 @@ export default function BuyingGuideYachtList({
           <div className="h-4 bg-slate-200 rounded w-1/3 mx-auto"></div>
           {[1, 2, 3].map((i) => (
             <div key={i} className="flex gap-4">
-              <div className="w-28 h-20 bg-slate-200 rounded-xl flex-shrink-0"></div>
+              <div className="w-28 h-20 bg-slate-200 rounded-xl shrink-0"></div>
               <div className="flex-1 space-y-2">
                 <div className="h-4 bg-slate-200 rounded w-2/3"></div>
                 <div className="h-3 bg-slate-100 rounded w-1/2"></div>
@@ -133,7 +133,7 @@ export default function BuyingGuideYachtList({
           >
             <div className="flex flex-col sm:flex-row gap-4">
               {yacht.primaryImageUrl ? (
-                <div className="w-full sm:w-28 h-20 bg-slate-100 rounded-xl overflow-hidden flex-shrink-0">
+                <div className="w-full sm:w-28 h-20 bg-slate-100 rounded-xl overflow-hidden shrink-0">
                   <Image
                     src={yacht.primaryImageUrl}
                     alt={`${yacht.manufacturer} ${yacht.modelName}`}
@@ -145,11 +145,11 @@ export default function BuyingGuideYachtList({
                   />
                 </div>
               ) : (
-                <div className="w-full sm:w-28 h-20 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex-shrink-0 flex items-center justify-center">
+                <div className="w-full sm:w-28 h-20 bg-linear-to-br from-slate-100 to-slate-200 rounded-xl shrink-0 flex items-center justify-center">
                   <span className="text-2xl opacity-40">⛵</span>
                 </div>
               )}
-              <div className="flex-grow min-w-0">
+              <div className="grow min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-1.5">
                   <h4 className="text-base font-semibold text-slate-800 group-hover:text-amber-700 transition font-serif truncate">
                     {yacht.manufacturer} {yacht.modelName}

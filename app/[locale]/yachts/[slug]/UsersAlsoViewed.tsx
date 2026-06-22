@@ -56,7 +56,7 @@ export function UsersAlsoViewed({ slug }: UsersAlsoViewedProps) {
         </div>
         <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="flex-shrink-0 w-40 h-32 bg-muted rounded-lg animate-pulse" />
+            <div key={i} className="shrink-0 w-40 h-32 bg-muted rounded-lg animate-pulse" />
           ))}
         </div>
       </section>
@@ -76,7 +76,7 @@ export function UsersAlsoViewed({ slug }: UsersAlsoViewedProps) {
           <Link
             key={yacht.id}
             href={localePath(locale, `/yachts/${yacht.slug}`)}
-            className="flex-shrink-0 w-40 sm:w-48 group"
+            className="shrink-0 w-40 sm:w-48 group"
             data-testid="also-viewed-card"
           >
             <div className="h-28 sm:h-32 bg-muted rounded-lg overflow-hidden relative">

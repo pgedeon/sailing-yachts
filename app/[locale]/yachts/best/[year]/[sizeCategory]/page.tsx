@@ -223,7 +223,7 @@ export default async function BestYearSizePage(
       </nav>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-amber-50 via-orange-50 to-white py-12 px-4">
+      <section className="bg-linear-to-b from-amber-50 via-orange-50 to-white py-12 px-4">
         <div className="max-w-5xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-800 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
             <span className="text-lg">🏆</span>
@@ -247,7 +247,7 @@ export default async function BestYearSizePage(
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
-          <aside className="lg:w-64 flex-shrink-0 space-y-4">
+          <aside className="lg:w-64 shrink-0 space-y-4">
             {/* Other Size Categories */}
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <h3 className="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wider">

@@ -33,7 +33,7 @@ export default function YachtsLoading() {
             {/* Yacht cards grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {Array.from({ length: 9 }).map((_, i) => (
-                <SkeletonCard key={i} lines={4} hasImage imageAspectRatio="aspect-[16/10]" />
+                <SkeletonCard key={i} lines={4} hasImage imageAspectRatio="aspect-16/10" />
               ))}
             </div>
 

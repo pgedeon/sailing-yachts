@@ -262,7 +262,7 @@ export default async function CheaperAlternativesPage(
       />
 
       {/* Header */}
-      <section className="bg-gradient-to-b from-amber-50 to-white py-16 px-4">
+      <section className="bg-linear-to-b from-amber-50 to-white py-16 px-4">
         <div className="max-w-5xl mx-auto text-center">
           <div className="mb-4 text-4xl">🏷️</div>
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
@@ -315,7 +315,7 @@ export default async function CheaperAlternativesPage(
                       )}
                     </div>
                     {yacht.primaryImageUrl ? (
-                      <div className="ml-4 flex-shrink-0 w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
+                      <div className="ml-4 shrink-0 w-16 h-16 bg-gray-200 rounded-lg overflow-hidden">
                         <Image
                           src={yacht.primaryImageUrl}
                           alt={`${yacht.manufacturer} ${yacht.modelName}`}
@@ -327,7 +327,7 @@ export default async function CheaperAlternativesPage(
                         />
                       </div>
                     ) : (
-                      <div className="ml-4 w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500 text-2xl flex-shrink-0">
+                      <div className="ml-4 w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500 text-2xl shrink-0">
                         ⛵
                       </div>
                     )}

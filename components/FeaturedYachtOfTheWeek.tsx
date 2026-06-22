@@ -49,7 +49,7 @@ export function FeaturedYachtOfTheWeek() {
 
   if (loading) {
     return (
-      <section className="py-12 px-4 bg-gradient-to-r from-blue-50 to-sky-50">
+      <section className="py-12 px-4 bg-linear-to-r from-blue-50 to-sky-50">
         <div className="max-w-5xl mx-auto">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-200 rounded w-64 mb-4" />
@@ -66,7 +66,7 @@ export function FeaturedYachtOfTheWeek() {
   const headline = featured.headline || t("defaultHeadline", { manufacturer: yacht.manufacturer, model: yacht.modelName });
 
   return (
-    <section className="py-12 px-4 bg-gradient-to-r from-blue-50 to-sky-50 border-y border-blue-100">
+    <section className="py-12 px-4 bg-linear-to-r from-blue-50 to-sky-50 border-y border-blue-100">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center gap-2 mb-6">
           <span className="text-2xl">⭐</span>

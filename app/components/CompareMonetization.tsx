@@ -141,7 +141,7 @@ export function CompareMonetization({ yachts }: CompareMonetizationProps) {
   return (
     <div className="compare-monetization space-y-8">
       {/* Contextual CTA Banner */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white">
+      <div className="bg-linear-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <p className="text-lg font-semibold mb-1">Still deciding?</p>
@@ -387,7 +387,7 @@ export function CompareMonetization({ yachts }: CompareMonetizationProps) {
                     )}
 
                     <div className="flex items-start gap-2 text-xs text-gray-500">
-                      <Info className="w-4 h-4 flex-shrink-0 mt-0.5"  aria-hidden="true" />
+                      <Info className="w-4 h-4 shrink-0 mt-0.5"  aria-hidden="true" />
                       <p>
                         Your inquiry will be routed to partner brokers and dealers. We may share your contact
                         information with relevant brokers to help you find the right yacht.

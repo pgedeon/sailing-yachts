@@ -64,7 +64,7 @@ export function PersonalizedRecommendations() {
 
   return (
     <section
-      className="py-16 px-4 bg-gradient-to-b from-blue-50 to-white"
+      className="py-16 px-4 bg-linear-to-b from-blue-50 to-white"
       data-testid="personalized-recommendations"
     >
       <div className="max-w-5xl mx-auto">

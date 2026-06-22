@@ -7,7 +7,7 @@ export default function Loading() {
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar skeleton */}
-        <div className="lg:w-64 flex-shrink-0 space-y-4">
+        <div className="lg:w-64 shrink-0 space-y-4">
           <div className="bg-gray-100 rounded-lg h-48" />
           <div className="bg-gray-100 rounded-lg h-40" />
         </div>

@@ -44,7 +44,7 @@ export default function ManufacturerDetailLoading() {
           <div className="h-6 w-36 bg-muted animate-pulse rounded mb-4" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
-              <SkeletonCard key={i} lines={3} imageAspectRatio="aspect-[16/10]" />
+              <SkeletonCard key={i} lines={3} imageAspectRatio="aspect-16/10" />
             ))}
           </div>
         </div>

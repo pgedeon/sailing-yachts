@@ -219,7 +219,7 @@ export function EmailYachtDialog({
                 {/* Error message */}
                 {formState === "error" && errorMessage && (
                   <div className="flex items-start gap-2 rounded-lg bg-red-50 p-3 dark:bg-red-900/20">
-                    <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-500" />
+                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
                     <p className="text-sm text-red-700 dark:text-red-300">
                       {errorMessage}
                     </p>

@@ -72,7 +72,7 @@ export default async function LocaleLayout(props: LayoutProps) {
       {/* Skip to content link for keyboard users */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-white focus:text-gray-900 focus:px-4 focus:py-2 focus:rounded-md focus:shadow-lg focus:border focus:border-blue-500 focus:outline-none"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-100 focus:bg-white focus:text-gray-900 focus:px-4 focus:py-2 focus:rounded-md focus:shadow-lg focus:border focus:border-blue-500 focus:outline-none"
       >
         {t("skipToContent")}
       </a>
@@ -81,7 +81,7 @@ export default async function LocaleLayout(props: LayoutProps) {
           <div className="flex items-center justify-between h-16">
             <Link
               href={`/${locale}`}
-              className="text-xl font-bold text-primary tracking-tight flex-shrink-0"
+              className="text-xl font-bold text-primary tracking-tight shrink-0"
             >
               {t("siteName")}
             </Link>

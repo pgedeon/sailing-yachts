@@ -253,7 +253,7 @@ export function SharedCompareClient({
               className={`rounded-xl border-2 p-4 transition-all hover:shadow-md ${color.border} ${color.bg}`}
             >
               <div className="flex items-center gap-3">
-                <div className={`w-3 h-3 rounded-full ${color.dot} flex-shrink-0`} />
+                <div className={`w-3 h-3 rounded-full ${color.dot} shrink-0`} />
                 <div>
                   <div className={`font-semibold ${color.text}`}>{yacht.manufacturer}</div>
                   <div className="text-gray-800 font-medium">{yacht.modelName}</div>

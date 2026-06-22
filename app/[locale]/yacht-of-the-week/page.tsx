@@ -82,7 +82,7 @@ export default async function YachtOfTheWeekPage(props: Props) {
 
       <main className="min-h-screen bg-gray-50">
         {/* Hero */}
-        <section className="bg-gradient-to-b from-blue-50 to-white py-12 px-4">
+        <section className="bg-linear-to-b from-blue-50 to-white py-12 px-4">
           <div className="max-w-4xl mx-auto text-center">
             <div className="text-4xl mb-4">⭐</div>
             <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
