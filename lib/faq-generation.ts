@@ -76,7 +76,8 @@ function fmtFt(m: number | null): string {
 }
 
 export async function getManufacturerStats(mfrName: string): Promise<ManufacturerStats | null> {
-  const rows = await db
+  try {
+    const rows = await db
     .select({
       yachtCount: count(yachtModels.id),
       minLoa: min(yachtModels.lengthOverall),
@@ -143,22 +144,30 @@ export async function getManufacturerStats(mfrName: string): Promise<Manufacture
     hullMaterials: Object.fromEntries(hullRows.map((r: any) => [r.hullMaterial, r.cnt])),
     years: { min: stats.minYear, max: stats.maxYear },
   };
+  } catch {
+    return null;
+  }
 }
 
 export async function getAllManufacturerSlugs(): Promise<string[]> {
-  const rows = await db
-    .select({ name: manufacturers.name })
-    .from(manufacturers)
-    .innerJoin(yachtModels, eq(yachtModels.manufacturerId, manufacturers.id))
-    .groupBy(manufacturers.name)
-    .having(sql`count(*) >= 3`)
-    .orderBy(manufacturers.name);
+  try {
+    const rows = await db
+      .select({ name: manufacturers.name })
+      .from(manufacturers)
+      .innerJoin(yachtModels, eq(yachtModels.manufacturerId, manufacturers.id))
+      .groupBy(manufacturers.name)
+      .having(sql`count(*) >= 3`)
+      .orderBy(manufacturers.name);
 
-  return rows.map((r: any) => slugify(r.name));
+    return rows.map((r: any) => slugify(r.name));
+  } catch {
+    return [];
+  }
 }
 
 export async function getSizeCategoryStats(cat: SizeCategory): Promise<SizeCategoryStats | null> {
-  const rows = await db
+  try {
+    const rows = await db
     .select({
       yachtCount: count(yachtModels.id),
       avgCabins: avg(yachtModels.cabins),
@@ -237,6 +246,9 @@ export async function getSizeCategoryStats(cat: SizeCategory): Promise<SizeCateg
     rigTypes: Object.fromEntries(rigRows.map((r: any) => [r.rigType, r.cnt])),
     keelTypes: Object.fromEntries(keelRows.map((r: any) => [r.keelType, r.cnt])),
   };
+  } catch {
+    return null;
+  }
 }
 
 // --- FAQ Generation Helpers ---
@@ -449,6 +461,7 @@ export function generateSizeCategoryFaqs(stats: SizeCategoryStats): FaqPageData 
 export async function generateGeneralFaqs(): Promise<FaqPageData> {
   const faqs: FaqItem[] = [];
 
+  try {
   // Get overall stats
   const totalYachts = await db.select({ cnt: count() }).from(yachtModels);
   const totalMfrs = await db.select({ cnt: count() }).from(manufacturers);
@@ -567,4 +580,16 @@ export async function generateGeneralFaqs(): Promise<FaqPageData> {
     faqs,
     jsonLd: buildJsonLd(faqs, "https://info.sailboats.fr/faq"),
   };
+  } catch {
+    // Return minimal FAQ data on DB error
+    return {
+      title: "Sailing Yachts — Frequently Asked Questions",
+      titleFr: "Voiliers — Questions Fréquentes",
+      description: "Frequently asked questions about sailing yachts.",
+      descriptionFr: "Questions fréquentes sur les voiliers.",
+      slug: "general",
+      faqs: [],
+      jsonLd: { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: [] },
+    };
+  }
 }

@@ -13,14 +13,65 @@ export function isBuildTime(): boolean {
   return !process.env.DATABASE_URL;
 }
 
+// Patterns that indicate DB connectivity issues (not SQL bugs)
+const DB_CONNECTION_ERRORS = [
+  BUILD_DB_ERROR,
+  "password authentication failed",
+  "ECONNREFUSED",
+  "ENOTFOUND",
+  "connect ETIMEDOUT",
+  "Failed to parse URL",
+  "terminating connection due to administrator command",
+  "connection terminated unexpectedly",
+  "too many clients already",
+  // SSL/TLS errors (common with self-hosted PostgreSQL)
+  "DEPTH_ZERO_SELF_SIGNED_CERT",
+  "self-signed certificate",
+  "UNABLE_TO_VERIFY_LEAF_SIGNATURE",
+  "CERT_HAS_EXPIRED",
+  "unable to verify the first certificate",
+  // Network errors
+  "fetch failed",
+  "network",
+];
+
+function isDbConnectionError(err: any): boolean {
+  const msg = err?.message || "";
+  const causeMsg = err?.cause?.message || "";
+  const combined = `${msg} ${causeMsg}`;
+  return DB_CONNECTION_ERRORS.some((pattern) => combined.includes(pattern));
+}
+
 export async function buildSafeQuery<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
   try {
     return await fn();
   } catch (err: any) {
-    // Check for the database access error during build
-    if (err?.message?.includes(BUILD_DB_ERROR)) {
-      console.warn(`[build-safe] Returning fallback data during build (no DATABASE_URL)`);
+    if (isDbConnectionError(err)) {
+      const msg = err?.cause?.message || err?.message || "unknown";
+      console.warn(`[build-safe] Returning fallback data (DB unavailable: ${msg.slice(0, 100)})`);
       return fallback;
+    }
+    throw err;
+  }
+}
+
+
+/**
+ * Wraps any async data fetcher to return null on DB connection errors.
+ * Use in page components and generateMetadata during SSG.
+ *
+ * Example:
+ *   const data = await safeDataFetch(() => getBestYearSizePageData(year, slug));
+ *   if (!data) notFound();
+ */
+export async function safeDataFetch<T>(fn: () => Promise<T>): Promise<T | null> {
+  try {
+    return await fn();
+  } catch (err: any) {
+    if (isDbConnectionError(err)) {
+      const msg = err?.cause?.message || err?.message || "unknown";
+      console.warn(`[build-safe] Data fetch returned null (DB unavailable: ${msg.slice(0, 100)})`);
+      return null;
     }
     throw err;
   }

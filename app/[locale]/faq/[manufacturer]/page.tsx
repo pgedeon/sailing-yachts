@@ -27,40 +27,44 @@ export async function generateMetadata(props: MfrFaqPageProps): Promise<Metadata
   const { locale, manufacturer } = params;
   setRequestLocale(locale);
 
-  // Resolve manufacturer name from slug
-  const slugs = await getAllManufacturerSlugs();
-  // We need the actual name — query by slug match
-  // Since slugs are derived from names, we need to find the original name
-  const { db, manufacturers, yachtModels } = await import("@/lib/db-edge");
-  const { eq, count, sql } = await import("drizzle-orm");
+  try {
+    // Resolve manufacturer name from slug
+    const slugs = await getAllManufacturerSlugs();
+    if (!slugs.includes(manufacturer)) return {};
 
-  const mfrRows = await db
-    .select({ name: manufacturers.name })
-    .from(manufacturers)
-    .innerJoin(yachtModels, eq(yachtModels.manufacturerId, manufacturers.id))
-    .groupBy(manufacturers.name)
-    .having(sql`count(*) >= 3`);
+    const { db, manufacturers, yachtModels } = await import("@/lib/db-edge");
+    const { eq, count, sql } = await import("drizzle-orm");
 
-  const mfr = mfrRows.find((r: any) => slugify(r.name) === manufacturer);
-  if (!mfr) return {};
+    const mfrRows = await db
+      .select({ name: manufacturers.name })
+      .from(manufacturers)
+      .innerJoin(yachtModels, eq(yachtModels.manufacturerId, manufacturers.id))
+      .groupBy(manufacturers.name)
+      .having(sql`count(*) >= 3`);
 
-  const stats = await getManufacturerStats(mfr.name);
-  if (!stats) return {};
+    const mfr = mfrRows.find((r: any) => slugify(r.name) === manufacturer);
+    if (!mfr) return {};
 
-  const data = generateManufacturerFaqs(stats);
-  const title = locale === "fr" ? data.titleFr : data.title;
+    const stats = await getManufacturerStats(mfr.name);
+    if (!stats) return {};
 
-  return {
-    title,
-    description: locale === "fr" ? data.descriptionFr : data.description,
-    alternates: buildLocaleAlternates(`/faq/${manufacturer}`, locale),
-    openGraph: {
+    const data = generateManufacturerFaqs(stats);
+    const title = locale === "fr" ? data.titleFr : data.title;
+
+    return {
       title,
       description: locale === "fr" ? data.descriptionFr : data.description,
-      type: "website",
-      url: getSiteUrl(`/${locale}/faq/${manufacturer}`),
-    },
-  };
+      alternates: buildLocaleAlternates(`/faq/${manufacturer}`, locale),
+      openGraph: {
+        title,
+        description: locale === "fr" ? data.descriptionFr : data.description,
+        type: "website",
+        url: getSiteUrl(`/${locale}/faq/${manufacturer}`),
+      },
+    };
+  } catch {
+    return {};
+  }
 }
 
 export default async function ManufacturerFaqPage(props: MfrFaqPageProps) {
@@ -69,21 +73,28 @@ export default async function ManufacturerFaqPage(props: MfrFaqPageProps) {
   setRequestLocale(locale);
   const isFr = locale === "fr";
 
-  // Resolve manufacturer name
-  const { db, manufacturers, yachtModels } = await import("@/lib/db-edge");
-  const { eq, count, sql } = await import("drizzle-orm");
+  let stats: Awaited<ReturnType<typeof getManufacturerStats>> = null;
 
-  const mfrRows = await db
-    .select({ name: manufacturers.name })
-    .from(manufacturers)
-    .innerJoin(yachtModels, eq(yachtModels.manufacturerId, manufacturers.id))
-    .groupBy(manufacturers.name)
-    .having(sql`count(*) >= 3`);
+  try {
+    // Resolve manufacturer name
+    const { db, manufacturers, yachtModels } = await import("@/lib/db-edge");
+    const { eq, count, sql } = await import("drizzle-orm");
 
-  const mfr = mfrRows.find((r: any) => slugify(r.name) === manufacturerSlug);
-  if (!mfr) notFound();
+    const mfrRows = await db
+      .select({ name: manufacturers.name })
+      .from(manufacturers)
+      .innerJoin(yachtModels, eq(yachtModels.manufacturerId, manufacturers.id))
+      .groupBy(manufacturers.name)
+      .having(sql`count(*) >= 3`);
 
-  const stats = await getManufacturerStats(mfr.name);
+    const mfr = mfrRows.find((r: any) => slugify(r.name) === manufacturerSlug);
+    if (!mfr) notFound();
+
+    stats = await getManufacturerStats(mfr.name);
+  } catch {
+    // DB error — allow dynamic rendering at runtime
+  }
+
   if (!stats) notFound();
 
   const data = generateManufacturerFaqs(stats);

@@ -8,6 +8,7 @@ import { eq, and, sql, count, asc } from "drizzle-orm";
 import { SIZE_CATEGORIES, type SizeCategory } from "@/lib/size-categories";
 import type { YachtListItem } from "@/lib/yachts";
 import { slugify } from "@/lib/utils/slugify";
+import { safeDataFetch } from "@/lib/build-safe";
 
 export interface SizeCategoryHubData {
   sizeCategory: SizeCategory;
@@ -32,6 +33,7 @@ export interface SizeCategoryHubData {
 export async function getSizeCategoryHubData(
   sizeCategorySlug: string
 ): Promise<SizeCategoryHubData | null> {
+  return safeDataFetch(async () => {
   const sizeCategory = SIZE_CATEGORIES.find((c) => c.slug === sizeCategorySlug);
   if (!sizeCategory) return null;
 
@@ -131,4 +133,5 @@ export async function getSizeCategoryHubData(
     otherSizes,
     topManufacturers,
   };
+  });
 }

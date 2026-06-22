@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { safeDataFetch } from "@/lib/build-safe";
 import { featuredYachts, yachtModels, manufacturers, images } from "@/drizzle/schema";
 import { eq, and, lte, gte, desc, sql } from "drizzle-orm";
 
@@ -34,6 +35,7 @@ export interface FeaturedYachtData {
  * Get the currently active featured yacht (the one whose week range covers now).
  */
 export async function getActiveFeaturedYacht(): Promise<FeaturedYachtData | null> {
+  return safeDataFetch(async () => {
   const now = new Date();
 
   const rows = await db
@@ -112,6 +114,7 @@ export async function getActiveFeaturedYacht(): Promise<FeaturedYachtData | null
       imageUrl: row.imageUrl ?? null,
     },
   };
+  });
 }
 
 /**
@@ -301,6 +304,16 @@ export async function markNewsletterSent(id: number) {
  * Get recent featured yachts for archive display.
  */
 export async function getRecentFeaturedYachts(limit = 6): Promise<FeaturedYachtData[]> {
+  try {
+    return await getRecentFeaturedYachtsInner(limit);
+  } catch (err: any) {
+    const msg = err?.cause?.message || err?.message || "unknown";
+    console.warn(`[featured-yacht] getRecentFeaturedYachts returned [] (DB unavailable: ${msg.slice(0, 100)})`);
+    return [];
+  }
+}
+
+async function getRecentFeaturedYachtsInner(limit: number): Promise<FeaturedYachtData[]> {
   const rows = await db
     .select({
       id: featuredYachts.id,
