@@ -173,8 +173,8 @@ export async function POST(request: Request, props: { params: Promise<{ id: stri
     const image = result.rows[0]
     
     // Revalidate cache
-    revalidateTag('yachts')
-    revalidateTag(`yacht:${yachtId}`)
+    revalidateTag('yachts', 'default')
+    revalidateTag(`yacht:${yachtId}`, 'default')
 
     return NextResponse.json({ 
       message: 'Image uploaded successfully',
@@ -258,8 +258,8 @@ export async function DELETE(request: Request, props: { params: Promise<{ id: st
     // from the filesystem if it was uploaded via file upload (not URL)
 
     // Revalidate cache
-    revalidateTag('yachts')
-    revalidateTag(`yacht:${yachtId}`)
+    revalidateTag('yachts', 'default')
+    revalidateTag(`yacht:${yachtId}`, 'default')
 
     return NextResponse.json({ 
       message: 'Image deleted successfully'

@@ -123,8 +123,8 @@ export async function PATCH(request: Request, props: { params: Promise<{ id: str
     }
 
     const yachtId = toNum(result.rows[0].yacht_model_id)
-    revalidateTag('yachts')
-    if (yachtId) revalidateTag(`yacht:${yachtId}`)
+    revalidateTag('yachts', 'default')
+    if (yachtId) revalidateTag(`yacht:${yachtId}`, 'default')
 
     const asset = result.rows[0]
     return NextResponse.json({
@@ -189,8 +189,8 @@ export async function DELETE(request: Request, props: { params: Promise<{ id: st
       )
     }
 
-    revalidateTag('yachts')
-    if (yachtId) revalidateTag(`yacht:${yachtId}`)
+    revalidateTag('yachts', 'default')
+    if (yachtId) revalidateTag(`yacht:${yachtId}`, 'default')
 
     return NextResponse.json({ message: 'Media asset deleted successfully' })
   } catch (error) {

@@ -15,10 +15,10 @@ function parseId(id: string) {
 }
 
 function revalidateSpotlightTags(spotlight: Pick<ManufacturerSpotlight, 'slug' | 'manufacturer'>) {
-  revalidateTag('manufacturer-spotlights')
-  revalidateTag('manufacturers')
-  revalidateTag(`manufacturer-spotlight:${spotlight.slug}`)
-  revalidateTag(`manufacturer:${spotlight.manufacturer.slug}`)
+  revalidateTag('manufacturer-spotlights', 'default')
+  revalidateTag('manufacturers', 'default')
+  revalidateTag(`manufacturer-spotlight:${spotlight.slug}`, 'default')
+  revalidateTag(`manufacturer:${spotlight.manufacturer.slug}`, 'default')
 }
 
 export async function GET(request: Request, props: { params: Promise<{ id: string }> }) {

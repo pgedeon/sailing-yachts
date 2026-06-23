@@ -164,9 +164,9 @@ export async function POST(request: Request) {
       ]
     )
     const yacht = result.rows[0]
-    revalidateTag('yachts');
+    revalidateTag('yachts', 'default');
     if (yacht.slug) {
-      revalidateTag(`yacht:${yacht.slug}`);
+      revalidateTag(`yacht:${yacht.slug}`, 'default');
     }
     const mappedYacht = mapYacht(yacht)
     return NextResponse.json({ yacht: mappedYacht }, { status: 201 })

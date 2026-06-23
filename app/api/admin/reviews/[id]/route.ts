@@ -119,8 +119,8 @@ export async function PATCH(request: Request, props: { params: Promise<{ id: str
     }
 
     const yachtModelId = toNum(result.rows[0].yacht_model_id)
-    revalidateTag('yachts')
-    if (yachtModelId) revalidateTag(`yacht:${yachtModelId}`)
+    revalidateTag('yachts', 'default')
+    if (yachtModelId) revalidateTag(`yacht:${yachtModelId}`, 'default')
 
     return NextResponse.json({ review: mapReview(result.rows[0]) })
   } catch (error) {
@@ -155,8 +155,8 @@ export async function DELETE(request: Request, props: { params: Promise<{ id: st
 
     await pool.query('DELETE FROM reviews WHERE id = $1', [reviewId])
 
-    revalidateTag('yachts')
-    if (yachtModelId) revalidateTag(`yacht:${yachtModelId}`)
+    revalidateTag('yachts', 'default')
+    if (yachtModelId) revalidateTag(`yacht:${yachtModelId}`, 'default')
 
     return new NextResponse(null, { status: 204 })
   } catch (error) {

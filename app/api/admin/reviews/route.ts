@@ -113,7 +113,7 @@ export async function POST(request: Request) {
       })
       .returning()
 
-    revalidateTag('yachts')
+    revalidateTag('yachts', 'default')
 
     const review = result[0]
     return NextResponse.json({
@@ -187,8 +187,8 @@ export async function PATCH(request: Request) {
 
     // Revalidate caches
     const yachtModelId = toNum(result.rows[0].yacht_model_id)
-    revalidateTag('yachts')
-    if (yachtModelId) revalidateTag(`yacht:${yachtModelId}`)
+    revalidateTag('yachts', 'default')
+    if (yachtModelId) revalidateTag(`yacht:${yachtModelId}`, 'default')
 
     return NextResponse.json({ review: mapReview(result.rows[0]) })
   } catch (error) {
@@ -227,8 +227,8 @@ export async function DELETE(request: Request) {
 
     await pool.query('DELETE FROM reviews WHERE id = $1', [id])
 
-    revalidateTag('yachts')
-    if (yachtModelId) revalidateTag(`yacht:${yachtModelId}`)
+    revalidateTag('yachts', 'default')
+    if (yachtModelId) revalidateTag(`yacht:${yachtModelId}`, 'default')
 
     return NextResponse.json({ message: 'Review deleted successfully' })
   } catch (error) {

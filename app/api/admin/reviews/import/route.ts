@@ -99,7 +99,7 @@ export async function POST(request: Request) {
       }
     }
 
-    revalidateTag('yachts');
+    revalidateTag('yachts', 'default');
 
     return NextResponse.json({
       imported,

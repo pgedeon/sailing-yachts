@@ -95,8 +95,8 @@ export async function POST(request: Request) {
       ],
     );
 
-    revalidateTag("yachts");
-    revalidateTag(`yacht:${data.yachtModelId}`);
+    revalidateTag("yachts", "default");
+    revalidateTag(`yacht:${data.yachtModelId}`, "default");
 
     return NextResponse.json(
       { success: true, id: result.rows[0].id },
