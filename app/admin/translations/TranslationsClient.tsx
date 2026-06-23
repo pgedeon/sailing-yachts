@@ -200,7 +200,7 @@ export default function TranslationsClient() {
         {/* Error */}
         {error && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            <AlertCircle className="w-4 h-4 shrink-0" />
             {error}
             <button onClick={() => setError(null)} className="ml-auto text-red-500 hover:text-red-700">×</button>
           </div>
@@ -422,7 +422,7 @@ export default function TranslationsClient() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <div className="flex items-center gap-1.5 shrink-0">
                     <button
                       onClick={() => setExpandedId(expandedId === item.id ? null : item.id)}
                       className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"

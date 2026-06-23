@@ -190,7 +190,7 @@ export default async function PartnersPage(props: PartnersPageProps) {
           </ol>
         </nav>
 
-        <section className="rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-6 sm:p-8">
+        <section className="rounded-2xl border border-sky-200 bg-linear-to-br from-sky-50 via-white to-cyan-50 p-6 sm:p-8">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
             {t("partners.officialNetwork")}
           </p>

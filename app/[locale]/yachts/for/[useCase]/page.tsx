@@ -189,7 +189,7 @@ export default async function UseCaseLandingPage(
       </nav>
 
       {/* Page Header */}
-      <section className="bg-gradient-to-b from-sky-50 to-white py-12 px-4">
+      <section className="bg-linear-to-b from-sky-50 to-white py-12 px-4">
         <div className="max-w-5xl mx-auto text-center">
           <div className="text-5xl mb-4">{data.useCase.emoji}</div>
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -219,7 +219,7 @@ export default async function UseCaseLandingPage(
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
-          <aside className="lg:w-64 flex-shrink-0">
+          <aside className="lg:w-64 shrink-0">
             {/* Other Use Cases */}
             <div className="bg-white rounded-lg border border-gray-200 p-4 mb-4">
               <h3 className="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wider">

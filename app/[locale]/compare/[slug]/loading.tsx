@@ -26,7 +26,7 @@ export default function CompareDetailLoading() {
                   <div className="h-3 w-32 bg-muted animate-pulse rounded" />
                 </div>
               </div>
-              <div className="aspect-[16/9] bg-muted animate-pulse rounded-lg" />
+              <div className="aspect-16/9 bg-muted animate-pulse rounded-lg" />
               <div className="grid grid-cols-3 gap-3">
                 {Array.from({ length: 3 }).map((_, j) => (
                   <SkeletonStat key={j} />

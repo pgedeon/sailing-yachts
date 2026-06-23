@@ -190,7 +190,7 @@ export default async function SizeCategoryHubPage(
       </nav>
 
       {/* Page Header */}
-      <section className="bg-gradient-to-b from-sky-50 to-white py-12 px-4">
+      <section className="bg-linear-to-b from-sky-50 to-white py-12 px-4">
         <div className="max-w-5xl mx-auto text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             {sizeLabel}{" "}
@@ -217,7 +217,7 @@ export default async function SizeCategoryHubPage(
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
-          <aside className="lg:w-64 flex-shrink-0">
+          <aside className="lg:w-64 shrink-0">
             {/* Other Size Categories */}
             <div className="bg-white rounded-lg border border-gray-200 p-4 mb-4">
               <h3 className="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wider">

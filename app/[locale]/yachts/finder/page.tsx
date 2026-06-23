@@ -49,7 +49,7 @@ function StepOption<T extends string>({
       }`}
       aria-pressed={selected}
     >
-      {icon && <span className="text-2xl flex-shrink-0 mt-0.5" aria-hidden="true">{icon}</span>}
+      {icon && <span className="text-2xl shrink-0 mt-0.5" aria-hidden="true">{icon}</span>}
       <div>
         <span className="font-medium text-gray-900">{label}</span>
         {description && <p className="text-sm text-gray-500 mt-0.5">{description}</p>}
@@ -122,7 +122,7 @@ function ScoreBar({ label, value, max }: { label: string; value: number; max: nu
   const pct = Math.round((value / max) * 100);
   return (
     <div className="flex items-center gap-2 text-xs">
-      <span className="w-24 text-gray-500 flex-shrink-0">{label}</span>
+      <span className="w-24 text-gray-500 shrink-0">{label}</span>
       <div className="flex-1 bg-gray-100 rounded-full h-1.5">
         <div
           className="bg-blue-400 rounded-full h-1.5 transition-all"
@@ -153,7 +153,7 @@ function ResultCard({ yacht }: { yacht: ScoredYacht }) {
             <>{yacht.manufacturer} {yacht.modelName}</>
           )}
         </h3>
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           <MatchBadge score={yacht.score} />
           {yacht.slug && <FavoriteButton slug={yacht.slug} modelName={`${yacht.manufacturer} ${yacht.modelName}`} size="sm" />}
         </div>

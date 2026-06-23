@@ -23,7 +23,7 @@ export default function BestYearSizeLoading() {
 
       {/* Content skeleton */}
       <div className="py-8 flex flex-col lg:flex-row gap-8">
-        <div className="lg:w-64 flex-shrink-0 space-y-4">
+        <div className="lg:w-64 shrink-0 space-y-4">
           <Skeleton className="h-48 w-full rounded-lg" />
           <Skeleton className="h-36 w-full rounded-lg" />
         </div>

@@ -166,7 +166,7 @@ export default async function Home(props: HomeProps) {
 
       <main className="min-h-screen">
         {/* Hero Section */}
-        <section className="bg-gradient-to-b from-sky-50 to-white py-16 sm:py-24 px-4">
+        <section className="bg-linear-to-b from-sky-50 to-white py-16 sm:py-24 px-4">
           <div className="max-w-5xl mx-auto text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
               {t("hero.title")}
@@ -331,7 +331,7 @@ export default async function Home(props: HomeProps) {
         </section>
 
         {/* Quiz CTA */}
-        <section className="py-12 px-4 bg-gradient-to-r from-sky-50 to-blue-50 border-t border-blue-100">
+        <section className="py-12 px-4 bg-linear-to-r from-sky-50 to-blue-50 border-t border-blue-100">
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">{t("quizCta.title")}</h2>
             <p className="text-gray-600 mb-6">{t("quizCta.subtitle")}</p>

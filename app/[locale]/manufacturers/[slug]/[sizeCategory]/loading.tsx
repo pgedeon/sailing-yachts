@@ -17,7 +17,7 @@ export default function Loading() {
       </div>
 
       {/* Header skeleton */}
-      <div className="bg-gradient-to-b from-sky-50 to-white py-12 px-4">
+      <div className="bg-linear-to-b from-sky-50 to-white py-12 px-4">
         <div className="max-w-5xl mx-auto text-center">
           <Skeleton className="h-12 w-12 mx-auto mb-4 rounded-full" />
           <Skeleton className="h-10 w-96 mx-auto mb-4" />
@@ -30,7 +30,7 @@ export default function Loading() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar skeleton */}
-          <div className="lg:w-64 flex-shrink-0 space-y-4">
+          <div className="lg:w-64 shrink-0 space-y-4">
             <Skeleton className="h-48 w-full rounded-lg" />
             <Skeleton className="h-40 w-full rounded-lg" />
           </div>

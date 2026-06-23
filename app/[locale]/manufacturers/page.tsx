@@ -122,7 +122,7 @@ export default async function ManufacturersPage(props: ManufacturersListingPageP
           </ol>
         </nav>
 
-        <section className="rounded-2xl border border-border bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-6 sm:p-8">
+        <section className="rounded-2xl border border-border bg-linear-to-br from-sky-50 via-white to-cyan-50 p-6 sm:p-8">
           <div className="max-w-3xl mx-auto text-center mb-6">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
               {t("listing.title")}

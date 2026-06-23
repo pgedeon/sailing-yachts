@@ -282,7 +282,7 @@ export default function MediaGallery({ mediaAssets }: MediaGalleryProps) {
               unoptimized
             />
             {(currentPhoto.title || currentPhoto.caption) && (
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 rounded-b-lg">
+              <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/70 to-transparent p-4 rounded-b-lg">
                 <p className="text-white text-sm">
                   {currentPhoto.title || currentPhoto.caption}
                 </p>
@@ -320,7 +320,7 @@ function PhotoGrid({
         <button
           key={photo.id}
           onClick={() => onPhotoClick(idx)}
-          className="relative aspect-[4/3] rounded-lg overflow-hidden bg-muted group cursor-pointer border border-border hover:border-primary transition-colors"
+          className="relative aspect-4/3 rounded-lg overflow-hidden bg-muted group cursor-pointer border border-border hover:border-primary transition-colors"
           data-testid="media-photo-thumb"
         >
           <Image
@@ -340,7 +340,7 @@ function PhotoGrid({
             </span>
           )}
           {photo.title && (
-            <span className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
+            <span className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/60 to-transparent p-2">
               <span className="text-white text-xs truncate block">
                 {photo.title}
               </span>

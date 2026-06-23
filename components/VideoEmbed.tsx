@@ -69,7 +69,7 @@ export default function VideoEmbed({
           blurDataURL={SHIMMER_BLUR}
         />
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
+        <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-muted to-muted/50">
           <PlayCircle className="h-16 w-16 text-muted-foreground" aria-hidden="true" />
         </div>
       )}

@@ -131,7 +131,7 @@ export default function QuickFacts(props: QuickFactsProps) {
                 : "border-border bg-card"
             }`}
           >
-            <div className="flex-shrink-0">{fact.icon}</div>
+            <div className="shrink-0">{fact.icon}</div>
             <div className="min-w-0">
               <div className="text-xs text-muted-foreground truncate">
                 {fact.label}

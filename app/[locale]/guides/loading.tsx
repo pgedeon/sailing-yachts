@@ -23,7 +23,7 @@ export default function GuidesLoading() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="border rounded-lg overflow-hidden">
-              <div className="aspect-[2/1] bg-muted animate-pulse" />
+              <div className="aspect-2/1 bg-muted animate-pulse" />
               <div className="p-4 space-y-3">
                 <div className="h-5 w-3/4 bg-muted animate-pulse rounded" />
                 <div className="space-y-1.5">

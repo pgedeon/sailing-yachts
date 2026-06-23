@@ -76,7 +76,7 @@ export default async function SizeCategoryFaqPage(props: SizeFaqPageProps) {
     <main className="min-h-screen bg-white">
       <FaqStructuredData jsonLd={data.jsonLd} />
       {/* Hero */}
-      <section className="bg-gradient-to-b from-blue-50 to-white py-12 border-b">
+      <section className="bg-linear-to-b from-blue-50 to-white py-12 border-b">
         <div className="max-w-4xl mx-auto px-4">
           <Link
             href={localePath(locale, "/faq")}
@@ -111,7 +111,7 @@ export default async function SizeCategoryFaqPage(props: SizeFaqPageProps) {
             >
               <summary className="flex items-center justify-between cursor-pointer text-lg font-semibold text-gray-900 list-none">
                 <span>{isFr ? faq.questionFr : faq.question}</span>
-                <span className="ml-4 text-blue-600 group-open:rotate-180 transition-transform flex-shrink-0">
+                <span className="ml-4 text-blue-600 group-open:rotate-180 transition-transform shrink-0">
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                   </svg>

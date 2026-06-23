@@ -663,7 +663,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                 {yacht ? (
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <div className={`w-3 h-3 rounded-full ${color.dot} flex-shrink-0 mt-1`} />
+                      <div className={`w-3 h-3 rounded-full ${color.dot} shrink-0 mt-1`} />
                       <div>
                         <div className={`font-semibold ${color.text}`}>{yacht.manufacturer}</div>
                         <div className="text-gray-800 font-medium">{yacht.modelName}</div>
@@ -761,7 +761,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
                             : 'hover:bg-gray-50 text-gray-700'
                         }`}
                       >
-                        <div className={`w-4 h-4 rounded flex-shrink-0 flex items-center justify-center ${
+                        <div className={`w-4 h-4 rounded shrink-0 flex items-center justify-center ${
                           isSelected
                             ? `${color?.dot || 'bg-blue-500'}`
                             : 'border border-gray-300'
@@ -832,7 +832,7 @@ export function CompareClient({ initialIds }: CompareClientProps) {
       {yachts.length >= 2 && !loading && (
         <div className="border rounded-xl overflow-hidden shadow-sm relative">
           {/* Mobile scroll hint */}
-          <div className="md:hidden absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-200/80 to-transparent z-20 pointer-events-none" id="compare-scroll-hint" />
+          <div className="md:hidden absolute right-0 top-0 bottom-0 w-8 bg-linear-to-l from-gray-200/80 to-transparent z-20 pointer-events-none" id="compare-scroll-hint" />
           <div className="overflow-x-auto" id="compare-table-scroll">
             <table className="w-full text-sm">
               <thead>

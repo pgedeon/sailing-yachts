@@ -34,7 +34,7 @@ describe("P13.2: Skip navigation & landmark structure", () => {
 
     it("skip link is positioned fixed when focused for visibility", () => {
       expect(mainLayout).toContain("focus:fixed");
-      expect(mainLayout).toContain("focus:z-[100]");
+      expect(mainLayout).toContain("focus:z-100");
     });
   });
 

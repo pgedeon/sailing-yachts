@@ -1,58 +1,46 @@
 # Sailing Yachts — Session Notes
 
-## Session: 2026-06-21 22:20 CEST
+## Session: 2026-06-22 23:45 CEST
 
 ### Summary
-Fixed issue #453 — completed the removal of `@neondatabase/serverless` and migration of all Edge runtime routes to Node.js runtime.
+Upgraded zod from v3.25.76 to v4.4.3 — clean migration with zero code changes needed.
 
 ### Issue Worked On
-- **#453** — Fix Edge runtime DB routes for OCI PostgreSQL migration (priority: high)
+- **#463** — deps: upgrade zod 3→4 (breaking API changes) (priority: medium)
 
 ### What Was Implemented
-1. **Rewrote `lib/edge-pool.ts`** — Replaced `neon()` HTTP client with `pg` Pool. Kept the `edgePool.query()` API for backward compatibility.
-2. **Rewrote `lib/db-edge.ts`** — Replaced `drizzle-orm/neon-http` + `neon()` with `drizzle-orm/node-postgres` + `pg` Pool. Kept as compatibility wrapper.
-3. **Removed `runtime = 'edge'`** from 9 DB-backed routes:
-   - `app/api/compare/route.ts`
-   - `app/api/compare/share/route.ts`
-   - `app/api/yachts/route.ts`
-   - `app/api/yachts/[slug]/route.ts`
-   - `app/api/yachts/[slug]/variants/route.ts`
-   - `app/api/yachts/[slug]/also-viewed/route.ts`
-   - `app/api/manufacturers/route.ts`
-   - `app/api/manufacturers/[slug]/route.ts`
-   - `app/api/search/route.ts`
-4. **Kept Edge runtime** for `app/api/og/route.tsx` — doesn't use DB, only generates images
-5. **Replaced direct `neon()` imports** with `edgePool` in 3 files that bypassed the shared lib
-6. **Updated all scripts** (migrate.ts, seed-*.ts/js, p27-index-migration.js) to use `pg` Pool
-7. **Updated test files** to use `pg` instead of `@neondatabase/serverless`
-8. **Removed `@neondatabase/serverless`** from `package.json` dependencies
+1. Upgraded `zod` from `^3.25.76` to `^4.4.3` in package.json
+2. No code changes required — zod 3.25 was a bridge release with forward compatibility to v4
+3. All API patterns used in the codebase are v4-compatible:
+   - `z.record(keySchema, valueSchema)` — already v4 syntax
+   - `z.enum([...], { message })` — still supported
+   - `z.string().datetime({ message })` — still supported
+   - `z.coerce.number()` — unchanged
+   - `result.error.issues` — unchanged
 
 ### Build/Test Results
-- ✅ TypeScript: passes (`tsc --noEmit`)
-- ✅ Next.js compilation: succeeds
-- ⚠️ SSG fails locally due to pre-existing DB auth issue (`.env` password doesn't match OCI DB — Vercel has correct env vars)
+- ✅ TypeScript: passes clean (`tsc --noEmit`)
+- ✅ Next.js build: succeeds
+- ✅ Tests: 65 validation tests pass (25 schema + 40 API security)
+- ✅ CI: TypeScript, Build, Lint, Security Audit, Analyze — all pass
+- ⚠️ Lighthouse CI: failed (pre-existing production performance scores, not zod-related)
 
 ### Deploy Status
-- PR #455 merged to main
-- ⚠️ Vercel has NOT auto-deployed — latest deploys are 2 days old (repeated SSG build failures may have paused auto-deploy)
+- PR #466 merged to main (squash)
+- Vercel auto-deployed successfully
 
-### Live Verification Results (current production — OLD code)
+### Live Verification Results
 - ✅ `/` — 200 OK
 - ✅ `/yachts` — 200 OK
 - ✅ `/search` — 200 OK
 - ✅ `/compare` — 200 OK
 - ✅ API `/api/yachts` — 10 yachts returned
-- ✅ API `/api/search?q=beneteau` — 2 results
-- ✅ API `/api/manufacturers` — 12 manufacturers
-- ❌ API `/api/yachts/[slug]/also-viewed` — 500 (pre-existing Neon connection failure — this is exactly what our fix addresses)
 
-### Known Issues
-1. **Vercel not auto-deploying** — Latest Vercel deployments are 2+ days old. Likely due to repeated SSG build failures from DB auth issue during build. User may need to manually trigger a Vercel deploy or fix the SSG DB connection.
-2. **Local `.env` DB password** — `neondb_owner:sailboats2026` fails auth against OCI PostgreSQL at 92.5.167.113. The correct password may be different or the user may have changed it.
-3. **Next.js 14 security advisories** — Still needs major upgrade to next@16.
+### Remaining Open auto-build Issues
+1. **#462** — deps: upgrade tailwindcss 3→4 (major migration) — complex, CSS-first config
+2. **#464** — deps: upgrade eslint-config-next to v16 — blocked by Next.js 16 upgrade
 
 ### Next Recommended Tasks
-1. **Trigger Vercel deploy** — Manually deploy main branch or check Vercel auto-deploy settings
-2. **Fix SSG DB connection** — Ensure Vercel env vars have correct OCI PostgreSQL credentials for build-time SSG
-3. **Next.js 14→16 migration** — Address all high-severity security advisories
-4. **Consider dynamic rendering** — If SSG build DB issues persist, consider switching SSG pages to `dynamic = 'force-dynamic'` or use ISR with fallback
+1. **#462 (tailwindcss 4)** — major migration with visual regression risk
+2. **#464 (eslint-config-next v16)** — needs Next.js 16 first
+3. Consider creating issues for Next.js 15→16 upgrade

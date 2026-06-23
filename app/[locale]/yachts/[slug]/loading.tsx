@@ -31,7 +31,7 @@ export default function YachtDetailLoading() {
         {/* Image + specs grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Image area */}
-          <div className="aspect-[4/3] bg-muted animate-pulse rounded-lg" />
+          <div className="aspect-4/3 bg-muted animate-pulse rounded-lg" />
 
           {/* Key specs */}
           <div className="space-y-4">
@@ -84,7 +84,7 @@ export default function YachtDetailLoading() {
           <div className="h-6 w-40 bg-muted animate-pulse rounded mb-4" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 3 }).map((_, i) => (
-              <SkeletonCard key={i} lines={3} imageAspectRatio="aspect-[16/10]" />
+              <SkeletonCard key={i} lines={3} imageAspectRatio="aspect-16/10" />
             ))}
           </div>
         </div>

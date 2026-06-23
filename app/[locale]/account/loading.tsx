@@ -26,7 +26,7 @@ export default function AccountLoading() {
           <div className="h-6 w-32 bg-muted animate-pulse rounded mb-4" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 3 }).map((_, i) => (
-              <SkeletonCard key={i} lines={2} imageAspectRatio="aspect-[16/10]" />
+              <SkeletonCard key={i} lines={2} imageAspectRatio="aspect-16/10" />
             ))}
           </div>
         </div>

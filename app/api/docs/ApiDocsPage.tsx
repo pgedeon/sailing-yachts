@@ -184,7 +184,7 @@ function TryIt({ path, method }: { path: string; method: string }) {
           <div className="space-y-2">
             {pathParams.map((p) => (
               <div key={p.name} className="flex items-center gap-2">
-                <label className="text-xs font-mono text-gray-600 w-28 flex-shrink-0">
+                <label className="text-xs font-mono text-gray-600 w-28 shrink-0">
                   {p.name}
                   {p.required && <span className="text-red-500 ml-0.5">*</span>}
                 </label>
@@ -209,7 +209,7 @@ function TryIt({ path, method }: { path: string; method: string }) {
             <div className="mt-2 space-y-2">
               {queryParams.map((p) => (
                 <div key={p.name} className="flex items-center gap-2">
-                  <label className="text-xs font-mono text-gray-600 w-28 flex-shrink-0">
+                  <label className="text-xs font-mono text-gray-600 w-28 shrink-0">
                     {p.name}
                     {p.required && <span className="text-red-500 ml-0.5">*</span>}
                   </label>

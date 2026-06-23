@@ -68,7 +68,7 @@ export default async function BestValueIndexPage(
   return (
     <>
       {/* Header */}
-      <section className="bg-gradient-to-b from-emerald-50 to-white py-16 px-4">
+      <section className="bg-linear-to-b from-emerald-50 to-white py-16 px-4">
         <div className="max-w-5xl mx-auto text-center">
           <div className="mb-4 text-5xl">🏆</div>
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">

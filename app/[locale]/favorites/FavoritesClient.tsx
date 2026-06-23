@@ -178,7 +178,7 @@ export default function FavoritesClient() {
                   </Link>
                   <button
                     onClick={() => toggleFavorite(yacht.slug)}
-                    className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 transition-colors flex-shrink-0"
+                    className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 transition-colors shrink-0"
                     aria-label={`Remove ${yacht.manufacturer} ${yacht.modelName} from favorites`}
                     title="Remove from favorites"
                   >

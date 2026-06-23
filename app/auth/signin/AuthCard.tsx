@@ -97,7 +97,7 @@ export default function AuthCard({ errorCode, googleEnabled }: AuthCardProps) {
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-slate-50 via-white to-blue-50/70">
+    <div className="min-h-[calc(100vh-4rem)] bg-linear-to-b from-slate-50 via-white to-blue-50/70">
       <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-12 sm:px-6 lg:flex-row lg:items-center lg:px-8 lg:py-20">
         <div className="max-w-xl flex-1">
           <span className="inline-flex items-center rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700">

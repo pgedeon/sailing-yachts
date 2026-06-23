@@ -204,7 +204,7 @@ export default async function ManufacturerSpotlightPage(props: ManufacturerSpotl
           </ol>
         </nav>
 
-        <section className="rounded-2xl border border-border bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-6 sm:p-8">
+        <section className="rounded-2xl border border-border bg-linear-to-br from-sky-50 via-white to-cyan-50 p-6 sm:p-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
@@ -330,7 +330,7 @@ export default async function ManufacturerSpotlightPage(props: ManufacturerSpotl
               {spotlight.notableModels.map((model) => (
                 <div
                   key={`${model.yachtSlug}-${model.reason}`}
-                  className="rounded-2xl border border-border bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-5"
+                  className="rounded-2xl border border-border bg-linear-to-br from-sky-50 via-white to-cyan-50 p-5"
                 >
                   <div className="text-sm font-semibold uppercase tracking-wide text-sky-700">
                     {model.yacht?.year || "Model spotlight"}
@@ -365,7 +365,7 @@ export default async function ManufacturerSpotlightPage(props: ManufacturerSpotl
           )}
         </section>
 
-        <section className="mt-10 rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-6 sm:p-8">
+        <section className="mt-10 rounded-2xl border border-sky-200 bg-linear-to-br from-sky-50 via-white to-cyan-50 p-6 sm:p-8">
           <h2 className="text-2xl font-bold tracking-tight">
             {t("spotlight.exploreMore", { name: spotlight.manufacturer.name })}
           </h2>

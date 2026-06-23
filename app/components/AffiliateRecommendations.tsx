@@ -19,7 +19,7 @@ export default function AffiliateRecommendations({ categories }: AffiliateRecomm
 
   return (
     <section className="affiliate-recommendations mt-10 sm:mt-12 no-print">
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 sm:p-8">
+      <div className="bg-linear-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 sm:p-8">
         <div className="flex items-center gap-2 mb-6">
           <ShoppingBag className="h-6 w-6 text-blue-700"  aria-hidden="true" />
           <h2 className="text-xl sm:text-2xl font-bold text-blue-900">
@@ -76,7 +76,7 @@ export default function AffiliateRecommendations({ categories }: AffiliateRecomm
                       <h4 className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors text-sm sm:text-base">
                         {product.name}
                       </h4>
-                      <ExternalLink className="h-4 w-4 text-gray-500 group-hover:text-blue-600 flex-shrink-0 ml-2"  aria-hidden="true" />
+                      <ExternalLink className="h-4 w-4 text-gray-500 group-hover:text-blue-600 shrink-0 ml-2"  aria-hidden="true" />
                     </div>
 
                     <p className="text-xs sm:text-sm text-gray-600 mb-2">
