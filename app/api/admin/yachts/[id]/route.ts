@@ -204,14 +204,14 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
       return NextResponse.json({ error: 'Yacht not found' }, { status: 404 })
     }
     // P1: Invalidate cache tags
-    revalidateTag('yachts');
+    revalidateTag('yachts', 'default');
     // Invalidate old slug if it changed
     if (oldRow?.slug && oldRow.slug !== body.slug) {
-      revalidateTag(`yacht:${oldRow.slug}`);
+      revalidateTag(`yacht:${oldRow.slug}`, 'default');
     }
     // Invalidate new slug if present
     if (body.slug) {
-      revalidateTag(`yacht:${body.slug}`);
+      revalidateTag(`yacht:${body.slug}`, 'default');
     }
     // Fetch updated row to return
     const row = await fetchYachtById(yachtId)
@@ -246,9 +246,9 @@ export async function DELETE(request: Request, props: { params: Promise<{ id: st
       return NextResponse.json({ error: 'Yacht not found' }, { status: 404 })
     }
     // P1: Invalidate cache tags
-    revalidateTag('yachts');
+    revalidateTag('yachts', 'default');
     if (slug) {
-      revalidateTag(`yacht:${slug}`);
+      revalidateTag(`yacht:${slug}`, 'default');
     }
     return new NextResponse(null, { status: 204 })
   } catch (error) {

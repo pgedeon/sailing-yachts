@@ -69,10 +69,10 @@ export async function POST(request: Request) {
     )
     const manufacturer = mapManufacturer(result.rows[0])
     // Revalidate manufacturer list and detail cache
-    revalidateTag('manufacturers');
+    revalidateTag('manufacturers', 'default');
     if (manufacturer.name) {
       const slug = slugify(manufacturer.name)
-      revalidateTag(`manufacturer:${slug}`)
+      revalidateTag(`manufacturer:${slug}`, 'default')
     }
     return NextResponse.json({ manufacturer }, { status: 201 })
   } catch (error) {

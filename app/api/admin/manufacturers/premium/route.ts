@@ -119,10 +119,10 @@ export async function PATCH(request: Request) {
     }
 
     // Revalidate caches
-    revalidateTag('manufacturers')
+    revalidateTag('manufacturers', 'default')
     const name = result.rows[0].name
     if (name) {
-      revalidateTag(`manufacturer:${slugify(name)}`)
+      revalidateTag(`manufacturer:${slugify(name)}`, 'default')
     }
 
     return NextResponse.json({ manufacturer: mapPremiumManufacturer(result.rows[0]) })

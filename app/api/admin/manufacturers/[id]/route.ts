@@ -117,16 +117,16 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
     const newSlug = manufacturer.name ? slugify(manufacturer.name) : null
 
     // Revalidate manufacturer list cache
-    revalidateTag('manufacturers')
+    revalidateTag('manufacturers', 'default')
 
     // Revalidate old slug if name changed
     if (oldSlug && oldSlug !== newSlug) {
-      revalidateTag(`manufacturer:${oldSlug}`)
+      revalidateTag(`manufacturer:${oldSlug}`, 'default')
     }
 
     // Revalidate new slug
     if (newSlug) {
-      revalidateTag(`manufacturer:${newSlug}`)
+      revalidateTag(`manufacturer:${newSlug}`, 'default')
     }
 
     return NextResponse.json({ manufacturer })
@@ -169,9 +169,9 @@ export async function DELETE(request: Request, props: { params: Promise<{ id: st
     }
 
     // Revalidate manufacturer list and detail cache
-    revalidateTag('manufacturers')
+    revalidateTag('manufacturers', 'default')
     if (slug) {
-      revalidateTag(`manufacturer:${slug}`)
+      revalidateTag(`manufacturer:${slug}`, 'default')
     }
 
     return new NextResponse(null, { status: 204 })

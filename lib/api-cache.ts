@@ -24,7 +24,7 @@ export function cached<T extends (...args: any[]) => Promise<any>>(
 /** Revalidate all caches for a given tag */
 export async function revalidateTag(tag: string): Promise<void> {
   const { revalidateTag: rt } = await import('next/cache');
-  rt(tag);
+  rt(tag, 'default');
 }
 
 /** Cache durations */
