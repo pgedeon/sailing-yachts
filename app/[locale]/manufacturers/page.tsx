@@ -15,7 +15,7 @@ import {
 import ManufacturerListingClient from "@/components/manufacturer-listing-client";
 
 // ISR: Revalidate manufacturers list every hour
-export const revalidate = 0;
+export const revalidate = 3600;
 
 const FALLBACK_MANUFACTURERS: any[] = [];
 
@@ -30,7 +30,7 @@ async function getManufacturers() {
       return manufacturers;
     },
     ["manufacturers-list"],
-    { tags: ["manufacturers"], revalidate: 0 }
+    { tags: ["manufacturers"], revalidate: 3600 }
   )();
 }
 
