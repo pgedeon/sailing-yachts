@@ -1,3 +1,5 @@
+export const dynamicParams = true;
+
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -46,9 +48,7 @@ async function getCachedCompareData(slugA: string, slugB: string) {
   )();
 }
 
-export async function generateStaticParams() {
-  return getManufacturerComparisonParams();
-}
+// export async function generateStaticParams() disabled for Next.js 16
 
 export async function generateMetadata(
   props: {

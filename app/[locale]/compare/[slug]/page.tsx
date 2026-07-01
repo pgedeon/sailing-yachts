@@ -1,3 +1,5 @@
+export const dynamicParams = true;
+
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -35,9 +37,7 @@ function parseCompareSlug(
   return { slugA, slugB };
 }
 
-export async function generateStaticParams() {
-  return getComparisonParams();
-}
+// export async function generateStaticParams() disabled for Next.js 16
 
 export async function generateMetadata(
   props: {
