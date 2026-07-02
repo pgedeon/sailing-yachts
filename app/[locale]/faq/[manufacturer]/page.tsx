@@ -9,17 +9,22 @@ import { slugify } from "@/lib/utils/slugify";
 import FaqStructuredData from "../FaqStructuredData";
 
 export const revalidate = 3600;
+export const dynamicParams = true;
 
 interface MfrFaqPageProps {
   params: Promise<{ locale: string; manufacturer: string }>;
 }
 
 export async function generateStaticParams() {
-  const slugs = await getAllManufacturerSlugs();
-  return slugs.flatMap((slug) => [
-    { locale: "en", manufacturer: slug },
-    { locale: "fr", manufacturer: slug },
-  ]);
+  try {
+    const slugs = await getAllManufacturerSlugs();
+    return slugs.flatMap((slug) => [
+      { locale: "en", manufacturer: slug },
+      { locale: "fr", manufacturer: slug },
+    ]);
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata(props: MfrFaqPageProps): Promise<Metadata> {
