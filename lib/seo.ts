@@ -21,7 +21,8 @@ export function buildLocaleAlternates(pathWithoutLocale: string, locale = "en"):
   languages: Record<string, string>;
 } {
   const clean = pathWithoutLocale.replace(/^\/(en|fr)/, "");
-  const path = clean.startsWith("/") ? clean : "/" + clean;
+  // Normalize: empty string or "/" means root — no trailing slash after locale
+  const path = clean === "" || clean === "/" ? "" : (clean.startsWith("/") ? clean : "/" + clean);
   return {
     canonical: getSiteUrl(`/${locale}${path}`),
     languages: {
