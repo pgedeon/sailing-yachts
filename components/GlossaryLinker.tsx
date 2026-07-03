@@ -37,7 +37,8 @@ export function GlossaryLinker({
       }
 
       if (React.isValidElement(node)) {
-        const { children: nodeChildren, ...props } = node.props;
+        const props = node.props as Record<string, unknown>;
+        const { children: nodeChildren, ...restProps } = props;
 
         // Skip links and interactive elements
         if (node.type === "a" || node.type === "button" || node.type === "input") {
@@ -45,9 +46,9 @@ export function GlossaryLinker({
         }
 
         // Process children recursively
-        const processedChildren = React.Children.toArray(nodeChildren).map(processNode);
+        const processedChildren = React.Children.toArray(nodeChildren as React.ReactNode).map(processNode);
 
-        return React.createElement(node.type, { ...props }, ...processedChildren);
+        return React.createElement(node.type, { ...restProps }, ...processedChildren);
       }
 
       return node;
