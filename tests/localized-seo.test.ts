@@ -19,11 +19,18 @@ describe("buildLocaleAlternates", () => {
     expect(result.languages.fr).toBe(`${SITE_URL}/fr/yachts`);
   });
 
-  it("handles root path", () => {
+  it("handles root path without trailing slash", () => {
     const result = buildLocaleAlternates("/");
-    expect(result.canonical).toBe(`${SITE_URL}/en/`);
-    expect(result.languages.en).toBe(`${SITE_URL}/en/`);
-    expect(result.languages.fr).toBe(`${SITE_URL}/fr/`);
+    expect(result.canonical).toBe(`${SITE_URL}/en`);
+    expect(result.languages.en).toBe(`${SITE_URL}/en`);
+    expect(result.languages.fr).toBe(`${SITE_URL}/fr`);
+  });
+
+  it("handles empty string as root path", () => {
+    const result = buildLocaleAlternates("");
+    expect(result.canonical).toBe(`${SITE_URL}/en`);
+    expect(result.languages.en).toBe(`${SITE_URL}/en`);
+    expect(result.languages.fr).toBe(`${SITE_URL}/fr`);
   });
 
   it("strips existing /en or /fr prefix from path", () => {

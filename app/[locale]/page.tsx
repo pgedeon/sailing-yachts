@@ -116,7 +116,7 @@ export async function generateMetadata(props: HomeProps) {
       title: t("meta.twitterTitle"),
       description: t("meta.twitterDescription", { yachtPhrase }),
     },
-    alternates: buildLocaleAlternates("/", locale),
+    alternates: buildLocaleAlternates("", locale),
   };
 }
 

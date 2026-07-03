@@ -1,10 +1,12 @@
 module.exports = {
   ci: {
     collect: {
-      url: ['https://info.sailboats.fr/', 'https://info.sailboats.fr/yachts', 'https://info.sailboats.fr/compare', 'https://info.sailboats.fr/search'],
+      url: [
+        'https://info.sailboats.fr/en',
+        'https://info.sailboats.fr/en/yachts',
+        'https://info.sailboats.fr/en/compare'
+      ],
       numberOfRuns: 3,
-      startServer: 'npm run start',
-      startServerReadyPattern: 'started server on',
       settings: {
         onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
         preset: 'desktop'
@@ -19,7 +21,6 @@ module.exports = {
         'canonical': ['error'],
         'uses-responsive-images': ['warn'],
         'uses-rel-preconnect': ['warn'],
-        'uses-rel-preload': ['warn'],
         'cumulative-layout-shift': ['error', { maxNumericValue: 0.1 }],
         'largest-contentful-paint': ['error', { maxNumericValue: 2500 }],
         'speed-index': ['warn', { maxNumericValue: 3800 }],

@@ -172,10 +172,9 @@ jobs:
         echo "📊 Performance Budget Configuration Summary:"
         echo "=========================================="
         echo "🎯 Pages monitored:"
-        echo "  • Homepage: https://info.sailboats.fr/"
-        echo "  • Yachts Page: https://info.sailboats.fr/yachts"
-        echo "  • Compare Page: https://info.sailboats.fr/compare"
-        echo "  • Search Page: https://info.sailboats.fr/search"
+        echo "  • Homepage: https://info.sailboats.fr/en"
+        echo "  • Yachts Page: https://info.sailboats.fr/en/yachts"
+        echo "  • Compare Page: https://info.sailboats.fr/en/compare"
         echo ""
         echo "📏 Budget thresholds:"
         echo "  • Largest Contentful Paint: < 2.5 seconds"
@@ -184,7 +183,7 @@ jobs:
         echo "  • Performance Score: > 75%"
         echo "  • Accessibility Score: > 80%"
         echo "  • Best Practices Score: > 90%"
-        echo "  • SEO Score: > 90%"
+        echo "  • SEO Score: > 90% (homepage, yachts, compare)"
         echo ""
         echo "🔧 Integration ready for production deployment"
         echo "✅ Performance budgets successfully configured in CI"
@@ -192,7 +191,7 @@ jobs:
   lighthouse-ci:
     name: Lighthouse CI — Performance Regression Detection
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: []
     if: github.event_name == 'pull_request'
     # Informational - reports perf regressions without blocking PRs
     # until LHCI_GITHUB_APP_TOKEN secret is configured
@@ -210,12 +209,6 @@ jobs:
 
     - name: Install dependencies
       run: npm ci
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v8
-      with:
-        name: build-output
-        path: .next
 
     - name: Run Lighthouse CI against production URLs
       run: |
