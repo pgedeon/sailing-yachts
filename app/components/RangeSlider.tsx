@@ -31,7 +31,7 @@ export default function RangeSlider({
   const [dragging, setDragging] = useState<"min" | "max" | null>(null);
   const [localMin, setLocalMin] = useState(valueMin);
   const [localMax, setLocalMax] = useState(valueMax);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const isDragging = dragging !== null;
 
   // Sync from props when not dragging
