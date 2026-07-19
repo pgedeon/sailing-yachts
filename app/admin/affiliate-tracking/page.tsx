@@ -2,6 +2,8 @@ import { Metadata } from "next";
 import { requireAdmin } from "@/lib/admin-auth";
 import AffiliateTrackingDashboardClient from "./AffiliateTrackingDashboardClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Affiliate Tracking — Admin",
   robots: { index: false },
