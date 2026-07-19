@@ -1,21 +1,12 @@
 import { Suspense } from "react";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireAdmin } from "@/lib/admin-auth";
 import Link from "next/link";
 import DescriptionAdminClient from "./DescriptionAdminClient";
 
 export const dynamic = "force-dynamic";
 
 export default async function DescriptionsAdminPage() {
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user || session.user.role !== "admin") {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Unauthorized. Please log in.</p>
-      </div>
-    );
-  }
+  await requireAdmin();
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
