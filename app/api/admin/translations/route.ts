@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import {
   getTranslationStats,
@@ -20,6 +22,10 @@ export const dynamic = "force-dynamic";
 
 /** GET /api/admin/translations — stats + queue */
 export async function GET(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const { searchParams } = new URL(request.url);
     const action = searchParams.get("action");
@@ -70,6 +76,10 @@ export async function GET(request: NextRequest) {
 
 /** POST /api/admin/translations — create/update, auto-generate, bulk approve */
 export async function POST(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const body = await request.json();
     const action = body.action;
@@ -125,6 +135,10 @@ export async function POST(request: NextRequest) {
 
 /** PATCH /api/admin/translations — update status or text */
 export async function PATCH(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const body = await request.json();
 

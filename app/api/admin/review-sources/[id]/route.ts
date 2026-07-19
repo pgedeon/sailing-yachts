@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextResponse } from 'next/server';
 import { pool } from '@/lib/db';
 
@@ -20,6 +22,10 @@ function mapSource(row: Record<string, unknown>) {
 
 /** GET /api/admin/review-sources/[id] */
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const { id } = await params;
     const numId = parseInt(id, 10);
@@ -41,6 +47,10 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
 /** PATCH /api/admin/review-sources/[id] */
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const { id } = await params;
     const numId = parseInt(id, 10);
@@ -89,6 +99,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
 /** DELETE /api/admin/review-sources/[id] */
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const { id } = await params;
     const numId = parseInt(id, 10);

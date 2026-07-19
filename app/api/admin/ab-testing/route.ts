@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { Pool } from "pg";
 import { getAbTestingDashboard } from "@/lib/ab-testing-service";
@@ -14,6 +16,10 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
  *   ?period=7d|30d|90d|all (default: all)
  */
 export async function GET(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const period = request.nextUrl.searchParams.get("period") || "all";
 
   const client = await pool.connect();

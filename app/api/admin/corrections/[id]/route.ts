@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { pool } from "@/lib/db";
@@ -42,6 +44,10 @@ const patchSchema = z.object({
  * GET /api/admin/corrections/[id]
  */
 export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const params = await props.params;
   const cookieStore = await cookies();
 
@@ -78,6 +84,10 @@ export async function GET(request: NextRequest, props: { params: Promise<{ id: s
  * Accept or reject a correction. When accepted, auto-updates the yacht_model field.
  */
 export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const params = await props.params;
   const cookieStore = await cookies();
 
@@ -206,6 +216,10 @@ export async function PATCH(request: NextRequest, props: { params: Promise<{ id:
  * DELETE /api/admin/corrections/[id]
  */
 export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const params = await props.params;
   const cookieStore = await cookies();
 

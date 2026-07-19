@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextResponse } from 'next/server';
 import { pool } from '@/lib/db';
 
@@ -25,6 +27,10 @@ function slugify(name: string): string {
 
 /** GET /api/admin/review-sources — list all review sources */
 export async function GET() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const result = await pool.query(
       `SELECT rs.*, COUNT(r.id)::int as review_count
@@ -42,6 +48,10 @@ export async function GET() {
 
 /** POST /api/admin/review-sources — create a review source */
 export async function POST(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const body = await request.json();
     const { name, websiteUrl, logoUrl, description, credibilityScore, sourceType } = body;

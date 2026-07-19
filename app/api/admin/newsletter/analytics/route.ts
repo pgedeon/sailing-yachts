@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { db, ensureSchema, newsletterCampaigns, newsletterOpens, newsletterClicks, newsletterSubscribers, newsletterSponsorSlots } from "@/lib/db";
 import { desc, eq, sql } from "drizzle-orm";
@@ -7,6 +9,10 @@ export const dynamic = "force-dynamic";
 // GET — newsletter monetization analytics dashboard data
 // P27.1: Parallelized independent queries to reduce latency
 export async function GET(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     await ensureSchema();
 

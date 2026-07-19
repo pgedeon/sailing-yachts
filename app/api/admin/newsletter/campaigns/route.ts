@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { db, ensureSchema, newsletterCampaigns, newsletterSubscribers, newsletterSponsorSlots } from "@/lib/db";
 import { desc, eq, sql } from "drizzle-orm";
@@ -6,6 +8,10 @@ export const dynamic = "force-dynamic";
 
 // GET — list all campaigns with stats
 export async function GET(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     await ensureSchema();
 
@@ -60,6 +66,10 @@ export async function GET(request: NextRequest) {
 
 // POST — create a new campaign
 export async function POST(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     await ensureSchema();
 

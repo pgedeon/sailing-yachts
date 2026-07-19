@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextResponse } from 'next/server'
 import { pool } from '@/lib/db'
 import { revalidateTag } from 'next/cache'
@@ -38,6 +40,10 @@ function parseId(id: string) {
 }
 
 export async function GET(request: Request, props: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const params = await props.params;
 
   const { id } = params
@@ -71,6 +77,10 @@ export async function GET(request: Request, props: { params: Promise<{ id: strin
 }
 
 export async function PATCH(request: Request, props: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const params = await props.params;
 
   const { id } = params
@@ -133,6 +143,10 @@ export async function PATCH(request: Request, props: { params: Promise<{ id: str
 }
 
 export async function DELETE(request: Request, props: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const params = await props.params;
 
   const { id } = params

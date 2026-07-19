@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextResponse } from 'next/server'
 import { ensureSchema, pool } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
@@ -8,6 +10,10 @@ function parseId(id: string) {
 }
 
 export async function POST(request: Request, props: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const params = await props.params;
 
   const { id } = params

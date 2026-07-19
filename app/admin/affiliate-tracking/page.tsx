@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { requireAdmin } from "@/lib/admin-auth";
 import AffiliateTrackingDashboardClient from "./AffiliateTrackingDashboardClient";
 
 export const metadata: Metadata = {
@@ -6,6 +7,7 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-export default function AffiliateTrackingPage() {
+export default async function AffiliateTrackingPage() {
+  await requireAdmin();
   return <AffiliateTrackingDashboardClient />;
 }

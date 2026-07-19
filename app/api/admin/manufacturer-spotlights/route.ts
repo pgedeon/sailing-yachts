@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextResponse } from 'next/server'
 import { ensureSchema } from '@/lib/db'
 import { revalidateTag } from 'next/cache'
@@ -16,6 +18,10 @@ function revalidateSpotlightTags(spotlight: Pick<ManufacturerSpotlight, 'slug' |
 }
 
 export async function GET(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   try {
     await ensureSchema()
@@ -31,6 +37,10 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   try {
     await ensureSchema()

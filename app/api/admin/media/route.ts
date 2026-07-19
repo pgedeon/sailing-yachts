@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { ensureSchema, pool } from '@/lib/db'
@@ -12,6 +14,10 @@ function toNum(v: string | number | null | undefined): number | null {
 
 /** GET /api/admin/media?yachtId=N — list media assets for a yacht */
 export async function GET(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const cookieStore = await cookies()
 
 
@@ -65,6 +71,10 @@ export async function GET(request: Request) {
 
 /** POST /api/admin/media — create a new media asset */
 export async function POST(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const cookieStore = await cookies()
 
 
@@ -180,6 +190,10 @@ export async function POST(request: Request) {
 
 /** PATCH /api/admin/media?id=N — update a media asset */
 export async function PATCH(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const cookieStore = await cookies()
 
 
@@ -270,6 +284,10 @@ export async function PATCH(request: Request) {
 
 /** DELETE /api/admin/media?id=N — delete a media asset */
 export async function DELETE(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const cookieStore = await cookies()
 
 

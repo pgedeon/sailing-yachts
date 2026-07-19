@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { importYachts, getImportJob, getImportJobs, type YachtImportRecord, type ManufacturerImport } from "@/lib/data-import";
 
@@ -17,6 +19,10 @@ function isAdmin(request: NextRequest): boolean {
  * Body: { source, confidence, manufacturers, records }
  */
 export async function POST(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   if (!isAdmin(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -68,6 +74,10 @@ export async function POST(request: NextRequest) {
  * Query params: ?jobId=123 or ?limit=20
  */
 export async function GET(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   if (!isAdmin(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

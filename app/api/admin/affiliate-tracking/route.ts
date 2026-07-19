@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { pool } from "@/lib/db";
 import {
@@ -20,6 +22,10 @@ export const dynamic = "force-dynamic";
  *   action=stats&placementId=N — Stats for a specific placement
  */
 export async function GET(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const action = request.nextUrl.searchParams.get("action") || "summary";
 
   try {
@@ -75,6 +81,10 @@ export async function GET(request: NextRequest) {
  *   trigger_optimize — Force re-check auto-optimization
  */
 export async function POST(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const body = await request.json();
     const action = body.action;

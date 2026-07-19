@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextResponse } from 'next/server'
 import { db, reviews, yachtModels, manufacturers, pool } from '@/lib/db'
 import { eq, desc, sql } from 'drizzle-orm'
@@ -36,6 +38,10 @@ function mapReview(row: Record<string, unknown>) {
 
 /** GET /api/admin/reviews?status=pending|verified|rejected — list reviews */
 export async function GET(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   try {
     const { searchParams } = new URL(request.url)
@@ -71,6 +77,10 @@ export async function GET(request: Request) {
 
 /** POST /api/admin/reviews — create a review (admin) */
 export async function POST(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   try {
     const body = await request.json()
@@ -141,6 +151,10 @@ export async function POST(request: Request) {
 
 /** PATCH /api/admin/reviews?id=N — update review (approve/verify, reject) */
 export async function PATCH(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   try {
     const { searchParams } = new URL(request.url)
@@ -202,6 +216,10 @@ export async function PATCH(request: Request) {
 
 /** DELETE /api/admin/reviews?id=N — remove review */
 export async function DELETE(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   try {
     const { searchParams } = new URL(request.url)

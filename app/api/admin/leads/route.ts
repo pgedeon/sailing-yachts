@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { db, leads } from "@/lib/db";
 import { desc, sql, eq, and, isNotNull } from "drizzle-orm";
@@ -13,6 +15,10 @@ export const dynamic = "force-dynamic";
  * - score-all: rescores all unscored leads
  */
 export async function GET(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const { searchParams } = new URL(request.url);
   const action = searchParams.get("action") || "scored";
 
@@ -113,6 +119,10 @@ export async function GET(request: NextRequest) {
  * POST /api/admin/leads — Score a single lead by ID
  */
 export async function POST(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const body = await request.json();
     const { leadId } = body;

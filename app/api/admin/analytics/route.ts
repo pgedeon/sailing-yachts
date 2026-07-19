@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminAnalyticsDashboard } from "@/lib/analytics-service";
 
@@ -10,6 +12,10 @@ export const dynamic = "force-dynamic";
  *   days: number (default 30) — lookback period in days
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const days = parseInt(
       request.nextUrl.searchParams.get("days") || "30",

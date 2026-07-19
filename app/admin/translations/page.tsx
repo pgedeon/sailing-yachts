@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireAdmin } from "@/lib/admin-auth";
 import TranslationsClient from "./TranslationsClient";
 
 export const metadata: Metadata = {
@@ -6,6 +7,7 @@ export const metadata: Metadata = {
   description: "Manage multilingual content translations",
 };
 
-export default function TranslationsAdminPage() {
+export default async function TranslationsAdminPage() {
+  await requireAdmin();
   return <TranslationsClient />;
 }

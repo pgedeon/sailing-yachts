@@ -1,10 +1,12 @@
 export const dynamic = 'force-dynamic';
 
+import { requireAdmin } from "@/lib/admin-auth";
 import Link from "next/link";
 
 export const metadata = { title: "Import Prices — Admin" };
 
-export default function ImportPricesPage() {
+export default async function ImportPricesPage() {
+  await requireAdmin();
   return (
     <div>
       <div className="mb-6">

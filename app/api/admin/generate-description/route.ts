@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { ensureSchema, pool } from "@/lib/db";
 import {
@@ -17,6 +19,10 @@ export const dynamic = "force-dynamic";
  * If no slug is provided, returns a report of yachts needing descriptions.
  */
 export async function GET(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const slug = request.nextUrl.searchParams.get("slug");
   const style = (request.nextUrl.searchParams.get("style") || "balanced") as DescriptionStyle;
 

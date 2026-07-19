@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { ensureSchema, pool } from '@/lib/db'
@@ -11,6 +13,10 @@ function toNum(v: string | number | null | undefined): number | null {
 
 /** GET /api/admin/media/[id] — get single media asset */
 export async function GET(request: Request, props: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const params = await props.params;
   const cookieStore = await cookies()
 
@@ -64,6 +70,10 @@ export async function GET(request: Request, props: { params: Promise<{ id: strin
 
 /** PATCH /api/admin/media/[id] — update media asset */
 export async function PATCH(request: Request, props: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const params = await props.params;
   const cookieStore = await cookies()
 
@@ -147,6 +157,10 @@ export async function PATCH(request: Request, props: { params: Promise<{ id: str
 
 /** DELETE /api/admin/media/[id] — delete media asset */
 export async function DELETE(request: Request, props: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const params = await props.params;
   const cookieStore = await cookies()
 

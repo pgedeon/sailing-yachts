@@ -289,8 +289,50 @@ export async function ensureSchema() {
     `);
     await client.query(`CREATE INDEX IF NOT EXISTS idx_nl_clicks_campaign ON newsletter_clicks(campaign_id);`);
     await client.query(`CREATE INDEX IF NOT EXISTS idx_nl_clicks_subscriber ON newsletter_clicks(subscriber_id);`);
-    await client.query(`CREATE INDEX IF NOT EXISTS idx_nl_clicks_when ON newsletter_clicks(clicked_at);`);
-    // After creating base tables, ensure yacht_models has all Drizzle columns
+   await client.query(`CREATE INDEX IF NOT EXISTS idx_nl_clicks_when ON newsletter_clicks(clicked_at);`);
+    // Articles / guides table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS articles (
+        id SERIAL PRIMARY KEY,
+        slug VARCHAR(255) NOT NULL UNIQUE,
+        title VARCHAR(500) NOT NULL,
+        excerpt VARCHAR(1000),
+        content TEXT,
+        content_markdown TEXT,
+        category VARCHAR(100),
+        author VARCHAR(255),
+        author_title VARCHAR(255),
+        featured_image VARCHAR(500),
+        reading_time_minutes INTEGER,
+        buying_guide_template_id VARCHAR(100),
+        is_published BOOLEAN DEFAULT FALSE,
+        published_at TIMESTAMP,
+        meta_title VARCHAR(500),
+        meta_description VARCHAR(1000),
+        og_image VARCHAR(500),
+        canonical_url VARCHAR(500),
+        noindex BOOLEAN DEFAULT FALSE,
+        last_reviewed_at TIMESTAMP,
+        review_status VARCHAR(20) DEFAULT 'fresh',
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+    await client.query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_articles_slug ON articles(slug);`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_articles_category ON articles(category);`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_articles_published ON articles(is_published);`);
+    // Article-Yachts junction table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS article_yachts (
+        id SERIAL PRIMARY KEY,
+        article_id INTEGER NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
+        yacht_model_id INTEGER NOT NULL REFERENCES yacht_models(id) ON DELETE CASCADE,
+        sort_order INTEGER DEFAULT 0,
+        UNIQUE(article_id, yacht_model_id)
+      );
+    `);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_article_yachts_article ON article_yachts(article_id);`);
+   // After creating base tables, ensure yacht_models has all Drizzle columns
     // (migrate from minimal to full schema if needed)
     const columnResult = await client.query(`
       SELECT column_name
