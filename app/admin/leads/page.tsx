@@ -5,6 +5,7 @@ import { db, leads } from "@/lib/db";
 import { desc, sql, isNotNull } from "drizzle-orm";
 import { scoreLead, explainScore } from "@/lib/lead-scoring";
 import Link from "next/link";
+import { ScoreAllButton } from './ScoreAllButton';
 
 export const metadata = { title: "Lead Management — Admin" };
 
@@ -70,26 +71,9 @@ export default async function AdminLeadsPage() {
           <h1 className="text-2xl font-bold">Lead Management</h1>
           <p className="text-gray-500 text-sm mt-1">{allLeads.length} leads total</p>
         </div>
-        <div className="flex gap-3">
-          <button
-            id="score-all-btn"
-            className="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
-            onClick={async () => {
-              const btn = document.getElementById('score-all-btn');
-              if (btn) { btn.textContent = 'Scoring...'; btn.setAttribute('disabled', 'true'); }
-              try {
-                const res = await fetch('/api/admin/leads?action=score-all');
-                const data = await res.json();
-                alert(`Scored ${data.scored} leads`);
-                window.location.reload();
-              } catch (e) {
-                alert('Error scoring leads');
-              }
-            }}
-          >
-            ⚡ Score All Leads
-          </button>
-          <Link href="/admin" className="text-blue-600 hover:underline text-sm self-center">← Back to Admin</Link>
+        <div className="flex gap-3 items-center">
+          <ScoreAllButton />
+          <Link href="/admin" className="text-blue-600 hover:underline text-sm">← Back to Admin</Link>
         </div>
       </div>
 
