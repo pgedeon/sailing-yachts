@@ -170,7 +170,7 @@ export async function getTimeBetweenStages(
   for (const pair of stagePairs) {
     const extraFilter =
       pair.to === "lead"
-        ? "AND (b.metadata->>'ctaType' LIKE '%contact%' OR b.metadata->>'ctaType' LIKE '%lead%' OR b.metadata->>'ctaType' LIKE '%inquiry%' OR b.metadata->>'ctaType' LIKE '%request%')"
+        ? "AND (analytics_events.metadata->>'ctaType' LIKE '%contact%' OR analytics_events.metadata->>'ctaType' LIKE '%lead%' OR analytics_events.metadata->>'ctaType' LIKE '%inquiry%' OR analytics_events.metadata->>'ctaType' LIKE '%request%')"
         : "";
 
     const result = await pool.query(
