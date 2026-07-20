@@ -78,6 +78,13 @@ function toNum(v: unknown): number | null {
   return null;
 }
 
+// Detect multihulls (catamarans/trimarans) by beam-to-LOA ratio.
+// Catamarans typically have beam >45% of LOA; monohulls 25–35%.
+function isMultihull(beam: number | null, loa: number | null): boolean {
+  if (!beam || !loa || loa <= 0) return false;
+  return beam / loa > 0.45;
+}
+
 // ---------------------------------------------------------------------------
 // Validation Rules
 // ---------------------------------------------------------------------------
@@ -107,11 +114,13 @@ const RULES: ValidationRule[] = [
     id: "beam_too_wide",
     field: "beam",
     severity: "warning",
-    message: "Beam is unusually wide (>40% of LOA). Typical ratio is 25–35% for sailboats",
+    message: "Beam is unusually wide (>40% of LOA). Typical ratio is 25–35% for monohulls (multihulls exempt)",
     check: (s) => {
       const loa = toNum(s.lengthOverall);
       const b = toNum(s.beam);
-      return loa !== null && b !== null && loa > 0 && b / loa > 0.4;
+      if (loa === null || b === null || loa <= 0) return false;
+      if (isMultihull(b, loa)) return false;
+      return b / loa > 0.4;
     },
   },
   {
@@ -164,11 +173,13 @@ const RULES: ValidationRule[] = [
     id: "displacement_too_low",
     field: "displacement",
     severity: "warning",
-    message: "Displacement seems too low for this LOA (expected >500 kg/m minimum)",
+    message: "Displacement seems too low for this LOA (expected >300 kg/m for monohulls)",
     check: (s) => {
       const loa = toNum(s.lengthOverall);
       const disp = toNum(s.displacement);
-      return loa !== null && disp !== null && loa > 0 && disp / loa < 500;
+      const b = toNum(s.beam);
+      if (isMultihull(b, loa)) return false;
+      return loa !== null && disp !== null && loa > 0 && disp / loa < 300;
     },
   },
   {
@@ -231,22 +242,26 @@ const RULES: ValidationRule[] = [
     id: "sail_area_very_low",
     field: "sailAreaMain",
     severity: "warning",
-    message: "Sail area seems very low for this LOA (expected >5 m²/m)",
+    message: "Sail area seems very low for this LOA (expected >3.5 m²/m)",
     check: (s) => {
       const loa = toNum(s.lengthOverall);
       const sa = toNum(s.sailAreaMain);
-      return loa !== null && sa !== null && loa > 0 && sa > 0 && sa / loa < 5;
+      const b = toNum(s.beam);
+      if (isMultihull(b, loa)) return false;
+      return loa !== null && sa !== null && loa > 0 && sa > 0 && sa / loa < 3.5;
     },
   },
   {
     id: "sail_area_very_high",
     field: "sailAreaMain",
     severity: "warning",
-    message: "Sail area seems very high for this LOA (expected <30 m²/m)",
+    message: "Sail area seems very high for this LOA (expected <35 m²/m)",
     check: (s) => {
       const loa = toNum(s.lengthOverall);
       const sa = toNum(s.sailAreaMain);
-      return loa !== null && sa !== null && loa > 0 && sa / loa > 30;
+      const b = toNum(s.beam);
+      if (isMultihull(b, loa)) return false;
+      return loa !== null && sa !== null && loa > 0 && sa / loa > 35;
     },
   },
 

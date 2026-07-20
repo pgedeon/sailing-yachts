@@ -51,8 +51,8 @@ describe("validateSpecs", () => {
     expect(result.issues.some((i) => i.rule === "beam_exceeds_loa")).toBe(true);
   });
 
-  it("detects beam too wide (>40% of LOA)", () => {
-    const result = validateSpecs(makeSpecs({ beam: 5, lengthOverall: 10 }));
+  it("detects beam too wide (>40% of LOA, monohull)", () => {
+    const result = validateSpecs(makeSpecs({ beam: 4.3, lengthOverall: 10 }));
     const issue = result.issues.find((i) => i.rule === "beam_too_wide");
     expect(issue).toBeDefined();
     expect(issue!.severity).toBe("warning");
@@ -430,11 +430,43 @@ describe("ValidationResult", () => {
   })
 
   it("isValid is true with only warnings", () => {
-    const result = validateSpecs(makeSpecs({ beam: 4.5, lengthOverall: 10 }))
-    // beam is 45% of LOA → beam_too_wide warning, but no errors
+    const result = validateSpecs(makeSpecs({ beam: 4.2, lengthOverall: 10 }))
+    // beam is 42% of LOA → beam_too_wide warning, but no errors
     const hasErrors = result.issues.some((i) => i.severity === "error")
     if (!hasErrors) {
       expect(result.isValid).toBe(true)
     }
   })
 })
+
+// ---------------------------------------------------------------------------
+// Multihull exemptions
+// ---------------------------------------------------------------------------
+
+describe("multihull exemptions", () => {
+  it("does not flag catamaran beam as too wide", () => {
+    // Lagoon 46: beam 7.94, LOA 13.99 → 57% ratio
+    const result = validateSpecs(makeSpecs({ beam: 7.94, lengthOverall: 13.99 }));
+    const issue = result.issues.find((i) => i.rule === "beam_too_wide");
+    expect(issue).toBeUndefined();
+  });
+
+  it("does not flag catamaran displacement as too low", () => {
+    // Catamarans are lighter per meter
+    const result = validateSpecs(makeSpecs({ beam: 7, lengthOverall: 12, displacement: 9000 }));
+    const issue = result.issues.find((i) => i.rule === "displacement_too_low");
+    expect(issue).toBeUndefined();
+  });
+
+  it("does not flag catamaran sail area as too low", () => {
+    const result = validateSpecs(makeSpecs({ beam: 7, lengthOverall: 12, sailAreaMain: 50 }));
+    const issue = result.issues.find((i) => i.rule === "sail_area_very_low");
+    expect(issue).toBeUndefined();
+  });
+
+  it("still flags monohull beam as too wide at 42%", () => {
+    const result = validateSpecs(makeSpecs({ beam: 4.2, lengthOverall: 10 }));
+    const issue = result.issues.find((i) => i.rule === "beam_too_wide");
+    expect(issue).toBeDefined();
+  });
+});
