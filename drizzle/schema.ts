@@ -57,6 +57,9 @@ export const yachtModels = pgTable(
       .references(() => manufacturers.id, { onDelete: "cascade" }),
     modelName: varchar("model_name", { length: 255 }).notNull(),
     year: integer("year").notNull(),
+    firstBuilt: integer("first_built"),
+    lastBuilt: integer("last_built"),
+    productionStatus: varchar("production_status", { length: 20 }).default("unknown"),
     slug: varchar("slug", { length: 500 }).unique(),
 
     // Core numeric specs (indexed)
