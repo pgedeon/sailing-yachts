@@ -1,7 +1,7 @@
 import { requireAdmin } from '@/lib/admin-auth'
 import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { ReviewsTable } from './ReviewsTable'
 
 export const dynamic = 'force-dynamic'
 
@@ -37,18 +37,8 @@ export default async function AdminReviewsPage() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Manage Reviews</h1>
           <div className="flex gap-3">
-            <Link
-              href="/admin/reviews/new"
-              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200"
-            >
-              Add Review
-            </Link>
-            <Link
-              href="/admin"
-              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition duration-200"
-            >
-              Back to Dashboard
-            </Link>
+            <Link href="/admin/reviews/new" className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-200">Add Review</Link>
+            <Link href="/admin" className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition duration-200">Back to Dashboard</Link>
           </div>
         </div>
 
@@ -63,85 +53,10 @@ export default async function AdminReviewsPage() {
           ) : reviews.length === 0 ? (
             <p className="text-gray-500 text-center py-8">
               No reviews found.{' '}
-              <Link href="/admin/reviews/new" className="text-blue-600 hover:underline">
-                Add one
-              </Link>
+              <Link href="/admin/reviews/new" className="text-blue-600 hover:underline">Add one</Link>
             </p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Yacht
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Source
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Rating
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Summary
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Date
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {reviews.map((review: any) => (
-                    <tr key={review.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                        {review.manufacturerName} {review.yachtModelName}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {review.source || '—'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {review.rating !== null ? `${review.rating.toFixed(1)}/10` : '—'}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                        {review.summary || '—'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {review.reviewDate
-                          ? new Date(review.reviewDate).toLocaleDateString()
-                          : '—'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
-                        <Link
-                          href={`/admin/reviews/${review.id}/edit`}
-                          prefetch={false}
-                          className="text-blue-600 hover:text-blue-800 px-2 py-1 rounded text-xs bg-blue-50"
-                        >
-                          Edit
-                        </Link>
-                        <form
-                          action={`/api/admin/reviews/${review.id}`}
-                          method="POST"
-                          style={{ display: 'inline' }}
-                          onSubmit={(e: any) => {
-                            if (!confirm('Delete this review?')) e.preventDefault()
-                          }}
-                        >
-                          <input type="hidden" name="_method" value="DELETE" />
-                          <button
-                            type="submit"
-                            className="text-red-600 hover:text-red-800 px-2 py-1 rounded text-xs bg-red-50"
-                          >
-                            Delete
-                          </button>
-                        </form>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <ReviewsTable reviews={reviews} />
           )}
         </div>
       </div>
