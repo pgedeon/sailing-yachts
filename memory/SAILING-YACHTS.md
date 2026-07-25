@@ -1,29 +1,27 @@
-## Session: 2026-07-09 22:20 CEST
+## Session: 2026-07-24 22:20 CEST
 
 ### Summary
-Patch dependency updates shipped. ESLint 10 and TypeScript 7.0 remain blocked. All pages healthy. Project in maintenance mode.
+ESLint 10 upgrade re-attempted and confirmed blocked. All pages healthy. Project in maintenance mode.
 
 ### Issues Worked On
-- **PR #496** — deps: upgrade lucide-react 1.23→1.24, marked 18.0.5→18.0.6, vite 8.1.3→8.1.4 — ✅ MERGED & VERIFIED
-- **#482** — deps: upgrade ESLint 9→10 — 🔒 STILL BLOCKED (eslint-plugin-react@7.37.5 peer dep max: eslint ^9.7)
+- **#482** — deps: upgrade ESLint 9→10 — 🔒 BLOCKED (confirmed: eslint-plugin-react@7.37.5 via eslint-config-next@16.2.11 uses `context.getFilename()` removed in ESLint 10; no newer version available)
 
 ### What Was Done
-- Upgraded lucide-react 1.23.0→1.24.0 (minor)
-- Upgraded marked 18.0.5→18.0.6 (patch)
-- Upgraded vite 8.1.3→8.1.4 (patch)
+- Attempted ESLint 9→10 upgrade (3 approaches, all blocked)
+- Removed `brace-expansion` override → fixed brace-expansion conflict
+- Upgraded `typescript-eslint` 8.63→8.65 → fixed `scopeManager.addGlobals` error
+- Overrode parser to `@typescript-eslint/parser` → fixed babel parser issue
+- Root blocker: `eslint-plugin-react@7.37.5` uses `context.getFilename()` removed in ESLint 10
+- All changes reverted, main branch clean
 - Typecheck, build, lint all pass
 - PR #496 squash-merged, Vercel auto-deployed
 
-### Live Verification Results
+### Live Verification Results (2026-07-24)
 - ✅ `/` — 200 OK
 - ✅ `/yachts` — 200 OK
 - ✅ `/search` — 200 OK
 - ✅ `/compare` — 200 OK
 - ✅ API `/api/yachts` — 243 yachts returned
-
-### CI Results
-- ✅ Build, TypeScript, Lint, Security Audit, CodeQL, Analyze, Performance Budgets — ALL PASS
-- ⚠️ Lighthouse CI — FAIL (pre-existing budget violation, not a regression)
 
 ### Current State
 - All FUTURE_ROADMAP.md phases (0-27) COMPLETE
