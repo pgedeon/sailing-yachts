@@ -38,19 +38,24 @@ interface YachtProfile {
   priceTier?: PriceTier;
 }
 
+/**
+ * Affiliate tag for the sailing-yachts project. Kept as data-driven constant:
+ * used in disclosures and any future direct-URL fallbacks.
+ */
 const AFFILIATE_TAG = recommendationData.affiliateTag || "pgedeon-20";
 
 /**
- * Generate Amazon search URL with affiliate tag.
+ * Generate tracked proxy URL via api.petergedeon.com link service.
+ *
+ * Every outbound affiliate click flows through a registered slug (SY-{productId})
+ * so clicks are counted server-side per slug and A/B variants can be attributed
+ * via the ascsubtag the link service appends on redirect.
  */
-function generateAmazonUrl(category: string, searchTerm: string): string {
-  const baseUrl = "https://www.amazon.com/s";
-  const params = new URLSearchParams({
-    k: searchTerm,
-    i: category,
-    tag: AFFILIATE_TAG,
-  });
-  return `${baseUrl}?${params.toString()}`;
+const PROXY_BASE = "https://api.petergedeon.com/a";
+
+function generateAmazonUrl(category: string, searchTerm: string, productId?: string): string {
+  const slug = productId ? `SY-${productId}` : `SY-${category}`;
+  return `${PROXY_BASE}/${slug}`;
 }
 
 /**
@@ -136,7 +141,7 @@ function scoreProducts(
         amazonCategory: product.amazonCategory,
         tags: product.tags,
         recommendedProducts: tierRecs,
-        affiliateUrl: generateAmazonUrl(product.amazonCategory, searchTerm),
+        affiliateUrl: generateAmazonUrl(product.amazonCategory, searchTerm, product.id),
       });
     }
   }
