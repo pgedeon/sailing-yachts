@@ -255,3 +255,12 @@ Custom Non-Commercial License — free for individuals and organizations with un
 ---
 
 [![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-PayPal-blue)](https://www.paypal.com/donate/?business=petermgedeon%40gmail.com)
+
+
+## Content Writing Standard (MANDATORY)
+
+All article / web-page content written or rewritten by this agent MUST follow
+`/root/.openclaw/workspace/main/docs/content-writing-guide.md` (Bing AI/Copilot
+optimization): direct answers under question-based headings, self-contained factual
+sentences, real specs with cited sources, comparison tables, no marketing filler,
+schema matching visible content.

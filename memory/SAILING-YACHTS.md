@@ -1,43 +1,34 @@
-## Session: 2026-07-24 22:20 CEST
+## Session: 2026-08-01 02:32 CEST
 
 ### Summary
-ESLint 10 upgrade re-attempted and confirmed blocked. All pages healthy. Project in maintenance mode.
+ESLint 10 upstream blocker re-checked. No safe code change. Production healthy.
 
-### Issues Worked On
-- **#482** — deps: upgrade ESLint 9→10 — 🔒 BLOCKED (confirmed: eslint-plugin-react@7.37.5 via eslint-config-next@16.2.11 uses `context.getFilename()` removed in ESLint 10; no newer version available)
+### Issue Worked On
+- **#482** — deps: upgrade ESLint 9→10 — BLOCKED upstream
 
-### What Was Done
-- Attempted ESLint 9→10 upgrade (3 approaches, all blocked)
-- Removed `brace-expansion` override → fixed brace-expansion conflict
-- Upgraded `typescript-eslint` 8.63→8.65 → fixed `scopeManager.addGlobals` error
-- Overrode parser to `@typescript-eslint/parser` → fixed babel parser issue
-- Root blocker: `eslint-plugin-react@7.37.5` uses `context.getFilename()` removed in ESLint 10
-- All changes reverted, main branch clean
-- Typecheck, build, lint all pass
-- PR #496 squash-merged, Vercel auto-deployed
+### Findings
+- `eslint-plugin-react@7.37.5` remains latest and limits its ESLint peer dependency to `^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9.7`.
+- `eslint-config-next@16.2.12` supports ESLint `>=9.0.0`, but still uses incompatible `eslint-plugin-react`.
+- No safe implementation path until `eslint-plugin-react` adds ESLint 10 support.
+- Added scheduled re-check comment to issue #482.
 
-### Live Verification Results (2026-07-24)
-- ✅ `/` — 200 OK
-- ✅ `/yachts` — 200 OK
-- ✅ `/search` — 200 OK
-- ✅ `/compare` — 200 OK
-- ✅ API `/api/yachts` — 243 yachts returned
+### Build / Test / Deploy
+- No code changed, so no feature branch, build, tests, PR, merge, or deployment required.
+- Existing production deployment remains healthy.
+
+### Live Verification Results (2026-08-01)
+- PASS `/` — HTTP success
+- PASS `/yachts` — HTTP success; rendered yacht listing
+- PASS `/search` — HTTP success
+- PASS `/compare` — HTTP success
+- PASS `/api/yachts` — valid JSON, 243 yachts
+- PASS browser console — no errors on `/yachts`
+- PASS page content — no `Application error`
 
 ### Current State
-- All FUTURE_ROADMAP.md phases (0-27) COMPLETE
-- Only 1 open auto-build issue: #482 (ESLint 10, blocked)
-- `npm outdated`: eslint (blocked), typescript (too fresh)
-- `npm audit`: 25 vulnerabilities (21 moderate, 3 low, 1 high) — all from transitive deps via lighthouse/@sentry/OpenTelemetry
-- Production site fully operational
+- All FUTURE_ROADMAP.md phases complete.
+- Only open `auto-build` issue: #482, blocked upstream.
+- Production site operational.
 
-### Known Issues
-- Lighthouse CI budget violations on production site (pre-existing)
-- ESLint 10 blocked: `eslint-plugin-react@7.37.5` (via `eslint-config-next@16.2.10`) peer-depends on `eslint: '^3-^9.7'`
-- TypeScript 7.0 (Go compiler rewrite) released recently — needs ecosystem validation before upgrade
-- npm audit: 25 vulnerabilities all from transitive deps (lighthouse → @sentry → OpenTelemetry, @lhci/cli → tmp/inquirer)
-
-### Next Recommended Tasks
-1. **ESLint 10** — revisit when eslint-plugin-react ships ESLint 10 support (check npm info periodically)
-2. **TypeScript 7.0** — evaluate after Next.js ecosystem validation (weeks/months)
-3. Monitor for new security advisories or feature requests
-4. Consider @sentry/nextjs upgrade to resolve OpenTelemetry transitive vulns when available
+### Next Recommended Task
+Revisit #482 after `eslint-plugin-react` publishes ESLint 10 support. Monitor new auto-build issues and security advisories.

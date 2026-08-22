@@ -49,14 +49,14 @@ test.describe("Affiliate Recommendations", () => {
     }
   });
 
-  test("affiliate links should have correct attributes when present", async ({ page }) => {
+  test("affiliate links should be tracked via proxy when present", async ({ page }) => {
     await page.goto("/yachts/beneteau-oceanis-38-1");
 
     // Wait for client-side rendering
     await page.waitForTimeout(1000);
 
-    // Look for any Amazon affiliate links
-    const affiliateLinks = page.locator('a[href*="amazon.com"][href*="tag="]');
+    // All outbound affiliate links must flow through the tracked proxy
+    const affiliateLinks = page.locator('a[href*="api.petergedeon.com/a/"]');
 
     const count = await affiliateLinks.count();
 
@@ -64,9 +64,15 @@ test.describe("Affiliate Recommendations", () => {
     if (count > 0) {
       const firstLink = affiliateLinks.first();
 
-      // Check the affiliate tag
+      // Check the tracked proxy slug format
       const href = await firstLink.getAttribute("href");
-      expect(href).toContain("tag=pgedeon-20");
+      expect(href).toMatch(/api\.petergedeon\.com\/a\/SY-[a-z0-9-]+/);
+
+      // No raw Amazon links may remain in the section
+      const rawAmazon = await page
+        .locator('section.affiliate-recommendations a[href*="amazon."]')
+        .count();
+      expect(rawAmazon).toBe(0);
 
       // Check security attributes
       const rel = await firstLink.getAttribute("rel");
