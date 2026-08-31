@@ -26,17 +26,27 @@ function writeFavorites(slugs: string[]): void {
 }
 
 /**
- * Check if user is logged in by calling /api/auth/session
+ * Check if user is logged in by calling /api/auth/session.
+ * Module-level in-flight dedupe: every FavoriteButton on a page calls this
+ * hook; without sharing, a 20-yacht listing fired 20+ identical session
+ * requests (observed 22x on /en/yachts 2026-08-31).
  */
-async function getSessionUserId(): Promise<string | null> {
-  try {
-    const res = await fetch("/api/auth/session");
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data?.user?.id || null;
-  } catch {
-    return null;
+let sessionUserIdPromise: Promise<string | null> | null = null;
+
+function getSessionUserId(): Promise<string | null> {
+  if (!sessionUserIdPromise) {
+    sessionUserIdPromise = (async () => {
+      try {
+        const res = await fetch("/api/auth/session");
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data?.user?.id || null;
+      } catch {
+        return null;
+      }
+    })();
   }
+  return sessionUserIdPromise;
 }
 
 /**

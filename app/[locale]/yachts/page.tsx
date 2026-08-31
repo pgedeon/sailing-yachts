@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { shouldNoindexYachtsPage, generateYachtsPageCanonical } from "@/lib/thin-page-governance";
 import { getYachtsListing, getFilterOptions, type YachtsListingResult, type FilterOptions } from "@/lib/yachts";
 import { getTranslations , setRequestLocale } from "next-intl/server";
-import YachtsClient from "./YachtsClientLazy";
+import YachtsClient from "./YachtsClient";
 
 // Revalidate every 60 minutes — yacht list doesn't change frequently
 export const revalidate = 3600;

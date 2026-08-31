@@ -91,7 +91,7 @@ export default function YachtsClient({ initialData, filterOptions: initialFilter
 
   // Stable filter key to prevent re-fetching on same params
   const currentKey = filterKey(searchParams);
-  const lastFetchedKey = useRef<string>(initialData ? 'initial' : '');
+  const lastFetchedKey = useRef<string>(initialData ? ':p1' : '');
   const abortRef = useRef<AbortController | null>(null);
 
   // Compute tags for yachts that don't have them from the API (client-side fallback)
